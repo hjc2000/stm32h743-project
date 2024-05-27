@@ -1,0 +1,50 @@
+﻿{
+	"version": 3,
+	"configurePresets": [
+		{
+			"name": "options",
+			"hidden": true,
+			"cacheVariables": {
+				"cpp_lib_build_scripts_path": "$env{cpp_lib_build_scripts_path}",
+				"platform": "arm-none-eabi-cortex-m7",
+				"CMAKE_SYSTEM_PROCESSOR": "arm",
+				"CMAKE_SYSTEM_ARCH": "armv7-m",
+				"CMAKE_SYSTEM_NAME": "Generic",
+				"CMAKE_C_COMPILER": "arm-none-eabi-gcc.exe",
+				"CMAKE_CXX_COMPILER": "arm-none-eabi-g++.exe",
+				"CMAKE_ASM_COMPILER": "arm-none-eabi-gcc.exe",
+				"CMAKE_LINKER": "arm-none-eabi-ld.exe",
+				"CMAKE_OBJCOPY": "arm-none-eabi-objcopy.exe",
+				"CMAKE_SIZE": "arm-none-eabi-size.exe",
+				"CMAKE_STRIP": "arm-none-eabi-ld.exe"
+			},
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"intelliSenseMode": "linux-gcc-arm"
+				}
+			}
+		},
+		{
+			"name": "gcc debug",
+			"displayName": "gcc debug",
+			"inherits": "options",
+			"generator": "Ninja",
+			"binaryDir": "${sourceDir}/out/build/${presetName}",
+			"installDir": "${sourceDir}/out/install/${presetName}",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug"
+			}
+		},
+		{
+			"name": "gcc release",
+			"displayName": "gcc release",
+			"inherits": "options",
+			"generator": "Ninja",
+			"binaryDir": "${sourceDir}/out/build/${presetName}",
+			"installDir": "${sourceDir}/out/install/${presetName}",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release"
+			}
+		}
+	]
+}
