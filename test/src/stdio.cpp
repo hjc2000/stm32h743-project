@@ -1,4 +1,3 @@
-#include<atk-stm32f103/bsp.h>
 #include<errno.h>
 #include<unistd.h>
 
@@ -18,7 +17,6 @@ extern "C"
 	{
 		try
 		{
-			BSP::Serial().Write((uint8_t *)ptr, 0, len);
 			return len;
 		}
 		catch (...)

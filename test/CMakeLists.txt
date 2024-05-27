@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 include(${cpp_lib_build_scripts_path}/cmake-module/setup.cmake)
 include(target_import_base)
+include(target_import_libfreertos)
 
 set(ProjectName test)
 project(${ProjectName})
