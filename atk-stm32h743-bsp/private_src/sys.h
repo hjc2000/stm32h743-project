@@ -41,7 +41,6 @@ typedef __I uint8_t vuc8;
 #define OFF	0
 #define Write_Through() (*(__IO uint32_t*)0XE000EF9C=1UL<<2) //Cache͸дģʽ
 
-void Cache_Enable(void);                                    //ʹ��STM32H7��L1-Cahce
 void Stm32_Clock_Init(u32 plln, u32 pllm, u32 pllp, u32 pllq); //����ϵͳʱ��
 u8 Get_ICahceSta(void);//�ж�I_Cache�Ƿ��
 u8 Get_DCahceSta(void);//�ж�I_Dache�Ƿ��

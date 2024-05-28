@@ -1,4 +1,5 @@
 #include"bsp.h"
+#include<Cache.h>
 #include<DigitalLed.h>
 #include<hal.h>
 
@@ -22,7 +23,7 @@ IDigitalLed &BSP::GreenDigitalLed()
 
 void BSP::Initialize()
 {
-	Cache_Enable();
+	Cache::Enable();
 	HAL_Init();
 	Stm32_Clock_Init(160, 5, 2, 4);
 	delay_init(400);

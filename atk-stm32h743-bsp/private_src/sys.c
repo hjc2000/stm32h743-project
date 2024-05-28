@@ -1,12 +1,5 @@
 #include "sys.h"
 
-void Cache_Enable(void)
-{
-	SCB_EnableICache();//ʹ��I-Cache
-	SCB_EnableDCache();//ʹ��D-Cache   
-	SCB->CACR |= 1 << 2;   //ǿ��D-Cache͸д,�粻����,ʵ��ʹ���п���������������	
-}
-
 void Stm32_Clock_Init(u32 plln, u32 pllm, u32 pllp, u32 pllq)
 {
 	HAL_StatusTypeDef ret = HAL_OK;
@@ -55,18 +48,4 @@ void Stm32_Clock_Init(u32 plln, u32 pllm, u32 pllp, u32 pllq)
 	__HAL_RCC_CSI_ENABLE();
 	__HAL_RCC_SYSCFG_CLK_ENABLE();
 	HAL_EnableCompensationCell();
-}
-
-u8 Get_ICahceSta(void)
-{
-	u8 sta;
-	sta = ((SCB->CCR) >> 17) & 0X01;
-	return sta;
-}
-
-u8 Get_DCahceSta(void)
-{
-	u8 sta;
-	sta = ((SCB->CCR) >> 16) & 0X01;
-	return sta;
 }
