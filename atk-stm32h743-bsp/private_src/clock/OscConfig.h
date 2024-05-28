@@ -1,6 +1,6 @@
 #pragma once
 #include<hal.h>
-#include<PllInitOptions.h>
+#include<PllConfig.h>
 
 namespace bsp
 {
@@ -73,6 +73,6 @@ namespace bsp
 
 		LsiState _lsi_state = LsiState::Off;
 
-		PllInitOptions _pll_init_options;
+		PllConfig _pll_init_options;
 	};
 }

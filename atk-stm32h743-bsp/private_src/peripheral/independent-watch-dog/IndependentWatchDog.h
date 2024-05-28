@@ -1,7 +1,7 @@
 #pragma once
-#include<IndependentWatchDogInitOptions.h>
 #include<bsp-interface/IIndependentWatchDog.h>
 #include<chrono>
+#include<IndependentWatchDogInitOptions.h>
 
 namespace bsp
 {
@@ -31,7 +31,7 @@ namespace bsp
 
 		IWDG_TypeDef *HardwareInstance()
 		{
-			return IWDG;
+			return IWDG1;
 		}
 
 		/// <summary>
