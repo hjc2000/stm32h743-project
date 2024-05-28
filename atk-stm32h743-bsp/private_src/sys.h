@@ -1,83 +1,50 @@
 #ifndef _SYS_H
 #define _SYS_H
-#include "stm32h7xx.h"
-#include "core_cm7.h"
-#include "stm32h7xx_hal.h"
-//////////////////////////////////////////////////////////////////////////////////	 
-//±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-//ALIENTEK STM32H7¿ª·¢°å
-//ÏµÍ³Ê±ÖÓ³õÊ¼»¯	
-//ÕıµãÔ­×Ó@ALIENTEK
-//¼¼ÊõÂÛÌ³:www.openedv.com
-//´´½¨ÈÕÆÚ:2017/6/7
-//°æ±¾£ºV1.0
-//°æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-//Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2014-2024
-//All rights reserved
-//********************************************************************************
-//ĞŞ¸ÄËµÃ÷
-//ÎŞ
-//////////////////////////////////////////////////////////////////////////////////  
+#include<hal.h>
 
-//0,²»Ö§³Öos
-//1,Ö§³Öos
-#define SYSTEM_SUPPORT_OS		0		//¶¨ÒåÏµÍ³ÎÄ¼ş¼ĞÊÇ·ñÖ§³ÖOS	
+#define SYSTEM_SUPPORT_OS		0		//ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ö§ï¿½ï¿½OS	
 ///////////////////////////////////////////////////////////////////////////////////
-//¶¨ÒåÒ»Ğ©³£ÓÃµÄÊı¾İÀàĞÍ¶Ì¹Ø¼ü×Ö 
+//ï¿½ï¿½ï¿½ï¿½Ò»Ğ©ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¶Ì¹Ø¼ï¿½ï¿½ï¿½ 
 typedef int32_t  s32;
 typedef int16_t s16;
 typedef int8_t  s8;
 
-typedef const int32_t sc32;  
-typedef const int16_t sc16;  
-typedef const int8_t sc8;  
+typedef const int32_t sc32;
+typedef const int16_t sc16;
+typedef const int8_t sc8;
 
 typedef __IO int32_t  vs32;
 typedef __IO int16_t  vs16;
 typedef __IO int8_t   vs8;
 
-typedef __I int32_t vsc32;  
-typedef __I int16_t vsc16; 
-typedef __I int8_t vsc8;   
+typedef __I int32_t vsc32;
+typedef __I int16_t vsc16;
+typedef __I int8_t vsc8;
 
 typedef uint32_t  u32;
 typedef uint16_t u16;
 typedef uint8_t  u8;
 
-typedef const uint32_t uc32;  
-typedef const uint16_t uc16;  
-typedef const uint8_t uc8; 
+typedef const uint32_t uc32;
+typedef const uint16_t uc16;
+typedef const uint8_t uc8;
 
 typedef __IO uint32_t  vu32;
 typedef __IO uint16_t vu16;
 typedef __IO uint8_t  vu8;
 
-typedef __I uint32_t vuc32;  
-typedef __I uint16_t vuc16; 
-typedef __I uint8_t vuc8;  
+typedef __I uint32_t vuc32;
+typedef __I uint16_t vuc16;
+typedef __I uint8_t vuc8;
 
 #define ON	1
 #define OFF	0
 #define Write_Through() (*(__IO uint32_t*)0XE000EF9C=1UL<<2) //CacheÍ¸Ğ´Ä£Ê½
 
-void Cache_Enable(void);                                    //Ê¹ÄÜSTM32H7µÄL1-Cahce
-void Stm32_Clock_Init(u32 plln,u32 pllm,u32 pllp,u32 pllq); //ÅäÖÃÏµÍ³Ê±ÖÓ
-u8 Get_ICahceSta(void);//ÅĞ¶ÏI_CacheÊÇ·ñ´ò¿ª
-u8 Get_DCahceSta(void);//ÅĞ¶ÏI_DacheÊÇ·ñ´ò¿ª
-
-#if defined(__clang__) //Ê¹ÓÃV6±àÒëÆ÷(clang)
-void __attribute__((noinline)) WFI_SET(void);
-void __attribute__((noinline)) INTX_DISABLE(void);
-void __attribute__((noinline)) INTX_ENABLE(void);
-void __attribute__((noinline)) MSR_MSP(u32 addr);
-#elif defined (__CC_ARM)    //Ê¹ÓÃV5±àÒëÆ÷(ARMCC)
-//ÒÔÏÂÎª»ã±àº¯Êı
-void WFI_SET(void);		//Ö´ĞĞWFIÖ¸Áî
-void INTX_DISABLE(void);//¹Ø±ÕËùÓĞÖĞ¶Ï
-void INTX_ENABLE(void);	//¿ªÆôËùÓĞÖĞ¶Ï
-void MSR_MSP(u32 addr);	//ÉèÖÃ¶ÑÕ»µØÖ· 
-#endif
-
+void Cache_Enable(void);                                    //Ê¹ï¿½ï¿½STM32H7ï¿½ï¿½L1-Cahce
+void Stm32_Clock_Init(u32 plln, u32 pllm, u32 pllp, u32 pllq); //ï¿½ï¿½ï¿½ï¿½ÏµÍ³Ê±ï¿½ï¿½
+u8 Get_ICahceSta(void);//ï¿½Ğ¶ï¿½I_Cacheï¿½Ç·ï¿½ï¿½
+u8 Get_DCahceSta(void);//ï¿½Ğ¶ï¿½I_Dacheï¿½Ç·ï¿½ï¿½
 
 #endif
 
