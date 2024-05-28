@@ -20,7 +20,8 @@
 			},
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
-					"intelliSenseMode": "linux-gcc-arm"
+					"intelliSenseMode": "linux-gcc-arm",
+					"disableExternalAnalysis": true
 				}
 			}
 		},
