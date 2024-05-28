@@ -6,6 +6,8 @@
 #include<task/Task.h>
 
 volatile double count = 0;
+bool std_exception_occurred = false;
+bool unknow_exception_occurred = false;
 
 int main(void)
 {
@@ -27,7 +29,11 @@ int main(void)
 		}
 		catch (std::exception &e)
 		{
-
+			std_exception_occurred = true;
+		}
+		catch (...)
+		{
+			unknow_exception_occurred = true;
 		}
 	}
 }
