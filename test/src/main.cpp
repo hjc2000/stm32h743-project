@@ -5,7 +5,6 @@
 #include<stdint.h>
 #include<task/Task.h>
 
-volatile double count = 0;
 bool std_exception_occurred = false;
 bool unknow_exception_occurred = false;
 
