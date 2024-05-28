@@ -1,6 +1,6 @@
 #pragma once
-#include<GpioPort.h>
 #include<bsp-interface/IDigitalLed.h>
+#include<GpioPort.h>
 
 namespace bsp
 {
@@ -22,7 +22,7 @@ namespace bsp
 			GpioPinInitOptions gpio_pin_options;
 			gpio_pin_options._mode = GpioPinMode::Output_PushPull;
 			gpio_pin_options._pull_mode = GpioPinPull::PullUp;
-			gpio_pin_options._speed = GpioPinSpeed::High;
+			gpio_pin_options._speed = GpioPinSpeed::VeryHigh;
 			GpioPortB::Instance().InitPin(GpioPin::Pin0, gpio_pin_options);
 		}
 
@@ -55,7 +55,7 @@ namespace bsp
 			GpioPinInitOptions gpio_pin_options;
 			gpio_pin_options._mode = GpioPinMode::Output_PushPull;
 			gpio_pin_options._pull_mode = GpioPinPull::PullUp;
-			gpio_pin_options._speed = GpioPinSpeed::High;
+			gpio_pin_options._speed = GpioPinSpeed::VeryHigh;
 			GpioPortB::Instance().InitPin(GpioPin::Pin1, gpio_pin_options);
 		}
 

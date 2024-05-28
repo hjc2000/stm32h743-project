@@ -11,7 +11,12 @@ extern "C"
 
 using namespace bsp;
 
-IDigitalLed &BSP::RedLed()
+IDigitalLed &BSP::RedDigitalLed()
+{
+	return RedDigitalLed::Instance();
+}
+
+IDigitalLed &BSP::GreenDigitalLed()
 {
 	return RedDigitalLed::Instance();
 }

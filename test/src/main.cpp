@@ -5,6 +5,6 @@ int main(void)
 	BSP::Initialize();
 	while (true)
 	{
-		BSP::RedLed().Toggle();
+		BSP::RedDigitalLed().Toggle();
 	}
 }

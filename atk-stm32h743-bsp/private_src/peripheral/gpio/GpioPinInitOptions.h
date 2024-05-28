@@ -68,6 +68,7 @@ namespace bsp
 		Low = GPIO_SPEED_FREQ_LOW,
 		Medium = GPIO_SPEED_FREQ_MEDIUM,
 		High = GPIO_SPEED_FREQ_HIGH,
+		VeryHigh = GPIO_SPEED_FREQ_VERY_HIGH,
 	};
 
 	class GpioPinInitOptions
