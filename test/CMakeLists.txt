@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 include(${cpp_lib_build_scripts_path}/cmake-module/setup.cmake)
 include(target_import_base)
 include(target_import_libfreertos)
+include(target_import_libstm32h743_hal)
 
 set(ProjectName test)
 project(${ProjectName})
@@ -13,11 +14,8 @@ add_executable(${ProjectName})
 target_import_src(${ProjectName})
 target_import_libfreertos(${ProjectName} PUBLIC)
 target_import_base(${ProjectName} PUBLIC)
-target_link_libraries(
-    ${ProjectName} PUBLIC
-    c
-    m
-)
+target_import_libstm32h743_hal(${ProjectName} PUBLIC)
+target_link_libraries(${ProjectName} PUBLIC c m atk-stm32h743-bsp)
 
 add_custom_command(
 	TARGET ${ProjectName} POST_BUILD 
