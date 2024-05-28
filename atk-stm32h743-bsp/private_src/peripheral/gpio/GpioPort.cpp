@@ -15,21 +15,11 @@ bool GpioPortA::IsClockEnabled()
 
 void GpioPortA::EnableClock()
 {
-	if (IsClockEnabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 }
 
 void GpioPortA::DisableClock()
 {
-	if (IsClockDisabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOA_CLK_DISABLE();
 }
 #pragma endregion
@@ -47,21 +37,11 @@ bool GpioPortB::IsClockEnabled()
 
 void GpioPortB::EnableClock()
 {
-	if (IsClockEnabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 }
 
 void GpioPortB::DisableClock()
 {
-	if (IsClockDisabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOB_CLK_DISABLE();
 }
 #pragma endregion
@@ -79,21 +59,11 @@ bool GpioPortC::IsClockEnabled()
 
 void GpioPortC::EnableClock()
 {
-	if (IsClockEnabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOC_CLK_ENABLE();
 }
 
 void GpioPortC::DisableClock()
 {
-	if (IsClockDisabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOC_CLK_DISABLE();
 }
 #pragma endregion
@@ -111,21 +81,11 @@ bool GpioPortD::IsClockEnabled()
 
 void GpioPortD::EnableClock()
 {
-	if (IsClockEnabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOD_CLK_ENABLE();
 }
 
 void GpioPortD::DisableClock()
 {
-	if (IsClockDisabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOD_CLK_DISABLE();
 }
 #pragma endregion
@@ -143,11 +103,6 @@ bool GpioPortE::IsClockEnabled()
 
 void GpioPortE::EnableClock()
 {
-	if (IsClockEnabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOE_CLK_ENABLE();
 }
 
@@ -175,21 +130,11 @@ bool GpioPortF::IsClockEnabled()
 
 void GpioPortF::EnableClock()
 {
-	if (IsClockEnabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOF_CLK_ENABLE();
 }
 
 void GpioPortF::DisableClock()
 {
-	if (IsClockDisabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOF_CLK_DISABLE();
 }
 #pragma endregion
@@ -207,21 +152,11 @@ bool GpioPortG::IsClockEnabled()
 
 void GpioPortG::EnableClock()
 {
-	if (IsClockEnabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOG_CLK_ENABLE();
 }
 
 void GpioPortG::DisableClock()
 {
-	if (IsClockDisabled())
-	{
-		return;
-	}
-
 	__HAL_RCC_GPIOG_CLK_DISABLE();
 }
 #pragma endregion
