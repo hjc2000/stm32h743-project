@@ -23,7 +23,7 @@ namespace bsp
 			gpio_pin_options._mode = GpioPinMode::Output_PushPull;
 			gpio_pin_options._pull_mode = GpioPinPull::PullUp;
 			gpio_pin_options._speed = GpioPinSpeed::High;
-			GpioPortB::Instance().InitPin(GpioPin::Pin5, gpio_pin_options);
+			GpioPortB::Instance().InitPin(GpioPin::Pin0, gpio_pin_options);
 		}
 
 		static RedDigitalLed &Instance()
@@ -46,7 +46,7 @@ namespace bsp
 		GreenDigitalLed()
 		{
 			using namespace bsp;
-			GpioPortE::Instance().EnableClock();
+			GpioPortB::Instance().EnableClock();
 
 			/* 使能时钟后写输出寄存器的操作就有效了。先关闭 LED，然后配置为输出模式，
 			* 这样 LED 的初始状态就是关闭的。
@@ -56,7 +56,7 @@ namespace bsp
 			gpio_pin_options._mode = GpioPinMode::Output_PushPull;
 			gpio_pin_options._pull_mode = GpioPinPull::PullUp;
 			gpio_pin_options._speed = GpioPinSpeed::High;
-			GpioPortE::Instance().InitPin(GpioPin::Pin5, gpio_pin_options);
+			GpioPortB::Instance().InitPin(GpioPin::Pin1, gpio_pin_options);
 		}
 
 		static GreenDigitalLed &Instance()
