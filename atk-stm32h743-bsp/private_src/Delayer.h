@@ -6,7 +6,7 @@
 namespace bsp
 {
 	/// <summary>
-	///		延时器。内部默认使用 H7SysTick 类进行延时。
+	///		延时器。内部默认使用 SysTickClock 类进行延时。
 	/// </summary>
 	class Delayer :public bsp::IDelayer
 	{

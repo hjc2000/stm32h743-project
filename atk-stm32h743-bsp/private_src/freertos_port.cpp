@@ -1,6 +1,6 @@
 #include"FreeRTOSConfig.h"
 #include<FreeRTOS.h>
-#include<H7SysTick.h>
+#include<SysTickClock.h>
 #include<hal.h>
 #include<task.h>
 
@@ -13,7 +13,7 @@ extern "C"
 
 	uint32_t freertos_get_systic_clock_freq()
 	{
-		return bsp::H7SysTick::Instance().Frequency();
+		return bsp::SysTickClock::Instance().Frequency();
 	}
 
 	/// <summary>

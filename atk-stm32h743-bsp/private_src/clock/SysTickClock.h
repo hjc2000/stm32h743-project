@@ -8,17 +8,17 @@
 namespace bsp
 {
 	/// <summary>
-	///		H7SysTick 只有 1 个，所以实现为静态类。
+	///		SysTickClock 只有 1 个，所以实现为静态类。
 	/// </summary>
-	class H7SysTick :public bsp::ISysTick
+	class SysTickClock :public bsp::ISysTick
 	{
 	private:
-		H7SysTick() = default;
+		SysTickClock() = default;
 
 	public:
-		static H7SysTick &Instance()
+		static SysTickClock &Instance()
 		{
-			static H7SysTick o;
+			static SysTickClock o;
 			return o;
 		}
 
@@ -44,14 +44,14 @@ namespace bsp
 			HCLK_DIV8 = SYSTICK_CLKSOURCE_HCLK_DIV8,
 		};
 
-		H7SysTick::SysTickClockSource ClockSource();
+		SysTickClock::SysTickClockSource ClockSource();
 
 		/// <summary>
 		///		设置完后必须使用 ClockSignal::Config 配置一下 ClockType::SYSCLK，
 		///		否则仅仅是更新标志位，不会实际配置 sysclk，这会导致状态不同步。
 		/// </summary>
 		/// <param name="value"></param>
-		void SetClockSource(H7SysTick::SysTickClockSource value);
+		void SetClockSource(SysTickClock::SysTickClockSource value);
 
 		/// <summary>
 		///		获取 systick 的时钟频率。
