@@ -1,5 +1,6 @@
 #include"bsp.h"
 #include<Cache.h>
+#include<ClockSignal.h>
 #include<Delayer.h>
 #include<DigitalLed.h>
 #include<functional>
@@ -36,23 +37,17 @@ void BSP::Initialize()
 		ret = HAL_RCC_OscConfig(&RCC_OscInitStruct);
 		if (ret != HAL_OK) while (1);
 
-		RCC_ClkInitTypeDef RCC_ClkInitStruct;
-		RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK |
-			RCC_CLOCKTYPE_HCLK |
-			RCC_CLOCKTYPE_D1PCLK1 |
-			RCC_CLOCKTYPE_PCLK1 |
-			RCC_CLOCKTYPE_PCLK2 |
-			RCC_CLOCKTYPE_D3PCLK1);
-
-		RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-		RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
-		RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
-		RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
-		RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
-		RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;
-		RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV4;
-		ret = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
-		if (ret != HAL_OK) while (1);
+		ClockSignalConfig clock_signal_config;
+		clock_signal_config.SelectAllClockType();
+		clock_signal_config._flash_latency = ClockSignalConfig::FlashLatency::Latency2;
+		clock_signal_config._system_clk_config._clock_source = SystemClockConfig::ClockSource::PLLCLK;
+		clock_signal_config._system_clk_config._output_divider = SystemClockConfig::OutputDivider::DIV1;
+		clock_signal_config._system_clk_config._hclk_config._input_divider = HclkConfig::InputDivider::DIV2;
+		clock_signal_config._system_clk_config._hclk_config._apb1clk_config._input_divider = Apb1ClkConfig::InputDivider::DIV2;
+		clock_signal_config._system_clk_config._hclk_config._apb2clk_config._input_divider = Apb2ClkConfig::InputDivider::DIV2;
+		clock_signal_config._system_clk_config._hclk_config._apb3clk_config._input_divider = Apb3ClkConfig::InputDivider::DIV2;
+		clock_signal_config._system_clk_config._hclk_config._apb4clk_config._input_divider = Apb4ClkConfig::InputDivider::DIV4;
+		ClockSignal::SetConfig(clock_signal_config);
 
 		__HAL_RCC_CSI_ENABLE();
 		__HAL_RCC_SYSCFG_CLK_ENABLE();

@@ -7,9 +7,6 @@ namespace bsp
 	{
 	private:
 		ClockSignal() = delete;
-		ClockSignal(ClockSignal const &o) = delete;
-		ClockSignal(ClockSignal const &&o) = delete;
-		ClockSignal &operator=(ClockSignal const &o) = delete;
 
 	public:
 		/// <summary>
