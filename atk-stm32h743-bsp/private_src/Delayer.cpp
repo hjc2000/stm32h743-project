@@ -12,12 +12,12 @@ void Delayer::Delay(std::chrono::microseconds microseconds)
 	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(microseconds);
 	if (ms.count() > 0)
 	{
-		Delay(std::chrono::milliseconds{ ms });
+		Delay(std::chrono::milliseconds { ms });
 	}
 
 	// 剩余的小于 1000 部分的微秒
 	microseconds -= ms;
-	Systic::NopLoopDelay(microseconds);
+	Systic::Instance().NopLoopDelay(microseconds);
 }
 
 void Delayer::Delay(std::chrono::milliseconds milliseconds)
@@ -25,7 +25,7 @@ void Delayer::Delay(std::chrono::milliseconds milliseconds)
 	// 如果调度器不在运行，则使用 Systic::NopLoopDelay
 	if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING)
 	{
-		Systic::NopLoopDelay(milliseconds);
+		Systic::Instance().NopLoopDelay(milliseconds);
 		return;
 	}
 
@@ -62,13 +62,13 @@ void Delayer::Delay(std::chrono::milliseconds milliseconds)
 
 	if (mod > 0)
 	{
-		Systic::NopLoopDelay(std::chrono::milliseconds{ mod / configTICK_RATE_HZ });
+		Systic::Instance().NopLoopDelay(std::chrono::milliseconds { mod / configTICK_RATE_HZ });
 	}
 }
 
 void Delayer::Delay(std::chrono::seconds seconds)
 {
-	Delay(std::chrono::milliseconds{ seconds });
+	Delay(std::chrono::milliseconds { seconds });
 }
 
 extern "C"
@@ -79,6 +79,6 @@ extern "C"
 	/// <param name="ms"></param>
 	void HAL_Delay(uint32_t ms)
 	{
-		Delayer::Instance().Delay(std::chrono::milliseconds{ ms });
+		Delayer::Instance().Delay(std::chrono::milliseconds { ms });
 	}
 }

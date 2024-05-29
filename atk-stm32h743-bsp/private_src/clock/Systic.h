@@ -18,11 +18,15 @@ namespace bsp
 	class Systic
 	{
 	private:
-		Systic() = delete;
-		Systic(Systic const &another) = delete;
-		Systic &operator=(Systic const &value) = delete;
+		Systic() = default;
 
 	public:
+		static Systic &Instance()
+		{
+			static Systic o;
+			return o;
+		}
+
 		/// <summary>
 		///		获取 SysTick 寄存器组中的 CTRL 寄存器的 COUNTFLAG 位的值。
 		///		该位是只读的。
@@ -37,23 +41,23 @@ namespace bsp
 		/// </note>
 		/// 
 		/// <returns>发生了回绕 返回非 0 值，没有发生回绕返回 0.</returns>
-		static bool CountFlag();
+		bool CountFlag();
 
-		static SysticClockSource ClockSource();
+		SysticClockSource ClockSource();
 
 		/// <summary>
 		///		设置完后必须使用 ClockSignal::Config 配置一下 ClockType::SYSCLK，
 		///		否则仅仅是更新标志位，不会实际配置 sysclk，这会导致状态不同步。
 		/// </summary>
 		/// <param name="value"></param>
-		static void SetClockSource(SysticClockSource value);
+		void SetClockSource(SysticClockSource value);
 
 		/// <summary>
 		///		获取 systick 的时钟频率。
 		///		* 这是最终输入到计数器的频率，后面没有任何分频器。
 		/// </summary>
 		/// <returns></returns>
-		static uint32_t Frequency();
+		uint32_t Frequency();
 
 		/// <summary>
 		///		获取 SysTick 的 LOAD 寄存器的 RELOAD 部分的值。
@@ -62,7 +66,7 @@ namespace bsp
 		///		RELOAD 是用来在计数值递减到 0 后，下一个时钟周期装载到计数器中的。
 		/// </summary>
 		/// <returns></returns>
-		static uint32_t ReloadNum();
+		uint32_t ReloadNum();
 
 		/// <summary>
 		///		获取 SysTick 的 VAL 寄存器的 CURRENT 部分的值。
@@ -74,15 +78,15 @@ namespace bsp
 		///		COUNTFLAG 位清零。
 		/// </note>
 		/// <returns>当前计数值</returns>
-		static uint32_t CurrentValue();
+		uint32_t CurrentValue();
 
 		/// <summary>
 		///		通过空指令循环来延时
 		/// </summary>
 		/// <param name="tick_count">要延时的 SysTick 计数值</param>
-		static void NopLoopDelayForTicks(uint32_t tick_count);
-		static void NopLoopDelay(std::chrono::microseconds microseconds);
-		static void NopLoopDelay(std::chrono::milliseconds milliseconds);
-		static void NopLoopDelay(std::chrono::seconds seconds);
+		void NopLoopDelayForTicks(uint32_t tick_count);
+		void NopLoopDelay(std::chrono::microseconds microseconds);
+		void NopLoopDelay(std::chrono::milliseconds milliseconds);
+		void NopLoopDelay(std::chrono::seconds seconds);
 	};
 }

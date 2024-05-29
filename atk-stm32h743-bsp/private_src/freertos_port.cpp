@@ -13,7 +13,7 @@ extern "C"
 
 	uint32_t freertos_get_systic_clock_freq()
 	{
-		return bsp::Systic::Frequency();
+		return bsp::Systic::Instance().Frequency();
 	}
 
 	/// <summary>
