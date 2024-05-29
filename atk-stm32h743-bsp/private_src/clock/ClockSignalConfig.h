@@ -21,6 +21,8 @@ namespace bsp
 			HCLK = RCC_CLOCKTYPE_HCLK,
 			PCLK1 = RCC_CLOCKTYPE_PCLK1,
 			PCLK2 = RCC_CLOCKTYPE_PCLK2,
+			D1PCLK1 = RCC_CLOCKTYPE_D1PCLK1,
+			D3PCLK1 = RCC_CLOCKTYPE_D3PCLK1,
 		};
 
 		ClockType _clock_type;
@@ -30,6 +32,7 @@ namespace bsp
 		/// </summary>
 		enum class SysclkSource :uint32_t
 		{
+			CSI = RCC_SYSCLKSOURCE_CSI,
 			HSI = RCC_SYSCLKSOURCE_HSI,
 			HSE = RCC_SYSCLKSOURCE_HSE,
 			PLLCLK = RCC_SYSCLKSOURCE_PLLCLK,
