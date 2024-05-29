@@ -7,7 +7,6 @@
 
 bool std_exception_occurred = false;
 bool unknow_exception_occurred = false;
-volatile uint64_t count = 0;
 
 int main(void)
 {
@@ -17,12 +16,13 @@ int main(void)
 		{
 
 			BSP::Initialize();
-			BSP::RedDigitalLed().TurnOn();
 			std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create([]()
 			{
 				while (true)
 				{
-					BSP::GreenDigitalLed().TurnOn();
+					BSP::RedDigitalLed().Toggle();
+					BSP::GreenDigitalLed().Toggle();
+					BSP::Delayer().Delay(std::chrono::seconds { 1 });
 				}
 			}, 512);
 			vTaskStartScheduler();

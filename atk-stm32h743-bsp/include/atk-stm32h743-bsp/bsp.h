@@ -1,4 +1,5 @@
 #pragma once
+#include<bsp-interface/IDelayer.h>
 #include<bsp-interface/IDigitalLed.h>
 
 class BSP
@@ -11,4 +12,6 @@ public:
 
 	static bsp::IDigitalLed &RedDigitalLed();
 	static bsp::IDigitalLed &GreenDigitalLed();
+
+	static bsp::IDelayer &Delayer();
 };

@@ -1,5 +1,6 @@
 #include"bsp.h"
 #include<Cache.h>
+#include<Delayer.h>
 #include<DigitalLed.h>
 #include<functional>
 #include<hal.h>
@@ -71,4 +72,9 @@ IDigitalLed &BSP::RedDigitalLed()
 IDigitalLed &BSP::GreenDigitalLed()
 {
 	return GreenDigitalLed::Instance();
+}
+
+bsp::IDelayer &BSP::Delayer()
+{
+	return Delayer::Instance();
 }
