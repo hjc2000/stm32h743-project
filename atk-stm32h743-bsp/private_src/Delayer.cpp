@@ -1,7 +1,7 @@
 #include"Delayer.h"
 #include<FreeRTOS.h>
 #include<FreeRTOSConfig.h>
-#include<Systic.h>
+#include<H7SysTick.h>
 #include<task.h>
 
 using namespace bsp;
@@ -17,21 +17,21 @@ void Delayer::Delay(std::chrono::microseconds microseconds)
 
 	// 剩余的小于 1000 部分的微秒
 	microseconds -= ms;
-	Systic::Instance().Delay(microseconds);
+	H7SysTick::Instance().Delay(microseconds);
 }
 
 void Delayer::Delay(std::chrono::milliseconds milliseconds)
 {
-	// 如果调度器不在运行，则使用 Systic::NopLoopDelay
+	// 如果调度器不在运行，则使用 H7SysTick::NopLoopDelay
 	if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING)
 	{
-		Systic::Instance().Delay(milliseconds);
+		H7SysTick::Instance().Delay(milliseconds);
 		return;
 	}
 
 	/*
 	* FreeRTOSConfig.h 中的 configTICK_RATE_HZ 定义了 freertos 的 tick 频率。
-	* 注意，这个频率不是 Systic 硬件时钟的频率。
+	* 注意，这个频率不是 H7SysTick 硬件时钟的频率。
 	*
 	* freertos tick 周期
 	*	T = 1 / configTICK_RATE_HZ
@@ -49,7 +49,7 @@ void Delayer::Delay(std::chrono::milliseconds milliseconds)
 	*	base = count / 1000
 	* 这部分可以用 freertos 延时。
 	*	mod = count % 1000
-	* 这部分利用 freertos 延时的话会被截断，所以用 Systic::NopLoopDelay 延时。
+	* 这部分利用 freertos 延时的话会被截断，所以用 H7SysTick::NopLoopDelay 延时。
 	*/
 
 	int64_t count = milliseconds.count() * configTICK_RATE_HZ;
@@ -62,7 +62,7 @@ void Delayer::Delay(std::chrono::milliseconds milliseconds)
 
 	if (mod > 0)
 	{
-		Systic::Instance().Delay(std::chrono::milliseconds { mod / configTICK_RATE_HZ });
+		H7SysTick::Instance().Delay(std::chrono::milliseconds { mod / configTICK_RATE_HZ });
 	}
 }
 

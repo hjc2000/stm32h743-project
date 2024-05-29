@@ -7,24 +7,18 @@
 
 namespace bsp
 {
-	enum class SysticClockSource
-	{
-		HCLK = SYSTICK_CLKSOURCE_HCLK,
-		HCLK_DIV8 = SYSTICK_CLKSOURCE_HCLK_DIV8,
-	};
-
 	/// <summary>
-	///		Systic 只有 1 个，所以实现为静态类。
+	///		H7SysTick 只有 1 个，所以实现为静态类。
 	/// </summary>
-	class Systic :public bsp::ISysTick
+	class H7SysTick :public bsp::ISysTick
 	{
 	private:
-		Systic() = default;
+		H7SysTick() = default;
 
 	public:
-		static Systic &Instance()
+		static H7SysTick &Instance()
 		{
-			static Systic o;
+			static H7SysTick o;
 			return o;
 		}
 
@@ -44,14 +38,20 @@ namespace bsp
 		/// <returns>发生了回绕 返回非 0 值，没有发生回绕返回 0.</returns>
 		bool CountFlag();
 
-		SysticClockSource ClockSource();
+		enum class SysTickClockSource
+		{
+			HCLK = SYSTICK_CLKSOURCE_HCLK,
+			HCLK_DIV8 = SYSTICK_CLKSOURCE_HCLK_DIV8,
+		};
+
+		H7SysTick::SysTickClockSource ClockSource();
 
 		/// <summary>
 		///		设置完后必须使用 ClockSignal::Config 配置一下 ClockType::SYSCLK，
 		///		否则仅仅是更新标志位，不会实际配置 sysclk，这会导致状态不同步。
 		/// </summary>
 		/// <param name="value"></param>
-		void SetClockSource(SysticClockSource value);
+		void SetClockSource(H7SysTick::SysTickClockSource value);
 
 		/// <summary>
 		///		获取 systick 的时钟频率。
