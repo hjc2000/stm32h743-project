@@ -3,12 +3,6 @@
 
 using namespace bsp;
 
-bool SysTickClock::CountFlag()
-{
-	uint32_t masked = SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk;
-	return masked >> SysTick_CTRL_COUNTFLAG_Pos;
-}
-
 SysTickClock::SysTickClockSource SysTickClock::ClockSource()
 {
 	uint32_t masked = SysTick->CTRL & SysTick_CTRL_CLKSOURCE_Msk;

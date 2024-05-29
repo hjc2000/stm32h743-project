@@ -7,9 +7,6 @@
 
 namespace bsp
 {
-	/// <summary>
-	///		SysTickClock 只有 1 个，所以实现为静态类。
-	/// </summary>
 	class SysTickClock :public bsp::ISysTick
 	{
 	private:
@@ -21,22 +18,6 @@ namespace bsp
 			static SysTickClock o;
 			return o;
 		}
-
-		/// <summary>
-		///		获取 SysTick 寄存器组中的 CTRL 寄存器的 COUNTFLAG 位的值。
-		///		该位是只读的。
-		/// </summary>
-		/// 
-		/// <note>
-		///		SysTick 是一个减计数的计数器。如果自上次读取 SysTick 的值后，SysTick 减计数到 0 了，
-		///		说明计数值要发生回绕了，此时 CTRL 寄存器的 COUNTFLAG 位会置位，则本函数返回 1.
-		/// </note>
-		/// <note>
-		///		读取 COUNTFLAG 位会导致 COUNTFLAG 位自动清零。
-		/// </note>
-		/// 
-		/// <returns>发生了回绕 返回非 0 值，没有发生回绕返回 0.</returns>
-		bool CountFlag();
 
 		enum class SysTickClockSource
 		{
