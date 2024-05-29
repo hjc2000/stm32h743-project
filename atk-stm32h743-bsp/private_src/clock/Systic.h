@@ -67,7 +67,7 @@ namespace bsp
 		///		RELOAD 是用来在计数值递减到 0 后，下一个时钟周期装载到计数器中的。
 		/// </summary>
 		/// <returns></returns>
-		uint32_t ReloadValue();
+		uint32_t ReloadValue() override;
 
 		/// <summary>
 		///		获取 SysTick 的 VAL 寄存器的 CURRENT 部分的值。
@@ -79,15 +79,6 @@ namespace bsp
 		///		COUNTFLAG 位清零。
 		/// </note>
 		/// <returns>当前计数值</returns>
-		uint32_t CurrentValue();
-
-		/// <summary>
-		///		通过空指令循环来延时
-		/// </summary>
-		/// <param name="tick_count">要延时的 SysTick 计数值</param>
-		void NopLoopDelayForTicks(uint32_t tick_count) override;
-		void NopLoopDelay(std::chrono::microseconds microseconds) override;
-		void NopLoopDelay(std::chrono::milliseconds milliseconds) override;
-		void NopLoopDelay(std::chrono::seconds seconds) override;
+		uint32_t CurrentValue() override;
 	};
 }

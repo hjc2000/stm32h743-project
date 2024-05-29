@@ -17,7 +17,7 @@ void Delayer::Delay(std::chrono::microseconds microseconds)
 
 	// 剩余的小于 1000 部分的微秒
 	microseconds -= ms;
-	Systic::Instance().NopLoopDelay(microseconds);
+	Systic::Instance().Delay(microseconds);
 }
 
 void Delayer::Delay(std::chrono::milliseconds milliseconds)
@@ -25,7 +25,7 @@ void Delayer::Delay(std::chrono::milliseconds milliseconds)
 	// 如果调度器不在运行，则使用 Systic::NopLoopDelay
 	if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING)
 	{
-		Systic::Instance().NopLoopDelay(milliseconds);
+		Systic::Instance().Delay(milliseconds);
 		return;
 	}
 
@@ -62,7 +62,7 @@ void Delayer::Delay(std::chrono::milliseconds milliseconds)
 
 	if (mod > 0)
 	{
-		Systic::Instance().NopLoopDelay(std::chrono::milliseconds { mod / configTICK_RATE_HZ });
+		Systic::Instance().Delay(std::chrono::milliseconds { mod / configTICK_RATE_HZ });
 	}
 }
 
