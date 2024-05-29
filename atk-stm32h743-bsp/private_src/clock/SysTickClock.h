@@ -27,11 +27,6 @@ namespace bsp
 
 		SysTickClock::SysTickClockSource ClockSource();
 
-		/// <summary>
-		///		设置完后必须使用 ClockSignal::Config 配置一下 ClockType::SYSCLK，
-		///		否则仅仅是更新标志位，不会实际配置 sysclk，这会导致状态不同步。
-		/// </summary>
-		/// <param name="value"></param>
 		void SetClockSource(SysTickClock::SysTickClockSource value);
 
 		/// <summary>

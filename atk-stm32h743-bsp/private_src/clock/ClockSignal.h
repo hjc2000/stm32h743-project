@@ -13,7 +13,7 @@ namespace bsp
 		///		获取当前时钟信号的配置。
 		/// </summary>
 		/// <returns></returns>
-		static ClockSignalConfig Config();
+		static ClockSignalConfig GetConfig();
 
 		/// <summary>
 		///		应用时钟信号配置。

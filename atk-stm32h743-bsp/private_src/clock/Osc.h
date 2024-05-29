@@ -15,7 +15,7 @@ namespace bsp
 		Osc() = delete;
 
 	public:
-		static OscConfig Config()
+		static OscConfig GetConfig()
 		{
 			RCC_OscInitTypeDef def;
 			HAL_RCC_GetOscConfig(&def);

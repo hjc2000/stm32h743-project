@@ -3,7 +3,7 @@
 
 using namespace bsp;
 
-ClockSignalConfig bsp::ClockSignal::Config()
+ClockSignalConfig bsp::ClockSignal::GetConfig()
 {
 	RCC_ClkInitTypeDef def;
 	uint32_t flash_latency;
