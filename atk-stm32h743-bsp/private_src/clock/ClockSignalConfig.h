@@ -156,6 +156,9 @@ namespace bsp
 		void Deserialize(RCC_ClkInitTypeDef const &o);
 	};
 
+	/// <summary>
+	///		根类型。上方都是本类的子成员的类型。
+	/// </summary>
 	class ClockSignalConfig
 	{
 	public:
