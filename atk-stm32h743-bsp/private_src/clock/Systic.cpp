@@ -22,17 +22,12 @@ SysticClockSource Systic::ClockSource()
 
 void Systic::SetClockSource(SysticClockSource value)
 {
-	HAL_SYSTICK_CLKSourceConfig((uint32_t)value);
+	HAL_SYSTICK_CLKSourceConfig(static_cast<uint32_t>(value));
 }
 
-uint32_t Systic::ClockFreq()
+uint32_t Systic::Frequency()
 {
-	if (ClockSource() == SysticClockSource::HCLK_DIV8)
-	{
-		return ClockSignal::HclkFreq() / 8;
-	}
-
-	return ClockSignal::HclkFreq();
+	return HAL_RCC_GetSysClockFreq();
 }
 
 uint32_t Systic::ReloadNum()
@@ -89,7 +84,7 @@ void Systic::NopLoopDelayForTicks(uint32_t tick_count)
 
 void Systic::NopLoopDelay(std::chrono::microseconds microseconds)
 {
-	uint32_t freq = ClockFreq();
+	uint32_t freq = Frequency();
 
 	/*
 	* 时钟周期 T = 1 / freq
@@ -105,10 +100,10 @@ void Systic::NopLoopDelay(std::chrono::microseconds microseconds)
 
 void Systic::NopLoopDelay(std::chrono::milliseconds milliseconds)
 {
-	NopLoopDelay(std::chrono::microseconds{ milliseconds });
+	NopLoopDelay(std::chrono::microseconds { milliseconds });
 }
 
 void Systic::NopLoopDelay(std::chrono::seconds seconds)
 {
-	NopLoopDelay(std::chrono::milliseconds{ seconds });
+	NopLoopDelay(std::chrono::milliseconds { seconds });
 }
