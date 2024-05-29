@@ -7,6 +7,7 @@
 
 bool std_exception_occurred = false;
 bool unknow_exception_occurred = false;
+volatile uint64_t count = 0;
 
 int main(void)
 {
