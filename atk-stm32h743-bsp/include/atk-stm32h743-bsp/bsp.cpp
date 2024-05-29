@@ -39,7 +39,7 @@ void BSP::Initialize()
 		clock_signal_config._system_clk_config._clock_source = SystemClockConfig::ClockSource::PLLCLK;
 		clock_signal_config._system_clk_config._output_divider = SystemClockConfig::OutputDivider::DIV1;
 
-		auto &hclk_config = clock_signal_config._system_clk_config._hclk_config;
+		HclkConfig &hclk_config = clock_signal_config._system_clk_config._hclk_config;
 		hclk_config._input_divider = HclkConfig::InputDivider::DIV2;
 		hclk_config._apb1clk_config._input_divider = Apb1ClkConfig::InputDivider::DIV2;
 		hclk_config._apb2clk_config._input_divider = Apb2ClkConfig::InputDivider::DIV2;
