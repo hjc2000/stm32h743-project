@@ -5,6 +5,7 @@
 #include<DigitalLed.h>
 #include<functional>
 #include<hal.h>
+#include<Osc.h>
 
 using namespace bsp;
 
@@ -12,30 +13,25 @@ void BSP::Initialize()
 {
 	auto init_clock = []()
 	{
-		HAL_StatusTypeDef ret = HAL_OK;
-
 		MODIFY_REG(PWR->CR3, PWR_CR3_SCUEN, 0);
 		__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
 		while ((PWR->D3CR & (PWR_D3CR_VOSRDY)) != PWR_D3CR_VOSRDY) { }
 
-		RCC_OscInitTypeDef RCC_OscInitStruct;
-		RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-		RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-		RCC_OscInitStruct.HSIState = RCC_HSI_OFF;
-		RCC_OscInitStruct.CSIState = RCC_CSI_OFF;
-		RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-		RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-
-		RCC_OscInitStruct.PLL.PLLN = 160;
-		RCC_OscInitStruct.PLL.PLLM = 5;
-		RCC_OscInitStruct.PLL.PLLP = 2;
-		RCC_OscInitStruct.PLL.PLLQ = 4;
-
-		RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-		RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_2;
-		ret = HAL_RCC_OscConfig(&RCC_OscInitStruct);
-		if (ret != HAL_OK) while (1);
+		OscConfig osc_config;
+		osc_config._oscillator_type = OscConfig::OscillatorType::HSE;
+		osc_config._hse_state = OscConfig::HseState::On;
+		osc_config._hsi_state = OscConfig::HsiState::Off;
+		osc_config._csi_state = OscConfig::CsiState::Off;
+		osc_config._pll_config._state = PllConfig::PllState::On;
+		osc_config._pll_config._source = PllConfig::PllSource::HSE;
+		osc_config._pll_config._n = 160;
+		osc_config._pll_config._m = 5;
+		osc_config._pll_config._p = 2;
+		osc_config._pll_config._q = 4;
+		osc_config._pll_config._vco_range = PllConfig::Pll1VcoRange::Wide;
+		osc_config._pll_config._vci_range = PllConfig::Pll1VciRange::Range2;
+		Osc::SetConfig(osc_config);
 
 		ClockSignalConfig clock_signal_config;
 		clock_signal_config.SelectAllClockType();
