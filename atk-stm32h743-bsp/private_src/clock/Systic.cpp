@@ -30,7 +30,7 @@ uint32_t Systic::Frequency()
 	return HAL_RCC_GetSysClockFreq();
 }
 
-uint32_t Systic::ReloadNum()
+uint32_t Systic::ReloadValue()
 {
 	uint32_t masked = SysTick->LOAD & SysTick_LOAD_RELOAD_Msk;
 	return masked >> SysTick_LOAD_RELOAD_Pos;
@@ -44,9 +44,6 @@ uint32_t Systic::CurrentValue()
 
 void Systic::NopLoopDelayForTicks(uint32_t tick_count)
 {
-	/* 这里不禁用操作系统的调度。不要让此函数耦合性太强。
-	* 如果需要的话，禁用操作系统的调度这个操作应该放到本函数外，调用者自己执行。
-	*/
 	uint32_t old_tick = CurrentValue();
 	uint32_t total_tick = 0;
 	while (1)
@@ -69,7 +66,7 @@ void Systic::NopLoopDelayForTicks(uint32_t tick_count)
 			// 发生了环绕
 			// delta_tick = old_tick - (now_tick - reload)
 			// delta_tick = old_tick - now_tick + reload
-			delta_tick = old_tick - now_tick + ReloadNum();
+			delta_tick = old_tick - now_tick + ReloadValue();
 		}
 
 		total_tick += delta_tick;

@@ -1,4 +1,5 @@
 #pragma once
+#include<bsp-interface/ISysTick.h>
 #include<chrono>
 #include<GpioPort.h>
 #include<hal.h>
@@ -15,7 +16,7 @@ namespace bsp
 	/// <summary>
 	///		Systic 只有 1 个，所以实现为静态类。
 	/// </summary>
-	class Systic
+	class Systic :public bsp::ISysTick
 	{
 	private:
 		Systic() = default;
@@ -57,7 +58,7 @@ namespace bsp
 		///		* 这是最终输入到计数器的频率，后面没有任何分频器。
 		/// </summary>
 		/// <returns></returns>
-		uint32_t Frequency();
+		uint32_t Frequency() override;
 
 		/// <summary>
 		///		获取 SysTick 的 LOAD 寄存器的 RELOAD 部分的值。
@@ -66,7 +67,7 @@ namespace bsp
 		///		RELOAD 是用来在计数值递减到 0 后，下一个时钟周期装载到计数器中的。
 		/// </summary>
 		/// <returns></returns>
-		uint32_t ReloadNum();
+		uint32_t ReloadValue();
 
 		/// <summary>
 		///		获取 SysTick 的 VAL 寄存器的 CURRENT 部分的值。
@@ -84,9 +85,9 @@ namespace bsp
 		///		通过空指令循环来延时
 		/// </summary>
 		/// <param name="tick_count">要延时的 SysTick 计数值</param>
-		void NopLoopDelayForTicks(uint32_t tick_count);
-		void NopLoopDelay(std::chrono::microseconds microseconds);
-		void NopLoopDelay(std::chrono::milliseconds milliseconds);
-		void NopLoopDelay(std::chrono::seconds seconds);
+		void NopLoopDelayForTicks(uint32_t tick_count) override;
+		void NopLoopDelay(std::chrono::microseconds microseconds) override;
+		void NopLoopDelay(std::chrono::milliseconds milliseconds) override;
+		void NopLoopDelay(std::chrono::seconds seconds) override;
 	};
 }
