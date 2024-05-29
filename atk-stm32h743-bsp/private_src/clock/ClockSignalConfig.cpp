@@ -3,6 +3,14 @@
 
 using namespace bsp;
 
+bsp::ClockSignalConfig::ClockSignalConfig()
+{
+	_clock_type = ClockType::SYSCLK
+		| ClockType::HCLK
+		| ClockType::PCLK1
+		| ClockType::PCLK2;
+}
+
 bsp::ClockSignalConfig::ClockSignalConfig(RCC_ClkInitTypeDef const &o)
 {
 	*this = o;
@@ -10,22 +18,12 @@ bsp::ClockSignalConfig::ClockSignalConfig(RCC_ClkInitTypeDef const &o)
 
 ClockSignalConfig &ClockSignalConfig::operator=(RCC_ClkInitTypeDef const &o)
 {
-	_clock_type = static_cast<ClockType>(o.ClockType);
-	_sysclk_source = static_cast<SysclkSource>(o.SYSCLKSource);
-	_ahb_clk_divider = static_cast<AHBDivider>(o.AHBCLKDivider);
-	_apb1_divider = static_cast<APBDivider>(o.APB1CLKDivider);
-	_apb2_divider = static_cast<APBDivider>(o.APB2CLKDivider);
 	return *this;
 }
 
 ClockSignalConfig::operator RCC_ClkInitTypeDef() const
 {
 	RCC_ClkInitTypeDef o;
-	o.ClockType = static_cast<uint32_t>(_clock_type);
-	o.SYSCLKSource = static_cast<uint32_t>(_sysclk_source);
-	o.AHBCLKDivider = static_cast<uint32_t>(_ahb_clk_divider);
-	o.APB1CLKDivider = static_cast<uint32_t>(_apb1_divider);
-	o.APB2CLKDivider = static_cast<uint32_t>(_apb2_divider);
 	return o;
 }
 

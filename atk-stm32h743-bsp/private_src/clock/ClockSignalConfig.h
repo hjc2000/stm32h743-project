@@ -6,31 +6,30 @@ namespace bsp
 	class ClockSignalConfig
 	{
 	public:
-		ClockSignalConfig() = default;
+		ClockSignalConfig();
 		ClockSignalConfig(RCC_ClkInitTypeDef const &o);
 		ClockSignalConfig &operator=(RCC_ClkInitTypeDef const &o);
 		operator RCC_ClkInitTypeDef() const;
 
-		/// <summary>
-		///		选择要设置的时钟信号类型。
-		///		本枚举类型的枚举值可以按位或，从而选中多个时钟。
-		/// </summary>
-		enum class ClockType :uint32_t
+		enum class ClockType
 		{
 			SYSCLK = RCC_CLOCKTYPE_SYSCLK,
 			HCLK = RCC_CLOCKTYPE_HCLK,
+			D1PCLK1 = RCC_CLOCKTYPE_D1PCLK1,
 			PCLK1 = RCC_CLOCKTYPE_PCLK1,
 			PCLK2 = RCC_CLOCKTYPE_PCLK2,
-			D1PCLK1 = RCC_CLOCKTYPE_D1PCLK1,
 			D3PCLK1 = RCC_CLOCKTYPE_D3PCLK1,
 		};
 
+		/// <summary>
+		///		选择色要配置哪个时钟。可以将多个枚举值按位或。
+		/// </summary>
 		ClockType _clock_type;
 
 		/// <summary>
-		///		选择系统时钟的时钟源
+		///		SysTick 可选的时钟源。
 		/// </summary>
-		enum class SysclkSource :uint32_t
+		enum class SysTickClockSource
 		{
 			CSI = RCC_SYSCLKSOURCE_CSI,
 			HSI = RCC_SYSCLKSOURCE_HSI,
@@ -38,13 +37,15 @@ namespace bsp
 			PLLCLK = RCC_SYSCLKSOURCE_PLLCLK,
 		};
 
-		SysclkSource _sysclk_source;
+		/// <summary>
+		///		为 SysTick 选择时钟源。
+		/// </summary>
+		SysTickClockSource _systick_clock_source;
 
 		/// <summary>
-		///		AHB 分频器的分频系数。
-		///		SYSCLK 经过 AHB 分频器后变成 HCLK。
+		///		SysTick 可选的分频系数
 		/// </summary>
-		enum class AHBDivider :uint32_t
+		enum class SysTickDivider
 		{
 			DIV1 = RCC_SYSCLK_DIV1,
 			DIV2 = RCC_SYSCLK_DIV2,
@@ -58,33 +59,83 @@ namespace bsp
 		};
 
 		/// <summary>
-		///		APB1 和 APB2 分频器的分频系数。
-		///		HCLK 经过 APB1 分频器后变成 PCLK1，此即低速外设时钟。
-		///		HCLK 经过 APB2 分频器后变成 PCLK2，此即高速外设时钟。
+		///		为 SysTick 选择分频系数。
 		/// </summary>
-		enum class APBDivider :uint32_t
+		SysTickDivider systick_divider;
+
+		/// <summary>
+		///		以 HCLK 为时钟源的时钟信号可以选择让 HCLK 多少分频后再进来。
+		/// </summary>
+		enum class HclkDivider
 		{
 			DIV1 = RCC_HCLK_DIV1,
 			DIV2 = RCC_HCLK_DIV2,
 			DIV4 = RCC_HCLK_DIV4,
 			DIV8 = RCC_HCLK_DIV8,
 			DIV16 = RCC_HCLK_DIV16,
+			DIV64 = RCC_HCLK_DIV64,
+			DIV128 = RCC_HCLK_DIV128,
+			DIV256 = RCC_HCLK_DIV256,
+			DIV512 = RCC_HCLK_DIV512,
+		};
+
+		HclkDivider _ahb_clk_divider;
+
+		/// <summary>
+		///		APB3 CLK 可选的分频系数。
+		/// </summary>
+		enum class Apb3Divider
+		{
+			DIV1 = RCC_APB3_DIV1,
+			DIV2 = RCC_APB3_DIV2,
+			DIV4 = RCC_APB3_DIV4,
+			DIV8 = RCC_APB3_DIV8,
+			DIV16 = RCC_APB3_DIV16,
 		};
 
 		/// <summary>
-		///		AHB 分频器。分频后输出 HCLK。
+		///		为 APB3 CLK 或者叫 D1PCLK1 选择分频系数。
 		/// </summary>
-		AHBDivider _ahb_clk_divider;
+		Apb3Divider _apb3_clk_divider;
+
+		enum class Apb1Divider
+		{
+			DIV1 = RCC_APB1_DIV1,
+			DIV2 = RCC_APB1_DIV2,
+			DIV4 = RCC_APB1_DIV4,
+			DIV8 = RCC_APB1_DIV8,
+			DIV16 = RCC_APB1_DIV16,
+		};
 
 		/// <summary>
-		///		APB1 分频器的分频系数。分频后输出 PCLK1，此即低速外设时钟。
+		///		为 APB1 CLK 或者叫 PCLK1 选择分频系数。
 		/// </summary>
-		APBDivider _apb1_divider;
+		Apb1Divider _apb1_clk_divider;
+
+		enum class Apb2Divider
+		{
+			DIV1 = RCC_APB2_DIV1,
+			DIV2 = RCC_APB2_DIV2,
+			DIV4 = RCC_APB2_DIV4,
+			DIV8 = RCC_APB2_DIV8,
+			DIV16 = RCC_APB2_DIV16,
+		};
 
 		/// <summary>
-		///		APB2 分频器的分频系数。分频后输出 PCLK2，此即高速外设时钟。
+		///		为 APB2 或者叫 PCLK2 选择分频系数。
 		/// </summary>
-		APBDivider _apb2_divider;
+		Apb2Divider _apb2_clk_divider;
+
+		enum class Apb4Divider
+		{
+			DIV1 = RCC_APB4_DIV1,
+			DIV2 = RCC_APB4_DIV2,
+			DIV4 = RCC_APB4_DIV4,
+			DIV8 = RCC_APB4_DIV8,
+			DIV16 = RCC_APB4_DIV16,
+		};
+
+		Apb4Divider _apb4_clk_divider;
 
 		/// <summary>
 		///		读写 flash 时要延迟多少个 CPU 时钟周期。
@@ -96,23 +147,17 @@ namespace bsp
 		/// </summary>
 		enum class FlashLatency
 		{
-			/// <summary>
-			///		延迟 0 个 CPU 时钟周期。
-			/// </summary>
 			Latency0 = FLASH_LATENCY_0,
-
-			/// <summary>
-			///		延迟 1 个 CPU 时钟周期。
-			/// </summary>
 			Latency1 = FLASH_LATENCY_1,
-
-			/// <summary>
-			///		延迟 2 个 CPU 时钟周期。
-			/// </summary>
 			Latency2 = FLASH_LATENCY_2,
+			Latency3 = FLASH_LATENCY_3,
+			Latency4 = FLASH_LATENCY_4,
+			Latency5 = FLASH_LATENCY_5,
+			Latency6 = FLASH_LATENCY_6,
+			Latency7 = FLASH_LATENCY_7,
 		};
 
-		FlashLatency _flash_latency;
+		FlashLatency _flash_latency = FlashLatency::Latency2;
 	};
 }
 
