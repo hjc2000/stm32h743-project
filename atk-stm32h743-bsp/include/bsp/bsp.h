@@ -2,6 +2,7 @@
 #include<bsp-interface/IDelayer.h>
 #include<bsp-interface/IDigitalLed.h>
 #include<bsp-interface/IKeyScanner.h>
+#include<bsp-interface/ISerial.h>
 
 enum class KeyIndex :uint16_t
 {
@@ -26,4 +27,6 @@ public:
 	static bsp::IDelayer &Delayer();
 
 	static bsp::IKeyScanner &KeyScanner();
+
+	static bsp::ISerial &Serial();
 };

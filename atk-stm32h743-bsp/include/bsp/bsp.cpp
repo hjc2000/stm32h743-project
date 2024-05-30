@@ -9,6 +9,7 @@
 #include<hal-wrapper/clock/ClockSignal.h>
 #include<hal-wrapper/clock/Osc.h>
 #include<Key.h>
+#include<Serial.h>
 
 using namespace bsp;
 
@@ -93,4 +94,9 @@ bsp::IKeyScanner &BSP::KeyScanner()
 	// 初始化完成
 	initialized = true;
 	return key_scanner;
+}
+
+bsp::ISerial &BSP::Serial()
+{
+	return Serial::Instance();
 }
