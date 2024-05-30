@@ -1,7 +1,7 @@
 #pragma once
 #include<functional>
-#include<stdint.h>
 #include<hal-wrapper/peripheral/gpio/GpioPort.h>
+#include<stdint.h>
 
 namespace hal
 {
