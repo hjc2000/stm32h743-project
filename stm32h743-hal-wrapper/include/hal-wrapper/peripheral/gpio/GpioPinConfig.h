@@ -63,12 +63,17 @@ namespace hal
 	/// <summary>
 	///		定义 GPIO 引脚的最大速度。
 	/// </summary>
-	enum GpioPinSpeed :uint32_t
+	enum class GpioPinSpeed :uint32_t
 	{
 		Low = GPIO_SPEED_FREQ_LOW,
 		Medium = GPIO_SPEED_FREQ_MEDIUM,
 		High = GPIO_SPEED_FREQ_HIGH,
 		VeryHigh = GPIO_SPEED_FREQ_VERY_HIGH,
+	};
+
+	enum class Alternate
+	{
+		AF7_USART1 = GPIO_AF7_USART1,
 	};
 
 	class GpioPinConfig
@@ -77,5 +82,6 @@ namespace hal
 		GpioPinMode _mode = GpioPinMode::Input;
 		GpioPinPull _pull_mode = GpioPinPull::NoPull;
 		GpioPinSpeed _speed = GpioPinSpeed::High;
+		Alternate _alternate;
 	};
 }
