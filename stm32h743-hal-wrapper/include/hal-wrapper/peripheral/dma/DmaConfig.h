@@ -80,13 +80,26 @@ namespace hal
 
 		MemoryDataAlignment _memory_data_alignment;
 
-		uint32_t Mode;                 /*!< Specifies the operation mode of the DMAy Streamx.
-		This parameter can be a value of @ref DMA_mode
-		@note The circular buffer mode cannot be used if the memory-to-memory
-		data transfer is configured on the selected Stream                        */
+		enum class Mode
+		{
+			Normal = DMA_NORMAL,
+			Circular = DMA_CIRCULAR,
+			PfCtrl = DMA_PFCTRL,
+			DoubleBufferM0 = DMA_DOUBLE_BUFFER_M0,
+			DoubleBufferM1 = DMA_DOUBLE_BUFFER_M1,
+		};
 
-		uint32_t Priority;             /*!< Specifies the software priority for the DMAy Streamx.
-		This parameter can be a value of @ref DMA_Priority_level                        */
+		Mode _mode;
+
+		enum class Priority
+		{
+			Low = DMA_PRIORITY_LOW,
+			Medium = DMA_PRIORITY_MEDIUM,
+			High = DMA_PRIORITY_HIGH,
+			VeryHigh = DMA_PRIORITY_VERY_HIGH,
+		};
+
+		Priority _priority;
 
 		uint32_t FIFOMode;             /*!< Specifies if the FIFO mode or Direct mode will be used for the specified stream.
 		This parameter can be a value of @ref DMA_FIFO_direct_mode
