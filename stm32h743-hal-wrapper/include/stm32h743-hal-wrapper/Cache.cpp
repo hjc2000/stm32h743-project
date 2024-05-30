@@ -1,14 +1,14 @@
 #include"Cache.h"
 #include<hal.h>
 
-void bsp::Cache::Enable()
+void hal::Cache::Enable()
 {
 	SCB_EnableICache();
 	SCB_EnableDCache();
 	SCB->CACR |= 1 << 2;
 }
 
-void bsp::Cache::Disable()
+void hal::Cache::Disable()
 {
 	SCB_DisableICache();
 	SCB_DisableDCache();

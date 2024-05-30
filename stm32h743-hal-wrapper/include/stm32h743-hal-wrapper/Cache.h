@@ -1,6 +1,6 @@
 #pragma once
 
-namespace bsp
+namespace hal
 {
 	class Cache
 	{

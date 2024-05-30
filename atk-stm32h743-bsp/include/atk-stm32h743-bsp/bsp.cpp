@@ -1,10 +1,10 @@
 #include"bsp.h"
-#include<Cache.h>
 #include<Delayer.h>
 #include<DigitalLed.h>
 #include<functional>
 #include<hal.h>
 #include<Osc.h>
+#include<stm32h743-hal-wrapper/Cache.h>
 #include<stm32h743-hal-wrapper/clock/ClockSignal.h>
 
 using namespace bsp;
@@ -53,7 +53,7 @@ void BSP::Initialize()
 		HAL_EnableCompensationCell();
 	};
 
-	Cache::Enable();
+	hal::Cache::Enable();
 	HAL_Init();
 	init_clock();
 }
