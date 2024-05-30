@@ -44,7 +44,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 		hal::GpioPortA::Instance().InitPin(hal::GpioPin::Pin9, options);
 
 		// 接收引脚 PA10
-		options._mode = hal::GpioPinMode::AlternateFunction_PushPull;
+		options._alternate = hal::PA10Alternate::usart1;
 		hal::GpioPortA::Instance().InitPin(hal::GpioPin::Pin10, options);
 	};
 
@@ -164,7 +164,7 @@ void Serial::Close()
 	HAL_UART_DMAStop(&_uart_handle);
 	hal::Interrupt::DisableIRQ(IRQn_Type::USART1_IRQn);
 	hal::Interrupt::DisableIRQ(IRQn_Type::DMA1_Stream0_IRQn);
-	hal::Interrupt::DisableIRQ(IRQn_Type::DMA1_Stream0_IRQn);
+	hal::Interrupt::DisableIRQ(IRQn_Type::DMA1_Stream1_IRQn);
 	_have_begun = false;
 }
 
@@ -199,7 +199,7 @@ void Serial::Begin(uint32_t baud_rate)
 	hal::UartConfig options;
 	options._baud_rate = baud_rate;
 
-	_uart_handle.Instance = _uart_hardware_instance;
+	_uart_handle.Instance = USART1;
 	_uart_handle.Init = options;
 	_uart_handle.MspInitCallback = OnMspInitCallback;
 	HAL_UART_Init(&_uart_handle);
