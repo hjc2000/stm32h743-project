@@ -16,6 +16,8 @@ UartConfig &hal::UartConfig::operator=(UART_InitTypeDef const &o)
 	_mode = (Mode)o.Mode;
 	_hardware_flow_control = (HardwareFlowControl)o.HwFlowCtl;
 	_over_sampling = (OverSampling)o.OverSampling;
+	_one_bit_sampling = static_cast<OneBitSampling>(o.OneBitSampling);
+	_clock_prescaler = static_cast<ClockPrescaler>(o.ClockPrescaler);
 	return *this;
 }
 
@@ -29,5 +31,7 @@ hal::UartConfig::operator UART_InitTypeDef() const
 	o.Mode = (uint32_t)_mode;
 	o.HwFlowCtl = (uint32_t)_hardware_flow_control;
 	o.OverSampling = (uint32_t)_over_sampling;
+	o.OneBitSampling = static_cast<uint32_t>(_one_bit_sampling);
+	o.ClockPrescaler = static_cast<uint32_t>(_clock_prescaler);
 	return o;
 }
