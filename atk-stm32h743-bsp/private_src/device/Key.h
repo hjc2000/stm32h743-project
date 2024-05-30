@@ -5,9 +5,6 @@
 
 namespace bsp
 {
-	/// <summary>
-	///		位于 PE4 引脚上的按键。另一端接地，所以要上拉使用。
-	/// </summary>
 	class Key0 :public bsp::IKey
 	{
 	public:
@@ -24,6 +21,11 @@ namespace bsp
 			return hal::GpioPortH::Instance();
 		}
 
+		static consteval hal::GpioPin Pin()
+		{
+			return hal::GpioPin::Pin3;
+		}
+
 		bool KeyIsDown() override;
 
 		void Delay(std::chrono::milliseconds num) override
@@ -32,9 +34,6 @@ namespace bsp
 		}
 	};
 
-	/// <summary>
-	///		位于 PE3 引脚。另一端接地，所以需要上拉使用。
-	/// </summary>
 	class Key1 :public bsp::IKey
 	{
 	public:
@@ -49,6 +48,11 @@ namespace bsp
 		hal::IGpioPort &Port()
 		{
 			return hal::GpioPortH::Instance();
+		}
+
+		static consteval hal::GpioPin Pin()
+		{
+			return hal::GpioPin::Pin2;
 		}
 
 		bool KeyIsDown() override;
