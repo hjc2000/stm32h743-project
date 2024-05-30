@@ -1,7 +1,7 @@
 #include"FreeRTOSConfig.h"
 #include<FreeRTOS.h>
 #include<hal.h>
-#include<stm32h743-hal-wrapper/clock/SysTickClock.h>
+#include<hal-wrapper/clock/SysTickClock.h>
 #include<task.h>
 
 extern "C"

@@ -1,8 +1,8 @@
 #pragma once
 #include<hal.h>
 #include<stdexcept>
-#include<stm32h743-hal-wrapper/clock/OscConfig.h>
-#include<stm32h743-hal-wrapper/clock/PllConfig.h>
+#include<hal-wrapper/clock/OscConfig.h>
+#include<hal-wrapper/clock/PllConfig.h>
 
 namespace hal
 {

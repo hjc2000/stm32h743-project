@@ -1,5 +1,5 @@
 #include"SysTickClock.h"
-#include<stm32h743-hal-wrapper/clock/ClockSignal.h>
+#include<hal-wrapper/clock/ClockSignal.h>
 
 using namespace hal;
 

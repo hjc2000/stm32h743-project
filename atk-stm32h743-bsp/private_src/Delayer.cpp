@@ -1,7 +1,7 @@
 #include"Delayer.h"
 #include<FreeRTOS.h>
 #include<FreeRTOSConfig.h>
-#include<stm32h743-hal-wrapper/clock/SysTickClock.h>
+#include<hal-wrapper/clock/SysTickClock.h>
 #include<task.h>
 
 using namespace bsp;

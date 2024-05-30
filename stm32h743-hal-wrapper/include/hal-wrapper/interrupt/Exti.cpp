@@ -1,5 +1,5 @@
 #include"Exti.h"
-#include<stm32h743-hal-wrapper/interrupt/Interrupt.h>
+#include<hal-wrapper/interrupt/Interrupt.h>
 
 using namespace hal;
 

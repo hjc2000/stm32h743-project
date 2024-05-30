@@ -6,9 +6,9 @@
 #include<functional>
 #include<hal.h>
 #include<Key.h>
-#include<stm32h743-hal-wrapper/Cache.h>
-#include<stm32h743-hal-wrapper/clock/ClockSignal.h>
-#include<stm32h743-hal-wrapper/clock/Osc.h>
+#include<hal-wrapper/Cache.h>
+#include<hal-wrapper/clock/ClockSignal.h>
+#include<hal-wrapper/clock/Osc.h>
 
 using namespace bsp;
 

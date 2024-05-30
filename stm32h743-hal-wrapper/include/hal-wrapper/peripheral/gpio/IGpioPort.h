@@ -1,5 +1,5 @@
 #pragma once
-#include<stm32h743-hal-wrapper/peripheral/gpio/GpioPinConfig.h>
+#include<hal-wrapper/peripheral/gpio/GpioPinConfig.h>
 
 namespace hal
 {

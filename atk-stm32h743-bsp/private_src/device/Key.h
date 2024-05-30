@@ -1,7 +1,7 @@
 #pragma once
 #include<bsp-interface/IKey.h>
 #include<Delayer.h>
-#include<stm32h743-hal-wrapper/peripheral/gpio/GpioPort.h>
+#include<hal-wrapper/peripheral/gpio/GpioPort.h>
 
 namespace bsp
 {
