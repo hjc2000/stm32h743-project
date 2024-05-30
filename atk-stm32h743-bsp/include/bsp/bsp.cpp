@@ -5,10 +5,10 @@
 #include<DigitalLed.h>
 #include<functional>
 #include<hal.h>
-#include<Key.h>
 #include<hal-wrapper/Cache.h>
 #include<hal-wrapper/clock/ClockSignal.h>
 #include<hal-wrapper/clock/Osc.h>
+#include<Key.h>
 
 using namespace bsp;
 
