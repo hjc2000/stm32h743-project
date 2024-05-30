@@ -1,9 +1,9 @@
 #include"Interrupt.h"
 #include<stdexcept>
 
-using namespace bsp;
+using namespace hal;
 
-void bsp::Interrupt::SetPriorityGroup(PreemptionPriorityGroup group)
+void hal::Interrupt::SetPriorityGroup(PreemptionPriorityGroup group)
 {
 	static bool have_set = false;
 	if (have_set)

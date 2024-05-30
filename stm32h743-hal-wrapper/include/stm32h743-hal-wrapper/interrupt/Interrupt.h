@@ -1,7 +1,7 @@
 #pragma once
 #include<hal.h>
 
-namespace bsp
+namespace hal
 {
 	/// <summary>
 	///		静态类。提供中断相关的操作。
