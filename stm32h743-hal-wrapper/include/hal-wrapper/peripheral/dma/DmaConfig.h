@@ -101,24 +101,42 @@ namespace hal
 
 		Priority _priority;
 
-		uint32_t FIFOMode;             /*!< Specifies if the FIFO mode or Direct mode will be used for the specified stream.
-		This parameter can be a value of @ref DMA_FIFO_direct_mode
-		@note The Direct mode (FIFO mode disabled) cannot be used if the
-		memory-to-memory data transfer is configured on the selected stream       */
+		enum class FifoMode
+		{
+			Disable = DMA_FIFOMODE_DISABLE,
+			Enable = DMA_FIFOMODE_ENABLE,
+		};
 
-		uint32_t FIFOThreshold;        /*!< Specifies the FIFO threshold level.
-		This parameter can be a value of @ref DMA_FIFO_threshold_level                  */
+		FifoMode _fifo_mode;
 
-		uint32_t MemBurst;             /*!< Specifies the Burst transfer configuration for the memory transfers.
-		It specifies the amount of data to be transferred in a single non interruptible
-		transaction.
-		This parameter can be a value of @ref DMA_Memory_burst
-		@note The burst mode is possible only if the address Increment mode is enabled. */
+		enum class FifoThreshold
+		{
+			Threshold_1_div_4 = DMA_FIFO_THRESHOLD_1QUARTERFULL,
+			Threshold_2_div_4 = DMA_FIFO_THRESHOLD_HALFFULL,
+			Threshold_3_div_4 = DMA_FIFO_THRESHOLD_3QUARTERSFULL,
+			Threshold_4_div_4 = DMA_FIFO_THRESHOLD_FULL,
+		};
 
-		uint32_t PeriphBurst;          /*!< Specifies the Burst transfer configuration for the peripheral transfers.
-		It specifies the amount of data to be transferred in a single non interruptible
-		transaction.
-		This parameter can be a value of @ref DMA_Peripheral_burst
-		@note The burst mode is possible only if the address Increment mode is enabled. */
+		FifoThreshold _fifo_threshold;
+
+		enum class MemoryBurst
+		{
+			Single = DMA_MBURST_SINGLE,
+			Inc4 = DMA_MBURST_INC4,
+			Inc8 = DMA_MBURST_INC8,
+			Inc16 = DMA_MBURST_INC16,
+		};
+
+		MemoryBurst _memory_burst;
+
+		enum class PeripheralBurst
+		{
+			Single = DMA_PBURST_SINGLE,
+			Inc4 = DMA_PBURST_INC4,
+			Inc8 = DMA_PBURST_INC8,
+			Inc16 = DMA_PBURST_INC16,
+		};
+
+		PeripheralBurst _peripheral_burst;
 	};
 }
