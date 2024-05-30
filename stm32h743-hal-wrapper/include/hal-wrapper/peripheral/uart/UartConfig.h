@@ -23,14 +23,8 @@ namespace hal
 		/// </summary>
 		enum class WordLength
 		{
-			/// <summary>
-			///		一个串行帧有 8 位。
-			/// </summary>
+			WordLength_7bit = UART_WORDLENGTH_7B,
 			WordLength_8bit = UART_WORDLENGTH_8B,
-
-			/// <summary>
-			///		一个串行帧有 9 位。
-			/// </summary>
 			WordLength_9bit = UART_WORDLENGTH_9B,
 		};
 
@@ -44,14 +38,16 @@ namespace hal
 		/// </summary>
 		enum class StopBitCount
 		{
-			StopBitCount_1bit = UART_STOPBITS_1,
-			StopBitCount_2bit = UART_STOPBITS_2,
+			StopBitCount_0_5_bit = UART_STOPBITS_0_5,
+			StopBitCount_1_bit = UART_STOPBITS_1,
+			StopBitCount_1_5_bit = UART_STOPBITS_1_5,
+			StopBitCount_2_bit = UART_STOPBITS_2,
 		};
 
 		/// <summary>
 		///		一个串行帧有多少个停止位
 		/// </summary>
-		StopBitCount _stop_bit_count = StopBitCount::StopBitCount_1bit;
+		StopBitCount _stop_bit_count = StopBitCount::StopBitCount_1_bit;
 
 		/// <summary>
 		///		UART 校验模式
