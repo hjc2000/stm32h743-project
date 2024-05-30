@@ -1,11 +1,11 @@
 #include"bsp.h"
 #include<Cache.h>
-#include<ClockSignal.h>
 #include<Delayer.h>
 #include<DigitalLed.h>
 #include<functional>
 #include<hal.h>
 #include<Osc.h>
+#include<stm32h743-hal-wrapper/ClockSignal.h>
 
 using namespace bsp;
 
