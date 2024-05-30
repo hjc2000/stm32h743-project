@@ -29,6 +29,8 @@ namespace bsp
 		DMA_HandleTypeDef _tx_dma_handle { };
 		DMA_HandleTypeDef _rx_dma_handle { };
 		USART_TypeDef *_uart_hardware_instance = USART1;
+		DMA_Stream_TypeDef *_tx_dma_stream = DMA1_Stream0;
+		DMA_Stream_TypeDef *_Rx_dma_stream = DMA1_Stream1;
 		task::BinarySemaphore _send_complete_signal;
 		task::BinarySemaphore _receive_complete_signal;
 		task::Mutex _read_lock { };
