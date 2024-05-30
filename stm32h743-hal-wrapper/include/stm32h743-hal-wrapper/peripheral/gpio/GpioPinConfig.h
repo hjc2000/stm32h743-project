@@ -71,7 +71,7 @@ namespace hal
 		VeryHigh = GPIO_SPEED_FREQ_VERY_HIGH,
 	};
 
-	class GpioPinInitOptions
+	class GpioPinConfig
 	{
 	public:
 		GpioPinMode _mode = GpioPinMode::Input;

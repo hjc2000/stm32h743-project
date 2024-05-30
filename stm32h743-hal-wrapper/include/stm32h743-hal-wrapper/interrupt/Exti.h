@@ -3,11 +3,6 @@
 #include<stdint.h>
 #include<stm32h743-hal-wrapper/peripheral/gpio/GpioPort.h>
 
-extern "C"
-{
-	void HAL_GPIO_EXTI_Callback(uint16_t pin);
-}
-
 namespace hal
 {
 	/// <summary>

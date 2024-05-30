@@ -1,5 +1,5 @@
 #pragma once
-#include<stm32h743-hal-wrapper/peripheral/gpio/GpioPinInitOptions.h>
+#include<stm32h743-hal-wrapper/peripheral/gpio/GpioPinConfig.h>
 
 namespace hal
 {
@@ -28,7 +28,7 @@ namespace hal
 		/// </summary>
 		virtual void DisableClock() = 0;
 
-		void InitPin(GpioPin pin, GpioPinInitOptions const &options);
+		void InitPin(GpioPin pin, GpioPinConfig const &options);
 		void DigitalWritePin(GpioPin pin, bool value);
 		bool DigitalReadPin(GpioPin pin);
 		void DigitalTogglePin(GpioPin pin);
