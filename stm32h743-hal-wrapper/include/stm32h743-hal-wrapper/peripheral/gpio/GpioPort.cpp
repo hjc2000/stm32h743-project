@@ -182,3 +182,25 @@ void GpioPortH::DisableClock()
 	__HAL_RCC_GPIOH_CLK_DISABLE();
 }
 #pragma endregion
+
+#pragma region GpioPortI
+GPIO_TypeDef *GpioPortI::HardwareInstance()
+{
+	return GPIOI;
+}
+
+bool GpioPortI::IsClockEnabled()
+{
+	return __HAL_RCC_GPIOI_IS_CLK_ENABLED();
+}
+
+void GpioPortI::EnableClock()
+{
+	__HAL_RCC_GPIOI_CLK_ENABLE();
+}
+
+void GpioPortI::DisableClock()
+{
+	__HAL_RCC_GPIOI_CLK_DISABLE();
+}
+#pragma endregion
