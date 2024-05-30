@@ -1,7 +1,7 @@
 #include"Delayer.h"
 #include<FreeRTOS.h>
 #include<FreeRTOSConfig.h>
-#include<SysTickClock.h>
+#include<stm32h743-hal-wrapper/clock/SysTickClock.h>
 #include<task.h>
 
 using namespace bsp;
@@ -17,7 +17,7 @@ void Delayer::Delay(std::chrono::microseconds microseconds)
 
 	// 剩余的小于 1000 部分的微秒
 	microseconds -= ms;
-	SysTickClock::Instance().Delay(microseconds);
+	hal::SysTickClock::Instance().Delay(microseconds);
 }
 
 void Delayer::Delay(std::chrono::milliseconds milliseconds)
@@ -25,7 +25,7 @@ void Delayer::Delay(std::chrono::milliseconds milliseconds)
 	// 如果调度器不在运行，则使用 SysTickClock::Delay
 	if (xTaskGetSchedulerState() != taskSCHEDULER_RUNNING)
 	{
-		SysTickClock::Instance().Delay(milliseconds);
+		hal::SysTickClock::Instance().Delay(milliseconds);
 		return;
 	}
 
@@ -62,7 +62,7 @@ void Delayer::Delay(std::chrono::milliseconds milliseconds)
 
 	if (mod > 0)
 	{
-		SysTickClock::Instance().Delay(std::chrono::milliseconds { mod / configTICK_RATE_HZ });
+		hal::SysTickClock::Instance().Delay(std::chrono::milliseconds { mod / configTICK_RATE_HZ });
 	}
 }
 

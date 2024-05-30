@@ -1,11 +1,10 @@
 #pragma once
 #include<bsp-interface/ISysTick.h>
 #include<chrono>
-#include<GpioPort.h>
 #include<hal.h>
 #include<stdint.h>
 
-namespace bsp
+namespace hal
 {
 	class SysTickClock :public bsp::ISysTick
 	{

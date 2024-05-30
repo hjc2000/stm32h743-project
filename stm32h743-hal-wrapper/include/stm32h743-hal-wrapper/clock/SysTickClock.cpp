@@ -1,7 +1,7 @@
 #include"SysTickClock.h"
 #include<stm32h743-hal-wrapper/clock/ClockSignal.h>
 
-using namespace bsp;
+using namespace hal;
 
 SysTickClock::SysTickClockSource SysTickClock::ClockSource()
 {
