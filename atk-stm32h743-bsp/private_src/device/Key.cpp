@@ -5,7 +5,6 @@ using namespace bsp;
 #pragma region Key0
 bsp::Key0::Key0()
 {
-	using namespace bsp;
 	Port().EnableClock();
 	hal::GpioPinConfig options;
 	options._mode = hal::GpioPinMode::Input;
@@ -24,7 +23,6 @@ bool bsp::Key0::KeyIsDown()
 #pragma region Key1
 bsp::Key1::Key1()
 {
-	using namespace bsp;
 	Port().EnableClock();
 	hal::GpioPinConfig options;
 	options._mode = hal::GpioPinMode::Input;

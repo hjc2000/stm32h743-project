@@ -121,4 +121,21 @@ namespace hal
 		void DisableClock() override;
 	};
 	#endif // GPIOG
+
+	#ifdef GPIOH
+	class GpioPortH :public IGpioPort
+	{
+	public:
+		static GpioPortH &Instance()
+		{
+			static GpioPortH port { };
+			return port;
+		}
+
+		GPIO_TypeDef *HardwareInstance() override;
+		bool IsClockEnabled() override;
+		void EnableClock() override;
+		void DisableClock() override;
+	};
+	#endif // GPIOH
 }
