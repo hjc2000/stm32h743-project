@@ -10,13 +10,13 @@ bsp::Key0::Key0()
 	options._mode = hal::GpioPinMode::Input;
 	options._pull_mode = hal::GpioPinPull::PullUp;
 	options._speed = hal::GpioPinSpeed::High;
-	Port().InitPin(hal::GpioPin::Pin4, options);
+	Port().InitPin(hal::GpioPin::Pin3, options);
 }
 
 bool bsp::Key0::KeyIsDown()
 {
 	// 被按下是低电平，否则是高电平
-	return !Port().DigitalReadPin(hal::GpioPin::Pin4);
+	return !Port().DigitalReadPin(hal::GpioPin::Pin3);
 }
 #pragma endregion
 

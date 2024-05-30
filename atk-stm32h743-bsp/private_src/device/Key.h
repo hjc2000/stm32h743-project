@@ -21,7 +21,7 @@ namespace bsp
 
 		hal::IGpioPort &Port()
 		{
-			return hal::GpioPortE::Instance();
+			return hal::GpioPortH::Instance();
 		}
 
 		bool KeyIsDown() override;
