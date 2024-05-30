@@ -3,7 +3,7 @@
 
 namespace hal
 {
-	#ifdef GPIOA
+	#pragma region GpioPortA
 	class GpioPortA :public IGpioPort
 	{
 	public:
@@ -18,9 +18,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOA
+	#pragma endregion
 
-	#ifdef GPIOB
+	#pragma region GpioPortB
 	class GpioPortB :public IGpioPort
 	{
 	public:
@@ -35,9 +35,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOB
+	#pragma endregion
 
-	#ifdef GPIOC
+	#pragma region GpioPortC
 	class GpioPortC :public IGpioPort
 	{
 	public:
@@ -52,9 +52,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOC
+	#pragma endregion
 
-	#ifdef GPIOD
+	#pragma region GpioPortD
 	class GpioPortD :public IGpioPort
 	{
 	public:
@@ -69,9 +69,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOD
+	#pragma endregion
 
-	#ifdef GPIOE
+	#pragma region GpioPortE
 	class GpioPortE :public IGpioPort
 	{
 	public:
@@ -86,9 +86,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOE
+	#pragma endregion
 
-	#ifdef GPIOF
+	#pragma region GpioPortF
 	class GpioPortF :public IGpioPort
 	{
 	public:
@@ -103,9 +103,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOF
+	#pragma endregion
 
-	#ifdef GPIOG
+	#pragma region GpioPortG
 	class GpioPortG :public IGpioPort
 	{
 	public:
@@ -120,9 +120,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOG
+	#pragma endregion
 
-	#ifdef GPIOH
+	#pragma region GpioPortH
 	class GpioPortH :public IGpioPort
 	{
 	public:
@@ -137,9 +137,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOH
+	#pragma endregion
 
-	#ifdef GPIOI
+	#pragma region GpioPortI
 	class GpioPortI :public IGpioPort
 	{
 	public:
@@ -154,9 +154,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOI
+	#pragma endregion
 
-	#ifdef GPIOJ
+	#pragma region GpioPortJ
 	class GpioPortJ :public IGpioPort
 	{
 	public:
@@ -171,9 +171,9 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOJ
+	#pragma endregion
 
-	#ifdef GPIOK
+	#pragma region GpioPortK
 	class GpioPortK :public IGpioPort
 	{
 	public:
@@ -188,5 +188,5 @@ namespace hal
 		void EnableClock() override;
 		void DisableClock() override;
 	};
-	#endif // GPIOK
+	#pragma endregion
 }
