@@ -40,6 +40,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 		options._mode = hal::GpioPinMode::AlternateFunction_PushPull;
 		options._pull_mode = hal::GpioPinPull::PullUp;
 		options._speed = hal::GpioPinSpeed::High;
+		options._alternate = hal::Alternate::AF7_USART1;
 		hal::GpioPortA::Instance().InitPin(hal::GpioPin::Pin9, options);
 
 		// 接收引脚 PA10
