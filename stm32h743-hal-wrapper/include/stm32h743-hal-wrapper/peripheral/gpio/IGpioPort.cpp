@@ -1,6 +1,6 @@
 #include"IGpioPort.h"
 
-using namespace bsp;
+using namespace hal;
 
 void IGpioPort::InitPin(GpioPin pin, GpioPinInitOptions const &options)
 {

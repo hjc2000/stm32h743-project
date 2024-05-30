@@ -1,7 +1,7 @@
 #pragma once
-#include<GpioPinInitOptions.h>
+#include<stm32h743-hal-wrapper/peripheral/gpio/GpioPinInitOptions.h>
 
-namespace bsp
+namespace hal
 {
 	/// <summary>
 	///		GPIO 端口抽象类，有几组 GPIO 端口就派生几个本类。

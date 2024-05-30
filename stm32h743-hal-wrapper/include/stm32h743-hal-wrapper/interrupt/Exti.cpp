@@ -1,7 +1,7 @@
 #include"Exti.h"
 #include<stm32h743-hal-wrapper/interrupt/Interrupt.h>
 
-using namespace bsp;
+using namespace hal;
 
 /// <summary>
 ///		EXTI 中断函数的定义。

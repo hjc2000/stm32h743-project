@@ -1,13 +1,14 @@
 #pragma once
-#include<GpioPort.h>
 #include<functional>
+#include<stdint.h>
+#include<stm32h743-hal-wrapper/peripheral/gpio/GpioPort.h>
 
 extern "C"
 {
 	void HAL_GPIO_EXTI_Callback(uint16_t pin);
 }
 
-namespace bsp
+namespace hal
 {
 	/// <summary>
 	///		本类不提供开启中断的功能。设置好回调函数后，需要用 Interrupt 类来开启
