@@ -3,9 +3,9 @@
 #include<DigitalLed.h>
 #include<functional>
 #include<hal.h>
-#include<Osc.h>
 #include<stm32h743-hal-wrapper/Cache.h>
 #include<stm32h743-hal-wrapper/clock/ClockSignal.h>
+#include<stm32h743-hal-wrapper/clock/Osc.h>
 
 using namespace bsp;
 
@@ -31,7 +31,7 @@ void BSP::Initialize()
 		osc_config._pll_config._q = 4;
 		osc_config._pll_config._vco_range = hal::PllConfig::Pll1VcoRange::Wide;
 		osc_config._pll_config._vci_range = hal::PllConfig::Pll1VciRange::Range2;
-		Osc::SetConfig(osc_config);
+		hal::Osc::SetConfig(osc_config);
 
 		hal::ClockSignalConfig clock_signal_config;
 		clock_signal_config.SelectAllClockType();

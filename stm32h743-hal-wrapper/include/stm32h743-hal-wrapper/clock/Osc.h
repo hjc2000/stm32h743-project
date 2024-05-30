@@ -4,11 +4,8 @@
 #include<stm32h743-hal-wrapper/clock/OscConfig.h>
 #include<stm32h743-hal-wrapper/clock/PllConfig.h>
 
-namespace bsp
+namespace hal
 {
-	/// <summary>
-	///		时钟系统只有一个，所以实现为静态类
-	/// </summary>
 	class Osc
 	{
 	private:
