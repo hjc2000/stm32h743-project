@@ -6,6 +6,11 @@ namespace hal
 	class DmaConfig
 	{
 	public:
+		DmaConfig() = default;
+		DmaConfig(DMA_InitTypeDef const &o);
+		DmaConfig &operator=(DMA_InitTypeDef const &o);
+		operator DMA_InitTypeDef();
+
 		enum class Request
 		{
 			MemoryToMemory = DMA_REQUEST_MEM2MEM,
