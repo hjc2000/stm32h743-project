@@ -5,7 +5,7 @@
 #include<functional>
 #include<hal.h>
 #include<Osc.h>
-#include<stm32h743-hal-wrapper/ClockSignal.h>
+#include<stm32h743-hal-wrapper/clock/ClockSignal.h>
 
 using namespace bsp;
 

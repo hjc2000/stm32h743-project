@@ -1,5 +1,5 @@
 #pragma once
-#include<stm32h743-hal-wrapper/ClockSignalConfig.h>
+#include<stm32h743-hal-wrapper/clock/clock-signal-config/ClockSignalConfig.h>
 
 namespace hal
 {
