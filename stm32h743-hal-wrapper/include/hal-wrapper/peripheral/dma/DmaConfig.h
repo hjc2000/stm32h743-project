@@ -46,11 +46,39 @@ namespace hal
 
 		MemoryAddressIncrease _memory_address_increase;
 
-		uint32_t PeriphDataAlignment;  /*!< Specifies the Peripheral data width.
-		This parameter can be a value of @ref DMA_Peripheral_data_size                 */
+		enum class PeripheralDataAlignment
+		{
+			Byte = DMA_PDATAALIGN_BYTE,
 
-		uint32_t MemDataAlignment;     /*!< Specifies the Memory data width.
-		This parameter can be a value of @ref DMA_Memory_data_size                     */
+			/// <summary>
+			///		16 位
+			/// </summary>
+			HalfWord = DMA_PDATAALIGN_HALFWORD,
+
+			/// <summary>
+			///		32 位
+			/// </summary>
+			Word = DMA_PDATAALIGN_WORD,
+		};
+
+		PeripheralDataAlignment _peripheral_data_alignment;
+
+		enum class MemoryDataAlignment
+		{
+			Byte = DMA_MDATAALIGN_BYTE,
+
+			/// <summary>
+			///		16 位
+			/// </summary>
+			HalfWord = DMA_MDATAALIGN_HALFWORD,
+
+			/// <summary>
+			///		32 位
+			/// </summary>
+			Word = DMA_MDATAALIGN_WORD,
+		};
+
+		MemoryDataAlignment _memory_data_alignment;
 
 		uint32_t Mode;                 /*!< Specifies the operation mode of the DMAy Streamx.
 		This parameter can be a value of @ref DMA_mode
