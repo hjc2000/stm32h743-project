@@ -113,10 +113,7 @@ namespace hal
 		enum class OverSampling
 		{
 			OverSampling_16 = UART_OVERSAMPLING_16,
-
-			#if defined(USART_CR1_OVER8)
-			OverSampling_8,
-			#endif /* USART_CR1_OVER8 */
+			OverSampling_8 = UART_OVERSAMPLING_8,
 		};
 
 		/// <summary>
