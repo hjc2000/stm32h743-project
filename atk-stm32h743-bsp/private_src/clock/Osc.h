@@ -1,8 +1,8 @@
 #pragma once
 #include<hal.h>
 #include<OscConfig.h>
-#include<PllConfig.h>
 #include<stdexcept>
+#include<stm32h743-hal-wrapper/clock/PllConfig.h>
 
 namespace bsp
 {

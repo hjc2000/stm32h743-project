@@ -1,7 +1,7 @@
 #pragma once
 #include<hal.h>
 
-namespace bsp
+namespace hal
 {
 	/// <summary>
 	///		PLL 初始化选项

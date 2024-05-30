@@ -1,6 +1,6 @@
 #pragma once
 #include<hal.h>
-#include<PllConfig.h>
+#include<stm32h743-hal-wrapper/clock/PllConfig.h>
 
 namespace bsp
 {
@@ -100,6 +100,6 @@ namespace bsp
 		/// </summary>
 		uint32_t _csi_calibration_value = 0;
 
-		PllConfig _pll_config;
+		hal::PllConfig _pll_config;
 	};
 }

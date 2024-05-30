@@ -1,8 +1,8 @@
 #include"PllConfig.h"
 
-using namespace bsp;
+using namespace hal;
 
-bsp::PllConfig::PllConfig(RCC_PLLInitTypeDef const &o)
+hal::PllConfig::PllConfig(RCC_PLLInitTypeDef const &o)
 {
 	*this = o;
 }
