@@ -1,8 +1,11 @@
 #include"bsp.h"
+#include<atomic>
+#include<bsp-interface/KeyScanner.h>
 #include<Delayer.h>
 #include<DigitalLed.h>
 #include<functional>
 #include<hal.h>
+#include<Key.h>
 #include<stm32h743-hal-wrapper/Cache.h>
 #include<stm32h743-hal-wrapper/clock/ClockSignal.h>
 #include<stm32h743-hal-wrapper/clock/Osc.h>
@@ -71,4 +74,21 @@ IDigitalLed &BSP::GreenDigitalLed()
 bsp::IDelayer &BSP::Delayer()
 {
 	return Delayer::Instance();
+}
+
+bsp::IKeyScanner &BSP::KeyScanner()
+{
+	static std::atomic_bool initialized = false;
+	static std::vector<bsp::IKey *> keys { (size_t)KeyIndex::EnumEndFlag };
+	if (!initialized)
+	{
+		keys[(uint16_t)KeyIndex::Key0] = &Key0::Instance();
+		keys[(uint16_t)KeyIndex::Key1] = &Key1::Instance();
+	}
+
+	static bsp::KeyScanner key_scanner { keys, Delayer::Instance() };
+
+	// 初始化完成
+	initialized = true;
+	return key_scanner;
 }
