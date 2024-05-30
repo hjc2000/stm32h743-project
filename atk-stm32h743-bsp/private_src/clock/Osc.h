@@ -1,7 +1,7 @@
 #pragma once
 #include<hal.h>
-#include<OscConfig.h>
 #include<stdexcept>
+#include<stm32h743-hal-wrapper/clock/OscConfig.h>
 #include<stm32h743-hal-wrapper/clock/PllConfig.h>
 
 namespace bsp
@@ -15,11 +15,11 @@ namespace bsp
 		Osc() = delete;
 
 	public:
-		static OscConfig GetConfig()
+		static hal::OscConfig GetConfig()
 		{
 			RCC_OscInitTypeDef def;
 			HAL_RCC_GetOscConfig(&def);
-			return OscConfig { def };
+			return hal::OscConfig { def };
 		}
 
 		/// <summary>
@@ -27,7 +27,7 @@ namespace bsp
 		/// </summary>
 		/// <param name="options"></param>
 		/// <returns></returns>
-		static void SetConfig(OscConfig const &options)
+		static void SetConfig(hal::OscConfig const &options)
 		{
 			RCC_OscInitTypeDef rcc_osc_init = options;
 			HAL_StatusTypeDef result = HAL_RCC_OscConfig(&rcc_osc_init);

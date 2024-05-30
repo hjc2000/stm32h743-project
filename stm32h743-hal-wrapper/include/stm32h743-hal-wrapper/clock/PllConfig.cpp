@@ -2,7 +2,7 @@
 
 using namespace hal;
 
-hal::PllConfig::PllConfig(RCC_PLLInitTypeDef const &o)
+PllConfig::PllConfig(RCC_PLLInitTypeDef const &o)
 {
 	*this = o;
 }

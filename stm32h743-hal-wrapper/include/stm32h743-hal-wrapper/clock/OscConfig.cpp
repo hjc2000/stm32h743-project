@@ -1,8 +1,8 @@
 #include"OscConfig.h"
 
-using namespace bsp;
+using namespace hal;
 
-bsp::OscConfig::OscConfig(RCC_OscInitTypeDef const &o)
+hal::OscConfig::OscConfig(RCC_OscInitTypeDef const &o)
 {
 	*this = o;
 }

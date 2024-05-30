@@ -18,11 +18,11 @@ void BSP::Initialize()
 
 		while ((PWR->D3CR & (PWR_D3CR_VOSRDY)) != PWR_D3CR_VOSRDY) { }
 
-		OscConfig osc_config;
-		osc_config._oscillator_type = OscConfig::OscillatorType::HSE;
-		osc_config._hse_state = OscConfig::HseState::On;
-		osc_config._hsi_state = OscConfig::HsiState::Off;
-		osc_config._csi_state = OscConfig::CsiState::Off;
+		hal::OscConfig osc_config;
+		osc_config._oscillator_type = hal::OscConfig::OscillatorType::HSE;
+		osc_config._hse_state = hal::OscConfig::HseState::On;
+		osc_config._hsi_state = hal::OscConfig::HsiState::Off;
+		osc_config._csi_state = hal::OscConfig::CsiState::Off;
 		osc_config._pll_config._state = hal::PllConfig::PllState::On;
 		osc_config._pll_config._source = hal::PllConfig::PllSource::HSE;
 		osc_config._pll_config._m = 5;
