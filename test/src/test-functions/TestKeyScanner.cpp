@@ -23,5 +23,11 @@ void TestKeyScanner()
 			BSP::RedDigitalLed().Toggle();
 			BSP::GreenDigitalLed().Toggle();
 		}
+
+		if (BSP::KeyScanner().HasKeyDownEvent(static_cast<uint16_t>(KeyIndex::KeyWakeUp)))
+		{
+			BSP::RedDigitalLed().TurnOn();
+			BSP::GreenDigitalLed().TurnOn();
+		}
 	}
 }

@@ -55,3 +55,20 @@ bool bsp::Key2::KeyIsDown()
 	return !Port().DigitalReadPin(Pin());
 }
 #pragma endregion
+
+#pragma region KeyWakeUp
+bsp::KeyWakeUp::KeyWakeUp()
+{
+	Port().EnableClock();
+	hal::GpioPinConfig options;
+	options._mode = hal::GpioPinMode::Input;
+	options._pull_mode = hal::GpioPinPull::PullDown;
+	options._speed = hal::GpioPinSpeed::High;
+	Port().InitPin(Pin(), options);
+}
+
+bool bsp::KeyWakeUp::KeyIsDown()
+{
+	return Port().DigitalReadPin(Pin());
+}
+#pragma endregion
