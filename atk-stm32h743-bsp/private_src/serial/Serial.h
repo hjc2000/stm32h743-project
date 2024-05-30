@@ -11,8 +11,8 @@
 extern "C"
 {
 	void USART1_IRQHandler();
-	void DMA1_Channel4_IRQHandler();
-	void DMA1_Channel5_IRQHandler();
+	void DMA_STR0_IRQHandler();
+	void DMA_STR1_IRQHandler();
 }
 
 namespace bsp
@@ -35,8 +35,8 @@ namespace bsp
 		int32_t _current_receive_count = 0;
 
 		friend void ::USART1_IRQHandler();
-		friend void ::DMA1_Channel4_IRQHandler();
-		friend void ::DMA1_Channel5_IRQHandler();
+		friend void ::DMA_STR0_IRQHandler();
+		friend void ::DMA_STR1_IRQHandler();
 		static void OnMspInitCallback(UART_HandleTypeDef *huart);
 
 		#pragma region 被中断处理函数回调的函数

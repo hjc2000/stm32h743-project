@@ -320,12 +320,6 @@ g_pfnVectors:
 	.weak	RCC_IRQHandler
 	.thumb_set RCC_IRQHandler,Default_Handler
 
-	.weak	DMA_STR0_IRQHandler
-	.thumb_set DMA_STR0_IRQHandler,Default_Handler
-
-	.weak	DMA_STR1_IRQHandler
-	.thumb_set DMA_STR1_IRQHandler,Default_Handler
-
 	.weak	DMA_STR2_IRQHandler
 	.thumb_set DMA_STR2_IRQHandler,Default_Handler
 

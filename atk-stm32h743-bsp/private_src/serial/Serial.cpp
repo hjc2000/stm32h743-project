@@ -16,12 +16,12 @@ extern "C"
 		HAL_UART_IRQHandler(&Serial::Instance()._uart_handle);
 	}
 
-	void DMA1_Channel4_IRQHandler()
+	void DMA_STR0_IRQHandler()
 	{
 		HAL_DMA_IRQHandler(&Serial::Instance()._tx_dma_handle);
 	}
 
-	void DMA1_Channel5_IRQHandler()
+	void DMA_STR1_IRQHandler()
 	{
 		HAL_DMA_IRQHandler(&Serial::Instance()._rx_dma_handle);
 	}
