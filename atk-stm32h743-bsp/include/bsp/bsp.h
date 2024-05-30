@@ -7,6 +7,7 @@ enum class KeyIndex :uint16_t
 {
 	Key0,
 	Key1,
+	Key2,
 	EnumEndFlag,
 };
 

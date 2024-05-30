@@ -62,4 +62,33 @@ namespace bsp
 			Delayer::Instance().Delay(num);
 		}
 	};
+
+	class Key2 :public bsp::IKey
+	{
+	public:
+		Key2();
+
+		static Key2 &Instance()
+		{
+			static Key2 key { };
+			return key;
+		}
+
+		hal::IGpioPort &Port()
+		{
+			return hal::GpioPortC::Instance();
+		}
+
+		static consteval hal::GpioPin Pin()
+		{
+			return hal::GpioPin::Pin13;
+		}
+
+		bool KeyIsDown() override;
+
+		void Delay(std::chrono::milliseconds num) override
+		{
+			Delayer::Instance().Delay(num);
+		}
+	};
 }

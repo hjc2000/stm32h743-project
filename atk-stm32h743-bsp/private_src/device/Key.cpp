@@ -37,3 +37,21 @@ bool bsp::Key1::KeyIsDown()
 	return !Port().DigitalReadPin(Pin());
 }
 #pragma endregion
+
+#pragma region Key2
+bsp::Key2::Key2()
+{
+	Port().EnableClock();
+	hal::GpioPinConfig options;
+	options._mode = hal::GpioPinMode::Input;
+	options._pull_mode = hal::GpioPinPull::PullUp;
+	options._speed = hal::GpioPinSpeed::High;
+	Port().InitPin(Pin(), options);
+}
+
+bool bsp::Key2::KeyIsDown()
+{
+	// 被按下是低电平，否则是高电平
+	return !Port().DigitalReadPin(Pin());
+}
+#pragma endregion
