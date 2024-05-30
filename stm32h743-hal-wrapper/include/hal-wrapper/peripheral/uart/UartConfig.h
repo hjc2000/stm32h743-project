@@ -120,5 +120,31 @@ namespace hal
 		///		过采样倍率
 		/// </summary>
 		OverSampling _over_sampling = OverSampling::OverSampling_16;
+
+		enum class OneBitSampling
+		{
+			Disable = UART_ONE_BIT_SAMPLE_DISABLE,
+			Enable = UART_ONE_BIT_SAMPLE_ENABLE,
+		};
+
+		OneBitSampling _one_bit_sampling;
+
+		enum class ClockPrescaler
+		{
+			DIV1 = UART_PRESCALER_DIV1,
+			DIV2 = UART_PRESCALER_DIV2,
+			DIV4 = UART_PRESCALER_DIV4,
+			DIV6 = UART_PRESCALER_DIV6,
+			DIV8 = UART_PRESCALER_DIV8,
+			DIV10 = UART_PRESCALER_DIV10,
+			DIV12 = UART_PRESCALER_DIV12,
+			DIV16 = UART_PRESCALER_DIV16,
+			DIV32 = UART_PRESCALER_DIV32,
+			DIV64 = UART_PRESCALER_DIV64,
+			DIV128 = UART_PRESCALER_DIV128,
+			DIV256 = UART_PRESCALER_DIV256,
+		};
+
+		ClockPrescaler _clock_prescaler;
 	};
 }
