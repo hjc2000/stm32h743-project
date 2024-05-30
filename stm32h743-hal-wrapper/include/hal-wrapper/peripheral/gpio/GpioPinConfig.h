@@ -1,5 +1,6 @@
 #pragma once
 #include<hal.h>
+#include<hal-wrapper/peripheral/gpio/PinAlternate.h>
 
 namespace hal
 {
@@ -71,17 +72,16 @@ namespace hal
 		VeryHigh = GPIO_SPEED_FREQ_VERY_HIGH,
 	};
 
-	enum class Alternate
-	{
-		AF7_USART1 = GPIO_AF7_USART1,
-	};
-
 	class GpioPinConfig
 	{
 	public:
 		GpioPinMode _mode = GpioPinMode::Input;
 		GpioPinPull _pull_mode = GpioPinPull::NoPull;
 		GpioPinSpeed _speed = GpioPinSpeed::High;
-		Alternate _alternate;
+
+		/// <summary>
+		///		参考 PinAlternate.h
+		/// </summary>
+		uint32_t _alternate;
 	};
 }
