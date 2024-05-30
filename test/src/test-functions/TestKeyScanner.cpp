@@ -1,5 +1,5 @@
 #include"TestKeyScanner.h"
-#include<atk-stm32h743-bsp/bsp.h>
+#include<bsp/bsp.h>
 
 using namespace bsp;
 
