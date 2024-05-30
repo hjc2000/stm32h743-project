@@ -1,49 +1,49 @@
 #include"ClockSignalConfig.h"
 #include<type_traits>
 
-using namespace bsp;
+using namespace hal;
 
-void bsp::Apb1ClkConfig::Serialize(RCC_ClkInitTypeDef &o) const
+void hal::Apb1ClkConfig::Serialize(RCC_ClkInitTypeDef &o) const
 {
 	o.APB1CLKDivider = static_cast<uint32_t>(_input_divider);
 }
 
-void bsp::Apb1ClkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
+void hal::Apb1ClkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
 {
 	_input_divider = static_cast<decltype(_input_divider)>(o.APB1CLKDivider);
 }
 
-void bsp::Apb2ClkConfig::Serialize(RCC_ClkInitTypeDef &o) const
+void hal::Apb2ClkConfig::Serialize(RCC_ClkInitTypeDef &o) const
 {
 	o.APB2CLKDivider = static_cast<uint32_t>(_input_divider);
 }
 
-void bsp::Apb2ClkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
+void hal::Apb2ClkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
 {
 	_input_divider = static_cast<decltype(_input_divider)>(o.APB2CLKDivider);
 }
 
-void bsp::Apb3ClkConfig::Serialize(RCC_ClkInitTypeDef &o) const
+void hal::Apb3ClkConfig::Serialize(RCC_ClkInitTypeDef &o) const
 {
 	o.APB3CLKDivider = static_cast<uint32_t>(_input_divider);
 }
 
-void bsp::Apb3ClkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
+void hal::Apb3ClkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
 {
 	_input_divider = static_cast<decltype(_input_divider)>(o.APB3CLKDivider);
 }
 
-void bsp::Apb4ClkConfig::Serialize(RCC_ClkInitTypeDef &o) const
+void hal::Apb4ClkConfig::Serialize(RCC_ClkInitTypeDef &o) const
 {
 	o.APB4CLKDivider = static_cast<uint32_t>(_input_divider);
 }
 
-void bsp::Apb4ClkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
+void hal::Apb4ClkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
 {
 	_input_divider = static_cast<decltype(_input_divider)>(o.APB4CLKDivider);
 }
 
-void bsp::HclkConfig::Serialize(RCC_ClkInitTypeDef &o) const
+void hal::HclkConfig::Serialize(RCC_ClkInitTypeDef &o) const
 {
 	o.AHBCLKDivider = static_cast<uint32_t>(_input_divider);
 	_apb1clk_config.Serialize(o);
@@ -52,7 +52,7 @@ void bsp::HclkConfig::Serialize(RCC_ClkInitTypeDef &o) const
 	_apb4clk_config.Serialize(o);
 }
 
-void bsp::HclkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
+void hal::HclkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
 {
 	_input_divider = static_cast<decltype(_input_divider)>(o.AHBCLKDivider);
 	_apb1clk_config.Deserialize(o);
@@ -61,33 +61,33 @@ void bsp::HclkConfig::Deserialize(RCC_ClkInitTypeDef const &o)
 	_apb4clk_config.Deserialize(o);
 }
 
-void bsp::SystemClockConfig::Serialize(RCC_ClkInitTypeDef &o) const
+void hal::SystemClockConfig::Serialize(RCC_ClkInitTypeDef &o) const
 {
 	o.SYSCLKSource = static_cast<uint32_t>(_clock_source);
 	o.SYSCLKDivider = static_cast<uint32_t>(_output_divider);
 	_hclk_config.Serialize(o);
 }
 
-void bsp::SystemClockConfig::Deserialize(RCC_ClkInitTypeDef const &o)
+void hal::SystemClockConfig::Deserialize(RCC_ClkInitTypeDef const &o)
 {
 	_clock_source = static_cast<decltype(_clock_source)>(o.SYSCLKSource);
 	_output_divider = static_cast<decltype(_output_divider)>(o.SYSCLKDivider);
 	_hclk_config.Deserialize(o);
 }
 
-void bsp::ClockSignalConfig::Serialize(RCC_ClkInitTypeDef &o) const
+void hal::ClockSignalConfig::Serialize(RCC_ClkInitTypeDef &o) const
 {
 	o.ClockType = static_cast<uint32_t>(_clock_type);
 	_system_clk_config.Serialize(o);
 }
 
-void bsp::ClockSignalConfig::Deserialize(RCC_ClkInitTypeDef const &o)
+void hal::ClockSignalConfig::Deserialize(RCC_ClkInitTypeDef const &o)
 {
 	_clock_type = static_cast<decltype(_clock_type)>(o.ClockType);
 	_system_clk_config.Deserialize(o);
 }
 
-bsp::ClockSignalConfig::ClockSignalConfig(RCC_ClkInitTypeDef const &o)
+hal::ClockSignalConfig::ClockSignalConfig(RCC_ClkInitTypeDef const &o)
 {
 	*this = o;
 }
@@ -105,7 +105,7 @@ ClockSignalConfig::operator RCC_ClkInitTypeDef() const
 	return o;
 }
 
-void bsp::ClockSignalConfig::SelectAllClockType()
+void hal::ClockSignalConfig::SelectAllClockType()
 {
 	_clock_type = ClockType::SYSCLK
 		| ClockType::HCLK
@@ -115,9 +115,9 @@ void bsp::ClockSignalConfig::SelectAllClockType()
 		| ClockType::D3PCLK1;
 }
 
-bsp::ClockSignalConfig::ClockType operator|(
-	bsp::ClockSignalConfig::ClockType left,
-	bsp::ClockSignalConfig::ClockType right
+hal::ClockSignalConfig::ClockType operator|(
+	hal::ClockSignalConfig::ClockType left,
+	hal::ClockSignalConfig::ClockType right
 	)
 {
 	// 获取枚举类型的底层类型

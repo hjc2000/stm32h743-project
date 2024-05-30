@@ -1,7 +1,7 @@
 #pragma once
 #include<stm32h743-hal-wrapper/ClockSignalConfig.h>
 
-namespace bsp
+namespace hal
 {
 	class ClockSignal
 	{

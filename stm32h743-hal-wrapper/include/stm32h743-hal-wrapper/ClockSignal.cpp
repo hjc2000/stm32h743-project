@@ -1,9 +1,9 @@
 #include"ClockSignal.h"
 #include<stdexcept>
 
-using namespace bsp;
+using namespace hal;
 
-ClockSignalConfig bsp::ClockSignal::GetConfig()
+ClockSignalConfig hal::ClockSignal::GetConfig()
 {
 	RCC_ClkInitTypeDef def;
 	uint32_t flash_latency;
@@ -13,7 +13,7 @@ ClockSignalConfig bsp::ClockSignal::GetConfig()
 	return ret;
 }
 
-void bsp::ClockSignal::SetConfig(ClockSignalConfig const &config)
+void hal::ClockSignal::SetConfig(ClockSignalConfig const &config)
 {
 	RCC_ClkInitTypeDef rcc_clk_init = config;
 	HAL_StatusTypeDef ret = HAL_RCC_ClockConfig(
