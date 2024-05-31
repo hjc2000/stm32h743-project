@@ -2,13 +2,14 @@
 
 using namespace hal;
 
-void IGpioPort::InitPin(GpioPin pin, GpioPinConfig const &options)
+void IGpioPort::InitPin(GpioPin pin, GpioPinConfig const &config)
 {
-	GPIO_InitTypeDef gpio_init_options{};
-	gpio_init_options.Pin = (uint32_t)pin;
-	gpio_init_options.Mode = (uint32_t)options._mode;
-	gpio_init_options.Pull = (uint32_t)options._pull_mode;
-	gpio_init_options.Speed = (uint32_t)options._speed;
+	GPIO_InitTypeDef gpio_init_options { };
+	gpio_init_options.Pin = static_cast<uint32_t>(pin);
+	gpio_init_options.Mode = static_cast<uint32_t>(config._mode);
+	gpio_init_options.Pull = static_cast<uint32_t>(config._pull_mode);
+	gpio_init_options.Speed = static_cast<uint32_t>(config._speed);
+	gpio_init_options.Alternate = config._alternate;
 	HAL_GPIO_Init(HardwareInstance(), &gpio_init_options);
 }
 

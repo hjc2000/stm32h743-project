@@ -38,7 +38,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 		// 发送引脚 PA9
 		hal::GpioPinConfig options;
 		options._mode = hal::GpioPinMode::AlternateFunction_PushPull;
-		options._pull_mode = hal::GpioPinPull::PullUp;
+		options._pull_mode = hal::GpioPinPull::NoPull;
 		options._speed = hal::GpioPinSpeed::High;
 		options._alternate = hal::PA9Alternate::usart1;
 		hal::GpioPortA::Instance().InitPin(hal::GpioPin::Pin9, options);

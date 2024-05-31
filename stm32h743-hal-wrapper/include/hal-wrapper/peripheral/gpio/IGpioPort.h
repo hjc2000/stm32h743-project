@@ -28,7 +28,7 @@ namespace hal
 		/// </summary>
 		virtual void DisableClock() = 0;
 
-		void InitPin(GpioPin pin, GpioPinConfig const &options);
+		void InitPin(GpioPin pin, GpioPinConfig const &config);
 		void DigitalWritePin(GpioPin pin, bool value);
 		bool DigitalReadPin(GpioPin pin);
 		void DigitalTogglePin(GpioPin pin);
