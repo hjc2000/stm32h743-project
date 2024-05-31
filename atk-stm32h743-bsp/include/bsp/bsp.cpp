@@ -1,6 +1,6 @@
 #include"bsp.h"
 #include<atomic>
-#include<bsp-interface/KeyScanner.h>
+#include<bsp-interface/extension/KeyScanner.h>
 #include<Delayer.h>
 #include<DigitalLed.h>
 #include<functional>
