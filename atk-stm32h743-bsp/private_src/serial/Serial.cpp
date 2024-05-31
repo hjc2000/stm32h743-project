@@ -74,6 +74,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 	auto init_rx_dma = []()
 	{
 		__HAL_RCC_DMA1_CLK_ENABLE();
+
 		hal::DmaConfig dma_config { };
 		dma_config._request = hal::DmaConfig::Request::Usart1Rx;
 		dma_config._direction = hal::DmaConfig::Direction::PeripheralToMemory;
