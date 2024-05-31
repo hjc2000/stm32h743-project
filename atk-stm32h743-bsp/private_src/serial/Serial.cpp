@@ -183,7 +183,11 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 void Serial::Write(uint8_t const *buffer, int32_t offset, int32_t count)
 {
 	_send_complete_signal.Acquire();
-	HAL_UART_Transmit_DMA(&_uart_handle, buffer + offset, count);
+	HAL_StatusTypeDef ret = HAL_UART_Transmit_DMA(&_uart_handle, buffer + offset, count);
+	if (ret != HAL_StatusTypeDef::HAL_OK)
+	{
+		throw std::runtime_error { "发送失败" };
+	}
 }
 
 void Serial::Flush()
