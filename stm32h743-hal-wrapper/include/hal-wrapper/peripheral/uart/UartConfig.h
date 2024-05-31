@@ -127,7 +127,7 @@ namespace hal
 			Enable = UART_ONE_BIT_SAMPLE_ENABLE,
 		};
 
-		OneBitSampling _one_bit_sampling;
+		OneBitSampling _one_bit_sampling = OneBitSampling::Disable;
 
 		enum class ClockPrescaler
 		{
@@ -145,6 +145,6 @@ namespace hal
 			DIV256 = UART_PRESCALER_DIV256,
 		};
 
-		ClockPrescaler _clock_prescaler;
+		ClockPrescaler _clock_prescaler = ClockPrescaler::DIV1;
 	};
 }
