@@ -215,6 +215,25 @@ void Serial::SetPosition(int64_t value)
 }
 #pragma endregion
 
+int32_t bsp::Serial::ReadTimeOutInBaud()
+{
+	return _read_time_out_in_baud;
+}
+
+void bsp::Serial::SetReadTimeOutInBaud(int32_t value)
+{
+	_read_time_out_in_baud = value;
+	if (value > 0)
+	{
+		HAL_UART_ReceiverTimeout_Config(&_uart_handle, value);
+		HAL_UART_EnableReceiverTimeout(&_uart_handle);
+	}
+	else
+	{
+		HAL_UART_DisableReceiverTimeout(&_uart_handle);
+	}
+}
+
 void Serial::Begin(uint32_t baud_rate)
 {
 	if (_have_begun)

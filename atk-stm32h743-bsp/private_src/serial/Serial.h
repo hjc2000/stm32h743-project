@@ -1,6 +1,7 @@
 #pragma once
 #include<atomic>
 #include<bsp-interface/ISerial.h>
+#include<chrono>
 #include<hal.h>
 #include<hal-wrapper/peripheral/uart/UartConfig.h>
 #include<memory>
@@ -32,6 +33,7 @@ namespace bsp
 		task::BinarySemaphore _receive_complete_signal;
 		task::Mutex _read_lock { };
 		int32_t _current_receive_count = 0;
+		int32_t _read_time_out_in_baud = 0;
 
 		friend void ::USART1_IRQHandler();
 		friend void ::DMA_STR0_IRQHandler();
@@ -85,6 +87,25 @@ namespace bsp
 		int64_t Position() override;
 		void SetPosition(int64_t value) override;
 		#pragma endregion
+
+		/// <summary>
+		///		接收的超时时间。
+		/// </summary>
+		/// <returns></returns>
+		int32_t ReadTimeOutInBaud();
+
+		/// <summary>
+		///		设置接收的超时时间。
+		///		* 设置为小于等于 0 的值来禁用超时机制。设置为大于 0 的值来启用超时机制。
+		///		* 单位是一个 baud，即一个符号。在串行通信中，一个符号就是一个位。
+		///		* 在串行帧中，起始位，停止位，校验位，也算作 1 个波特，和数据位一样。
+		///		  波特率是对发送端的脉冲发生电路和接收端的脉冲采样电路的设置，规定一个脉冲
+		///		  持续 (1 / 波特率) 秒。无论是起始位，停止位，校验位，还是数据位，对于脉冲发生
+		///		  电路和脉冲采样电路来说都一视同仁，被当作一个位处理，要占用 1 个脉冲，也即
+		///		  一个波特的时间。
+		/// </summary>
+		/// <param name="value">超时时间为多少个波特</param>
+		void SetReadTimeOutInBaud(int32_t value);
 
 		/// <summary>
 		///		启动串口。
