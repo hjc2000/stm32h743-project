@@ -5,6 +5,7 @@
 #include<stdint.h>
 #include<task/Task.h>
 #include<TestKeyScanner.h>
+#include<TestSerial.h>
 
 bool std_exception_occurred = false;
 bool unknow_exception_occurred = false;
@@ -19,7 +20,7 @@ int main(void)
 			BSP::Initialize();
 			std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create([]()
 			{
-				TestKeyScanner();
+				TestSerial();
 			}, 512);
 			vTaskStartScheduler();
 		}

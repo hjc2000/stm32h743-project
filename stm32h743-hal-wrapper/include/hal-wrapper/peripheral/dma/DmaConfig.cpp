@@ -24,7 +24,7 @@ DmaConfig &DmaConfig::operator=(DMA_InitTypeDef const &o)
 	return *this;
 }
 
-hal::DmaConfig::operator DMA_InitTypeDef()
+hal::DmaConfig::operator DMA_InitTypeDef() const
 {
 	DMA_InitTypeDef o;
 	o.Request = static_cast<uint32_t>(_request);

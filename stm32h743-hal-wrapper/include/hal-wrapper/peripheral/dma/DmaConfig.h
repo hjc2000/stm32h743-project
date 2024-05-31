@@ -9,7 +9,7 @@ namespace hal
 		DmaConfig() = default;
 		DmaConfig(DMA_InitTypeDef const &o);
 		DmaConfig &operator=(DMA_InitTypeDef const &o);
-		operator DMA_InitTypeDef();
+		operator DMA_InitTypeDef() const;
 
 		enum class Request
 		{
