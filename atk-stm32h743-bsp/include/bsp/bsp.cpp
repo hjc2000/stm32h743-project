@@ -79,21 +79,43 @@ bsp::IDelayer &BSP::Delayer()
 
 bsp::IKeyScanner &BSP::KeyScanner()
 {
-	static std::atomic_bool initialized = false;
-	static std::vector<bsp::IKey *> keys { (size_t)KeyIndex::EnumEndFlag };
-	if (!initialized)
+	class KeyScannerInitializer
 	{
-		keys[(uint16_t)KeyIndex::Key0] = &Key0::Instance();
-		keys[(uint16_t)KeyIndex::Key1] = &Key1::Instance();
-		keys[(uint16_t)KeyIndex::Key2] = &Key2::Instance();
-		keys[(uint16_t)KeyIndex::KeyWakeUp] = &KeyWakeUp::Instance();
-	}
+	private:
+		KeyScannerInitializer()
+		{
+			_keys[(uint16_t)KeyIndex::Key0] = &Key0::Instance();
+			_keys[(uint16_t)KeyIndex::Key1] = &Key1::Instance();
+			_keys[(uint16_t)KeyIndex::Key2] = &Key2::Instance();
+			_keys[(uint16_t)KeyIndex::KeyWakeUp] = &KeyWakeUp::Instance();
+			_key_scanner = std::shared_ptr<bsp::KeyScanner> { new bsp::KeyScanner {
+				_keys,
+				Delayer::Instance()
+			} };
+		}
 
-	static bsp::KeyScanner key_scanner { keys, Delayer::Instance() };
+		KeyScannerInitializer(KeyScannerInitializer const &o) = delete;
+		KeyScannerInitializer(KeyScannerInitializer &&o) = delete;
+		KeyScannerInitializer &operator=(KeyScannerInitializer const &o) = delete;
+		KeyScannerInitializer &operator=(KeyScannerInitializer &&o) = delete;
 
-	// 初始化完成
-	initialized = true;
-	return key_scanner;
+		std::vector<bsp::IKey *> _keys { (size_t)KeyIndex::EnumEndFlag };
+		std::shared_ptr<bsp::KeyScanner> _key_scanner;
+
+	public:
+		static KeyScannerInitializer &Instance()
+		{
+			static KeyScannerInitializer o;
+			return o;
+		}
+
+		IKeyScanner &Scanner()
+		{
+			return *_key_scanner;
+		}
+	};
+
+	return KeyScannerInitializer::Instance().Scanner();
 }
 
 bsp::ISerial &BSP::Serial()
