@@ -27,11 +27,6 @@ namespace bsp
 		}
 
 		bool KeyIsDown() override;
-
-		void Delay(std::chrono::milliseconds num) override
-		{
-			Delayer::Instance().Delay(num);
-		}
 	};
 
 	class Key1 :public bsp::IKey
@@ -56,11 +51,6 @@ namespace bsp
 		}
 
 		bool KeyIsDown() override;
-
-		void Delay(std::chrono::milliseconds num) override
-		{
-			Delayer::Instance().Delay(num);
-		}
 	};
 
 	class Key2 :public bsp::IKey
@@ -85,11 +75,6 @@ namespace bsp
 		}
 
 		bool KeyIsDown() override;
-
-		void Delay(std::chrono::milliseconds num) override
-		{
-			Delayer::Instance().Delay(num);
-		}
 	};
 
 	class KeyWakeUp :public bsp::IKey
@@ -114,10 +99,5 @@ namespace bsp
 		}
 
 		bool KeyIsDown() override;
-
-		void Delay(std::chrono::milliseconds num) override
-		{
-			Delayer::Instance().Delay(num);
-		}
 	};
 }
