@@ -114,6 +114,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 #pragma region 被中断处理函数回调的函数
 void bsp::Serial::OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos)
 {
+	Serial::Instance()._current_receive_count = pos;
 	Serial::Instance()._receive_complete_signal.ReleaseFromISR();
 }
 
@@ -173,9 +174,9 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 		});
 
 		_receive_complete_signal.Acquire();
-		if (_uart_handle.RxXferSize > 0)
+		if (_current_receive_count > 0)
 		{
-			return _uart_handle.RxXferSize;
+			return _current_receive_count;
 		}
 	}
 }
