@@ -22,7 +22,7 @@ namespace hal
 		/// <summary>
 		///		一个串行帧有多少位
 		/// </summary>
-		enum class WordLength
+		enum class WordLengthOption
 		{
 			WordLength_7bit = UART_WORDLENGTH_7B,
 			WordLength_8bit = UART_WORDLENGTH_8B,
@@ -32,12 +32,12 @@ namespace hal
 		/// <summary>
 		///		一个串行帧有多少位
 		/// </summary>
-		WordLength _word_length = WordLength::WordLength_8bit;
+		WordLengthOption _word_length = WordLengthOption::WordLength_8bit;
 
 		/// <summary>
 		///		有多少位停止位
 		/// </summary>
-		enum class StopBitCount
+		enum class StopBitsOption
 		{
 			StopBitCount_0_5_bit = UART_STOPBITS_0_5,
 			StopBitCount_1_bit = UART_STOPBITS_1,
@@ -48,12 +48,12 @@ namespace hal
 		/// <summary>
 		///		一个串行帧有多少个停止位
 		/// </summary>
-		StopBitCount _stop_bit_count = StopBitCount::StopBitCount_1_bit;
+		StopBitsOption _stop_bit_count = StopBitsOption::StopBitCount_1_bit;
 
 		/// <summary>
 		///		UART 校验模式
 		/// </summary>
-		enum class Parity
+		enum class ParityOption
 		{
 			None = UART_PARITY_NONE,
 			Even = UART_PARITY_EVEN,
@@ -64,12 +64,12 @@ namespace hal
 		///		校验模式。
 		///		- 校验位被放到串行帧中除了停止位以外的最高位。
 		/// </summary>
-		Parity _parity = Parity::None;
+		ParityOption _parity = ParityOption::None;
 
 		/// <summary>
 		///		串口收发模式。
 		/// </summary>
-		enum class Mode
+		enum class ModeOption
 		{
 			/// <summary>
 			///		只接收
@@ -90,12 +90,12 @@ namespace hal
 		/// <summary>
 		///		收发模式
 		/// </summary>
-		Mode _mode = Mode::RX_TX;
+		ModeOption _mode = ModeOption::RX_TX;
 
 		/// <summary>
 		///		硬件流控
 		/// </summary>
-		enum class HardwareFlowControl
+		enum class HardwareFlowControlOption
 		{
 			None = UART_HWCONTROL_NONE,
 			RTS = UART_HWCONTROL_RTS,
@@ -106,12 +106,12 @@ namespace hal
 		/// <summary>
 		///		硬件流控
 		/// </summary>
-		HardwareFlowControl _hardware_flow_control = HardwareFlowControl::None;
+		HardwareFlowControlOption _hardware_flow_control = HardwareFlowControlOption::None;
 
 		/// <summary>
 		///		过采样倍率
 		/// </summary>
-		enum class OverSampling
+		enum class OverSamplingOption
 		{
 			OverSampling_16 = UART_OVERSAMPLING_16,
 			OverSampling_8 = UART_OVERSAMPLING_8,
@@ -120,17 +120,17 @@ namespace hal
 		/// <summary>
 		///		过采样倍率
 		/// </summary>
-		OverSampling _over_sampling = OverSampling::OverSampling_16;
+		OverSamplingOption _over_sampling = OverSamplingOption::OverSampling_16;
 
-		enum class OneBitSampling
+		enum class OneBitSamplingOption
 		{
 			Disable = UART_ONE_BIT_SAMPLE_DISABLE,
 			Enable = UART_ONE_BIT_SAMPLE_ENABLE,
 		};
 
-		OneBitSampling _one_bit_sampling = OneBitSampling::Disable;
+		OneBitSamplingOption _one_bit_sampling = OneBitSamplingOption::Disable;
 
-		enum class ClockPrescaler
+		enum class ClockPrescalerOption
 		{
 			DIV1 = UART_PRESCALER_DIV1,
 			DIV2 = UART_PRESCALER_DIV2,
@@ -146,7 +146,7 @@ namespace hal
 			DIV256 = UART_PRESCALER_DIV256,
 		};
 
-		ClockPrescaler _clock_prescaler = ClockPrescaler::DIV1;
+		ClockPrescalerOption _clock_prescaler = ClockPrescalerOption::DIV1;
 
 		/// <summary>
 		///		反序列化进来

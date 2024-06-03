@@ -11,14 +11,14 @@ hal::UartConfig::UartConfig(UART_InitTypeDef const &o)
 UartConfig &hal::UartConfig::operator=(UART_InitTypeDef const &o)
 {
 	_baud_rate = o.BaudRate;
-	_word_length = static_cast<WordLength>(o.WordLength);
-	_stop_bit_count = static_cast<StopBitCount>(o.StopBits);
-	_parity = static_cast<Parity>(o.Parity);
-	_mode = static_cast<Mode>(o.Mode);
-	_hardware_flow_control = static_cast<HardwareFlowControl>(o.HwFlowCtl);
-	_over_sampling = static_cast<OverSampling>(o.OverSampling);
-	_one_bit_sampling = static_cast<OneBitSampling>(o.OneBitSampling);
-	_clock_prescaler = static_cast<ClockPrescaler>(o.ClockPrescaler);
+	_word_length = static_cast<WordLengthOption>(o.WordLength);
+	_stop_bit_count = static_cast<StopBitsOption>(o.StopBits);
+	_parity = static_cast<ParityOption>(o.Parity);
+	_mode = static_cast<ModeOption>(o.Mode);
+	_hardware_flow_control = static_cast<HardwareFlowControlOption>(o.HwFlowCtl);
+	_over_sampling = static_cast<OverSamplingOption>(o.OverSampling);
+	_one_bit_sampling = static_cast<OneBitSamplingOption>(o.OneBitSampling);
+	_clock_prescaler = static_cast<ClockPrescalerOption>(o.ClockPrescaler);
 	return *this;
 }
 
@@ -45,17 +45,17 @@ void hal::UartConfig::Deserialize(bsp::ISerial const &serial)
 	{
 	case 7:
 		{
-			_word_length = WordLength::WordLength_7bit;
+			_word_length = WordLengthOption::WordLength_7bit;
 			break;
 		}
 	case 8:
 		{
-			_word_length = WordLength::WordLength_8bit;
+			_word_length = WordLengthOption::WordLength_8bit;
 			break;
 		}
 	case 9:
 		{
-			_word_length = WordLength::WordLength_9bit;
+			_word_length = WordLengthOption::WordLength_9bit;
 			break;
 		}
 	default:
@@ -68,22 +68,22 @@ void hal::UartConfig::Deserialize(bsp::ISerial const &serial)
 	{
 	case bsp::ISerial::StopBitsOption::ZeroPointFive:
 		{
-			_stop_bit_count = StopBitCount::StopBitCount_0_5_bit;
+			_stop_bit_count = StopBitsOption::StopBitCount_0_5_bit;
 			break;
 		}
 	case bsp::ISerial::StopBitsOption::One:
 		{
-			_stop_bit_count = StopBitCount::StopBitCount_1_bit;
+			_stop_bit_count = StopBitsOption::StopBitCount_1_bit;
 			break;
 		}
 	case bsp::ISerial::StopBitsOption::OnePointFive:
 		{
-			_stop_bit_count = StopBitCount::StopBitCount_1_5_bit;
+			_stop_bit_count = StopBitsOption::StopBitCount_1_5_bit;
 			break;
 		}
 	case bsp::ISerial::StopBitsOption::Tow:
 		{
-			_stop_bit_count = StopBitCount::StopBitCount_2_bit;
+			_stop_bit_count = StopBitsOption::StopBitCount_2_bit;
 			break;
 		}
 	default:
@@ -96,17 +96,17 @@ void hal::UartConfig::Deserialize(bsp::ISerial const &serial)
 	{
 	case bsp::ISerial::ParityOption::None:
 		{
-			_parity = Parity::None;
+			_parity = ParityOption::None;
 			break;
 		}
 	case bsp::ISerial::ParityOption::Even:
 		{
-			_parity = Parity::Even;
+			_parity = ParityOption::Even;
 			break;
 		}
 	case bsp::ISerial::ParityOption::Odd:
 		{
-			_parity = Parity::Odd;
+			_parity = ParityOption::Odd;
 			break;
 		}
 	default:
@@ -119,22 +119,22 @@ void hal::UartConfig::Deserialize(bsp::ISerial const &serial)
 	{
 	case bsp::ISerial::HardwareFlowControlOption::None:
 		{
-			_hardware_flow_control = HardwareFlowControl::None;
+			_hardware_flow_control = HardwareFlowControlOption::None;
 			break;
 		}
 	case bsp::ISerial::HardwareFlowControlOption::CTS:
 		{
-			_hardware_flow_control = HardwareFlowControl::CTS;
+			_hardware_flow_control = HardwareFlowControlOption::CTS;
 			break;
 		}
 	case bsp::ISerial::HardwareFlowControlOption::RTS:
 		{
-			_hardware_flow_control = HardwareFlowControl::RTS;
+			_hardware_flow_control = HardwareFlowControlOption::RTS;
 			break;
 		}
 	case bsp::ISerial::HardwareFlowControlOption::RTS_CTS:
 		{
-			_hardware_flow_control = HardwareFlowControl::RTS_CTS;
+			_hardware_flow_control = HardwareFlowControlOption::RTS_CTS;
 			break;
 		}
 	default:
@@ -150,17 +150,17 @@ void hal::UartConfig::Serialize(bsp::ISerial &serial) const
 
 	switch (_word_length)
 	{
-	case WordLength::WordLength_7bit:
+	case WordLengthOption::WordLength_7bit:
 		{
 			serial.SetDataBits(7);
 			break;
 		}
-	case WordLength::WordLength_8bit:
+	case WordLengthOption::WordLength_8bit:
 		{
 			serial.SetDataBits(8);
 			break;
 		}
-	case WordLength::WordLength_9bit:
+	case WordLengthOption::WordLength_9bit:
 		{
 			serial.SetDataBits(9);
 			break;
@@ -173,22 +173,22 @@ void hal::UartConfig::Serialize(bsp::ISerial &serial) const
 
 	switch (_stop_bit_count)
 	{
-	case StopBitCount::StopBitCount_0_5_bit:
+	case StopBitsOption::StopBitCount_0_5_bit:
 		{
 			serial.SetStopBits(bsp::ISerial::StopBitsOption::ZeroPointFive);
 			break;
 		}
-	case StopBitCount::StopBitCount_1_bit:
+	case StopBitsOption::StopBitCount_1_bit:
 		{
 			serial.SetStopBits(bsp::ISerial::StopBitsOption::One);
 			break;
 		}
-	case StopBitCount::StopBitCount_1_5_bit:
+	case StopBitsOption::StopBitCount_1_5_bit:
 		{
 			serial.SetStopBits(bsp::ISerial::StopBitsOption::OnePointFive);
 			break;
 		}
-	case StopBitCount::StopBitCount_2_bit:
+	case StopBitsOption::StopBitCount_2_bit:
 		{
 			serial.SetStopBits(bsp::ISerial::StopBitsOption::Tow);
 			break;
@@ -201,17 +201,17 @@ void hal::UartConfig::Serialize(bsp::ISerial &serial) const
 
 	switch (_parity)
 	{
-	case Parity::None:
+	case ParityOption::None:
 		{
 			serial.SetParity(bsp::ISerial::ParityOption::None);
 			break;
 		}
-	case Parity::Even:
+	case ParityOption::Even:
 		{
 			serial.SetParity(bsp::ISerial::ParityOption::Even);
 			break;
 		}
-	case Parity::Odd:
+	case ParityOption::Odd:
 		{
 			serial.SetParity(bsp::ISerial::ParityOption::Odd);
 			break;
@@ -224,22 +224,22 @@ void hal::UartConfig::Serialize(bsp::ISerial &serial) const
 
 	switch (_hardware_flow_control)
 	{
-	case HardwareFlowControl::None:
+	case HardwareFlowControlOption::None:
 		{
 			serial.SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption::None);
 			break;
 		}
-	case HardwareFlowControl::CTS:
+	case HardwareFlowControlOption::CTS:
 		{
 			serial.SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption::CTS);
 			break;
 		}
-	case HardwareFlowControl::RTS:
+	case HardwareFlowControlOption::RTS:
 		{
 			serial.SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption::RTS);
 			break;
 		}
-	case HardwareFlowControl::RTS_CTS:
+	case HardwareFlowControlOption::RTS_CTS:
 		{
 			serial.SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption::RTS_CTS);
 			break;
