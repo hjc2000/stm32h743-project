@@ -1,6 +1,7 @@
 #include"Serial.h"
 #include<bsp/bsp.h>
 #include<FreeRTOS.h>
+#include<hal-wrapper/clock/SysTickClock.h>
 #include<hal-wrapper/interrupt/Interrupt.h>
 #include<hal-wrapper/peripheral/dma/DmaConfig.h>
 #include<hal-wrapper/peripheral/gpio/GpioPort.h>
@@ -214,7 +215,84 @@ void Serial::SetPosition(int64_t value)
 }
 #pragma endregion
 
-void Serial::Begin(uint32_t baud_rate)
+#pragma region 属性
+uint32_t bsp::Serial::BaudRate()
+{
+	return _baud_rate;
+}
+
+void bsp::Serial::SetBaudRate(uint32_t value)
+{
+	if (_have_begun)
+	{
+		throw std::runtime_error { "串口打开后不允许更改设置" };
+	}
+
+	_baud_rate = value;
+}
+
+uint8_t bsp::Serial::DataBits()
+{
+	return _data_bits;
+}
+
+void bsp::Serial::SetDataBits(uint8_t value)
+{
+	if (_have_begun)
+	{
+		throw std::runtime_error { "串口打开后不允许更改设置" };
+	}
+
+	_data_bits = value;
+}
+
+bsp::ISerial::ParityOption bsp::Serial::Parity()
+{
+	return _parity;
+}
+
+void bsp::Serial::SetParity(bsp::ISerial::ParityOption value)
+{
+	if (_have_begun)
+	{
+		throw std::runtime_error { "串口打开后不允许更改设置" };
+	}
+
+	_parity = value;
+}
+
+bsp::ISerial::StopBitsOption bsp::Serial::StopBits()
+{
+	return _stop_bits;
+}
+
+void bsp::Serial::SetStopBits(bsp::ISerial::StopBitsOption value)
+{
+	if (_have_begun)
+	{
+		throw std::runtime_error { "串口打开后不允许更改设置" };
+	}
+
+	_stop_bits = value;
+}
+
+bsp::ISerial::HardwareFlowControlOption bsp::Serial::HardwareFlowControl()
+{
+	return _hardware_flow_control;
+}
+
+void bsp::Serial::SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption value)
+{
+	if (_have_begun)
+	{
+		throw std::runtime_error { "串口打开后不允许更改设置" };
+	}
+
+	_hardware_flow_control = value;
+}
+#pragma endregion
+
+void Serial::Open()
 {
 	if (_have_begun)
 	{
@@ -230,9 +308,8 @@ void Serial::Begin(uint32_t baud_rate)
 	*/
 	_send_complete_signal.Release();
 
-	_baud_rate = baud_rate;
 	hal::UartConfig options;
-	options._baud_rate = baud_rate;
+	options._baud_rate = _baud_rate;
 
 	_uart_handle.Instance = USART1;
 	_uart_handle.Init = options;
@@ -260,4 +337,20 @@ void Serial::Begin(uint32_t baud_rate)
 	};
 
 	enable_interrupt();
+}
+
+uint64_t bsp::Serial::BaudTicks(uint32_t baud_count)
+{
+	/*
+	* baud_interval = 1 / baud_rate
+	* tick_interval = 1 / tick_frequency
+	*
+	* tick_count = baud_count * baud_interval / tick_interval
+	* tick_count = baud_count * (1 / baud_rate) / (1 / tick_frequency)
+	* tick_count = baud_count * (1 / baud_rate) * tick_frequency
+	* tick_count = baud_count * tick_frequency / baud_rate
+	*/
+
+	uint64_t tick_count = baud_count * hal::SysTickClock::Instance().Frequency() / _baud_rate;
+	return tick_count;
 }

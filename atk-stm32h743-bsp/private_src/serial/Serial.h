@@ -24,8 +24,15 @@ namespace bsp
 	private:
 		Serial() = default;
 
-		bool _have_begun = false;
+		#pragma region 选项
 		uint32_t _baud_rate = 115200;
+		uint8_t _data_bits = 8;
+		bsp::ISerial::ParityOption _parity = bsp::ISerial::ParityOption::None;
+		bsp::ISerial::StopBitsOption _stop_bits = bsp::ISerial::StopBitsOption::One;
+		bsp::ISerial::HardwareFlowControlOption _hardware_flow_control = bsp::ISerial::HardwareFlowControlOption::None;
+		#pragma endregion
+
+		bool _have_begun = false;
 		UART_HandleTypeDef _uart_handle { };
 		DMA_HandleTypeDef _tx_dma_handle { };
 		DMA_HandleTypeDef _rx_dma_handle { };
@@ -92,6 +99,23 @@ namespace bsp
 		void SetPosition(int64_t value) override;
 		#pragma endregion
 
+		#pragma region 属性
+		uint32_t BaudRate() override;
+		void SetBaudRate(uint32_t value) override;
+
+		uint8_t DataBits() override;
+		void SetDataBits(uint8_t value) override;
+
+		bsp::ISerial::ParityOption Parity() override;
+		void SetParity(bsp::ISerial::ParityOption value) override;
+
+		bsp::ISerial::StopBitsOption StopBits() override;
+		void SetStopBits(bsp::ISerial::StopBitsOption value) override;
+
+		bsp::ISerial::HardwareFlowControlOption HardwareFlowControl() override;
+		void SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption value) override;
+		#pragma endregion
+
 		/// <summary>
 		///		启动串口。
 		///		* 本函数幂等，调用后，启动串口，再次调用会直接返回，只有调用 Close
@@ -99,6 +123,12 @@ namespace bsp
 		///		* 本函数不是线程安全和可重入的，包括实现幂等的机制也不是线程安全和可重入的。
 		/// </summary>
 		/// <param name="baud_rate">想要的波特率</param>
-		void Begin(uint32_t baud_rate) override;
+		void Open() override;
+
+		/// <summary>
+		///		baud_count 个波特占用 SysTick 的多少个 tick
+		/// </summary>
+		/// <returns></returns>
+		uint64_t BaudTicks(uint32_t baud_count);
 	};
 }
