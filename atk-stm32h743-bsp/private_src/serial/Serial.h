@@ -24,7 +24,7 @@ namespace bsp
 	private:
 		Serial() = default;
 
-		#pragma region 选项
+		#pragma region 属性的字段
 		uint32_t _baud_rate = 115200;
 		uint8_t _data_bits = 8;
 		bsp::ISerial::ParityOption _parity = bsp::ISerial::ParityOption::None;
@@ -124,11 +124,5 @@ namespace bsp
 		/// </summary>
 		/// <param name="baud_rate">想要的波特率</param>
 		void Open() override;
-
-		/// <summary>
-		///		baud_count 个波特占用 SysTick 的多少个 tick
-		/// </summary>
-		/// <returns></returns>
-		uint64_t BaudTicks(uint32_t baud_count);
 	};
 }
