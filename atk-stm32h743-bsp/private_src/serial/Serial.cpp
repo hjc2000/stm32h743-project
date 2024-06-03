@@ -170,6 +170,9 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 		*
 		* 这里必须使用 HAL_UARTEx_ReceiveToIdle_DMA，否则超时机制就无效。空闲线和
 		* 超时机制无法同时生效。
+		* 
+		* 使用 HAL_UARTEx_ReceiveToIdle_DMA 并在 while(true) 中执行直到接收到 count
+		* 个数据或发生空闲中断的这种方式适合连续的字节流，而不是需要时间来断帧的场景。
 		*/
 		HAL_UART_Receive_DMA(&_uart_handle, buffer + offset, count);
 
