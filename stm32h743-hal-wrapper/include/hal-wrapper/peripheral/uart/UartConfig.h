@@ -149,13 +149,15 @@ namespace hal
 		ClockPrescalerOption _clock_prescaler = ClockPrescalerOption::DIV1;
 
 		/// <summary>
-		///		反序列化进来
+		///		反序列化进来。
+		///		* 本类的属性比 bsp::ISerial 多，所以反序列化不完全。
 		/// </summary>
 		/// <param name="serial"></param>
 		void Deserialize(bsp::ISerial const &serial);
 
 		/// <summary>
-		///		序列化出去
+		///		序列化出去。
+		///		* 本类的属性比 bsp::ISerial 多，所以序列化不完全。
 		/// </summary>
 		/// <param name="serial"></param>
 		void Serialize(bsp::ISerial &serial) const;
