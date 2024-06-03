@@ -123,7 +123,6 @@ void bsp::Serial::OnSendCompleteCallback(UART_HandleTypeDef *huart)
 
 void bsp::Serial::OnErrotCallback(UART_HandleTypeDef *huart)
 {
-	Serial::Instance()._read_time_out = true;
 	Serial::Instance()._receive_complete_signal.ReleaseFromISR();
 }
 #pragma endregion
@@ -162,35 +161,36 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 	}
 
 	task::MutexLockGuard l { _read_lock };
-	_read_time_out = false;
-	while (true)
+	task::Critical::Run([&]()
 	{
-		if (_read_time_out)
-		{
-			_read_time_out = false;
-			return _uart_handle.RxXferSize;
-		}
+		/*
+		* 利用 DMA 接收有 2 个选择：
+		*	HAL_UART_Receive_DMA
+		*	HAL_UARTEx_ReceiveToIdle_DMA
+		*
+		* 这里必须使用 HAL_UARTEx_ReceiveToIdle_DMA，否则超时机制就无效。空闲线和
+		* 超时机制无法同时生效。
+		*/
+		HAL_UART_Receive_DMA(&_uart_handle, buffer + offset, count);
 
-		task::Critical::Run([&]()
-		{
-			// HAL_UART_Receive_DMA
-			HAL_UARTEx_ReceiveToIdle_DMA(&_uart_handle, buffer + offset, count);
+		/*
+		* 通过赋值为空指针，把传输半满回调给禁用，不然接收的数据较长，超过缓冲区一半时，
+		* 即使是一次性接收的，UART 也会回调 OnReceiveEventCallback 两次。
+		*
+		* 这个操作需要在临界区中，并且 DMA 的中断要处于 freertos 的管理范围内，否则无效。
+		*/
+		_rx_dma_handle.XferHalfCpltCallback = nullptr;
+	});
 
-			/*
-			* 通过赋值为空指针，把传输半满回调给禁用，不然接收的数据较长，超过缓冲区一半时，
-			* 即使是一次性接收的，UART 也会回调 OnReceiveEventCallback 两次。
-			*
-			* 这个操作需要在临界区中，并且 DMA 的中断要处于 freertos 的管理范围内，否则无效。
-			*/
-			_rx_dma_handle.XferHalfCpltCallback = nullptr;
-		});
+	_receive_complete_signal.Acquire();
 
-		_receive_complete_signal.Acquire();
-		if (_uart_handle.RxXferSize > 0)
-		{
-			return _uart_handle.RxXferSize;
-		}
+	// 接收到 count 个数据或超时后会结束等待。
+	if (_uart_handle.ErrorCode & HAL_UART_ERROR_RTO)
+	{
+		BSP::RedDigitalLed().Toggle();
 	}
+
+	return _uart_handle.RxXferSize;
 }
 
 void Serial::Write(uint8_t const *buffer, int32_t offset, int32_t count)
@@ -273,6 +273,8 @@ void Serial::Begin(uint32_t baud_rate)
 	_uart_handle.RxEventCallback = OnReceiveEventCallback;
 	_uart_handle.TxCpltCallback = OnSendCompleteCallback;
 	_uart_handle.ErrorCallback = OnErrotCallback;
+
+	SetReadTimeout((1 + 8 + 0 + 1) * 2);
 
 	// 启用中断
 	auto enable_interrupt = []()

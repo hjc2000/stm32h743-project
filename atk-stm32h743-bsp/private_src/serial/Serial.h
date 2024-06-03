@@ -33,7 +33,6 @@ namespace bsp
 		task::BinarySemaphore _receive_complete_signal;
 		task::Mutex _read_lock { };
 		int32_t _read_time_out_in_baud = 0;
-		bool _read_time_out = false;
 
 		friend void ::USART1_IRQHandler();
 		friend void ::DMA_STR0_IRQHandler();
