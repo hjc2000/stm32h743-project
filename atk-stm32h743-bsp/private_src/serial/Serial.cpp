@@ -113,13 +113,18 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 #pragma region 被中断处理函数回调的函数
 void bsp::Serial::OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos)
 {
-	Serial::Instance()._current_receive_count = pos;
 	Serial::Instance()._receive_complete_signal.ReleaseFromISR();
 }
 
 void bsp::Serial::OnSendCompleteCallback(UART_HandleTypeDef *huart)
 {
 	Serial::Instance()._send_complete_signal.ReleaseFromISR();
+}
+
+void bsp::Serial::OnErrotCallback(UART_HandleTypeDef *huart)
+{
+	Serial::Instance()._read_time_out = true;
+	Serial::Instance()._receive_complete_signal.ReleaseFromISR();
 }
 #pragma endregion
 
@@ -157,10 +162,18 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 	}
 
 	task::MutexLockGuard l { _read_lock };
+	_read_time_out = false;
 	while (true)
 	{
+		if (_read_time_out)
+		{
+			_read_time_out = false;
+			return _uart_handle.RxXferSize;
+		}
+
 		task::Critical::Run([&]()
 		{
+			// HAL_UART_Receive_DMA
 			HAL_UARTEx_ReceiveToIdle_DMA(&_uart_handle, buffer + offset, count);
 
 			/*
@@ -173,9 +186,9 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 		});
 
 		_receive_complete_signal.Acquire();
-		if (_current_receive_count > 0)
+		if (_uart_handle.RxXferSize > 0)
 		{
-			return _current_receive_count;
+			return _uart_handle.RxXferSize;
 		}
 	}
 }
@@ -215,6 +228,19 @@ void Serial::SetPosition(int64_t value)
 }
 #pragma endregion
 
+void bsp::Serial::SetReadTimeout(uint32_t baud_counts)
+{
+	if (baud_counts == 0)
+	{
+		HAL_UART_DisableReceiverTimeout(&_uart_handle);
+	}
+	else
+	{
+		HAL_UART_ReceiverTimeout_Config(&_uart_handle, baud_counts);
+		HAL_UART_EnableReceiverTimeout(&_uart_handle);
+	}
+}
+
 void Serial::Begin(uint32_t baud_rate)
 {
 	if (_have_begun)
@@ -246,6 +272,7 @@ void Serial::Begin(uint32_t baud_rate)
 	*/
 	_uart_handle.RxEventCallback = OnReceiveEventCallback;
 	_uart_handle.TxCpltCallback = OnSendCompleteCallback;
+	_uart_handle.ErrorCallback = OnErrotCallback;
 
 	// 启用中断
 	auto enable_interrupt = []()

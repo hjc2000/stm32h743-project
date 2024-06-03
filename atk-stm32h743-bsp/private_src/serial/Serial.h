@@ -32,8 +32,8 @@ namespace bsp
 		task::BinarySemaphore _send_complete_signal;
 		task::BinarySemaphore _receive_complete_signal;
 		task::Mutex _read_lock { };
-		int32_t _current_receive_count = 0;
 		int32_t _read_time_out_in_baud = 0;
+		bool _read_time_out = false;
 
 		friend void ::USART1_IRQHandler();
 		friend void ::DMA_STR0_IRQHandler();
@@ -43,6 +43,7 @@ namespace bsp
 		#pragma region 被中断处理函数回调的函数
 		static void OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos);
 		static void OnSendCompleteCallback(UART_HandleTypeDef *huart);
+		static void OnErrotCallback(UART_HandleTypeDef *huart);
 		#pragma endregion
 
 	public:
@@ -87,6 +88,8 @@ namespace bsp
 		int64_t Position() override;
 		void SetPosition(int64_t value) override;
 		#pragma endregion
+
+		void SetReadTimeout(uint32_t baud_counts);
 
 		/// <summary>
 		///		启动串口。
