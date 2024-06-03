@@ -309,6 +309,7 @@ void Serial::Open()
 	_send_complete_signal.Release();
 
 	hal::UartConfig options;
+	options.Deserialize(*this);
 	options._baud_rate = _baud_rate;
 
 	_uart_handle.Instance = USART1;

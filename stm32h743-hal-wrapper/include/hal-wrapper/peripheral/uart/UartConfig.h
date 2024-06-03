@@ -148,7 +148,16 @@ namespace hal
 
 		ClockPrescaler _clock_prescaler = ClockPrescaler::DIV1;
 
-		void Serialize(bsp::ISerial const &serial);
-		void Deserialize(bsp::ISerial &serial) const;
+		/// <summary>
+		///		反序列化进来
+		/// </summary>
+		/// <param name="serial"></param>
+		void Deserialize(bsp::ISerial const &serial);
+
+		/// <summary>
+		///		序列化出去
+		/// </summary>
+		/// <param name="serial"></param>
+		void Serialize(bsp::ISerial &serial) const;
 	};
 }
