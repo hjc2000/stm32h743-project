@@ -1,4 +1,5 @@
 #pragma once
+#include<bsp-interface/ISerial.h>
 #include<hal.h>
 
 namespace hal
@@ -146,5 +147,8 @@ namespace hal
 		};
 
 		ClockPrescaler _clock_prescaler = ClockPrescaler::DIV1;
+
+		void Serialize(bsp::ISerial const &serial);
+		void Deserialize(bsp::ISerial &serial) const;
 	};
 }

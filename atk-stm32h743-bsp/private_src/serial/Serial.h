@@ -100,19 +100,19 @@ namespace bsp
 		#pragma endregion
 
 		#pragma region 属性
-		uint32_t BaudRate() override;
+		uint32_t BaudRate() const override;
 		void SetBaudRate(uint32_t value) override;
 
-		uint8_t DataBits() override;
+		uint8_t DataBits() const override;
 		void SetDataBits(uint8_t value) override;
 
-		bsp::ISerial::ParityOption Parity() override;
+		bsp::ISerial::ParityOption Parity() const override;
 		void SetParity(bsp::ISerial::ParityOption value) override;
 
-		bsp::ISerial::StopBitsOption StopBits() override;
+		bsp::ISerial::StopBitsOption StopBits() const override;
 		void SetStopBits(bsp::ISerial::StopBitsOption value) override;
 
-		bsp::ISerial::HardwareFlowControlOption HardwareFlowControl() override;
+		bsp::ISerial::HardwareFlowControlOption HardwareFlowControl() const override;
 		void SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption value) override;
 		#pragma endregion
 
