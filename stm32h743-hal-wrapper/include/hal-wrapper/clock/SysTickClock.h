@@ -18,15 +18,15 @@ namespace hal
 			return o;
 		}
 
-		enum class SysTickClockSource
+		enum class SysTickClockSourceOption
 		{
 			HCLK = SYSTICK_CLKSOURCE_HCLK,
 			HCLK_DIV8 = SYSTICK_CLKSOURCE_HCLK_DIV8,
 		};
 
-		SysTickClock::SysTickClockSource ClockSource();
+		SysTickClock::SysTickClockSourceOption ClockSource();
 
-		void SetClockSource(SysTickClock::SysTickClockSource value);
+		void SetClockSource(SysTickClock::SysTickClockSourceOption value);
 
 		/// <summary>
 		///		获取 systick 的时钟频率。

@@ -3,18 +3,18 @@
 
 using namespace hal;
 
-SysTickClock::SysTickClockSource SysTickClock::ClockSource()
+SysTickClock::SysTickClockSourceOption SysTickClock::ClockSource()
 {
 	uint32_t masked = SysTick->CTRL & SysTick_CTRL_CLKSOURCE_Msk;
 	if (masked)
 	{
-		return SysTickClockSource::HCLK;
+		return SysTickClockSourceOption::HCLK;
 	}
 
-	return SysTickClockSource::HCLK_DIV8;
+	return SysTickClockSourceOption::HCLK_DIV8;
 }
 
-void SysTickClock::SetClockSource(SysTickClock::SysTickClockSource value)
+void SysTickClock::SetClockSource(SysTickClock::SysTickClockSourceOption value)
 {
 	HAL_SYSTICK_CLKSourceConfig(static_cast<uint32_t>(value));
 }
