@@ -25,7 +25,6 @@ namespace hal
 		};
 
 		SysTickClock::SysTickClockSourceOption ClockSource();
-
 		void SetClockSource(SysTickClock::SysTickClockSourceOption value);
 
 		/// <summary>

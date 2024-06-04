@@ -85,3 +85,5 @@ namespace hal
 		uint32_t _alternate;
 	};
 }
+
+hal::GpioPin operator|(hal::GpioPin left, hal::GpioPin right);
