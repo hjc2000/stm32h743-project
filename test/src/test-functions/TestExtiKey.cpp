@@ -4,7 +4,7 @@
 void TestExtiKey()
 {
 	BSP::RedDigitalLed().TurnOn();
-	while (1)
+	while (true)
 	{
 		if (BSP::WakeUpKey().IsPressed())
 		{
