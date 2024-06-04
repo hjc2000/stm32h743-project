@@ -1,6 +1,7 @@
 #pragma once
 #include<bsp-interface/IDelayer.h>
 #include<bsp-interface/IDigitalLed.h>
+#include<bsp-interface/IEventDrivenKey.h>
 #include<bsp-interface/IKeyScanner.h>
 #include<bsp-interface/ISerial.h>
 
@@ -27,6 +28,7 @@ public:
 	static bsp::IDelayer &Delayer();
 
 	static bsp::IKeyScanner &KeyScanner();
+	static bsp::IEventDrivenKey &WakeUpKey();
 
 	static bsp::ISerial &Serial();
 };

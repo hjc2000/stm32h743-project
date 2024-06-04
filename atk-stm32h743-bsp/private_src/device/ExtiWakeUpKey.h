@@ -13,6 +13,8 @@ namespace bsp
 	class ExtiWakeUpKey :public bsp::IEventDrivenKey
 	{
 	private:
+		ExtiWakeUpKey();
+
 		/// <summary>
 		///		中断函数中经过消抖，确认按键被按下后就会将此字段赋值为 true。
 		/// </summary>
@@ -29,8 +31,6 @@ namespace bsp
 		}
 
 	public:
-		ExtiWakeUpKey();
-
 		static ExtiWakeUpKey &Instance()
 		{
 			static ExtiWakeUpKey instance;

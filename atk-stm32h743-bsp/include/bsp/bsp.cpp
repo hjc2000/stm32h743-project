@@ -3,6 +3,7 @@
 #include<bsp-interface/extension/KeyScanner.h>
 #include<Delayer.h>
 #include<DigitalLed.h>
+#include<ExtiWakeUpKey.h>
 #include<functional>
 #include<hal.h>
 #include<hal-wrapper/Cache.h>
@@ -116,6 +117,11 @@ bsp::IKeyScanner &BSP::KeyScanner()
 	};
 
 	return KeyScannerInitializer::Instance().Scanner();
+}
+
+bsp::IEventDrivenKey &BSP::WakeUpKey()
+{
+	return bsp::ExtiWakeUpKey::Instance();
 }
 
 bsp::ISerial &BSP::Serial()
