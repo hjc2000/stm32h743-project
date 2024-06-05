@@ -22,7 +22,7 @@ std::chrono::milliseconds IndependentWatchDog::WatchDogTimeoutDuration() const
 
 void IndependentWatchDog::SetWatchDogTimeoutDuration(std::chrono::milliseconds value)
 {
-	Fraction inner_clock_source_freq { InnerClockSourceFreq_Hz() };
+	Fraction inner_clock_source_freq = InnerClockSourceFreq_Hz();
 	Fraction inner_clock_source_interval = 1 / inner_clock_source_freq;
 	Fraction timeout_in_milliseconds = value.count();
 	Fraction timeout = timeout_in_milliseconds / 1000;
