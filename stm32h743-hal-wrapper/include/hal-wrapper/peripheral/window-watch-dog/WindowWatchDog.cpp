@@ -1,4 +1,5 @@
 #include"WindowWatchDog.h"
+#include<stdexcept>
 
 using namespace hal;
 
@@ -20,6 +21,10 @@ void WindowWatchDog::OnMspInitCallback(WWDG_HandleTypeDef *handle)
 void WindowWatchDog::OnEarlyWakeUpInterruptCallback(WWDG_HandleTypeDef *handle)
 {
 	WindowWatchDog::Instance().Feed();
+	if (WindowWatchDog::Instance()._early_wakeup_interrupt_callback)
+	{
+		WindowWatchDog::Instance()._early_wakeup_interrupt_callback();
+	}
 }
 
 WWDG_HandleTypeDef &WindowWatchDog::Handle()
@@ -44,4 +49,9 @@ void WindowWatchDog::Initialize(WindowWatchDogConfig &config)
 void hal::WindowWatchDog::Feed()
 {
 	HAL_WWDG_Refresh(&_handle);
+}
+
+void hal::WindowWatchDog::SetEarlyWakeupInterruptCallback(std::function<void()> func)
+{
+	_early_wakeup_interrupt_callback = func;
 }

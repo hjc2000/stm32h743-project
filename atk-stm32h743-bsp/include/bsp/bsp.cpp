@@ -13,6 +13,7 @@
 #include<hal-wrapper/peripheral/window-watch-dog/WindowWatchDog.h>
 #include<Key.h>
 #include<Serial.h>
+#include<stdint.h>
 
 using namespace bsp;
 
@@ -146,11 +147,17 @@ void TestWindowWatchDog()
 	config.SetWindow(0x5f);
 	config.SetPrescaler(hal::WindowWatchDogConfig::PrescalerOption::DIV8);
 	config.SetEarlyWakeupInterrupt(hal::WindowWatchDogConfig::EarlyWakeupInterruptOption::Enable);
+
+	hal::WindowWatchDog::Instance().SetEarlyWakeupInterruptCallback([&]()
+	{
+		BSP::GreenDigitalLed().Toggle();
+	});
+
 	hal::WindowWatchDog::Instance().Initialize(config);
 
 	while (true)
 	{
-		BSP::GreenDigitalLed().Toggle();
+		BSP::RedDigitalLed().Toggle();
 		BSP::Delayer().Delay(std::chrono::seconds { 1 });
 	}
 }
