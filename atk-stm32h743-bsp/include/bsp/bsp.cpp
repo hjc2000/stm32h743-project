@@ -10,9 +10,9 @@
 #include<hal-wrapper/clock/ClockSignal.h>
 #include<hal-wrapper/clock/Osc.h>
 #include<hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
+#include<hal-wrapper/peripheral/serial/Serial.h>
 #include<hal-wrapper/peripheral/window-watch-dog/WindowWatchDog.h>
 #include<Key.h>
-#include<Serial.h>
 #include<stdint.h>
 
 using namespace bsp;
@@ -129,7 +129,7 @@ bsp::IEventDrivenKey &BSP::WakeUpKey()
 
 bsp::ISerial &BSP::Serial()
 {
-	return Serial::Instance();
+	return hal::Serial::Instance();
 }
 
 bsp::IIndependentWatchDog &BSP::IndependentWatchDog()

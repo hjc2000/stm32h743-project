@@ -1,5 +1,4 @@
 #include"Serial.h"
-#include<bsp/bsp.h>
 #include<FreeRTOS.h>
 #include<hal-wrapper/clock/SysTickClock.h>
 #include<hal-wrapper/interrupt/Interrupt.h>
@@ -8,6 +7,7 @@
 #include<task.h>
 
 using namespace bsp;
+using namespace hal;
 
 #pragma region 中断处理函数
 extern "C"
@@ -112,13 +112,13 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 }
 
 #pragma region 被中断处理函数回调的函数
-void bsp::Serial::OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos)
+void Serial::OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos)
 {
 	Serial::Instance()._current_receive_count = pos;
 	Serial::Instance()._receive_complete_signal.ReleaseFromISR();
 }
 
-void bsp::Serial::OnSendCompleteCallback(UART_HandleTypeDef *huart)
+void Serial::OnSendCompleteCallback(UART_HandleTypeDef *huart)
 {
 	Serial::Instance()._send_complete_signal.ReleaseFromISR();
 }
@@ -217,12 +217,12 @@ void Serial::SetPosition(int64_t value)
 #pragma endregion
 
 #pragma region 属性
-uint32_t bsp::Serial::BaudRate() const
+uint32_t Serial::BaudRate() const
 {
 	return _baud_rate;
 }
 
-void bsp::Serial::SetBaudRate(uint32_t value)
+void Serial::SetBaudRate(uint32_t value)
 {
 	if (_have_begun)
 	{
@@ -232,12 +232,12 @@ void bsp::Serial::SetBaudRate(uint32_t value)
 	_baud_rate = value;
 }
 
-uint8_t bsp::Serial::DataBits() const
+uint8_t Serial::DataBits() const
 {
 	return _data_bits;
 }
 
-void bsp::Serial::SetDataBits(uint8_t value)
+void Serial::SetDataBits(uint8_t value)
 {
 	if (_have_begun)
 	{
@@ -247,12 +247,12 @@ void bsp::Serial::SetDataBits(uint8_t value)
 	_data_bits = value;
 }
 
-bsp::ISerial::ParityOption bsp::Serial::Parity() const
+ISerial::ParityOption Serial::Parity() const
 {
 	return _parity;
 }
 
-void bsp::Serial::SetParity(bsp::ISerial::ParityOption value)
+void Serial::SetParity(ISerial::ParityOption value)
 {
 	if (_have_begun)
 	{
@@ -262,12 +262,12 @@ void bsp::Serial::SetParity(bsp::ISerial::ParityOption value)
 	_parity = value;
 }
 
-bsp::ISerial::StopBitsOption bsp::Serial::StopBits() const
+ISerial::StopBitsOption Serial::StopBits() const
 {
 	return _stop_bits;
 }
 
-void bsp::Serial::SetStopBits(bsp::ISerial::StopBitsOption value)
+void Serial::SetStopBits(ISerial::StopBitsOption value)
 {
 	if (_have_begun)
 	{
@@ -277,12 +277,12 @@ void bsp::Serial::SetStopBits(bsp::ISerial::StopBitsOption value)
 	_stop_bits = value;
 }
 
-bsp::ISerial::HardwareFlowControlOption bsp::Serial::HardwareFlowControl() const
+ISerial::HardwareFlowControlOption Serial::HardwareFlowControl() const
 {
 	return _hardware_flow_control;
 }
 
-void bsp::Serial::SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption value)
+void Serial::SetHardwareFlowControl(ISerial::HardwareFlowControlOption value)
 {
 	if (_have_begun)
 	{
@@ -309,12 +309,12 @@ void Serial::Open()
 	*/
 	_send_complete_signal.Release();
 
-	hal::UartConfig options;
-	options.Deserialize(*this);
-	options._baud_rate = _baud_rate;
+	hal::UartConfig config;
+	config.Deserialize(*this);
+	config._baud_rate = _baud_rate;
 
 	_uart_handle.Instance = USART1;
-	_uart_handle.Init = options;
+	_uart_handle.Init = config;
 	_uart_handle.MspInitCallback = OnMspInitCallback;
 	HAL_UART_Init(&_uart_handle);
 

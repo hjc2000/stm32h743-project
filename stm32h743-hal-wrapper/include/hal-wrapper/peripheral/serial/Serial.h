@@ -16,7 +16,7 @@ extern "C"
 	void DMA_STR1_IRQHandler();
 }
 
-namespace bsp
+namespace hal
 {
 	class Serial :
 		public bsp::ISerial
