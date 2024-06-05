@@ -2,6 +2,7 @@
 #include<bsp-interface/IDelayer.h>
 #include<bsp-interface/IDigitalLed.h>
 #include<bsp-interface/IEventDrivenKey.h>
+#include<bsp-interface/IIndependentWatchDog.h>
 #include<bsp-interface/IKeyScanner.h>
 #include<bsp-interface/ISerial.h>
 
@@ -31,4 +32,10 @@ public:
 	static bsp::IEventDrivenKey &WakeUpKey();
 
 	static bsp::ISerial &Serial();
+
+	/// <summary>
+	///		独立看门狗。
+	/// </summary>
+	/// <returns></returns>
+	static bsp::IIndependentWatchDog &IndependentWatchDog();
 };

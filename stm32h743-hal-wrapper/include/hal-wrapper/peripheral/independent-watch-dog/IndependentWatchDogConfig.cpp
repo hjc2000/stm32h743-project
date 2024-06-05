@@ -3,6 +3,11 @@
 
 using namespace hal;
 
+hal::IndependentWatchDogConfig::IndependentWatchDogConfig()
+{
+	SetWindowValue(0x0FFF);
+}
+
 IndependentWatchDogConfig::IndependentWatchDogConfig(IWDG_InitTypeDef const &o)
 {
 	*this = o;
@@ -207,4 +212,14 @@ uint32_t IndependentWatchDogConfig::ReloadValue() const
 void IndependentWatchDogConfig::SetReloadValue(uint32_t value)
 {
 	_config_handle.Reload = value;
+}
+
+uint32_t hal::IndependentWatchDogConfig::WindowValue() const
+{
+	return _config_handle.Window;
+}
+
+void hal::IndependentWatchDogConfig::SetWindowValue(uint32_t value)
+{
+	_config_handle.Window = value;
 }

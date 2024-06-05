@@ -9,6 +9,7 @@
 #include<hal-wrapper/Cache.h>
 #include<hal-wrapper/clock/ClockSignal.h>
 #include<hal-wrapper/clock/Osc.h>
+#include<hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
 #include<Key.h>
 #include<Serial.h>
 
@@ -127,4 +128,9 @@ bsp::IEventDrivenKey &BSP::WakeUpKey()
 bsp::ISerial &BSP::Serial()
 {
 	return Serial::Instance();
+}
+
+bsp::IIndependentWatchDog &BSP::IndependentWatchDog()
+{
+	return hal::IndependentWatchDog::Instance();
 }

@@ -5,6 +5,7 @@
 #include<stdint.h>
 #include<task/Task.h>
 #include<TestExtiKey.h>
+#include<TestIndependentWatchDog.h>
 #include<TestKeyScanner.h>
 #include<TestSerial.h>
 
@@ -21,7 +22,7 @@ int main(void)
 			BSP::Initialize();
 			std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create([]()
 			{
-				TestExtiKey();
+				TestIndependentWatchDog();
 			}, 512);
 			vTaskStartScheduler();
 		}

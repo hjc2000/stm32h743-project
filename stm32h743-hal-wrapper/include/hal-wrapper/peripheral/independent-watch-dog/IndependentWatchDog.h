@@ -16,8 +16,8 @@ namespace hal
 		public base::HandleWrapper<IWDG_HandleTypeDef>
 	{
 	private:
-		IWDG_HandleTypeDef _handle;
-		IndependentWatchDogConfig _config;
+		IWDG_HandleTypeDef _handle { };
+		IndependentWatchDogConfig _config { };
 
 		/// <summary>
 		///		内部时钟信号的频率。还要经过预分频才会输入到计数器。

@@ -12,10 +12,10 @@ namespace hal
 		public base::HandleWrapper<IWDG_InitTypeDef>
 	{
 	private:
-		IWDG_InitTypeDef _config_handle;
+		IWDG_InitTypeDef _config_handle { };
 
 	public:
-		IndependentWatchDogConfig() = default;
+		IndependentWatchDogConfig();
 		IndependentWatchDogConfig(IWDG_InitTypeDef const &o);
 		IndependentWatchDogConfig &operator=(IWDG_InitTypeDef const &o);
 
@@ -63,5 +63,8 @@ namespace hal
 		/// </summary>
 		uint32_t ReloadValue() const;
 		void SetReloadValue(uint32_t value);
+
+		uint32_t WindowValue() const;
+		void SetWindowValue(uint32_t value);
 	};
 }
