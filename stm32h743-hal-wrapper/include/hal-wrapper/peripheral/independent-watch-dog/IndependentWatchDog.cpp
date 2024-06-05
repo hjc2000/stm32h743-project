@@ -1,6 +1,8 @@
 #include"IndependentWatchDog.h"
+#include<base/math/Fraction.h>
 
 using namespace hal;
+using namespace base;
 
 void IndependentWatchDog::Initialize()
 {
@@ -11,18 +13,11 @@ void IndependentWatchDog::Initialize()
 
 std::chrono::milliseconds IndependentWatchDog::WatchDogTimeoutDuration() const
 {
-	/*
-	* 设计数器计数间隔为 count_interval，单位：秒。
-	*
-	* timeout = reload_value * count_interval
-	* count_interval = 1 / count_freq
-	* count_freq = InnerClockSourceFreq_Hz / prescaler
-	*
-	* count_interval = 1 / (InnerClockSourceFreq_Hz / prescaler)
-	* count_interval = prescaler / InnerClockSourceFreq_Hz
-	* timeout = reload_value * prescaler / InnerClockSourceFreq_Hz
-	*/
-	return std::chrono::milliseconds { static_cast<int64_t>(1000) * _config.ReloadValue() * _config.GetPrescalerByUint32() / InnerClockSourceFreq_Hz() };
+	Fraction count_freq = Fraction { InnerClockSourceFreq_Hz() } / _config.GetPrescalerByUint32();
+	Fraction count_interval = 1 / count_freq;
+	Fraction timeout_in_seconds = _config.ReloadValue() * count_interval;
+	Fraction timeout_in_milliseconds = timeout_in_seconds * 1000;
+	return std::chrono::milliseconds { timeout_in_milliseconds.Div() };
 }
 
 void IndependentWatchDog::SetWatchDogTimeoutDuration(std::chrono::milliseconds value)

@@ -5,6 +5,10 @@ using namespace hal;
 
 hal::IndependentWatchDogConfig::IndependentWatchDogConfig()
 {
+	/*
+	* 设置为最大值，这样才能成为独立看门狗，否则是窗口看门狗。
+	* H743 的这个独立看门狗一定会有窗口，喂狗时间大于窗口值会导致看门狗触发。
+	*/
 	SetWindowValue(0x0FFF);
 }
 
