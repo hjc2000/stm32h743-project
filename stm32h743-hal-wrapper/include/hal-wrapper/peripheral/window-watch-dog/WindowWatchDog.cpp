@@ -53,5 +53,7 @@ void hal::WindowWatchDog::Feed()
 
 void hal::WindowWatchDog::SetEarlyWakeupInterruptCallback(std::function<void()> func)
 {
+	hal::Interrupt::DisableIRQ(IRQn_Type::WWDG_IRQn);
 	_early_wakeup_interrupt_callback = func;
+	hal::Interrupt::EnableIRQ(IRQn_Type::WWDG_IRQn);
 }
