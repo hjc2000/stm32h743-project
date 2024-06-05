@@ -78,7 +78,7 @@ IDigitalLed &BSP::GreenDigitalLed()
 
 bsp::IDelayer &BSP::Delayer()
 {
-	return Delayer::Instance();
+	return hal::Delayer::Instance();
 }
 
 bsp::IKeyScanner &BSP::KeyScanner()
@@ -94,7 +94,7 @@ bsp::IKeyScanner &BSP::KeyScanner()
 			_keys[(uint16_t)KeyIndex::KeyWakeUp] = &KeyWakeUp::Instance();
 			_key_scanner = std::shared_ptr<bsp::KeyScanner> { new bsp::KeyScanner {
 				_keys,
-				Delayer::Instance()
+				hal::Delayer::Instance()
 			} };
 		}
 
