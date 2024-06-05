@@ -4,7 +4,7 @@ using namespace hal;
 
 extern "C"
 {
-	void WWDG_IRQHandler()
+	void WWDG1_IRQHandler()
 	{
 		HAL_WWDG_IRQHandler(&WindowWatchDog::Instance().Handle());
 	}
@@ -12,7 +12,7 @@ extern "C"
 
 void WindowWatchDog::OnMspInitCallback(WWDG_HandleTypeDef *handle)
 {
-	__HAL_RCC_WWDG_CLK_ENABLE();
+	__HAL_RCC_WWDG1_CLK_ENABLE();
 	Interrupt::SetPriority(IRQn_Type::WWDG_IRQn, 4, 0);
 	Interrupt::EnableIRQ(IRQn_Type::WWDG_IRQn);
 }
@@ -20,10 +20,6 @@ void WindowWatchDog::OnMspInitCallback(WWDG_HandleTypeDef *handle)
 void WindowWatchDog::OnEarlyWakeUpInterruptCallback(WWDG_HandleTypeDef *handle)
 {
 	WindowWatchDog::Instance().Feed();
-	if (WindowWatchDog::Instance()._on_early_wakeup_interrupt)
-	{
-		WindowWatchDog::Instance()._on_early_wakeup_interrupt();
-	}
 }
 
 WWDG_HandleTypeDef &WindowWatchDog::Handle()

@@ -39,3 +39,5 @@ public:
 	/// <returns></returns>
 	static bsp::IIndependentWatchDog &IndependentWatchDog();
 };
+
+void TestWindowWatchDog();

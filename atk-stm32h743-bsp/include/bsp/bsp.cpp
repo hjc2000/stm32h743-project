@@ -10,6 +10,7 @@
 #include<hal-wrapper/clock/ClockSignal.h>
 #include<hal-wrapper/clock/Osc.h>
 #include<hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
+#include<hal-wrapper/peripheral/window-watch-dog/WindowWatchDog.h>
 #include<Key.h>
 #include<Serial.h>
 
@@ -133,4 +134,23 @@ bsp::ISerial &BSP::Serial()
 bsp::IIndependentWatchDog &BSP::IndependentWatchDog()
 {
 	return hal::IndependentWatchDog::Instance();
+}
+
+void TestWindowWatchDog()
+{
+	BSP::Delayer().Delay(std::chrono::seconds { 1 });
+	BSP::RedDigitalLed().TurnOn();
+
+	hal::WindowWatchDogConfig config;
+	config.SetCounterReloadValue(0x7f);
+	config.SetWindow(0x5f);
+	config.SetPrescaler(hal::WindowWatchDogConfig::PrescalerOption::DIV8);
+	config.SetEarlyWakeupInterrupt(hal::WindowWatchDogConfig::EarlyWakeupInterruptOption::Enable);
+	hal::WindowWatchDog::Instance().Initialize(config);
+
+	while (true)
+	{
+		BSP::GreenDigitalLed().Toggle();
+		BSP::Delayer().Delay(std::chrono::seconds { 1 });
+	}
 }
