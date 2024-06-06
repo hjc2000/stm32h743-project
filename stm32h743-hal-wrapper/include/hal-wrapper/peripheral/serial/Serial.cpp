@@ -310,8 +310,9 @@ void Serial::Open()
 	_uart_handle.Instance = USART1;
 	_uart_handle.Init = config;
 	_uart_handle.MspInitCallback = OnMspInitCallback;
-
 	HAL_UART_Init(&_uart_handle);
+
+	// 超时在串口初始化后设置才有效
 	SetReadTimeoutByFrameCount(2);
 
 	/*
