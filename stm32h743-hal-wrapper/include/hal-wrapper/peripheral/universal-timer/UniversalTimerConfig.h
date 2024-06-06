@@ -86,7 +86,11 @@ namespace hal
 		{
 			_handle.ClockDivision = static_cast<uint32_t>(value);
 		}
-
+		
+		/// <summary>
+		///		重复计数
+		/// </summary>
+		/// <returns></returns>
 		uint32_t RepetitionCounter()
 		{
 			return _handle.RepetitionCounter;
@@ -103,7 +107,7 @@ namespace hal
 		};
 
 		/// <summary>
-		///		自动重装载。
+		///		自动重装载的预装载。
 		/// </summary>
 		/// <returns></returns>
 		AutoReloadPreloadOption AutoReloadPreload()

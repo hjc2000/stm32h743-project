@@ -3,12 +3,18 @@
 #include<hal.h>
 #include<hal-wrapper/peripheral/universal-timer/UniversalTimerConfig.h>
 
+extern "C"
+{
+	void TIM3_IRQHandler();
+}
+
 namespace hal
 {
 	class UniversalTimer1 :
 		public base::HandleWrapper<TIM_HandleTypeDef>
 	{
 	private:
+		friend void ::TIM3_IRQHandler();
 		TIM_HandleTypeDef _handle { };
 		hal::UniversalTimerConfig _config { };
 
@@ -18,7 +24,7 @@ namespace hal
 		}
 
 	public:
-		UniversalTimer1 &Instance()
+		static UniversalTimer1 &Instance()
 		{
 			static UniversalTimer1 o;
 			return o;
@@ -27,5 +33,13 @@ namespace hal
 
 		TIM_HandleTypeDef &Handle() override;
 
+		HAL_TIM_ActiveChannel ActiveChannel()
+		{
+			return _handle.Channel;
+		}
+		void SetActiveChannel(HAL_TIM_ActiveChannel value)
+		{
+			_handle.Channel = value;
+		}
 	};
 }
