@@ -11,6 +11,13 @@ namespace hal
 		TIM_HandleTypeDef _handle { };
 
 	public:
+		UniversalTimer1 &Instance()
+		{
+			static UniversalTimer1 o;
+			return o;
+		}
+
+
 		TIM_HandleTypeDef &Handle() override;
 
 	};
