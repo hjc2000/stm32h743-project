@@ -96,9 +96,6 @@ namespace hal
 			_handle.RepetitionCounter = value;
 		}
 
-		#define TIM_AUTORELOAD_PRELOAD_DISABLE                0x00000000U               /*!< TIMx_ARR register is not buffered */
-		#define TIM_AUTORELOAD_PRELOAD_ENABLE                 TIM_CR1_ARPE              /*!< TIMx_ARR register is buffered */
-
 		enum class AutoReloadPreloadOption
 		{
 			Disable = TIM_AUTORELOAD_PRELOAD_DISABLE,

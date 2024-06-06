@@ -12,6 +12,11 @@ namespace hal
 		TIM_HandleTypeDef _handle { };
 		hal::UniversalTimerConfig _config { };
 
+		TIM_TypeDef *HardwareInstance()
+		{
+			return TIM3;
+		}
+
 	public:
 		UniversalTimer1 &Instance()
 		{
