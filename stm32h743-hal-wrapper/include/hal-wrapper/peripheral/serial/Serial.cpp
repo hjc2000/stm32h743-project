@@ -134,31 +134,6 @@ void hal::Serial::OnReadTimeout(UART_HandleTypeDef *huart)
 #pragma endregion
 
 #pragma region Stream
-bool Serial::CanRead()
-{
-	return true;
-}
-
-bool Serial::CanWrite()
-{
-	return true;
-}
-
-bool Serial::CanSeek()
-{
-	return false;
-}
-
-int64_t Serial::Length()
-{
-	return 0;
-}
-
-void Serial::SetLength(int64_t value)
-{
-	// 不支持的操作
-}
-
 int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 {
 	if (count > UINT16_MAX)
@@ -202,11 +177,6 @@ void Serial::Write(uint8_t const *buffer, int32_t offset, int32_t count)
 	}
 }
 
-void Serial::Flush()
-{
-	// Write 方法利用 DMA 直接发送缓冲区，本类没有内部缓冲区，不需要冲洗。
-}
-
 void Serial::Close()
 {
 	HAL_UART_DMAStop(&_uart_handle);
@@ -214,16 +184,6 @@ void Serial::Close()
 	hal::Interrupt::DisableIRQ(IRQn_Type::DMA1_Stream0_IRQn);
 	hal::Interrupt::DisableIRQ(IRQn_Type::DMA1_Stream1_IRQn);
 	_have_begun = false;
-}
-
-int64_t Serial::Position()
-{
-	return 0;
-}
-
-void Serial::SetPosition(int64_t value)
-{
-	// 不支持的操作。
 }
 #pragma endregion
 
@@ -324,54 +284,7 @@ void hal::Serial::SetReadTimeoutByBaudCount(uint32_t value)
 
 void hal::Serial::SetReadTimeoutByFrameCount(uint32_t value)
 {
-	// 1 位起始位
-	uint32_t baud_count = 1 * value;
-	baud_count += DataBits() * value;
-	if (Parity() != bsp::ISerial::ParityOption::None)
-	{
-		baud_count += 1 * value;
-	}
-
-	switch (StopBits())
-	{
-	case ISerial::StopBitsOption::ZeroPointFive:
-		{
-			baud_count += 1 * (value / 2);
-			if (value % 2 > 0)
-			{
-				baud_count += 1;
-			}
-
-			break;
-		}
-	case ISerial::StopBitsOption::One:
-		{
-			baud_count += 1 * value;
-			break;
-		}
-	case ISerial::StopBitsOption::OnePointFive:
-		{
-			baud_count += 3 * (value / 2);
-			if (value % 2 > 0)
-			{
-				baud_count += 2;
-			}
-
-			break;
-		}
-	case ISerial::StopBitsOption::Tow:
-		{
-			baud_count += 2 * value;
-			break;
-		}
-	default:
-		{
-			baud_count += 1 * value;
-			break;
-		}
-	}
-
-	SetReadTimeoutByBaudCount(baud_count);
+	SetReadTimeoutByBaudCount(CalculateFramesBaudCount(value));
 }
 
 void Serial::Open()

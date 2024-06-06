@@ -38,6 +38,10 @@ namespace hal
 		task::BinarySemaphore _receive_complete_signal;
 		task::Mutex _read_lock { };
 
+		/// <summary>
+		///		通过串口句柄和 DMA 寄存器，获取当前 DMA 接收了多少个字节。
+		/// </summary>
+		/// <returns></returns>
 		int32_t HaveRead();
 
 		friend void ::USART1_IRQHandler();
@@ -61,13 +65,6 @@ namespace hal
 		UART_HandleTypeDef &Handle() override;
 
 		#pragma region Stream
-		bool CanRead() override;
-		bool CanWrite() override;
-		bool CanSeek() override;
-
-		int64_t Length() override;
-		void SetLength(int64_t value) override;
-
 		/// <summary>
 		///		调用后临时启动 DMA 接收一次数据。
 		///		* 本类没有缓冲机制，所以上层应用如果调用 Read 不及时，会丢失数据。
@@ -95,11 +92,7 @@ namespace hal
 		/// <param name="count"></param>
 		void Write(uint8_t const *buffer, int32_t offset, int32_t count) override;
 
-		void Flush() override;
 		void Close() override;
-
-		int64_t Position() override;
-		void SetPosition(int64_t value) override;
 		#pragma endregion
 
 		#pragma region 属性
