@@ -71,15 +71,11 @@ namespace hal
 			_handle.Period = value;
 		}
 
-		#define TIM_CLOCKDIVISION_DIV1             0x00000000U                          /*!< Clock division: tDTS=tCK_INT   */
-		#define TIM_CLOCKDIVISION_DIV2             TIM_CR1_CKD_0                        /*!< Clock division: tDTS=2*tCK_INT */
-		#define TIM_CLOCKDIVISION_DIV4             TIM_CR1_CKD_1                        /*!< Clock division: tDTS=4*tCK_INT */
-
 		enum class ClockDivisionOption
 		{
-			DIV1,
-			DIV2,
-			DIV3,
+			DIV1 = TIM_CLOCKDIVISION_DIV1,
+			DIV2 = TIM_CLOCKDIVISION_DIV2,
+			DIV4 = TIM_CLOCKDIVISION_DIV4,
 		};
 
 		ClockDivisionOption ClockDivision()
@@ -91,20 +87,35 @@ namespace hal
 			_handle.ClockDivision = static_cast<uint32_t>(value);
 		}
 
-		uint32_t RepetitionCounter;  /*!< Specifies the repetition counter value.
-		Each time the RCR downcounter
-		reaches zero, an update event is generated and counting restarts
-		from the RCR value (N).
-		This means in PWM mode that (N+1) corresponds to:
-		- the number of PWM periods in edge-aligned mode
-		- the number of half PWM period in center-aligned mode
-		GP timers: this parameter must be a number between Min_Data = 0x00 and
-		Max_Data = 0xFF.
-		Advanced timers: this parameter must be a number between Min_Data = 0x0000 and
-		Max_Data = 0xFFFF. */
+		uint32_t RepetitionCounter()
+		{
+			return _handle.RepetitionCounter;
+		}
+		void SetRepetitionCounter(uint32_t value)
+		{
+			_handle.RepetitionCounter = value;
+		}
 
-		uint32_t AutoReloadPreload;  /*!< Specifies the auto-reload preload.
-		This parameter can be a value of @ref TIM_AutoReloadPreload */
+		#define TIM_AUTORELOAD_PRELOAD_DISABLE                0x00000000U               /*!< TIMx_ARR register is not buffered */
+		#define TIM_AUTORELOAD_PRELOAD_ENABLE                 TIM_CR1_ARPE              /*!< TIMx_ARR register is buffered */
 
+		enum class AutoReloadPreloadOption
+		{
+			Disable = TIM_AUTORELOAD_PRELOAD_DISABLE,
+			Enable = TIM_AUTORELOAD_PRELOAD_ENABLE,
+		};
+
+		/// <summary>
+		///		自动重装载。
+		/// </summary>
+		/// <returns></returns>
+		AutoReloadPreloadOption AutoReloadPreload()
+		{
+			return static_cast<AutoReloadPreloadOption>(_handle.AutoReloadPreload);
+		}
+		void SetAutoReloadPreload(AutoReloadPreloadOption value)
+		{
+			_handle.AutoReloadPreload = static_cast<uint32_t>(value);
+		}
 	};
 }
