@@ -29,6 +29,11 @@ extern "C"
 }
 #pragma endregion
 
+int32_t hal::Serial::HaveRead()
+{
+	return _uart_handle.RxXferSize - __HAL_DMA_GET_COUNTER(&_rx_dma_handle);
+}
+
 void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 {
 	auto init_gpio = []()
@@ -114,13 +119,17 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 #pragma region 被中断处理函数回调的函数
 void Serial::OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos)
 {
-	Serial::Instance()._current_receive_count = pos;
 	Serial::Instance()._receive_complete_signal.ReleaseFromISR();
 }
 
 void Serial::OnSendCompleteCallback(UART_HandleTypeDef *huart)
 {
 	Serial::Instance()._send_complete_signal.ReleaseFromISR();
+}
+
+void hal::Serial::OnReadTimeout(UART_HandleTypeDef *huart)
+{
+	Serial::Instance()._receive_complete_signal.ReleaseFromISR();
 }
 #pragma endregion
 
@@ -162,7 +171,9 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 	{
 		task::Critical::Run([&]()
 		{
-			HAL_UARTEx_ReceiveToIdle_DMA(&_uart_handle, buffer + offset, count);
+			// HAL_UART_Receive_DMA
+			// HAL_UARTEx_ReceiveToIdle_DMA
+			HAL_UART_Receive_DMA(&_uart_handle, buffer + offset, count);
 
 			/*
 			* 通过赋值为空指针，把传输半满回调给禁用，不然接收的数据较长，超过缓冲区一半时，
@@ -174,9 +185,9 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 		});
 
 		_receive_complete_signal.Acquire();
-		if (_current_receive_count > 0)
+		if (HaveRead() > 0)
 		{
-			return _current_receive_count;
+			return HaveRead();
 		}
 	}
 }
@@ -293,6 +304,76 @@ void Serial::SetHardwareFlowControl(ISerial::HardwareFlowControlOption value)
 }
 #pragma endregion
 
+UART_HandleTypeDef &hal::Serial::Handle()
+{
+	return _uart_handle;
+}
+
+void hal::Serial::SetReadTimeoutByBaudCount(uint32_t value)
+{
+	if (value > 0)
+	{
+		HAL_UART_ReceiverTimeout_Config(&Handle(), value);
+		HAL_UART_EnableReceiverTimeout(&Handle());
+	}
+	else
+	{
+		HAL_UART_DisableReceiverTimeout(&Handle());
+	}
+}
+
+void hal::Serial::SetReadTimeoutByFrameCount(uint32_t value)
+{
+	// 1 位起始位
+	uint32_t baud_count = 1 * value;
+	baud_count += DataBits() * value;
+	if (Parity() != bsp::ISerial::ParityOption::None)
+	{
+		baud_count += 1 * value;
+	}
+
+	switch (StopBits())
+	{
+	case ISerial::StopBitsOption::ZeroPointFive:
+		{
+			baud_count += 1 * (value / 2);
+			if (value % 2 > 0)
+			{
+				baud_count += 1;
+			}
+
+			break;
+		}
+	case ISerial::StopBitsOption::One:
+		{
+			baud_count += 1 * value;
+			break;
+		}
+	case ISerial::StopBitsOption::OnePointFive:
+		{
+			baud_count += 3 * (value / 2);
+			if (value % 2 > 0)
+			{
+				baud_count += 2;
+			}
+
+			break;
+		}
+	case ISerial::StopBitsOption::Tow:
+		{
+			baud_count += 2 * value;
+			break;
+		}
+	default:
+		{
+			baud_count += 1 * value;
+			break;
+		}
+	}
+
+	SetReadTimeoutByBaudCount(baud_count);
+}
+
 void Serial::Open()
 {
 	if (_have_begun)
@@ -316,7 +397,9 @@ void Serial::Open()
 	_uart_handle.Instance = USART1;
 	_uart_handle.Init = config;
 	_uart_handle.MspInitCallback = OnMspInitCallback;
+
 	HAL_UART_Init(&_uart_handle);
+	SetReadTimeoutByFrameCount(2);
 
 	/*
 	* HAL_UART_Init 函数会把中断处理函数中回调的函数都设为默认的，所以必须在 HAL_UART_Init
@@ -324,6 +407,7 @@ void Serial::Open()
 	*/
 	_uart_handle.RxEventCallback = OnReceiveEventCallback;
 	_uart_handle.TxCpltCallback = OnSendCompleteCallback;
+	_uart_handle.ErrorCallback = OnReadTimeout;
 
 	// 启用中断
 	auto enable_interrupt = []()

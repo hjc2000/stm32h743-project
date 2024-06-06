@@ -1,10 +1,7 @@
 #pragma once
-#include<atomic>
+#include<base/HandleWrapper.h>
 #include<bsp-interface/ISerial.h>
-#include<chrono>
-#include<hal.h>
 #include<hal-wrapper/peripheral/uart/UartConfig.h>
-#include<memory>
 #include<task/BinarySemaphore.h>
 #include<task/Critical.h>
 #include<task/Mutex.h>
@@ -19,7 +16,8 @@ extern "C"
 namespace hal
 {
 	class Serial :
-		public bsp::ISerial
+		public bsp::ISerial,
+		public base::HandleWrapper<UART_HandleTypeDef>
 	{
 	private:
 		Serial() = default;
@@ -39,7 +37,8 @@ namespace hal
 		task::BinarySemaphore _send_complete_signal;
 		task::BinarySemaphore _receive_complete_signal;
 		task::Mutex _read_lock { };
-		int32_t _current_receive_count = 0;
+
+		int32_t HaveRead();
 
 		friend void ::USART1_IRQHandler();
 		friend void ::DMA_STR0_IRQHandler();
@@ -49,6 +48,7 @@ namespace hal
 		#pragma region 被中断处理函数回调的函数
 		static void OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos);
 		static void OnSendCompleteCallback(UART_HandleTypeDef *huart);
+		static void OnReadTimeout(UART_HandleTypeDef *huart);
 		#pragma endregion
 
 	public:
@@ -57,6 +57,8 @@ namespace hal
 			static Serial o;
 			return o;
 		}
+
+		UART_HandleTypeDef &Handle() override;
 
 		#pragma region Stream
 		bool CanRead() override;
@@ -116,6 +118,9 @@ namespace hal
 		bsp::ISerial::HardwareFlowControlOption HardwareFlowControl() const override;
 		void SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption value) override;
 		#pragma endregion
+
+		void SetReadTimeoutByBaudCount(uint32_t value);
+		void SetReadTimeoutByFrameCount(uint32_t value);
 
 		/// <summary>
 		///		启动串口。
