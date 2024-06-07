@@ -10,6 +10,9 @@ extern "C"
 
 namespace hal
 {
+	/// <summary>
+	///		通用定时器
+	/// </summary>
 	class UniversalTimer1 :
 		public base::HandleWrapper<TIM_HandleTypeDef>
 	{
