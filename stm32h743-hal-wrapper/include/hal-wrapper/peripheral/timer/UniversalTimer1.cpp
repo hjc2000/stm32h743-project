@@ -66,7 +66,7 @@ void hal::UniversalTimer1::PwmInitialize(hal::UniversalTimerBaseConfig &config)
 	_base_config = config;
 	_handle.Instance = HardwareInstance();
 	_handle.Init = _base_config.Handle();
-	_handle.Base_MspInitCallback = OnPwmMspInitCallback;
+	_handle.PWM_MspInitCallback = OnPwmMspInitCallback;
 	HAL_TIM_PWM_Init(&_handle);
 }
 #pragma endregion
