@@ -41,3 +41,16 @@ void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerConfig &config)
 
 	HAL_TIM_Base_Start_IT(&_handle);
 }
+
+void hal::UniversalTimer1::PwmInitialize(hal::UniversalTimerConfig &config)
+{
+	_config = config;
+	_handle.Instance = HardwareInstance();
+	_handle.Init = _config.Handle();
+	_handle.Base_MspInitCallback = OnMspInitCallback;
+	HAL_TIM_Base_Init(&_handle);
+
+	_handle.PeriodElapsedCallback = OnPeriodElapsed;
+
+	HAL_TIM_Base_Start_IT(&_handle);
+}

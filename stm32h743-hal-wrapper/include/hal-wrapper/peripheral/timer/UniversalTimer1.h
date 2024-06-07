@@ -84,6 +84,12 @@ namespace hal
 		/// <param name="config"></param>
 		void BaseInitialize(hal::UniversalTimerConfig &config);
 
+		/// <summary>
+		///		初始化为 PWM 输出器。
+		/// </summary>
+		/// <param name="config"></param>
+		void PwmInitialize(hal::UniversalTimerConfig &config);
+
 		void SetPeriodElapsedCallback(std::function<void()> func)
 		{
 			task::Critical::Run([&]()
