@@ -162,22 +162,20 @@ void TestWindowWatchDog()
 
 void TestUniversalTimer1()
 {
-	BSP::RedDigitalLed().TurnOn();
-
 	hal::UniversalTimerBaseConfig config;
-	config.SetPrescaler(20000 - 1);
-	config.SetPeriod(5000 - 1);
+	config.SetPrescaler(200 - 1);
+	config.SetPeriod(500 - 1);
 	config.SetCounterMode(hal::UniversalTimerBaseConfig::CounterModeOption::UP);
 	config.SetClockDivision(hal::UniversalTimerBaseConfig::ClockDivisionOption::DIV1);
-	hal::UniversalTimer1::Instance().BaseInitialize(config);
-	hal::UniversalTimer1::Instance().SetPeriodElapsedCallback([&]()
-	{
-		BSP::GreenDigitalLed().Toggle();
-	});
-
+	hal::UniversalTimer1::Instance().PwmInitialize(config);
+	hal::UniversalTimerCompareOutputConfig compare_output_config;
+	compare_output_config.SetMode(hal::UniversalTimerCompareOutputConfig::ModeOption::Pwm1);
+	compare_output_config.SetPulse(500 / 2);
+	compare_output_config.SetPolarity(hal::UniversalTimerCompareOutputConfig::PolarityOption::Low);
+	hal::UniversalTimer1::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
 	while (true)
 	{
 		BSP::Delayer().Delay(std::chrono::milliseconds { 1000 });
-		BSP::RedDigitalLed().Toggle();
+		BSP::GreenDigitalLed().Toggle();
 	}
 }

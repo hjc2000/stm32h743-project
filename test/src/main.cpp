@@ -28,12 +28,10 @@ int main(void)
 		}
 		catch (std::exception &e)
 		{
-			BSP::RedDigitalLed().TurnOff();
 			std_exception_occurred = true;
 		}
 		catch (...)
 		{
-			BSP::RedDigitalLed().TurnOff();
 			unknow_exception_occurred = true;
 		}
 	}

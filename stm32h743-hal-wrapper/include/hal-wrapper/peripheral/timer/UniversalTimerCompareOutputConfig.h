@@ -12,7 +12,12 @@ namespace hal
 		TIM_OC_InitTypeDef _handle { };
 
 	public:
-		enum class OutputCompareModeOption
+		TIM_OC_InitTypeDef &Handle() override
+		{
+			return _handle;
+		}
+
+		enum class ModeOption
 		{
 			Timing = TIM_OCMODE_TIMING,
 			Active = TIM_OCMODE_ACTIVE,
@@ -30,11 +35,11 @@ namespace hal
 			AsymmetricPwm2 = TIM_OCMODE_ASYMMETRIC_PWM2,
 		};
 
-		OutputCompareModeOption OutputCompareMode() const
+		ModeOption Mode() const
 		{
-			return static_cast<OutputCompareModeOption>(_handle.OCMode);
+			return static_cast<ModeOption>(_handle.OCMode);
 		}
-		void SetOutputCompareMode(OutputCompareModeOption value)
+		void SetMode(ModeOption value)
 		{
 			_handle.OCMode = static_cast<uint32_t>(value);
 		}
@@ -52,32 +57,32 @@ namespace hal
 			_handle.Pulse = value;
 		}
 
-		enum class OutputComparePolarityOption
+		enum class PolarityOption
 		{
 			High = TIM_OCPOLARITY_HIGH,
 			Low = TIM_OCPOLARITY_LOW,
 		};
 
-		OutputComparePolarityOption OutputComparePolarity() const
+		PolarityOption Polarity() const
 		{
-			return static_cast<OutputComparePolarityOption>(_handle.OCPolarity);
+			return static_cast<PolarityOption>(_handle.OCPolarity);
 		}
-		void SetOutputComparePolarity(OutputComparePolarityOption value)
+		void SetPolarity(PolarityOption value)
 		{
 			_handle.OCPolarity = static_cast<uint32_t>(value);
 		}
 
-		enum class OutputCompare_N_PolarityOption
+		enum class N_PolarityOption
 		{
 			High = TIM_OCNPOLARITY_HIGH,
 			Low = TIM_OCNPOLARITY_LOW,
 		};
 
-		OutputCompare_N_PolarityOption OutputCompare_N_Polarity() const
+		N_PolarityOption N_Polarity() const
 		{
-			return static_cast<OutputCompare_N_PolarityOption>(_handle.OCNPolarity);
+			return static_cast<N_PolarityOption>(_handle.OCNPolarity);
 		}
-		void SetOutputCompare_N_Polarity(OutputCompare_N_PolarityOption value)
+		void Set_N_Polarity(N_PolarityOption value)
 		{
 			_handle.OCNPolarity = static_cast<uint32_t>(value);
 		}
