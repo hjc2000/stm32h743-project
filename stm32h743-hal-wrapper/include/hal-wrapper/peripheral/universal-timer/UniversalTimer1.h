@@ -50,6 +50,7 @@ namespace hal
 				return pclk1_freq;
 			}
 
+			/* 如果 pclk1 对输入不是 1 分频，定时器内部会对来自 pclk1 的信号进行倍频。 */
 			return pclk1_freq * 2;
 		}
 
