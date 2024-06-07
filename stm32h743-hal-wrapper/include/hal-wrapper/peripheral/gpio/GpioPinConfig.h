@@ -1,4 +1,5 @@
 #pragma once
+#include<base/HandleWrapper.h>
 #include<hal.h>
 #include<hal-wrapper/peripheral/gpio/PinAlternate.h>
 
@@ -73,8 +74,17 @@ namespace hal
 	};
 
 	class GpioPinConfig
+		:public base::HandleWrapper<GPIO_InitTypeDef>
 	{
+	private:
+		GPIO_InitTypeDef _handle { };
+
 	public:
+		GPIO_InitTypeDef &Handle() override
+		{
+			return _handle;
+		}
+
 		GpioPinMode _mode = GpioPinMode::Input;
 		GpioPinPull _pull_mode = GpioPinPull::NoPull;
 		GpioPinSpeed _speed = GpioPinSpeed::High;
