@@ -54,11 +54,12 @@ void hal::UniversalTimer1::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 
 	hal::GpioPortB::Instance().EnableClock();
 	hal::GpioPinConfig config;
-	config._mode = hal::GpioPinMode::AlternateFunction_PushPull;
-	config._pull_mode = hal::GpioPinPull::PullUp;
-	config._speed = hal::GpioPinSpeed::VeryHigh;
-	config._alternate = GPIO_AF2_TIM3;
-	hal::GpioPortB::Instance().InitPin(hal::GpioPin::Pin1, config);
+	config.SetPin(hal::GpioPinConfig::PinEnum::Pin1);
+	config.SetMode(hal::GpioPinConfig::ModeEnum::AlternateFunction_PushPull);
+	config.SetPull(hal::GpioPinConfig::PullOption::PullUp);
+	config.SetSpeed(hal::GpioPinConfig::SpeedOption::VeryHigh);
+	config.SetAlternate(GPIO_AF2_TIM3);
+	hal::GpioPortB::Instance().InitPin(config);
 }
 
 void hal::UniversalTimer1::PwmInitialize(hal::UniversalTimerBaseConfig &config)

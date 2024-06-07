@@ -42,13 +42,13 @@ namespace hal
 		/// </summary>
 		/// <param name="callback"></param>
 		/// <param name="pin"></param>
-		void UseLine(std::function<void()> callback, hal::GpioPin pin);
+		void UseLine(std::function<void()> callback, hal::GpioPinConfig::PinEnum pin);
 
 		/// <summary>
 		///		取消使用一条外部中断线。
 		///		* 会先禁用对应的线的中断，然后将回调函数设为 nullptr。
 		/// </summary>
 		/// <param name="pin"></param>
-		void UnuseLine(hal::GpioPin pin);
+		void UnuseLine(hal::GpioPinConfig::PinEnum pin);
 	};
 }

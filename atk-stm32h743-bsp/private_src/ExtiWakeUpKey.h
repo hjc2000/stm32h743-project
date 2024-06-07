@@ -25,9 +25,9 @@ namespace bsp
 			return hal::GpioPortA::Instance();
 		}
 
-		hal::GpioPin Pin()
+		hal::GpioPinConfig::PinEnum Pin()
 		{
-			return hal::GpioPin::Pin0;
+			return hal::GpioPinConfig::PinEnum::Pin0;
 		}
 
 	public:

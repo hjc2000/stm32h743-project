@@ -21,9 +21,9 @@ namespace bsp
 			return hal::GpioPortH::Instance();
 		}
 
-		static consteval hal::GpioPin Pin()
+		static consteval hal::GpioPinConfig::PinEnum Pin()
 		{
-			return hal::GpioPin::Pin3;
+			return hal::GpioPinConfig::PinEnum::Pin3;
 		}
 
 		bool KeyIsDown() override;
@@ -45,9 +45,9 @@ namespace bsp
 			return hal::GpioPortH::Instance();
 		}
 
-		static consteval hal::GpioPin Pin()
+		static consteval hal::GpioPinConfig::PinEnum Pin()
 		{
-			return hal::GpioPin::Pin2;
+			return hal::GpioPinConfig::PinEnum::Pin2;
 		}
 
 		bool KeyIsDown() override;
@@ -69,9 +69,9 @@ namespace bsp
 			return hal::GpioPortC::Instance();
 		}
 
-		static consteval hal::GpioPin Pin()
+		static consteval hal::GpioPinConfig::PinEnum Pin()
 		{
-			return hal::GpioPin::Pin13;
+			return hal::GpioPinConfig::PinEnum::Pin13;
 		}
 
 		bool KeyIsDown() override;
@@ -93,9 +93,9 @@ namespace bsp
 			return hal::GpioPortA::Instance();
 		}
 
-		static consteval hal::GpioPin Pin()
+		static consteval hal::GpioPinConfig::PinEnum Pin()
 		{
-			return hal::GpioPin::Pin0;
+			return hal::GpioPinConfig::PinEnum::Pin0;
 		}
 
 		bool KeyIsDown() override;

@@ -43,15 +43,17 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 
 		// 发送引脚 PA9
 		hal::GpioPinConfig options;
-		options._mode = hal::GpioPinMode::AlternateFunction_PushPull;
-		options._pull_mode = hal::GpioPinPull::NoPull;
-		options._speed = hal::GpioPinSpeed::High;
-		options._alternate = hal::PA9Alternate::usart1;
-		hal::GpioPortA::Instance().InitPin(hal::GpioPin::Pin9, options);
+		options.SetPin(hal::GpioPinConfig::PinEnum::Pin9);
+		options.SetMode(hal::GpioPinConfig::ModeEnum::AlternateFunction_PushPull);
+		options.SetPull(hal::GpioPinConfig::PullOption::NoPull);
+		options.SetSpeed(hal::GpioPinConfig::SpeedOption::High);
+		options.SetAlternate(hal::PA9Alternate::usart1);
+		hal::GpioPortA::Instance().InitPin(options);
 
 		// 接收引脚 PA10
-		options._alternate = hal::PA10Alternate::usart1;
-		hal::GpioPortA::Instance().InitPin(hal::GpioPin::Pin10, options);
+		options.SetPin(hal::GpioPinConfig::PinEnum::Pin10);
+		options.SetAlternate(hal::PA10Alternate::usart1);
+		hal::GpioPortA::Instance().InitPin(options);
 	};
 
 	auto init_tx_dma = []()

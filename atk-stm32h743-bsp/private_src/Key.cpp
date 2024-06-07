@@ -7,10 +7,11 @@ bsp::Key0::Key0()
 {
 	Port().EnableClock();
 	hal::GpioPinConfig options;
-	options._mode = hal::GpioPinMode::Input;
-	options._pull_mode = hal::GpioPinPull::PullUp;
-	options._speed = hal::GpioPinSpeed::High;
-	Port().InitPin(Pin(), options);
+	options.SetPin(Pin());
+	options.SetMode(hal::GpioPinConfig::ModeEnum::Input);
+	options.SetPull(hal::GpioPinConfig::PullOption::PullUp);
+	options.SetSpeed(hal::GpioPinConfig::SpeedOption::High);
+	Port().InitPin(options);
 }
 
 bool bsp::Key0::KeyIsDown()
@@ -25,10 +26,11 @@ bsp::Key1::Key1()
 {
 	Port().EnableClock();
 	hal::GpioPinConfig options;
-	options._mode = hal::GpioPinMode::Input;
-	options._pull_mode = hal::GpioPinPull::PullUp;
-	options._speed = hal::GpioPinSpeed::High;
-	Port().InitPin(Pin(), options);
+	options.SetPin(Pin());
+	options.SetMode(hal::GpioPinConfig::ModeEnum::Input);
+	options.SetPull(hal::GpioPinConfig::PullOption::PullUp);
+	options.SetSpeed(hal::GpioPinConfig::SpeedOption::High);
+	Port().InitPin(options);
 }
 
 bool bsp::Key1::KeyIsDown()
@@ -43,10 +45,11 @@ bsp::Key2::Key2()
 {
 	Port().EnableClock();
 	hal::GpioPinConfig options;
-	options._mode = hal::GpioPinMode::Input;
-	options._pull_mode = hal::GpioPinPull::PullUp;
-	options._speed = hal::GpioPinSpeed::High;
-	Port().InitPin(Pin(), options);
+	options.SetPin(Pin());
+	options.SetMode(hal::GpioPinConfig::ModeEnum::Input);
+	options.SetPull(hal::GpioPinConfig::PullOption::PullUp);
+	options.SetSpeed(hal::GpioPinConfig::SpeedOption::High);
+	Port().InitPin(options);
 }
 
 bool bsp::Key2::KeyIsDown()
@@ -61,10 +64,11 @@ bsp::KeyWakeUp::KeyWakeUp()
 {
 	Port().EnableClock();
 	hal::GpioPinConfig options;
-	options._mode = hal::GpioPinMode::Input;
-	options._pull_mode = hal::GpioPinPull::PullDown;
-	options._speed = hal::GpioPinSpeed::High;
-	Port().InitPin(Pin(), options);
+	options.SetPin(Pin());
+	options.SetMode(hal::GpioPinConfig::ModeEnum::Input);
+	options.SetPull(hal::GpioPinConfig::PullOption::PullDown);
+	options.SetSpeed(hal::GpioPinConfig::SpeedOption::High);
+	Port().InitPin(options);
 }
 
 bool bsp::KeyWakeUp::KeyIsDown()

@@ -7,11 +7,14 @@ ExtiWakeUpKey::ExtiWakeUpKey()
 {
 	// 配置引脚
 	Port().EnableClock();
+
 	GpioPinConfig options;
-	options._mode = GpioPinMode::Interrupt_RisingEdgeTrigger;
-	options._pull_mode = GpioPinPull::PullDown;
-	options._speed = GpioPinSpeed::High;
-	Port().InitPin(Pin(), options);
+	options.SetPin(Pin());
+	options.SetMode(hal::GpioPinConfig::ModeEnum::Interrupt_RisingEdgeTrigger);
+	options.SetPull(hal::GpioPinConfig::PullOption::PullDown);
+	options.SetSpeed(hal::GpioPinConfig::SpeedOption::High);
+	Port().InitPin(options);
+
 	Exti::Instance().UseLine([&]()
 	{
 		// 这是在中断函数中，禁止使用 Delayer 进行延时。
