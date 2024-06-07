@@ -11,6 +11,7 @@
 #include<hal-wrapper/clock/Osc.h>
 #include<hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
 #include<hal-wrapper/peripheral/serial/Serial.h>
+#include<hal-wrapper/peripheral/universal-timer/UniversalTimer1.h>
 #include<hal-wrapper/peripheral/window-watch-dog/WindowWatchDog.h>
 #include<Key.h>
 #include<stdint.h>
@@ -156,5 +157,28 @@ void TestWindowWatchDog()
 	{
 		BSP::RedDigitalLed().Toggle();
 		BSP::Delayer().Delay(std::chrono::seconds { 1 });
+	}
+}
+
+void TestUniversalTimer1()
+{
+	BSP::RedDigitalLed().TurnOn();
+
+	hal::UniversalTimerConfig config;
+	config.SetPeriod(20000 - 1);
+	config.SetPeriod(5000 - 1);
+	config.SetCounterMode(hal::UniversalTimerConfig::CounterModeOption::UP);
+	config.SetClockDivision(hal::UniversalTimerConfig::ClockDivisionOption::DIV1);
+	config.SetAutoReloadPreload(hal::UniversalTimerConfig::AutoReloadPreloadOption::Enable);
+	hal::UniversalTimer1::Instance().SetPeriodElapsedCallback([]()
+	{
+		BSP::GreenDigitalLed().Toggle();
+	});
+	hal::UniversalTimer1::Instance().Initialize(config);
+
+	while (true)
+	{
+		BSP::Delayer().Delay(std::chrono::milliseconds { 1000 });
+		BSP::RedDigitalLed().Toggle();
 	}
 }

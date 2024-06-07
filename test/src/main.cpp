@@ -22,7 +22,7 @@ int main(void)
 			BSP::Initialize();
 			std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create([]()
 			{
-				TestSerial();
+				TestUniversalTimer1();
 			}, 512);
 			vTaskStartScheduler();
 		}

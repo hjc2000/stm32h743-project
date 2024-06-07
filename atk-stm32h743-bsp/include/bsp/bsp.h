@@ -41,3 +41,4 @@ public:
 };
 
 void TestWindowWatchDog();
+void TestUniversalTimer1();

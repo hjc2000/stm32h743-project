@@ -11,10 +11,6 @@ namespace hal
 		TIM_Base_InitTypeDef _handle { };
 
 	public:
-		UniversalTimerConfig() = default;
-		UniversalTimerConfig(UniversalTimerConfig const &o);
-		UniversalTimerConfig &operator=(UniversalTimerConfig const &o);
-
 		TIM_Base_InitTypeDef &Handle() override;
 
 		/// <summary>
@@ -28,7 +24,7 @@ namespace hal
 		///		* 输入给定时器计数器的时钟信号频率 = 分频器的输入信号 / (Prescaler + 1)
 		/// </summary>
 		/// <returns></returns>
-		uint32_t Prescaler()
+		uint32_t Prescaler() const
 		{
 			return _handle.Prescaler;
 		}
@@ -50,7 +46,7 @@ namespace hal
 		///		计数模式
 		/// </summary>
 		/// <returns></returns>
-		CounterModeOption CounterMode()
+		CounterModeOption CounterMode() const
 		{
 			return static_cast<CounterModeOption>(_handle.CounterMode);
 		}
@@ -65,7 +61,7 @@ namespace hal
 		///		* 设置范围：[0x0000, 0xffff]
 		/// </summary>
 		/// <returns></returns>
-		uint32_t Period()
+		uint32_t Period() const
 		{
 			return _handle.Period;
 		}
@@ -81,7 +77,7 @@ namespace hal
 			DIV4 = TIM_CLOCKDIVISION_DIV4,
 		};
 
-		ClockDivisionOption ClockDivision()
+		ClockDivisionOption ClockDivision() const
 		{
 			return static_cast<ClockDivisionOption>(_handle.ClockDivision);
 		}
@@ -89,12 +85,12 @@ namespace hal
 		{
 			_handle.ClockDivision = static_cast<uint32_t>(value);
 		}
-		
+
 		/// <summary>
 		///		重复计数
 		/// </summary>
 		/// <returns></returns>
-		uint32_t RepetitionCounter()
+		uint32_t RepetitionCounter() const
 		{
 			return _handle.RepetitionCounter;
 		}
@@ -113,7 +109,7 @@ namespace hal
 		///		自动重装载的预装载。
 		/// </summary>
 		/// <returns></returns>
-		AutoReloadPreloadOption AutoReloadPreload()
+		AutoReloadPreloadOption AutoReloadPreload() const
 		{
 			return static_cast<AutoReloadPreloadOption>(_handle.AutoReloadPreload);
 		}

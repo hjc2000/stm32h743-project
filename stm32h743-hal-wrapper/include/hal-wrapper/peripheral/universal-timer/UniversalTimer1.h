@@ -30,6 +30,7 @@ namespace hal
 			return TIM3;
 		}
 
+		static void OnMspInitCallback(TIM_HandleTypeDef *handle);
 		static void OnPeriodElapsed(TIM_HandleTypeDef *handle);
 
 	public:
