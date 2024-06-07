@@ -35,7 +35,7 @@ namespace hal
 		hal::UniversalTimerBaseConfig _config { };
 
 	private:
-		TIM_TypeDef *HardwareInstance()
+		TIM_TypeDef *HardwareInstance() const
 		{
 			return TIM3;
 		}
@@ -114,6 +114,15 @@ namespace hal
 		void SetActiveChannel(HAL_TIM_ActiveChannel value)
 		{
 			_handle.Channel = value;
+		}
+
+		uint32_t CaptureCompareRegister4Value() const
+		{
+			return HardwareInstance()->CCR4;
+		}
+		void SetCaptureCompareRegister4Value(uint32_t value)
+		{
+			HardwareInstance()->CCR4 = value;
 		}
 	};
 }
