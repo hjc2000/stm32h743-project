@@ -75,7 +75,10 @@ namespace hal
 		/// <param name="config"></param>
 		void PwmInitialize(hal::UniversalTimerBaseConfig &config);
 
-		void ConfigPwmChannel(hal::UniversalTimerCompareOutputConfig &config, hal::TimerChannelEnum channel)
+		void ConfigPwmChannel(
+			hal::UniversalTimerCompareOutputConfig &config,
+			hal::TimerChannelEnum channel
+		)
 		{
 			HAL_TIM_PWM_ConfigChannel(&_handle, config, static_cast<uint32_t>(channel));
 		}
