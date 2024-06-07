@@ -10,6 +10,7 @@ extern "C"
 	}
 }
 
+#pragma region 作为基本定时器
 void hal::UniversalTimer1::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
@@ -17,6 +18,34 @@ void hal::UniversalTimer1::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
 	hal::Interrupt::EnableIRQ(IRQn_Type::TIM3_IRQn);
 }
 
+void hal::UniversalTimer1::OnPeriodElapsed(TIM_HandleTypeDef *handle)
+{
+	if (hal::UniversalTimer1::Instance()._period_elapsed_callback)
+	{
+		hal::UniversalTimer1::Instance()._period_elapsed_callback();
+	}
+}
+
+void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerConfig &config)
+{
+	_config = config;
+	_handle.Instance = HardwareInstance();
+	_handle.Init = _config.Handle();
+	_handle.Base_MspInitCallback = OnBaseMspInitCallback;
+	HAL_TIM_Base_Init(&_handle);
+
+	_handle.PeriodElapsedCallback = OnPeriodElapsed;
+
+	HAL_TIM_Base_Start_IT(&_handle);
+}
+#pragma endregion
+
+TIM_HandleTypeDef &hal::UniversalTimer1::Handle()
+{
+	return _handle;
+}
+
+#pragma region 作为PWM输出器
 void hal::UniversalTimer1::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
@@ -32,32 +61,6 @@ void hal::UniversalTimer1::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 	hal::GpioPortB::Instance().InitPin(hal::GpioPin::Pin1, config);
 }
 
-void hal::UniversalTimer1::OnPeriodElapsed(TIM_HandleTypeDef *handle)
-{
-	if (hal::UniversalTimer1::Instance()._period_elapsed_callback)
-	{
-		hal::UniversalTimer1::Instance()._period_elapsed_callback();
-	}
-}
-
-TIM_HandleTypeDef &hal::UniversalTimer1::Handle()
-{
-	return _handle;
-}
-
-void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerConfig &config)
-{
-	_config = config;
-	_handle.Instance = HardwareInstance();
-	_handle.Init = _config.Handle();
-	_handle.Base_MspInitCallback = OnBaseMspInitCallback;
-	HAL_TIM_Base_Init(&_handle);
-
-	_handle.PeriodElapsedCallback = OnPeriodElapsed;
-
-	HAL_TIM_Base_Start_IT(&_handle);
-}
-
 void hal::UniversalTimer1::PwmInitialize(hal::UniversalTimerConfig &config)
 {
 	_config = config;
@@ -66,3 +69,4 @@ void hal::UniversalTimer1::PwmInitialize(hal::UniversalTimerConfig &config)
 	_handle.Base_MspInitCallback = OnPwmMspInitCallback;
 	HAL_TIM_PWM_Init(&_handle);
 }
+#pragma endregion

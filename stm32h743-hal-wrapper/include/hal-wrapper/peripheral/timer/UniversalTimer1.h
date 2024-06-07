@@ -23,16 +23,11 @@ namespace hal
 		friend void ::TIM3_IRQHandler();
 		TIM_HandleTypeDef _handle { };
 		hal::UniversalTimerConfig _config { };
-		std::function<void()> _period_elapsed_callback { };
 
 		TIM_TypeDef *HardwareInstance()
 		{
 			return TIM3;
 		}
-
-		static void OnBaseMspInitCallback(TIM_HandleTypeDef *handle);
-		static void OnPwmMspInitCallback(TIM_HandleTypeDef *handle);
-		static void OnPeriodElapsed(TIM_HandleTypeDef *handle);
 
 	public:
 		static UniversalTimer1 &Instance()
@@ -44,6 +39,44 @@ namespace hal
 
 		TIM_HandleTypeDef &Handle() override;
 
+		#pragma region 作为基本定时器
+	private:
+		std::function<void()> _period_elapsed_callback { };
+
+	private:
+		static void OnBaseMspInitCallback(TIM_HandleTypeDef *handle);
+		static void OnPeriodElapsed(TIM_HandleTypeDef *handle);
+
+	public:
+		/// <summary>
+		///		初始化为基本定时器。
+		/// </summary>
+		/// <param name="config"></param>
+		void BaseInitialize(hal::UniversalTimerConfig &config);
+
+		void SetPeriodElapsedCallback(std::function<void()> func)
+		{
+			task::Critical::Run([&]()
+			{
+				_period_elapsed_callback = func;
+			});
+		}
+		#pragma endregion
+
+		#pragma region 作为PWM输出器
+	private:
+		static void OnPwmMspInitCallback(TIM_HandleTypeDef *handle);
+
+	public:
+		/// <summary>
+		///		初始化为 PWM 输出器。
+		/// </summary>
+		/// <param name="config"></param>
+		void PwmInitialize(hal::UniversalTimerConfig &config);
+		#pragma endregion
+
+
+	public:
 		/// <summary>
 		///		输入到分频器的时钟信号的频率
 		/// </summary>
@@ -77,26 +110,6 @@ namespace hal
 		void SetActiveChannel(HAL_TIM_ActiveChannel value)
 		{
 			_handle.Channel = value;
-		}
-
-		/// <summary>
-		///		初始化为基本定时器。
-		/// </summary>
-		/// <param name="config"></param>
-		void BaseInitialize(hal::UniversalTimerConfig &config);
-
-		/// <summary>
-		///		初始化为 PWM 输出器。
-		/// </summary>
-		/// <param name="config"></param>
-		void PwmInitialize(hal::UniversalTimerConfig &config);
-
-		void SetPeriodElapsedCallback(std::function<void()> func)
-		{
-			task::Critical::Run([&]()
-			{
-				_period_elapsed_callback = func;
-			});
 		}
 	};
 }
