@@ -31,6 +31,7 @@ namespace hal
 		}
 
 		static void OnBaseMspInitCallback(TIM_HandleTypeDef *handle);
+		static void OnPwmMspInitCallback(TIM_HandleTypeDef *handle);
 		static void OnPeriodElapsed(TIM_HandleTypeDef *handle);
 
 	public:
