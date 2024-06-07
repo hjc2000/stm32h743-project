@@ -21,13 +21,6 @@ namespace hal
 	{
 	private:
 		friend void ::TIM3_IRQHandler();
-		TIM_HandleTypeDef _handle { };
-		hal::UniversalTimerConfig _config { };
-
-		TIM_TypeDef *HardwareInstance()
-		{
-			return TIM3;
-		}
 
 	public:
 		static UniversalTimer1 &Instance()
@@ -36,8 +29,20 @@ namespace hal
 			return o;
 		}
 
+		#pragma region 句柄
+	private:
+		TIM_HandleTypeDef _handle { };
+		hal::UniversalTimerConfig _config { };
 
+	private:
+		TIM_TypeDef *HardwareInstance()
+		{
+			return TIM3;
+		}
+
+	public:
 		TIM_HandleTypeDef &Handle() override;
+		#pragma endregion
 
 		#pragma region 作为基本定时器
 	private:
