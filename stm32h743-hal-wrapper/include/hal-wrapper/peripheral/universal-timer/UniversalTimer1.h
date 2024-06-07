@@ -71,5 +71,7 @@ namespace hal
 		{
 			_handle.Channel = value;
 		}
+
+		void Initialize(hal::UniversalTimerConfig const &config);
 	};
 }
