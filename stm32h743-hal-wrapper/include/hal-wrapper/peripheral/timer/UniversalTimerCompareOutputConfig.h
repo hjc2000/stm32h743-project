@@ -40,7 +40,8 @@ namespace hal
 		}
 
 		/// <summary>
-		///		范围：[0x0000, 0xffff]
+		///		比较值，可以用来设置占空比。
+		///		* 范围：[0x0000, 0xffff]
 		/// </summary>
 		uint32_t Pulse()
 		{

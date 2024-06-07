@@ -3,7 +3,9 @@
 #include<functional>
 #include<hal.h>
 #include<hal-wrapper/clock/ClockSignal.h>
+#include<hal-wrapper/peripheral/timer/TimerChannelEnum.h>
 #include<hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h>
+#include<hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>
 #include<task/Critical.h>
 
 extern "C"
@@ -21,6 +23,13 @@ namespace hal
 	{
 	private:
 		friend void ::TIM3_IRQHandler();
+		TIM_HandleTypeDef _handle { };
+		hal::UniversalTimerBaseConfig _base_config { };
+
+		TIM_TypeDef *HardwareInstance() const
+		{
+			return TIM3;
+		}
 
 	public:
 		static UniversalTimer1 &Instance()
@@ -29,20 +38,7 @@ namespace hal
 			return o;
 		}
 
-		#pragma region 句柄
-	private:
-		TIM_HandleTypeDef _handle { };
-		hal::UniversalTimerBaseConfig _config { };
-
-	private:
-		TIM_TypeDef *HardwareInstance() const
-		{
-			return TIM3;
-		}
-
-	public:
 		TIM_HandleTypeDef &Handle() override;
-		#pragma endregion
 
 		#pragma region 作为基本定时器
 	private:
@@ -78,6 +74,16 @@ namespace hal
 		/// </summary>
 		/// <param name="config"></param>
 		void PwmInitialize(hal::UniversalTimerBaseConfig &config);
+
+		void ConfigPwmChannel(hal::UniversalTimerCompareOutputConfig &config, hal::TimerChannelEnum channel)
+		{
+			HAL_TIM_PWM_ConfigChannel(&_handle, config, static_cast<uint32_t>(channel));
+		}
+
+		void StartPwm(hal::TimerChannelEnum channel)
+		{
+			HAL_TIM_PWM_Start(&_handle, static_cast<uint32_t>(channel));
+		}
 		#pragma endregion
 
 	public:
@@ -104,7 +110,7 @@ namespace hal
 		/// <returns></returns>
 		uint32_t CounterFrequency()
 		{
-			return PrescalerInputClockSignalFrequency() / (_config.Prescaler() + 1);
+			return PrescalerInputClockSignalFrequency() / (_base_config.Prescaler() + 1);
 		}
 
 		HAL_TIM_ActiveChannel ActiveChannel()

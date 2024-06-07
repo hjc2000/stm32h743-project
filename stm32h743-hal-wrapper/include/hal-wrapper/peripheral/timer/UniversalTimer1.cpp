@@ -33,9 +33,9 @@ void hal::UniversalTimer1::OnPeriodElapsed(TIM_HandleTypeDef *handle)
 
 void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerBaseConfig &config)
 {
-	_config = config;
+	_base_config = config;
 	_handle.Instance = HardwareInstance();
-	_handle.Init = _config.Handle();
+	_handle.Init = _base_config.Handle();
 	_handle.Base_MspInitCallback = OnBaseMspInitCallback;
 	HAL_TIM_Base_Init(&_handle);
 
@@ -63,9 +63,9 @@ void hal::UniversalTimer1::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 
 void hal::UniversalTimer1::PwmInitialize(hal::UniversalTimerBaseConfig &config)
 {
-	_config = config;
+	_base_config = config;
 	_handle.Instance = HardwareInstance();
-	_handle.Init = _config.Handle();
+	_handle.Init = _base_config.Handle();
 	_handle.Base_MspInitCallback = OnPwmMspInitCallback;
 	HAL_TIM_PWM_Init(&_handle);
 }
