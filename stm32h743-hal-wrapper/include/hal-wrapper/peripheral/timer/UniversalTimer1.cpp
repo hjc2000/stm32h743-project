@@ -10,6 +10,11 @@ extern "C"
 	}
 }
 
+TIM_HandleTypeDef &hal::UniversalTimer1::Handle()
+{
+	return _handle;
+}
+
 #pragma region 作为基本定时器
 void hal::UniversalTimer1::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
 {
@@ -39,11 +44,6 @@ void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerConfig &config)
 	HAL_TIM_Base_Start_IT(&_handle);
 }
 #pragma endregion
-
-TIM_HandleTypeDef &hal::UniversalTimer1::Handle()
-{
-	return _handle;
-}
 
 #pragma region 作为PWM输出器
 void hal::UniversalTimer1::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)

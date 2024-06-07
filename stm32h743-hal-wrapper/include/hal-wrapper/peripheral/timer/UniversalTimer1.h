@@ -80,7 +80,6 @@ namespace hal
 		void PwmInitialize(hal::UniversalTimerConfig &config);
 		#pragma endregion
 
-
 	public:
 		/// <summary>
 		///		输入到分频器的时钟信号的频率
