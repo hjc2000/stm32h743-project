@@ -3,7 +3,7 @@
 
 namespace hal
 {
-	enum class TimerChannelEnum
+	enum class TimerChannel
 	{
 		Channel1 = TIM_CHANNEL_1,
 		Channel2 = TIM_CHANNEL_2,

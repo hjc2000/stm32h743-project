@@ -3,7 +3,7 @@
 #include<functional>
 #include<hal.h>
 #include<hal-wrapper/clock/ClockSignal.h>
-#include<hal-wrapper/peripheral/timer/TimerChannelEnum.h>
+#include<hal-wrapper/peripheral/timer/TimerChannel.h>
 #include<hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h>
 #include<hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>
 #include<task/Critical.h>
@@ -77,13 +77,13 @@ namespace hal
 
 		void ConfigPwmChannel(
 			hal::UniversalTimerCompareOutputConfig &config,
-			hal::TimerChannelEnum channel
+			hal::TimerChannel channel
 		)
 		{
 			HAL_TIM_PWM_ConfigChannel(&_handle, config, static_cast<uint32_t>(channel));
 		}
 
-		void StartPwm(hal::TimerChannelEnum channel)
+		void StartPwm(hal::TimerChannel channel)
 		{
 			HAL_TIM_PWM_Start(&_handle, static_cast<uint32_t>(channel));
 		}

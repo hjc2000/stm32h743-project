@@ -172,7 +172,7 @@ void TestUniversalTimer1()
 	compare_output_config.SetMode(hal::UniversalTimerCompareOutputConfig::ModeOption::Pwm1);
 	compare_output_config.SetPulse(500 / 2);
 	compare_output_config.SetPolarity(hal::UniversalTimerCompareOutputConfig::PolarityOption::Low);
-	hal::UniversalTimer1::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
+	hal::UniversalTimer1::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannel::Channel4);
 	while (true)
 	{
 		BSP::Delayer().Delay(std::chrono::milliseconds { 1000 });
