@@ -1,8 +1,10 @@
 #pragma once
 #include<base/HandleWrapper.h>
+#include<functional>
 #include<hal.h>
 #include<hal-wrapper/clock/ClockSignal.h>
 #include<hal-wrapper/peripheral/universal-timer/UniversalTimerConfig.h>
+#include<task/Critical.h>
 
 extern "C"
 {
@@ -21,11 +23,14 @@ namespace hal
 		friend void ::TIM3_IRQHandler();
 		TIM_HandleTypeDef _handle { };
 		hal::UniversalTimerConfig _config { };
+		std::function<void()> _period_elapsed_callback { };
 
 		TIM_TypeDef *HardwareInstance()
 		{
 			return TIM3;
 		}
+
+		static void OnPeriodElapsed(TIM_HandleTypeDef *handle);
 
 	public:
 		static UniversalTimer1 &Instance()
@@ -73,5 +78,13 @@ namespace hal
 		}
 
 		void Initialize(hal::UniversalTimerConfig const &config);
+
+		void SetPeriodElapsedCallback(std::function<void()> func)
+		{
+			task::Critical::Run([&]()
+			{
+				_period_elapsed_callback = func;
+			});
+		}
 	};
 }

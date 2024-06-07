@@ -9,6 +9,14 @@ extern "C"
 	}
 }
 
+void hal::UniversalTimer1::OnPeriodElapsed(TIM_HandleTypeDef *handle)
+{
+	if (hal::UniversalTimer1::Instance()._period_elapsed_callback)
+	{
+		hal::UniversalTimer1::Instance()._period_elapsed_callback();
+	}
+}
+
 TIM_HandleTypeDef &hal::UniversalTimer1::Handle()
 {
 	return _handle;
@@ -24,5 +32,8 @@ void hal::UniversalTimer1::Initialize(hal::UniversalTimerConfig const &config)
 	_handle.Instance = HardwareInstance();
 	_handle.Init = _config.Handle();
 	HAL_TIM_Base_Init(&_handle);
+
+	_handle.PeriodElapsedCallback = OnPeriodElapsed;
+
 	HAL_TIM_Base_Start_IT(&_handle);
 }
