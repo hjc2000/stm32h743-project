@@ -164,11 +164,11 @@ void TestUniversalTimer1()
 {
 	BSP::RedDigitalLed().TurnOn();
 
-	hal::UniversalTimerConfig config;
+	hal::UniversalTimerBaseConfig config;
 	config.SetPrescaler(20000 - 1);
 	config.SetPeriod(5000 - 1);
-	config.SetCounterMode(hal::UniversalTimerConfig::CounterModeOption::UP);
-	config.SetClockDivision(hal::UniversalTimerConfig::ClockDivisionOption::DIV1);
+	config.SetCounterMode(hal::UniversalTimerBaseConfig::CounterModeOption::UP);
+	config.SetClockDivision(hal::UniversalTimerBaseConfig::ClockDivisionOption::DIV1);
 	hal::UniversalTimer1::Instance().BaseInitialize(config);
 	hal::UniversalTimer1::Instance().SetPeriodElapsedCallback([&]()
 	{

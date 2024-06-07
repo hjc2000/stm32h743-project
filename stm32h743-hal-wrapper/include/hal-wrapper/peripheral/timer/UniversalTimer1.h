@@ -3,7 +3,7 @@
 #include<functional>
 #include<hal.h>
 #include<hal-wrapper/clock/ClockSignal.h>
-#include<hal-wrapper/peripheral/timer/UniversalTimerConfig.h>
+#include<hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h>
 #include<task/Critical.h>
 
 extern "C"
@@ -32,7 +32,7 @@ namespace hal
 		#pragma region 句柄
 	private:
 		TIM_HandleTypeDef _handle { };
-		hal::UniversalTimerConfig _config { };
+		hal::UniversalTimerBaseConfig _config { };
 
 	private:
 		TIM_TypeDef *HardwareInstance()
@@ -57,7 +57,7 @@ namespace hal
 		///		初始化为基本定时器。
 		/// </summary>
 		/// <param name="config"></param>
-		void BaseInitialize(hal::UniversalTimerConfig &config);
+		void BaseInitialize(hal::UniversalTimerBaseConfig &config);
 
 		void SetPeriodElapsedCallback(std::function<void()> func)
 		{
@@ -77,7 +77,7 @@ namespace hal
 		///		初始化为 PWM 输出器。
 		/// </summary>
 		/// <param name="config"></param>
-		void PwmInitialize(hal::UniversalTimerConfig &config);
+		void PwmInitialize(hal::UniversalTimerBaseConfig &config);
 		#pragma endregion
 
 	public:

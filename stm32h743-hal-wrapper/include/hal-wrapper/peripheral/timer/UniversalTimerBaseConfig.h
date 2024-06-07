@@ -4,7 +4,7 @@
 
 namespace hal
 {
-	class UniversalTimerConfig :
+	class UniversalTimerBaseConfig :
 		public base::HandleWrapper<TIM_Base_InitTypeDef>
 	{
 	private:

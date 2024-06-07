@@ -31,7 +31,7 @@ void hal::UniversalTimer1::OnPeriodElapsed(TIM_HandleTypeDef *handle)
 	}
 }
 
-void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerConfig &config)
+void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerBaseConfig &config)
 {
 	_config = config;
 	_handle.Instance = HardwareInstance();
@@ -61,7 +61,7 @@ void hal::UniversalTimer1::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 	hal::GpioPortB::Instance().InitPin(hal::GpioPin::Pin1, config);
 }
 
-void hal::UniversalTimer1::PwmInitialize(hal::UniversalTimerConfig &config)
+void hal::UniversalTimer1::PwmInitialize(hal::UniversalTimerBaseConfig &config)
 {
 	_config = config;
 	_handle.Instance = HardwareInstance();
