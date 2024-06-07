@@ -3,7 +3,7 @@
 #include<functional>
 #include<hal.h>
 #include<hal-wrapper/clock/ClockSignal.h>
-#include<hal-wrapper/peripheral/universal-timer/UniversalTimerConfig.h>
+#include<hal-wrapper/peripheral/timer/UniversalTimerConfig.h>
 #include<task/Critical.h>
 
 extern "C"
@@ -78,7 +78,11 @@ namespace hal
 			_handle.Channel = value;
 		}
 
-		void Initialize(hal::UniversalTimerConfig &config);
+		/// <summary>
+		///		初始化为基本定时器。
+		/// </summary>
+		/// <param name="config"></param>
+		void BaseInitialize(hal::UniversalTimerConfig &config);
 
 		void SetPeriodElapsedCallback(std::function<void()> func)
 		{

@@ -29,7 +29,7 @@ TIM_HandleTypeDef &hal::UniversalTimer1::Handle()
 	return _handle;
 }
 
-void hal::UniversalTimer1::Initialize(hal::UniversalTimerConfig &config)
+void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerConfig &config)
 {
 	_config = config;
 	_handle.Instance = HardwareInstance();

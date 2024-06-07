@@ -11,7 +11,7 @@
 #include<hal-wrapper/clock/Osc.h>
 #include<hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
 #include<hal-wrapper/peripheral/serial/Serial.h>
-#include<hal-wrapper/peripheral/universal-timer/UniversalTimer1.h>
+#include<hal-wrapper/peripheral/timer/UniversalTimer1.h>
 #include<hal-wrapper/peripheral/window-watch-dog/WindowWatchDog.h>
 #include<Key.h>
 #include<stdint.h>
@@ -169,7 +169,7 @@ void TestUniversalTimer1()
 	config.SetPeriod(5000 - 1);
 	config.SetCounterMode(hal::UniversalTimerConfig::CounterModeOption::UP);
 	config.SetClockDivision(hal::UniversalTimerConfig::ClockDivisionOption::DIV1);
-	hal::UniversalTimer1::Instance().Initialize(config);
+	hal::UniversalTimer1::Instance().BaseInitialize(config);
 	hal::UniversalTimer1::Instance().SetPeriodElapsedCallback([&]()
 	{
 		BSP::GreenDigitalLed().Toggle();
