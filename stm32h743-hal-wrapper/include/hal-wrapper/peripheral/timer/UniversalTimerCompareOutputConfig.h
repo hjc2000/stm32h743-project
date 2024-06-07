@@ -87,47 +87,47 @@ namespace hal
 			_handle.OCNPolarity = static_cast<uint32_t>(value);
 		}
 
-		enum class OutputCompareFastModeOption
+		enum class FastModeOption
 		{
 			Disable = TIM_OCFAST_DISABLE,
 			Enable = TIM_OCFAST_ENABLE,
 		};
 
-		OutputCompareFastModeOption OutputCompareFastMode() const
+		FastModeOption FastMode() const
 		{
-			return static_cast<OutputCompareFastModeOption>(_handle.OCFastMode);
+			return static_cast<FastModeOption>(_handle.OCFastMode);
 		}
-		void SetOutputCompareFastMode(OutputCompareFastModeOption value)
+		void SetFastMode(FastModeOption value)
 		{
 			_handle.OCFastMode = static_cast<uint32_t>(value);
 		}
 
-		enum class OutputCompareIdleStateOption
+		enum class IdleStateOption
 		{
 			Set = TIM_OCIDLESTATE_SET,
 			Reset = TIM_OCIDLESTATE_RESET,
 		};
 
-		OutputCompareIdleStateOption OutputCompareIdleState() const
+		IdleStateOption IdleState() const
 		{
-			return static_cast<OutputCompareIdleStateOption>(_handle.OCIdleState);
+			return static_cast<IdleStateOption>(_handle.OCIdleState);
 		}
-		void SetOutputCompareIdleState(OutputCompareIdleStateOption value)
+		void SetIdleState(IdleStateOption value)
 		{
 			_handle.OCIdleState = static_cast<uint32_t>(value);
 		}
 
-		enum class OutputCompare_N_IdleStateOption
+		enum class N_IdleStateOption
 		{
 			Set = TIM_OCNIDLESTATE_SET,
 			Reset = TIM_OCNIDLESTATE_RESET,
 		};
 
-		OutputCompare_N_IdleStateOption OutputCompare_N_IdleState() const
+		N_IdleStateOption N_IdleState() const
 		{
-			return static_cast<OutputCompare_N_IdleStateOption>(_handle.OCNIdleState);
+			return static_cast<N_IdleStateOption>(_handle.OCNIdleState);
 		}
-		void SetOutputCompare_N_IdleState(OutputCompare_N_IdleStateOption value)
+		void Set_N_IdleState(N_IdleStateOption value)
 		{
 			_handle.OCNIdleState = static_cast<uint32_t>(value);
 		}
