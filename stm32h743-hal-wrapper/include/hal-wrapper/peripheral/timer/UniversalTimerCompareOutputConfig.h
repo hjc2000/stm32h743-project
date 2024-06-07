@@ -51,26 +51,79 @@ namespace hal
 			_handle.Pulse = value;
 		}
 
-		uint32_t OCPolarity;    /*!< Specifies the output polarity.
-		This parameter can be a value of @ref TIM_Output_Compare_Polarity */
+		enum class OutputComparePolarityOption
+		{
+			High = TIM_OCPOLARITY_HIGH,
+			Low = TIM_OCPOLARITY_LOW,
+		};
 
-		uint32_t OCNPolarity;   /*!< Specifies the complementary output polarity.
-		This parameter can be a value of @ref TIM_Output_Compare_N_Polarity
-		@note This parameter is valid only for timer instances supporting break feature. */
+		OutputComparePolarityOption OutputComparePolarity() const
+		{
+			return static_cast<OutputComparePolarityOption>(_handle.OCPolarity);
+		}
+		void SetOutputComparePolarity(OutputComparePolarityOption value)
+		{
+			_handle.OCPolarity = static_cast<uint32_t>(value);
+		}
 
-		uint32_t OCFastMode;    /*!< Specifies the Fast mode state.
-		This parameter can be a value of @ref TIM_Output_Fast_State
-		@note This parameter is valid only in PWM1 and PWM2 mode. */
+		enum class OutputCompare_N_PolarityOption
+		{
+			High = TIM_OCNPOLARITY_HIGH,
+			Low = TIM_OCNPOLARITY_LOW,
+		};
 
+		OutputCompare_N_PolarityOption OutputCompare_N_Polarity() const
+		{
+			return static_cast<OutputCompare_N_PolarityOption>(_handle.OCNPolarity);
+		}
+		void SetOutputCompare_N_Polarity(OutputCompare_N_PolarityOption value)
+		{
+			_handle.OCNPolarity = static_cast<uint32_t>(value);
+		}
 
-		uint32_t OCIdleState;   /*!< Specifies the TIM Output Compare pin state
-		during Idle state.
-		This parameter can be a value of @ref TIM_Output_Compare_Idle_State
-		@note This parameter is valid only for timer instances supporting break feature. */
+		enum class OutputCompareFastModeOption
+		{
+			Disable = TIM_OCFAST_DISABLE,
+			Enable = TIM_OCFAST_ENABLE,
+		};
 
-		uint32_t OCNIdleState;  /*!< Specifies the TIM Output Compare pin state during
-		Idle state.
-		This parameter can be a value of @ref TIM_Output_Compare_N_Idle_State
-		@note This parameter is valid only for timer instances supporting break feature. */
+		OutputCompareFastModeOption OutputCompareFastMode() const
+		{
+			return static_cast<OutputCompareFastModeOption>(_handle.OCFastMode);
+		}
+		void SetOutputCompareFastMode(OutputCompareFastModeOption value)
+		{
+			_handle.OCFastMode = static_cast<uint32_t>(value);
+		}
+
+		enum class OutputCompareIdleStateOption
+		{
+			Set = TIM_OCIDLESTATE_SET,
+			Reset = TIM_OCIDLESTATE_RESET,
+		};
+
+		OutputCompareIdleStateOption OutputCompareIdleState() const
+		{
+			return static_cast<OutputCompareIdleStateOption>(_handle.OCIdleState);
+		}
+		void SetOutputCompareIdleState(OutputCompareIdleStateOption value)
+		{
+			_handle.OCIdleState = static_cast<uint32_t>(value);
+		}
+
+		enum class OutputCompare_N_IdleStateOption
+		{
+			Set = TIM_OCNIDLESTATE_SET,
+			Reset = TIM_OCNIDLESTATE_RESET,
+		};
+
+		OutputCompare_N_IdleStateOption OutputCompare_N_IdleState() const
+		{
+			return static_cast<OutputCompare_N_IdleStateOption>(_handle.OCNIdleState);
+		}
+		void SetOutputCompare_N_IdleState(OutputCompare_N_IdleStateOption value)
+		{
+			_handle.OCNIdleState = static_cast<uint32_t>(value);
+		}
 	};
 }
