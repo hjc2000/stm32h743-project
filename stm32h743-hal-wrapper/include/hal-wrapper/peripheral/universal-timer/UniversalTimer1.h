@@ -78,7 +78,7 @@ namespace hal
 			_handle.Channel = value;
 		}
 
-		void Initialize(hal::UniversalTimerConfig const &config);
+		void Initialize(hal::UniversalTimerConfig &config);
 
 		void SetPeriodElapsedCallback(std::function<void()> func)
 		{

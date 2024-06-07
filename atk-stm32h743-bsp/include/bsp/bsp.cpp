@@ -169,12 +169,18 @@ void TestUniversalTimer1()
 	config.SetPeriod(5000 - 1);
 	config.SetCounterMode(hal::UniversalTimerConfig::CounterModeOption::UP);
 	config.SetClockDivision(hal::UniversalTimerConfig::ClockDivisionOption::DIV1);
-	config.SetAutoReloadPreload(hal::UniversalTimerConfig::AutoReloadPreloadOption::Enable);
-	hal::UniversalTimer1::Instance().SetPeriodElapsedCallback([]()
-	{
-		BSP::GreenDigitalLed().Toggle();
-	});
 	hal::UniversalTimer1::Instance().Initialize(config);
+
+	volatile uint64_t count = 0;
+	hal::UniversalTimer1::Instance().SetPeriodElapsedCallback([&]()
+	{
+		count = count + 1;
+		if (count > 10000)
+		{
+			count = 0;
+			BSP::GreenDigitalLed().Toggle();
+		}
+	});
 
 	while (true)
 	{
