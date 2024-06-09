@@ -3,8 +3,8 @@
 #include<bsp-interface/IDigitalLed.h>
 #include<bsp-interface/IEventDrivenKey.h>
 #include<bsp-interface/IIndependentWatchDog.h>
-#include<bsp-interface/IKeyScanner.h>
 #include<bsp-interface/ISerial.h>
+#include<bsp-interface/key/IKeyScanner.h>
 
 enum class KeyIndex :uint16_t
 {

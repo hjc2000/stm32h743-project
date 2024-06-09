@@ -1,5 +1,5 @@
 #pragma once
-#include<bsp-interface/IKey.h>
+#include<bsp-interface/key/IKey.h>
 #include<hal-wrapper/clock/Delayer.h>
 #include<hal-wrapper/peripheral/gpio/GpioPort.h>
 
