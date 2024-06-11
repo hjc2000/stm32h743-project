@@ -18,3 +18,22 @@ void hal::IsrManager::EnableInterrupt(uint32_t irq) noexcept
 {
 	hal::Interrupt::EnableIRQ(static_cast<IRQn_Type>(irq));
 }
+
+extern "C"
+{
+	void TIM3_IRQHandler()
+	{
+		try
+		{
+			auto func = IsrManager::Instance().GetIrqHandlerFromIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn));
+			if (func)
+			{
+				func();
+			}
+		}
+		catch (...)
+		{
+
+		}
+	}
+}
