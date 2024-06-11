@@ -3,7 +3,7 @@
 #include<functional>
 #include<hal.h>
 #include<hal-wrapper/clock/ClockSignal.h>
-#include<hal-wrapper/peripheral/timer/TimerChannel.h>
+#include<hal-wrapper/peripheral/timer/TimerChannelEnum.h>
 #include<hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h>
 #include<hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>
 #include<task/Critical.h>
@@ -75,15 +75,24 @@ namespace hal
 		/// <param name="config"></param>
 		void PwmInitialize(hal::UniversalTimerBaseConfig &config);
 
+		/// <summary>
+		///		配置指定的 PWM 输出通道。
+		/// </summary>
+		/// <param name="config"></param>
+		/// <param name="channel"></param>
 		void ConfigPwmChannel(
 			hal::UniversalTimerCompareOutputConfig &config,
-			hal::TimerChannel channel
+			hal::TimerChannelEnum channel
 		)
 		{
 			HAL_TIM_PWM_ConfigChannel(&_handle, config, static_cast<uint32_t>(channel));
 		}
 
-		void StartPwm(hal::TimerChannel channel)
+		/// <summary>
+		///		启动指定的通道的 PWM 输出。
+		/// </summary>
+		/// <param name="channel"></param>
+		void StartPwm(hal::TimerChannelEnum channel)
 		{
 			HAL_TIM_PWM_Start(&_handle, static_cast<uint32_t>(channel));
 		}
