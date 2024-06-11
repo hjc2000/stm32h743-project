@@ -16,9 +16,11 @@ namespace hal
 			return o;
 		}
 
-		// 通过 IIsrManager 继承
+		#pragma region IIsrManager
+	private:
 		std::map<uint32_t, std::function<void()>> &HandlerMap() override;
 		void DisableInterrupt(uint32_t irq) noexcept override;
 		void EnableInterrupt(uint32_t irq) noexcept override;
+		#pragma endregion
 	};
 }
