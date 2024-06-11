@@ -4,6 +4,22 @@
 using namespace hal;
 using namespace bsp;
 
+void hal::InterruptSwitch::DisableInterrupt(uint32_t irq) noexcept
+{
+	hal::Interrupt::DisableIRQ(static_cast<IRQn_Type>(irq));
+}
+
+void hal::InterruptSwitch::EnableInterrupt(uint32_t irq) noexcept
+{
+	hal::Interrupt::EnableIRQ(static_cast<IRQn_Type>(irq));
+}
+
+bsp::IsrManager &hal::GetIsrManager()
+{
+	static bsp::IsrManager manager { hal::InterruptSwitch::Instance() };
+	return manager;
+}
+
 extern "C"
 {
 	void TIM3_IRQHandler()
@@ -21,20 +37,4 @@ extern "C"
 
 		}
 	}
-}
-
-void hal::InterruptSwitch::DisableInterrupt(uint32_t irq) noexcept
-{
-	hal::Interrupt::DisableIRQ(static_cast<IRQn_Type>(irq));
-}
-
-void hal::InterruptSwitch::EnableInterrupt(uint32_t irq) noexcept
-{
-	hal::Interrupt::EnableIRQ(static_cast<IRQn_Type>(irq));
-}
-
-bsp::IsrManager &hal::GetIsrManager()
-{
-	static bsp::IsrManager manager { hal::InterruptSwitch::Instance() };
-	return manager;
 }
