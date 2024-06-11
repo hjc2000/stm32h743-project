@@ -19,7 +19,7 @@ namespace hal
 	/// <summary>
 	///		通用定时器
 	/// </summary>
-	class UniversalTimer1 :
+	class Timer3PwmMode :
 		public base::HandleWrapper<TIM_HandleTypeDef>
 	{
 	private:
@@ -33,9 +33,9 @@ namespace hal
 		}
 
 	public:
-		static UniversalTimer1 &Instance()
+		static Timer3PwmMode &Instance()
 		{
-			static UniversalTimer1 o;
+			static Timer3PwmMode o;
 			return o;
 		}
 
@@ -134,73 +134,6 @@ namespace hal
 		void SetActiveChannel(HAL_TIM_ActiveChannel value)
 		{
 			_handle.Channel = value;
-		}
-
-		enum class CaptureCompareRegisterEnum
-		{
-			CCR1,
-			CCR2,
-			CCR3,
-			CCR4,
-		};
-
-		/// <summary>
-		///		捕获比较寄存器 4 的值。
-		///		* PWM 模式下作为比较寄存器，可以写入改变 PWM 的占空比。
-		///		* 捕获模式下作为捕获寄存器，可以读出捕获值。
-		/// </summary>
-		/// <returns></returns>
-		uint32_t GetCaptureCompareRegisterValue(CaptureCompareRegisterEnum reg) const
-		{
-			switch (reg)
-			{
-			case CaptureCompareRegisterEnum::CCR1:
-				{
-					return HardwareInstance()->CCR1;
-				}
-			case CaptureCompareRegisterEnum::CCR2:
-				{
-					return HardwareInstance()->CCR2;
-				}
-			case CaptureCompareRegisterEnum::CCR3:
-				{
-					return HardwareInstance()->CCR3;
-				}
-			case CaptureCompareRegisterEnum::CCR4:
-				{
-					return HardwareInstance()->CCR4;
-				}
-			}
-
-			throw std::invalid_argument { "不存在此 CaptureCompareRegisterEnum 枚举值" };
-		}
-		void SetCaptureCompareRegisterValue(CaptureCompareRegisterEnum reg, uint32_t value)
-		{
-			switch (reg)
-			{
-			case CaptureCompareRegisterEnum::CCR1:
-				{
-					HardwareInstance()->CCR1 = value;
-					break;
-				}
-			case CaptureCompareRegisterEnum::CCR2:
-				{
-					HardwareInstance()->CCR2 = value;
-					break;
-				}
-			case CaptureCompareRegisterEnum::CCR3:
-				{
-					HardwareInstance()->CCR3 = value;
-					break;
-				}
-			case CaptureCompareRegisterEnum::CCR4:
-				{
-					HardwareInstance()->CCR4 = value;
-					break;
-				}
-			}
-
-			throw std::invalid_argument { "不存在此 CaptureCompareRegisterEnum 枚举值" };
 		}
 	};
 }

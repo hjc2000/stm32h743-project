@@ -1,37 +1,29 @@
-#include"UniversalTimer1.h"
+#include"Timer3BaseMode.h"
 #include<hal-wrapper/interrupt/Interrupt.h>
 #include<hal-wrapper/peripheral/gpio/GpioPort.h>
 
-extern "C"
-{
-	void TIM3_IRQHandler()
-	{
-		HAL_TIM_IRQHandler(&hal::UniversalTimer1::Instance().Handle());
-	}
-}
-
-TIM_HandleTypeDef &hal::UniversalTimer1::Handle()
+TIM_HandleTypeDef &hal::Timer3BaseMode::Handle()
 {
 	return _handle;
 }
 
 #pragma region 作为基本定时器
-void hal::UniversalTimer1::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
+void hal::Timer3BaseMode::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
 	hal::Interrupt::SetPriority(IRQn_Type::TIM3_IRQn, 10, 0);
 	hal::Interrupt::EnableIRQ(IRQn_Type::TIM3_IRQn);
 }
 
-void hal::UniversalTimer1::OnPeriodElapsed(TIM_HandleTypeDef *handle)
+void hal::Timer3BaseMode::OnPeriodElapsed(TIM_HandleTypeDef *handle)
 {
-	if (hal::UniversalTimer1::Instance()._period_elapsed_callback)
+	if (hal::Timer3BaseMode::Instance()._period_elapsed_callback)
 	{
-		hal::UniversalTimer1::Instance()._period_elapsed_callback();
+		hal::Timer3BaseMode::Instance()._period_elapsed_callback();
 	}
 }
 
-void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerBaseConfig &config)
+void hal::Timer3BaseMode::BaseInitialize(hal::UniversalTimerBaseConfig &config)
 {
 	_base_config = config;
 	_handle.Instance = HardwareInstance();
@@ -46,7 +38,7 @@ void hal::UniversalTimer1::BaseInitialize(hal::UniversalTimerBaseConfig &config)
 #pragma endregion
 
 #pragma region 作为PWM输出器
-void hal::UniversalTimer1::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
+void hal::Timer3BaseMode::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
 	hal::Interrupt::SetPriority(IRQn_Type::TIM3_IRQn, 10, 0);
@@ -62,7 +54,7 @@ void hal::UniversalTimer1::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 	hal::GpioPortB::Instance().InitPin(config);
 }
 
-void hal::UniversalTimer1::PwmInitialize(hal::UniversalTimerBaseConfig &config)
+void hal::Timer3BaseMode::PwmInitialize(hal::UniversalTimerBaseConfig &config)
 {
 	_base_config = config;
 	_handle.Instance = HardwareInstance();
