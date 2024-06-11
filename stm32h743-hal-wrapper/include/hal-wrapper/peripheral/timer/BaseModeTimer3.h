@@ -17,11 +17,15 @@ namespace hal
 	private:
 		TIM_HandleTypeDef _handle { };
 		hal::UniversalTimerBaseConfig _base_config { };
+		std::function<void()> _period_elapsed_callback { };
 
 		TIM_TypeDef *HardwareInstance() const
 		{
 			return TIM3;
 		}
+
+		static void OnBaseMspInitCallback(TIM_HandleTypeDef *handle);
+		static void OnPeriodElapsed(TIM_HandleTypeDef *handle);
 
 	public:
 		static BaseModeTimer3 &Instance()
@@ -32,15 +36,6 @@ namespace hal
 
 		TIM_HandleTypeDef &Handle() override;
 
-		#pragma region 作为基本定时器
-	private:
-		std::function<void()> _period_elapsed_callback { };
-
-	private:
-		static void OnBaseMspInitCallback(TIM_HandleTypeDef *handle);
-		static void OnPeriodElapsed(TIM_HandleTypeDef *handle);
-
-	public:
 		/// <summary>
 		///		初始化为基本定时器。
 		/// </summary>
@@ -54,43 +49,7 @@ namespace hal
 				_period_elapsed_callback = func;
 			});
 		}
-		#pragma endregion
 
-		#pragma region 作为PWM输出器
-	private:
-		static void OnPwmMspInitCallback(TIM_HandleTypeDef *handle);
-
-	public:
-		/// <summary>
-		///		初始化为 PWM 输出器。
-		/// </summary>
-		/// <param name="config"></param>
-		void PwmInitialize(hal::UniversalTimerBaseConfig &config);
-
-		/// <summary>
-		///		配置指定的 PWM 输出通道。
-		/// </summary>
-		/// <param name="config"></param>
-		/// <param name="channel"></param>
-		void ConfigPwmChannel(
-			hal::UniversalTimerCompareOutputConfig &config,
-			hal::TimerChannelEnum channel
-		)
-		{
-			HAL_TIM_PWM_ConfigChannel(&_handle, config, static_cast<uint32_t>(channel));
-		}
-
-		/// <summary>
-		///		启动指定的通道的 PWM 输出。
-		/// </summary>
-		/// <param name="channel"></param>
-		void StartPwm(hal::TimerChannelEnum channel)
-		{
-			HAL_TIM_PWM_Start(&_handle, static_cast<uint32_t>(channel));
-		}
-		#pragma endregion
-
-	public:
 		/// <summary>
 		///		输入到分频器的时钟信号的频率
 		/// </summary>
