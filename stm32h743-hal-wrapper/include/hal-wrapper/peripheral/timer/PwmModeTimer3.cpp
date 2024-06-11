@@ -1,30 +1,30 @@
-#include"Timer3.h"
+#include"PwmModeTimer3.h"
 #include<hal-wrapper/interrupt/Interrupt.h>
 #include<hal-wrapper/interrupt/IsrManager.h>
 #include<hal-wrapper/peripheral/gpio/GpioPort.h>
 
-TIM_HandleTypeDef &hal::Timer3::Handle()
+TIM_HandleTypeDef &hal::PwmModeTimer3::Handle()
 {
 	return _handle;
 }
 
 #pragma region 作为基本定时器
-void hal::Timer3::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
+void hal::PwmModeTimer3::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
 	hal::Interrupt::SetPriority(IRQn_Type::TIM3_IRQn, 10, 0);
 	hal::Interrupt::EnableIRQ(IRQn_Type::TIM3_IRQn);
 }
 
-void hal::Timer3::OnPeriodElapsed(TIM_HandleTypeDef *handle)
+void hal::PwmModeTimer3::OnPeriodElapsed(TIM_HandleTypeDef *handle)
 {
-	if (hal::Timer3::Instance()._period_elapsed_callback)
+	if (hal::PwmModeTimer3::Instance()._period_elapsed_callback)
 	{
-		hal::Timer3::Instance()._period_elapsed_callback();
+		hal::PwmModeTimer3::Instance()._period_elapsed_callback();
 	}
 }
 
-void hal::Timer3::BaseInitialize(hal::UniversalTimerBaseConfig &config)
+void hal::PwmModeTimer3::BaseInitialize(hal::UniversalTimerBaseConfig &config)
 {
 	_base_config = config;
 	_handle.Instance = HardwareInstance();
@@ -39,13 +39,13 @@ void hal::Timer3::BaseInitialize(hal::UniversalTimerBaseConfig &config)
 #pragma endregion
 
 #pragma region 作为PWM输出器
-void hal::Timer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
+void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
 	hal::Interrupt::SetPriority(IRQn_Type::TIM3_IRQn, 10, 0);
 	hal::IsrManager::Instance().SetIrqHandler(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), []()
 	{
-		HAL_TIM_IRQHandler(&hal::Timer3::Instance().Handle());
+		HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance().Handle());
 	});
 
 	hal::GpioPortB::Instance().EnableClock();
@@ -58,7 +58,7 @@ void hal::Timer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 	hal::GpioPortB::Instance().InitPin(config);
 }
 
-void hal::Timer3::PwmInitialize(hal::UniversalTimerBaseConfig &config)
+void hal::PwmModeTimer3::PwmInitialize(hal::UniversalTimerBaseConfig &config)
 {
 	_base_config = config;
 	_handle.Instance = HardwareInstance();

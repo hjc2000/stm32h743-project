@@ -9,21 +9,12 @@
 #include<stdexcept>
 #include<task/Critical.h>
 
-extern "C"
-{
-	void TIM3_IRQHandler();
-}
-
 namespace hal
 {
-	/// <summary>
-	///		Timer3 是通用定时器
-	/// </summary>
-	class Timer3 :
+	class PwmModeTimer3 :
 		public base::HandleWrapper<TIM_HandleTypeDef>
 	{
 	private:
-		friend void ::TIM3_IRQHandler();
 		TIM_HandleTypeDef _handle { };
 		hal::UniversalTimerBaseConfig _base_config { };
 
@@ -33,9 +24,9 @@ namespace hal
 		}
 
 	public:
-		static Timer3 &Instance()
+		static PwmModeTimer3 &Instance()
 		{
-			static Timer3 o;
+			static PwmModeTimer3 o;
 			return o;
 		}
 
