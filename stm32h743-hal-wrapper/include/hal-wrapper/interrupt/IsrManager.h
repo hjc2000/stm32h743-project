@@ -1,26 +1,24 @@
 #pragma once
-#include<bsp-interface/IIsrManager.h>
+#include<bsp-interface/interrupt/IsrManager.h>
 
 namespace hal
 {
-	class IsrManager :
-		public bsp::IIsrManager
+	class InterruptSwitch :
+		public bsp::IInterruptSwitch
 	{
 	private:
-		std::map<uint32_t, std::function<void()>> _handler_map;
+		InterruptSwitch() = default;
 
 	public:
-		static IsrManager &Instance()
+		static InterruptSwitch &Instance()
 		{
-			static IsrManager o;
+			static InterruptSwitch o;
 			return o;
 		}
 
-		#pragma region IIsrManager
-	private:
-		std::map<uint32_t, std::function<void()>> &HandlerMap() override;
 		void DisableInterrupt(uint32_t irq) noexcept override;
 		void EnableInterrupt(uint32_t irq) noexcept override;
-		#pragma endregion
 	};
+
+	bsp::IsrManager &GetIsrManager();
 }

@@ -7,7 +7,7 @@ void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
 	hal::Interrupt::SetPriority(IRQn_Type::TIM3_IRQn, 10, 0);
-	hal::IsrManager::Instance().SetIrqHandler(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), []()
+	hal::GetIsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), []()
 	{
 		HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance().Handle());
 	});
