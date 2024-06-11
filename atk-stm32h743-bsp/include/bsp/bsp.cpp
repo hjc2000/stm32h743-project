@@ -11,7 +11,7 @@
 #include<hal-wrapper/clock/Osc.h>
 #include<hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
 #include<hal-wrapper/peripheral/serial/Serial.h>
-#include<hal-wrapper/peripheral/timer/timer3/pwm-mode/Timer3PwmMode.h>
+#include<hal-wrapper/peripheral/timer/Timer3.h>
 #include<hal-wrapper/peripheral/window-watch-dog/WindowWatchDog.h>
 #include<Key.h>
 #include<stdint.h>
@@ -167,13 +167,13 @@ void TestUniversalTimer1()
 	config.SetPeriod(500 - 1);
 	config.SetCounterMode(hal::UniversalTimerBaseConfig::CounterModeOption::UP);
 	config.SetClockDivision(hal::UniversalTimerBaseConfig::ClockDivisionOption::DIV1);
-	hal::Timer3PwmMode::Instance().PwmInitialize(config);
+	hal::Timer3::Instance().PwmInitialize(config);
 	hal::UniversalTimerCompareOutputConfig compare_output_config;
 	compare_output_config.SetMode(hal::UniversalTimerCompareOutputConfig::ModeOption::Pwm1);
 	compare_output_config.SetPulse(500 / 2);
 	compare_output_config.SetPolarity(hal::UniversalTimerCompareOutputConfig::PolarityOption::Low);
-	hal::Timer3PwmMode::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
-	hal::Timer3PwmMode::Instance().StartPwm(hal::TimerChannelEnum::Channel4);
+	hal::Timer3::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
+	hal::Timer3::Instance().StartPwm(hal::TimerChannelEnum::Channel4);
 
 	uint32_t value = 500 / 2;
 	while (true)
@@ -184,6 +184,6 @@ void TestUniversalTimer1()
 		value += config.Period() + config.Period() / 4;
 		value %= config.Period();
 		compare_output_config.SetPulse(value);
-		hal::Timer3PwmMode::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
+		hal::Timer3::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
 	}
 }

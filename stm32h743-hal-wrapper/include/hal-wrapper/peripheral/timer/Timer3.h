@@ -17,9 +17,9 @@ extern "C"
 namespace hal
 {
 	/// <summary>
-	///		通用定时器
+	///		Timer3 是通用定时器
 	/// </summary>
-	class Timer3PwmMode :
+	class Timer3 :
 		public base::HandleWrapper<TIM_HandleTypeDef>
 	{
 	private:
@@ -33,9 +33,9 @@ namespace hal
 		}
 
 	public:
-		static Timer3PwmMode &Instance()
+		static Timer3 &Instance()
 		{
-			static Timer3PwmMode o;
+			static Timer3 o;
 			return o;
 		}
 
