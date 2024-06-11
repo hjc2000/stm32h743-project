@@ -6,6 +6,7 @@
 #include<hal-wrapper/peripheral/timer/TimerChannelEnum.h>
 #include<hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h>
 #include<hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>
+#include<stdexcept>
 #include<task/Critical.h>
 
 extern "C"
@@ -107,12 +108,13 @@ namespace hal
 		{
 			hal::ClockSignalConfig config = hal::ClockSignal::GetConfig();
 			uint32_t pclk1_freq = hal::ClockSignal::Pclk1Freq();
-			if (config._system_clk_config._hclk_config._apb1clk_config._input_divider == hal::Apb1ClkConfig::InputDivider::DIV1)
+			if (config._system_clk_config._hclk_config._apb1clk_config._input_divider
+				== hal::Apb1ClkConfig::InputDivider::DIV1)
 			{
 				return pclk1_freq;
 			}
 
-			/* 如果 pclk1 对输入不是 1 分频，定时器内部会对来自 pclk1 的信号进行倍频。 */
+			/* 如果 pclk1 对输入不是 1 分频，定时器内部会对来自 pclk1 的信号进行 2 倍频。 */
 			return pclk1_freq * 2;
 		}
 
@@ -134,13 +136,71 @@ namespace hal
 			_handle.Channel = value;
 		}
 
-		uint32_t CaptureCompareRegister4Value() const
+		enum class CaptureCompareRegisterEnum
 		{
-			return HardwareInstance()->CCR4;
+			CCR1,
+			CCR2,
+			CCR3,
+			CCR4,
+		};
+
+		/// <summary>
+		///		捕获比较寄存器 4 的值。
+		///		* PWM 模式下作为比较寄存器，可以写入改变 PWM 的占空比。
+		///		* 捕获模式下作为捕获寄存器，可以读出捕获值。
+		/// </summary>
+		/// <returns></returns>
+		uint32_t GetCaptureCompareRegisterValue(CaptureCompareRegisterEnum reg) const
+		{
+			switch (reg)
+			{
+			case CaptureCompareRegisterEnum::CCR1:
+				{
+					return HardwareInstance()->CCR1;
+				}
+			case CaptureCompareRegisterEnum::CCR2:
+				{
+					return HardwareInstance()->CCR2;
+				}
+			case CaptureCompareRegisterEnum::CCR3:
+				{
+					return HardwareInstance()->CCR3;
+				}
+			case CaptureCompareRegisterEnum::CCR4:
+				{
+					return HardwareInstance()->CCR4;
+				}
+			}
+
+			throw std::invalid_argument { "不存在此 CaptureCompareRegisterEnum 枚举值" };
 		}
-		void SetCaptureCompareRegister4Value(uint32_t value)
+		void SetCaptureCompareRegisterValue(CaptureCompareRegisterEnum reg, uint32_t value)
 		{
-			HardwareInstance()->CCR4 = value;
+			switch (reg)
+			{
+			case CaptureCompareRegisterEnum::CCR1:
+				{
+					HardwareInstance()->CCR1 = value;
+					break;
+				}
+			case CaptureCompareRegisterEnum::CCR2:
+				{
+					HardwareInstance()->CCR2 = value;
+					break;
+				}
+			case CaptureCompareRegisterEnum::CCR3:
+				{
+					HardwareInstance()->CCR3 = value;
+					break;
+				}
+			case CaptureCompareRegisterEnum::CCR4:
+				{
+					HardwareInstance()->CCR4 = value;
+					break;
+				}
+			}
+
+			throw std::invalid_argument { "不存在此 CaptureCompareRegisterEnum 枚举值" };
 		}
 	};
 }

@@ -170,13 +170,20 @@ void TestUniversalTimer1()
 	hal::UniversalTimer1::Instance().PwmInitialize(config);
 	hal::UniversalTimerCompareOutputConfig compare_output_config;
 	compare_output_config.SetMode(hal::UniversalTimerCompareOutputConfig::ModeOption::Pwm1);
-	compare_output_config.SetPulse(500 / 16);
+	compare_output_config.SetPulse(500 / 2);
 	compare_output_config.SetPolarity(hal::UniversalTimerCompareOutputConfig::PolarityOption::Low);
 	hal::UniversalTimer1::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
 	hal::UniversalTimer1::Instance().StartPwm(hal::TimerChannelEnum::Channel4);
+
+	uint32_t value = 500 / 2;
 	while (true)
 	{
 		BSP::Delayer().Delay(std::chrono::milliseconds { 1000 });
 		BSP::GreenDigitalLed().Toggle();
+
+		value += config.Period() + config.Period() / 4;
+		value %= config.Period();
+		compare_output_config.SetPulse(value);
+		hal::UniversalTimer1::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
 	}
 }
