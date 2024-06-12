@@ -40,15 +40,15 @@
 		------- x 从 0 到 n_total_pulse
 
 在 n 时刻 n_total_pulse = n_total_pulse(n)
-	Σ(b - k*x*gear_ratio(x)/unwinding_encoder_delta_n)Δx == n_total_pulse(n) / (n_pulse/y)
+	Σ(b - k* x * gear_ratio(x) / unwinding_encoder_delta_n)Δx == n_total_pulse(n) / (n_pulse/y)
 		------- x 从 0 到 n_total_pulse(n)
 
 n_total_pulse 每递增 1 视为采样一次，则 Δx = 1
-	Σ(b - k*x*gear_ratio(x)/unwinding_encoder_delta_n) == n_total_pulse(n) / (n_pulse/y)
+	Σ(b - k * x * gear_ratio(x) / unwinding_encoder_delta_n) == n_total_pulse(n) / (n_pulse/y)
 		------- x 从 0 到 n_total_pulse(n)
 
 两边差分，则
-	b - k*n_total_pulse(n)*gear_ratio(n)/unwinding_encoder_delta_n == (n_total_pulse(n) - n_total_pulse(n-1)) / (n_pulse/y)
+	b - k * n_total_pulse(n) * gear_ratio(n) / unwinding_encoder_delta_n == (n_total_pulse(n) - n_total_pulse(n-1)) / (n_pulse/y)
 			------- x 从 0 到 n_total_pulse(n-1)
 电子齿轮比 gear_ratio 在每次采样计算后都是变化的，
 解出 gear_ratio(n) 的大小，改变电子齿轮比。
