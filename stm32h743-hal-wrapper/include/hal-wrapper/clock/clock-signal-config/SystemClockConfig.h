@@ -21,7 +21,7 @@ namespace hal
 		/// <summary>
 		///		选择 SYSCLK 的输入时钟源
 		/// </summary>
-		ClockSource _clock_source;
+		ClockSource _clock_source { };
 
 		enum class OutputDivider
 		{
@@ -39,10 +39,10 @@ namespace hal
 		/// <summary>
 		///		SYSCLK 输出的分频系数
 		/// </summary>
-		OutputDivider _output_divider;
+		OutputDivider _output_divider { };
 
 		#pragma region 子时钟信号
-		HclkConfig _hclk_config;
+		HclkConfig _hclk_config { };
 		#pragma endregion
 
 		void Serialize(RCC_ClkInitTypeDef &o) const;

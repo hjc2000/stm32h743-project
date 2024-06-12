@@ -27,14 +27,14 @@ namespace hal
 		/// <summary>
 		///		选择色要配置哪个时钟。可以将多个枚举值按位或。
 		/// </summary>
-		ClockType _clock_type;
+		ClockType _clock_type { };
 
 		/// <summary>
 		///		选中所有时钟类型。
 		/// </summary>
 		void SelectAllClockType();
 
-		SystemClockConfig _system_clk_config;
+		SystemClockConfig _system_clk_config { };
 
 		/// <summary>
 		///		读写 flash 时要延迟多少个 CPU 时钟周期。

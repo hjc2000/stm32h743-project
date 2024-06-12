@@ -22,13 +22,13 @@ namespace hal
 		/// <summary>
 		///		HCLK 输入端的分频器。
 		/// </summary>
-		InputDivider _input_divider;
+		InputDivider _input_divider { };
 
 		#pragma region 子时钟
-		Apb1ClkConfig _apb1clk_config;
-		Apb2ClkConfig _apb2clk_config;
-		Apb3ClkConfig _apb3clk_config;
-		Apb4ClkConfig _apb4clk_config;
+		Apb1ClkConfig _apb1clk_config { };
+		Apb2ClkConfig _apb2clk_config { };
+		Apb3ClkConfig _apb3clk_config { };
+		Apb4ClkConfig _apb4clk_config { };
 		#pragma endregion
 
 		void Serialize(RCC_ClkInitTypeDef &o) const;

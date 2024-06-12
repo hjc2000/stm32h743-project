@@ -36,27 +36,27 @@ namespace hal
 		/// <summary>
 		///		取值范围：[1, 63]
 		/// </summary>
-		uint32_t _m = 1;
+		uint32_t _m = 5;
 
 		/// <summary>
 		///		取值范围：[4, 512]
 		/// </summary>
-		uint32_t _n = 4;
+		uint32_t _n = 192;
 
 		/// <summary>
 		///		取值范围：[2, 128]
 		/// </summary>
-		uint32_t _p;
+		uint32_t _p = 2;
 
 		/// <summary>
 		///		取值范围：[1, 128]
 		/// </summary>
-		uint32_t _q;
+		uint32_t _q = 2;
 
 		/// <summary>
 		///		取值范围：[1, 128]
 		/// </summary>
-		uint32_t _r;
+		uint32_t _r = 2;
 
 		enum class Pll1VciRange
 		{
@@ -94,6 +94,6 @@ namespace hal
 		/// <summary>
 		///		范围：[0, 8191]
 		/// </summary>
-		uint32_t _fracn;
+		uint32_t _fracn = 0;
 	};
 }

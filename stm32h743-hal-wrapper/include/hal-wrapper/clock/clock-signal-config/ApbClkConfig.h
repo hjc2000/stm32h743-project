@@ -15,7 +15,7 @@ namespace hal
 			DIV16 = RCC_APB1_DIV16,
 		};
 
-		InputDivider _input_divider;
+		InputDivider _input_divider { };
 
 		void Serialize(RCC_ClkInitTypeDef &o) const;
 		void Deserialize(RCC_ClkInitTypeDef const &o);
@@ -36,7 +36,7 @@ namespace hal
 		/// <summary>
 		///		为 APB2 或者叫 PCLK2 选择分频系数。
 		/// </summary>
-		InputDivider _input_divider;
+		InputDivider _input_divider { };
 
 		void Serialize(RCC_ClkInitTypeDef &o) const;
 		void Deserialize(RCC_ClkInitTypeDef const &o);
@@ -54,7 +54,7 @@ namespace hal
 			DIV16 = RCC_APB3_DIV16,
 		};
 
-		InputDivider _input_divider;
+		InputDivider _input_divider { };
 
 		void Serialize(RCC_ClkInitTypeDef &o) const;
 		void Deserialize(RCC_ClkInitTypeDef const &o);
@@ -72,7 +72,7 @@ namespace hal
 			DIV16 = RCC_APB4_DIV16,
 		};
 
-		InputDivider _input_divider;
+		InputDivider _input_divider { };
 
 		void Serialize(RCC_ClkInitTypeDef &o) const;
 		void Deserialize(RCC_ClkInitTypeDef const &o);
