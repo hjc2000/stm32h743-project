@@ -35,9 +35,10 @@ void BSP::Initialize()
 		osc_config._pll_config._state = hal::PllConfig::PllState::On;
 		osc_config._pll_config._source = hal::PllConfig::PllSource::HSE;
 		osc_config._pll_config._m = 5;
-		osc_config._pll_config._n = 160;
+		osc_config._pll_config._n = 192;
 		osc_config._pll_config._p = 2;
-		osc_config._pll_config._q = 4;
+		osc_config._pll_config._q = 2;
+		osc_config._pll_config._r = 2;
 		osc_config._pll_config._vco_range = hal::PllConfig::Pll1VcoRange::Wide;
 		osc_config._pll_config._vci_range = hal::PllConfig::Pll1VciRange::Range2;
 		hal::Osc::SetConfig(osc_config);
