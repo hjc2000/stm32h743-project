@@ -23,7 +23,7 @@ int main(void)
 
 			auto lvgl_init_task_func = []()
 			{
-				TestSerial();
+				TestUniversalTimer1();
 			};
 			std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create(
 				lvgl_init_task_func, 512);
