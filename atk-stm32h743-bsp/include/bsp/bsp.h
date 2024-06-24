@@ -1,12 +1,12 @@
 #pragma once
-#include<bsp-interface/IDelayer.h>
-#include<bsp-interface/IDigitalLed.h>
-#include<bsp-interface/IEventDrivenKey.h>
-#include<bsp-interface/IIndependentWatchDog.h>
-#include<bsp-interface/ISerial.h>
-#include<bsp-interface/key/IKeyScanner.h>
+#include <bsp-interface/IDelayer.h>
+#include <bsp-interface/IDigitalLed.h>
+#include <bsp-interface/IEventDrivenKey.h>
+#include <bsp-interface/IIndependentWatchDog.h>
+#include <bsp-interface/ISerial.h>
+#include <bsp-interface/key/IKeyScanner.h>
 
-enum class KeyIndex :uint16_t
+enum class KeyIndex : uint16_t
 {
 	Key0,
 	Key1,
@@ -33,10 +33,8 @@ public:
 
 	static bsp::ISerial &Serial();
 
-	/// <summary>
-	///		独立看门狗。
-	/// </summary>
-	/// <returns></returns>
+	/// @brief 独立看门狗。
+	/// @return
 	static bsp::IIndependentWatchDog &IndependentWatchDog();
 };
 
