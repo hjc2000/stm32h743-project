@@ -26,8 +26,8 @@
 			}
 		},
 		{
-			"name": "gcc debug",
-			"displayName": "gcc debug",
+			"name": "gcc-debug",
+			"displayName": "gcc-debug",
 			"inherits": "options",
 			"generator": "Ninja",
 			"binaryDir": "${sourceDir}/out/build/${presetName}",
@@ -37,8 +37,8 @@
 			}
 		},
 		{
-			"name": "gcc release",
-			"displayName": "gcc release",
+			"name": "gcc-release",
+			"displayName": "gcc-release",
 			"inherits": "options",
 			"generator": "Ninja",
 			"binaryDir": "${sourceDir}/out/build/${presetName}",

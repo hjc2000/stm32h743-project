@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "ninja-release-install",
+			"type": "shell",
+			"command": "ninja",
+			"args": [
+				"install"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/out/build/gcc-release"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "ninja-debug-install",
+			"type": "shell",
+			"command": "ninja",
+			"args": [
+				"install"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/out/build/gcc-debug"
+			},
+			"problemMatcher": []
+		}
+	]
+}
