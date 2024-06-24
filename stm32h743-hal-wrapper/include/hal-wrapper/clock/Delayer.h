@@ -1,11 +1,11 @@
 #pragma once
-#include<bsp-interface/IDelayer.h>
-#include<chrono>
-#include<stdint.h>
+#include <bsp-interface/IDelayer.h>
+#include <chrono>
+#include <stdint.h>
 
 namespace hal
 {
-	class Delayer :public bsp::IDelayer
+	class Delayer : public bsp::IDelayer
 	{
 	private:
 		Delayer() = default;

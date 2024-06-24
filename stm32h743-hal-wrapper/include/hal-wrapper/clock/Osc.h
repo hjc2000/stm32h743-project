@@ -1,8 +1,8 @@
 #pragma once
-#include<hal.h>
-#include<stdexcept>
-#include<hal-wrapper/clock/OscConfig.h>
-#include<hal-wrapper/clock/PllConfig.h>
+#include <hal-wrapper/clock/OscConfig.h>
+#include <hal-wrapper/clock/PllConfig.h>
+#include <hal.h>
+#include <stdexcept>
 
 namespace hal
 {
@@ -16,7 +16,7 @@ namespace hal
 		{
 			RCC_OscInitTypeDef def;
 			HAL_RCC_GetOscConfig(&def);
-			return hal::OscConfig { def };
+			return hal::OscConfig{def};
 		}
 
 		/// <summary>
@@ -30,7 +30,7 @@ namespace hal
 			HAL_StatusTypeDef result = HAL_RCC_OscConfig(&rcc_osc_init);
 			if (result != HAL_StatusTypeDef::HAL_OK)
 			{
-				throw std::runtime_error { "时钟源配置失败" };
+				throw std::runtime_error{"时钟源配置失败"};
 			}
 		}
 	};

@@ -1,4 +1,4 @@
-#include"OscConfig.h"
+#include "OscConfig.h"
 
 using namespace hal;
 
@@ -18,7 +18,7 @@ OscConfig &OscConfig::operator=(RCC_OscInitTypeDef const &o)
 	_hsi_48_state = static_cast<Hsi48State>(o.HSI48State);
 	_csi_state = static_cast<CsiState>(o.CSIState);
 	_csi_calibration_value = o.CSICalibrationValue;
-	_pll_config = hal::PllConfig { o.PLL };
+	_pll_config = hal::PllConfig{o.PLL};
 	return *this;
 }
 

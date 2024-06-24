@@ -1,9 +1,9 @@
-#include"TestIndependentWatchDog.h"
-#include<bsp/bsp.h>
+#include "TestIndependentWatchDog.h"
+#include <bsp/bsp.h>
 
 void TestIndependentWatchDog()
 {
-	BSP::Delayer().Delay(std::chrono::milliseconds { 500 });
+	BSP::Delayer().Delay(std::chrono::milliseconds{500});
 	BSP::RedDigitalLed().TurnOn();
 	BSP::IndependentWatchDog().SetWatchDogTimeoutDuration(std::chrono::milliseconds(1000));
 

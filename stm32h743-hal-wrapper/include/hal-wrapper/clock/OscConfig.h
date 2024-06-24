@@ -1,6 +1,6 @@
 #pragma once
-#include<hal.h>
-#include<hal-wrapper/clock/PllConfig.h>
+#include <hal-wrapper/clock/PllConfig.h>
+#include <hal.h>
 
 namespace hal
 {

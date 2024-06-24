@@ -1,5 +1,5 @@
 #pragma once
-#include<hal.h>
+#include <hal.h>
 
 namespace hal
 {
@@ -61,7 +61,7 @@ namespace hal
 		enum class Pll1VciRange
 		{
 			/// <summary>
-			///		Clock range frequency between 1 and 2 MHz 
+			///		Clock range frequency between 1 and 2 MHz
 			/// </summary>
 			Range0 = RCC_PLL1VCIRANGE_0,
 
