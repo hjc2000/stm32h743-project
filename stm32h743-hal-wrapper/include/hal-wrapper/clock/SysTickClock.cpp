@@ -19,7 +19,13 @@ void hal::SysTickClock::SetClockSource(hal::SysTickClock::SysTickClockSourceOpti
 
 uint32_t hal::SysTickClock::Frequency()
 {
-	return HAL_RCC_GetSysClockFreq();
+	uint32_t freq = HAL_RCC_GetSysClockFreq();
+	if (ClockSource() == hal::SysTickClock::SysTickClockSourceOption::HCLK)
+	{
+		return freq;
+	}
+
+	return freq / 8;
 }
 
 uint32_t hal::SysTickClock::ReloadValue()
