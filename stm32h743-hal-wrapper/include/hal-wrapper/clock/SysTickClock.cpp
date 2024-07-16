@@ -3,29 +3,21 @@
 
 hal::SysTickClock::SysTickClockSourceOption hal::SysTickClock::ClockSource()
 {
-	uint32_t masked = SysTick->CTRL & SysTick_CTRL_CLKSOURCE_Msk;
-	if (masked)
-	{
-		return SysTickClockSourceOption::HCLK;
-	}
-
-	return SysTickClockSourceOption::HCLK_DIV8;
+	// stm32h743 不支持 8 分频。
+	return SysTickClockSourceOption::HCLK;
 }
 
 void hal::SysTickClock::SetClockSource(hal::SysTickClock::SysTickClockSourceOption value)
 {
-	HAL_SYSTICK_CLKSourceConfig(static_cast<uint32_t>(value));
+	// stm32h743 不支持 8 分频。
+	// HAL_SYSTICK_CLKSourceConfig(static_cast<uint32_t>(value));
 }
 
 uint32_t hal::SysTickClock::Frequency()
 {
+	// stm32h743 不支持 8 分频。
 	uint32_t freq = HAL_RCC_GetSysClockFreq();
-	if (ClockSource() == hal::SysTickClock::SysTickClockSourceOption::HCLK)
-	{
-		return freq;
-	}
-
-	return freq / 8;
+	return freq;
 }
 
 uint32_t hal::SysTickClock::ReloadValue()

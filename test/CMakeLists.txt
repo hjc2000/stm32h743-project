@@ -17,8 +17,8 @@ add_custom_command(TARGET ${ProjectName} POST_BUILD
 				   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${ProjectName}>)
 
 add_custom_command(TARGET ${ProjectName} POST_BUILD
-	COMMAND ${obj_copy} -O binary $<TARGET_FILE:${ProjectName}> $<TARGET_FILE_DIR:${ProjectName}>/${ProjectName}.bin
-	COMMENT "由 elf 生成 bin 文件。")
+				   COMMAND ${obj_copy} -O binary $<TARGET_FILE:${ProjectName}> $<TARGET_FILE_DIR:${ProjectName}>/${ProjectName}.bin
+				   COMMENT "由 elf 生成 bin 文件。")
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${ProjectName}.bin"
     	DESTINATION bin)
