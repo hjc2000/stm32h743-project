@@ -29,14 +29,12 @@ int main(void)
 
 			vTaskStartScheduler();
 		}
-		catch (std::exception &e)
+		catch (std::exception const &e)
 		{
-			BSP::GreenDigitalLed().TurnOff();
 			std_exception_occurred = true;
 		}
 		catch (...)
 		{
-			BSP::GreenDigitalLed().TurnOff();
 			unknow_exception_occurred = true;
 		}
 	}
