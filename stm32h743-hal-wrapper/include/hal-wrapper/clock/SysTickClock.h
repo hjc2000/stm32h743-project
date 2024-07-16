@@ -22,7 +22,8 @@ namespace hal
 		}
 
 		/// @brief 获取 Systic 的时钟频率。
-		/// @note 这是最终输入到计数器的频率，后面没有任何分频器。
+		/// @note stm32h743 的 Systic 永远只能与 CPU 频率相同，即只能使用系统时钟信号
+		/// 作为时钟源，无法使用系统时钟信号 8 分频后的信号作为时钟源。
 		/// @return
 		uint32_t Frequency() override;
 
