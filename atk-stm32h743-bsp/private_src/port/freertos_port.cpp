@@ -1,16 +1,11 @@
-#include"FreeRTOSConfig.h"
-#include<FreeRTOS.h>
-#include<hal.h>
-#include<hal-wrapper/clock/SysTickClock.h>
-#include<task.h>
+#include "FreeRTOSConfig.h"
+#include <FreeRTOS.h>
+#include <hal-wrapper/clock/SysTickClock.h>
+#include <hal.h>
+#include <task.h>
 
 extern "C"
 {
-	uint32_t freertos_get_cpu_freq()
-	{
-		return HAL_RCC_GetHCLKFreq();
-	}
-
 	uint32_t freertos_get_systic_clock_freq()
 	{
 		return hal::SysTickClock::Instance().Frequency();

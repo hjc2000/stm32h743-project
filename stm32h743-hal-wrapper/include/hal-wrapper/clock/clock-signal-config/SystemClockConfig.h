@@ -1,12 +1,10 @@
 #pragma once
-#include<hal-wrapper/clock/clock-signal-config/HclkConfig.h>
+#include <hal-wrapper/clock/clock-signal-config/HclkConfig.h>
 
 namespace hal
 {
-	/// <summary>
-	///		SYSCLK
-	///		* 直接连着时钟源的一个时钟信号。
-	/// </summary>
+	/// @brief SYSCLK
+	/// @note 直接连着时钟源的一个时钟信号。
 	class SystemClockConfig
 	{
 	public:
@@ -18,10 +16,8 @@ namespace hal
 			PLLCLK = RCC_SYSCLKSOURCE_PLLCLK,
 		};
 
-		/// <summary>
-		///		选择 SYSCLK 的输入时钟源
-		/// </summary>
-		ClockSource _clock_source { };
+		/// @brief 选择 SYSCLK 的输入时钟源
+		ClockSource _clock_source{};
 
 		enum class OutputDivider
 		{
@@ -36,14 +32,12 @@ namespace hal
 			DIV512 = RCC_SYSCLK_DIV512,
 		};
 
-		/// <summary>
-		///		SYSCLK 输出的分频系数
-		/// </summary>
-		OutputDivider _output_divider { };
+		/// @brief SYSCLK 输出的分频系数
+		OutputDivider _output_divider{};
 
-		#pragma region 子时钟信号
-		HclkConfig _hclk_config { };
-		#pragma endregion
+#pragma region 子时钟信号
+		HclkConfig _hclk_config{};
+#pragma endregion
 
 		void Serialize(RCC_ClkInitTypeDef &o) const;
 		void Deserialize(RCC_ClkInitTypeDef const &o);

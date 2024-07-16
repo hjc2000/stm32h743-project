@@ -1,5 +1,5 @@
 #pragma once
-#include<hal-wrapper/clock/clock-signal-config/ApbClkConfig.h>
+#include <hal-wrapper/clock/clock-signal-config/ApbClkConfig.h>
 
 namespace hal
 {
@@ -19,17 +19,15 @@ namespace hal
 			DIV512 = RCC_HCLK_DIV512,
 		};
 
-		/// <summary>
-		///		HCLK 输入端的分频器。
-		/// </summary>
-		InputDivider _input_divider { };
+		/// @brief HCLK 输入端的分频器。
+		InputDivider _input_divider{};
 
-		#pragma region 子时钟
-		Apb1ClkConfig _apb1clk_config { };
-		Apb2ClkConfig _apb2clk_config { };
-		Apb3ClkConfig _apb3clk_config { };
-		Apb4ClkConfig _apb4clk_config { };
-		#pragma endregion
+#pragma region 子时钟
+		Apb1ClkConfig _apb1clk_config{};
+		Apb2ClkConfig _apb2clk_config{};
+		Apb3ClkConfig _apb3clk_config{};
+		Apb4ClkConfig _apb4clk_config{};
+#pragma endregion
 
 		void Serialize(RCC_ClkInitTypeDef &o) const;
 		void Deserialize(RCC_ClkInitTypeDef const &o);

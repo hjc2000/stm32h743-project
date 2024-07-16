@@ -1,11 +1,9 @@
 #pragma once
-#include<hal-wrapper/clock/clock-signal-config/SystemClockConfig.h>
+#include <hal-wrapper/clock/clock-signal-config/SystemClockConfig.h>
 
 namespace hal
 {
-	/// <summary>
-	///		根类型。上方都是本类的子成员的类型。
-	/// </summary>
+	/// @brief 时钟信号配置的根
 	class ClockSignalConfig
 	{
 	public:
@@ -24,26 +22,19 @@ namespace hal
 			D3PCLK1 = RCC_CLOCKTYPE_D3PCLK1,
 		};
 
-		/// <summary>
-		///		选择色要配置哪个时钟。可以将多个枚举值按位或。
-		/// </summary>
-		ClockType _clock_type { };
+		/// @brief 选择要配置哪个时钟。
+		/// @note 可以将多个枚举值按位或。也可以用 SelectAllClockType 选中全部。
+		ClockType _clock_type{};
 
-		/// <summary>
-		///		选中所有时钟类型。
-		/// </summary>
+		/// @brief 选中所有时钟类型。
 		void SelectAllClockType();
 
-		SystemClockConfig _system_clk_config { };
+		/// @brief 系统时钟配置
+		SystemClockConfig _system_clk_config{};
 
-		/// <summary>
-		///		读写 flash 时要延迟多少个 CPU 时钟周期。
-		///		CPU 时钟是由 HCLK 再经过一个分频器提供的。在 stm32f103 中，
-		///		这个分频器可以选择 1 分频或 8 分频。
-		/// 
-		///		因为 flash 是低速储存器，CPU 时钟频率很高时会出现速度不匹配，
-		///		这时候需要 CPU 通过延时来等待 flash。
-		/// </summary>
+		/// @brief 读写 flash 时要延迟多少个 CPU 时钟周期。
+		/// @note 因为 flash 是低速储存器，CPU 时钟频率很高时会出现速度不匹配，
+		/// 这时候需要 CPU 通过延时来等待 flash。
 		enum class FlashLatency
 		{
 			Latency0 = FLASH_LATENCY_0,
@@ -63,13 +54,9 @@ namespace hal
 	};
 }
 
-/// <summary>
-///		让 ClockType 枚举类型支持按位或。
-/// </summary>
-/// <param name="left"></param>
-/// <param name="right"></param>
-/// <returns></returns>
-hal::ClockSignalConfig::ClockType operator|(
-	hal::ClockSignalConfig::ClockType left,
-	hal::ClockSignalConfig::ClockType right
-	);
+/// @brief 让 ClockType 枚举类型支持按位或。
+/// @param left
+/// @param right
+/// @return
+hal::ClockSignalConfig::ClockType operator|(hal::ClockSignalConfig::ClockType left,
+											hal::ClockSignalConfig::ClockType right);
