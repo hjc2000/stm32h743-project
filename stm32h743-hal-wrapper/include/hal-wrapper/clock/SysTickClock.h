@@ -6,7 +6,10 @@
 
 namespace hal
 {
-	class SysTickClock : public bsp::ISysTick
+	/// @brief stm32h743 的 SysTick 不支持设置时钟源。他只能与 CPU 相同频率，
+	/// 即使用系统时钟信号。
+	class SysTickClock
+		: public bsp::ISysTick
 	{
 	private:
 		SysTickClock() = default;
@@ -17,24 +20,6 @@ namespace hal
 			static SysTickClock o;
 			return o;
 		}
-
-		enum class SysTickClockSourceOption
-		{
-			HCLK = SYSTICK_CLKSOURCE_HCLK,
-			HCLK_DIV8 = SYSTICK_CLKSOURCE_HCLK_DIV8,
-		};
-
-		/// @brief 获取 SysTickClock 当前使用的时钟源。
-		/// @return
-		hal::SysTickClock::SysTickClockSourceOption ClockSource();
-
-		/// @brief 设置 Systic 的时钟源。
-		/// @note 最好不要设置，因为 freertos 中会修改 Systic 的 CTRL 寄存器的 bit2 从而设置时钟源。
-		/// 并且默认情况下，除非你修改 port.c ，否则 freertos 会配置为使用不分频的系统时钟作为 Systic
-		/// 的时钟源，即与 CPU 使用相同的时钟源。而且如果不对应修改 freertos 那边的代码，调用本函数
-		/// 的结果会被 freertos 覆盖。
-		/// @param value
-		void SetClockSource(hal::SysTickClock::SysTickClockSourceOption value);
 
 		/// @brief 获取 Systic 的时钟频率。
 		/// @note 这是最终输入到计数器的频率，后面没有任何分频器。

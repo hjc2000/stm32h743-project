@@ -1,18 +1,6 @@
 #include "SysTickClock.h"
 #include <hal-wrapper/clock/ClockSignal.h>
 
-hal::SysTickClock::SysTickClockSourceOption hal::SysTickClock::ClockSource()
-{
-	// stm32h743 不支持 8 分频。
-	return SysTickClockSourceOption::HCLK;
-}
-
-void hal::SysTickClock::SetClockSource(hal::SysTickClock::SysTickClockSourceOption value)
-{
-	// stm32h743 不支持 8 分频。
-	// HAL_SYSTICK_CLKSourceConfig(static_cast<uint32_t>(value));
-}
-
 uint32_t hal::SysTickClock::Frequency()
 {
 	// stm32h743 不支持 8 分频。
