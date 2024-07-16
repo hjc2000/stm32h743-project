@@ -6,7 +6,7 @@
 
 extern "C"
 {
-	uint32_t freertos_get_systic_clock_freq()
+	uint32_t freertos_get_systic_clock_freq(uint8_t sync_to_cpu)
 	{
 		return hal::SysTickClock::Instance().Frequency();
 	}
