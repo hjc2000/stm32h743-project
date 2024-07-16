@@ -1,29 +1,18 @@
 {
+	// 使用 IntelliSense 了解相关属性。 
+	// 悬停以查看现有属性的描述。
+	// 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
 	"configurations": [
 		{
 			"preLaunchTask": "ninja-debug-install",
-			"name": "test.exe",
-			"type": "cppdbg",
+			"name": "Cortex Debug",
+			"cwd": "${workspaceFolder}/out/install/gcc-debug/bin/",
+			"executable": "${workspaceFolder}/out/install/gcc-debug/bin/test.elf",
 			"request": "launch",
-			"program": "${workspaceFolder}/out/install/x64-debug/bin/test.exe",
-			"args": [],
-			"stopAtEntry": false,
-			"cwd": "${workspaceFolder}/out/install/x64-debug",
-			"environment": [],
-			"externalConsole": true,
-			"MIMode": "gdb",
-			"setupCommands": [
-				{
-					"description": "为 gdb 启用整齐打印",
-					"text": "-enable-pretty-printing",
-					"ignoreFailures": true
-				},
-				{
-					"description": "将反汇编风格设置为 Intel",
-					"text": "-gdb-set disassembly-flavor intel",
-					"ignoreFailures": true
-				}
-			]
+			"type": "cortex-debug",
+			"runToEntryPoint": "main",
+			"servertype": "stlink",
 		}
 	]
 }
