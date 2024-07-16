@@ -13,21 +13,15 @@ target_import_src(${ProjectName})
 target_import_freertos(${ProjectName} PUBLIC)
 target_link_libraries(${ProjectName} PUBLIC c m atk-stm32h743-bsp)
 
-add_custom_command(
-	TARGET ${ProjectName} POST_BUILD 
-	COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${ProjectName}>
-)
+add_custom_command(TARGET ${ProjectName} POST_BUILD 
+				   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${ProjectName}>)
 
-add_custom_command(
-	TARGET ${ProjectName} POST_BUILD
-	COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${ProjectName}> $<TARGET_FILE_DIR:${ProjectName}>/${ProjectName}.bin
-	COMMENT "由 elf 生成 bin 文件。"
-)
+add_custom_command(TARGET ${ProjectName} POST_BUILD
+	COMMAND ${obj_copy} -O binary $<TARGET_FILE:${ProjectName}> $<TARGET_FILE_DIR:${ProjectName}>/${ProjectName}.bin
+	COMMENT "由 elf 生成 bin 文件。")
 
-install(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/${ProjectName}.bin"
-    DESTINATION bin
-)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${ProjectName}.bin"
+    	DESTINATION bin)
 
 # 安装时自动尝试将 bin 文件下载到单片机
 install(CODE "

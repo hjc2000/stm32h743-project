@@ -7,16 +7,16 @@
 			"cacheVariables": {
 				"cpp_lib_build_scripts_path": "$env{cpp_lib_build_scripts_path}",
 				"platform": "arm-none-eabi-cortex-m7",
+				"obj_copy": "arm-none-eabi-objcopy",
 				"CMAKE_SYSTEM_PROCESSOR": "arm",
 				"CMAKE_SYSTEM_ARCH": "armv7-m",
 				"CMAKE_SYSTEM_NAME": "Generic",
-				"CMAKE_C_COMPILER": "arm-none-eabi-gcc.exe",
-				"CMAKE_CXX_COMPILER": "arm-none-eabi-g++.exe",
-				"CMAKE_ASM_COMPILER": "arm-none-eabi-gcc.exe",
-				"CMAKE_LINKER": "arm-none-eabi-ld.exe",
-				"CMAKE_OBJCOPY": "arm-none-eabi-objcopy.exe",
-				"CMAKE_SIZE": "arm-none-eabi-size.exe",
-				"CMAKE_STRIP": "arm-none-eabi-ld.exe"
+				"CMAKE_C_COMPILER": "arm-none-eabi-gcc",
+				"CMAKE_CXX_COMPILER": "arm-none-eabi-g++",
+				"CMAKE_ASM_COMPILER": "arm-none-eabi-gcc",
+				"CMAKE_LINKER": "arm-none-eabi-ld",
+				"CMAKE_SIZE": "arm-none-eabi-size",
+				"CMAKE_STRIP": "arm-none-eabi-ld"
 			},
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
