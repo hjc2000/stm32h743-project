@@ -11,9 +11,7 @@ extern "C"
 		return hal::SysTickClock::Instance().Frequency();
 	}
 
-	/// <summary>
-	///		位于 libfreertos.a 中的一个函数，并没有暴露到头文件中。
-	/// </summary>
+	/// @brief 位于 libfreertos.a 中的一个函数，并没有暴露到头文件中。
 	void xPortSysTickHandler();
 
 	void SysTick_Handler()
