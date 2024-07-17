@@ -1,18 +1,17 @@
 #pragma once
-#include<bsp-interface/key/IKey.h>
-#include<hal-wrapper/clock/Delayer.h>
-#include<hal-wrapper/peripheral/gpio/GpioPort.h>
+#include <bsp-interface/key/IKey.h>
+#include <hal-wrapper/peripheral/gpio/GpioPort.h>
 
 namespace bsp
 {
-	class Key0 :public bsp::IKey
+	class Key0 : public bsp::IKey
 	{
 	public:
 		Key0();
 
 		static Key0 &Instance()
 		{
-			static Key0 key { };
+			static Key0 key{};
 			return key;
 		}
 
@@ -29,14 +28,14 @@ namespace bsp
 		bool KeyIsDown() override;
 	};
 
-	class Key1 :public bsp::IKey
+	class Key1 : public bsp::IKey
 	{
 	public:
 		Key1();
 
 		static Key1 &Instance()
 		{
-			static Key1 key { };
+			static Key1 key{};
 			return key;
 		}
 
@@ -53,14 +52,14 @@ namespace bsp
 		bool KeyIsDown() override;
 	};
 
-	class Key2 :public bsp::IKey
+	class Key2 : public bsp::IKey
 	{
 	public:
 		Key2();
 
 		static Key2 &Instance()
 		{
-			static Key2 key { };
+			static Key2 key{};
 			return key;
 		}
 
@@ -77,14 +76,14 @@ namespace bsp
 		bool KeyIsDown() override;
 	};
 
-	class KeyWakeUp :public bsp::IKey
+	class KeyWakeUp : public bsp::IKey
 	{
 	public:
 		KeyWakeUp();
 
 		static KeyWakeUp &Instance()
 		{
-			static KeyWakeUp key { };
+			static KeyWakeUp key{};
 			return key;
 		}
 

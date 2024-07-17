@@ -8,7 +8,6 @@
 #include <hal-wrapper/Cache.h>
 #include <hal-wrapper/Flash.h>
 #include <hal-wrapper/clock/ClockSignal.h>
-#include <hal-wrapper/clock/Delayer.h>
 #include <hal-wrapper/clock/Osc.h>
 #include <hal-wrapper/interrupt/InterruptSwitch.h>
 #include <hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
@@ -17,6 +16,7 @@
 #include <hal-wrapper/peripheral/window-watch-dog/WindowWatchDog.h>
 #include <hal.h>
 #include <stdint.h>
+#include <task/TaskDelayer.h>
 
 using namespace bsp;
 
@@ -81,7 +81,7 @@ IDigitalLed &BSP::GreenDigitalLed()
 
 bsp::IDelayer &BSP::Delayer()
 {
-	return hal::Delayer::Instance();
+	return task::TaskDelayer::Instance();
 }
 
 bsp::IKeyScanner &BSP::KeyScanner()
@@ -98,7 +98,7 @@ bsp::IKeyScanner &BSP::KeyScanner()
 
 			_key_scanner = std::shared_ptr<bsp::KeyScanner>{new bsp::KeyScanner{
 				_keys,
-				hal::Delayer::Instance(),
+				task::TaskDelayer::Instance(),
 			}};
 		}
 

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 include(${cpp_lib_build_scripts_path}/cmake-module/setup.cmake)
 include(target_import_freertos)
+include(target_import_task)
 
 set(ProjectName test)
 project(${ProjectName})
@@ -12,6 +13,7 @@ add_executable(${ProjectName})
 target_import_src(${ProjectName})
 target_import_freertos(${ProjectName} PUBLIC)
 target_link_libraries(${ProjectName} PUBLIC c m atk-stm32h743-bsp)
+target_import_task(${ProjectName} PUBLIC)
 
 add_custom_command(TARGET ${ProjectName} POST_BUILD 
 				   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${ProjectName}>)
