@@ -94,9 +94,11 @@ bsp::IKeyScanner &BSP::KeyScanner()
 			_keys[(uint16_t)KeyIndex::Key1] = &Key1::Instance();
 			_keys[(uint16_t)KeyIndex::Key2] = &Key2::Instance();
 			_keys[(uint16_t)KeyIndex::KeyWakeUp] = &KeyWakeUp::Instance();
+
 			_key_scanner = std::shared_ptr<bsp::KeyScanner>{new bsp::KeyScanner{
 				_keys,
-				hal::Delayer::Instance()}};
+				hal::Delayer::Instance(),
+			}};
 		}
 
 		KeyScannerInitializer(KeyScannerInitializer const &o) = delete;
