@@ -207,5 +207,6 @@ extern "C"
 {
 	void FLASH_IRQHandler()
 	{
+		HAL_FLASH_IRQHandler();
 	}
 }
