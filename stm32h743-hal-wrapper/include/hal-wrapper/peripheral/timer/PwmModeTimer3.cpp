@@ -12,7 +12,7 @@ void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 	{
 		HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance().Handle());
 	};
-	hal::GetIsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), tim3_isr);
+	hal::DI_IsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), tim3_isr);
 
 	hal::GpioPortB::Instance().EnableClock();
 	hal::GpioPinConfig config;

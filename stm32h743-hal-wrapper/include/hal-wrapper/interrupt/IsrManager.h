@@ -5,5 +5,5 @@ namespace hal
 {
 	/// @brief 获取中断服务程序管理器。
 	/// @return
-	bsp::IsrManager &GetIsrManager();
+	bsp::IsrManager &DI_IsrManager();
 }
