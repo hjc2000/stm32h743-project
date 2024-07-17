@@ -79,11 +79,6 @@ IDigitalLed &BSP::GreenDigitalLed()
 	return GreenDigitalLed::Instance();
 }
 
-bsp::IDelayer &BSP::Delayer()
-{
-	return task::TaskDelayer::Instance();
-}
-
 bsp::IKeyScanner &BSP::KeyScanner()
 {
 	class KeyScannerInitializer
@@ -144,7 +139,7 @@ bsp::IInterruptSwitch &BSP::InterruptSwitch()
 
 void TestWindowWatchDog()
 {
-	BSP::Delayer().Delay(std::chrono::seconds{1});
+	bsp::DI_Delayer().Delay(std::chrono::seconds{1});
 	BSP::RedDigitalLed().TurnOn();
 
 	hal::WindowWatchDogConfig config;
@@ -161,7 +156,7 @@ void TestWindowWatchDog()
 	while (true)
 	{
 		BSP::RedDigitalLed().Toggle();
-		BSP::Delayer().Delay(std::chrono::seconds{1});
+		bsp::DI_Delayer().Delay(std::chrono::seconds{1});
 	}
 }
 
@@ -183,7 +178,7 @@ void TestUniversalTimer1()
 	uint32_t value = 500 / 2;
 	while (true)
 	{
-		BSP::Delayer().Delay(std::chrono::milliseconds{1000});
+		bsp::DI_Delayer().Delay(std::chrono::milliseconds{1000});
 		BSP::GreenDigitalLed().Toggle();
 
 		value += config.Period() + config.Period() / 4;

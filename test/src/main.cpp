@@ -3,6 +3,7 @@
 #include <TestKeyScanner.h>
 #include <TestSerial.h>
 #include <atomic>
+#include <bsp-interface/di.h>
 #include <bsp/bsp.h>
 #include <memory>
 #include <stdexcept>
@@ -32,7 +33,7 @@ int main(void)
 			{
 				while (true)
 				{
-					BSP::Delayer().Delay(std::chrono::milliseconds{50});
+					bsp::DI_Delayer().Delay(std::chrono::milliseconds{50});
 					BSP::RedDigitalLed().Toggle();
 				}
 			};
