@@ -65,6 +65,46 @@ void hal::Flash::EraseBank(int32_t bank_id)
 
 uint32_t hal::Flash::ReadUInt32(size_t addr)
 {
-	volatile uint32_t *p = reinterpret_cast<volatile uint32_t *>(addr);
+	if (addr >= Bank1Size() + Bank2Size())
+	{
+		throw std::out_of_range{"地址超出范围"};
+	}
+
+	volatile uint32_t *p = reinterpret_cast<volatile uint32_t *>(Bank1BaseAddress() + addr);
+	return *p;
+}
+
+uint32_t hal::Flash::ReadBankUInt32(int32_t bank_id, size_t addr)
+{
+	size_t base_addr;
+	switch (bank_id)
+	{
+	case 1:
+	{
+		if (addr >= Bank1Size())
+		{
+			throw std::out_of_range{"地址超出范围"};
+		}
+
+		base_addr = Bank1BaseAddress();
+		break;
+	}
+	case 2:
+	{
+		if (addr >= Bank2Size())
+		{
+			throw std::out_of_range{"地址超出范围"};
+		}
+
+		base_addr = Bank2BaseAddress();
+		break;
+	}
+	default:
+	{
+		throw std::invalid_argument{"非法 bank_id"};
+	}
+	}
+
+	volatile uint32_t *p = reinterpret_cast<volatile uint32_t *>(base_addr + addr);
 	return *p;
 }
