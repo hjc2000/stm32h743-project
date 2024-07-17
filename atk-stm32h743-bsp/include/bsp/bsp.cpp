@@ -200,9 +200,14 @@ void TestFlash()
 			if (BSP::KeyScanner().HasKeyDownEvent(static_cast<uint16_t>(KeyIndex::Key0)))
 			{
 				flash.Unlock();
-				uint32_t value = flash.ReadBankUInt32(2, 0);
-				flash.EraseBank(2);
-				value = flash.ReadBankUInt32(2, 0);
+				uint32_t value = flash.ReadBankUInt32(2, 10 * 128);
+				// flash.EraseBank(2);
+				for (int i = 0; i <= 7; i++)
+				{
+					flash.EraseSector(2, i, 1);
+				}
+
+				value = flash.ReadBankUInt32(2, 10 * 128);
 				flash.Lock();
 				BSP::GreenDigitalLed().TurnOn();
 			}
