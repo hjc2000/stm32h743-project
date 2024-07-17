@@ -28,6 +28,16 @@ int main(void)
 			};
 			std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create(lvgl_init_task_func, 512);
 
+			auto blink_red_led = []()
+			{
+				while (true)
+				{
+					BSP::Delayer().Delay(std::chrono::milliseconds{50});
+					BSP::RedDigitalLed().Toggle();
+				}
+			};
+			std::shared_ptr<task::Task> blink_red_led_task = task::Task::Create(blink_red_led, 512);
+
 			vTaskStartScheduler();
 		}
 		catch (std::exception const &e)

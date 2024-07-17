@@ -194,15 +194,18 @@ void TestFlash()
 	try
 	{
 		auto &flash = hal::Flash::Instance();
-		flash.Unlock();
-		uint32_t value = flash.ReadBankUInt32(2, 0);
-		flash.EraseSector(2, 0, 1);
-		value = flash.ReadBankUInt32(2, 0);
-		flash.Lock();
 		while (true)
 		{
-			BSP::Delayer().Delay(std::chrono::milliseconds{1000});
-			BSP::GreenDigitalLed().Toggle();
+			BSP::KeyScanner().ScanKeys();
+			if (BSP::KeyScanner().HasKeyDownEvent(static_cast<uint16_t>(KeyIndex::Key0)))
+			{
+				flash.Unlock();
+				uint32_t value = flash.ReadBankUInt32(2, 0);
+				flash.EraseBank(2);
+				value = flash.ReadBankUInt32(2, 0);
+				flash.Lock();
+				BSP::GreenDigitalLed().TurnOn();
+			}
 		}
 	}
 	catch (std::exception const &e)
