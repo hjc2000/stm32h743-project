@@ -311,9 +311,6 @@ g_pfnVectors:
 	.weak	RTC_WKUP_IRQHandler
 	.thumb_set RTC_WKUP_IRQHandler,Default_Handler
 
-	.weak	FLASH_IRQHandler
-	.thumb_set FLASH_IRQHandler,Default_Handler
-
 	.weak	RCC_IRQHandler
 	.thumb_set RCC_IRQHandler,Default_Handler
 

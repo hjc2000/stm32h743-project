@@ -202,3 +202,10 @@ uint32_t hal::Flash::ReadBankUInt32(int32_t bank_id, size_t addr)
 	volatile uint32_t *p = reinterpret_cast<volatile uint32_t *>(base_addr + addr);
 	return *p;
 }
+
+extern "C"
+{
+	void FLASH_IRQHandler()
+	{
+	}
+}
