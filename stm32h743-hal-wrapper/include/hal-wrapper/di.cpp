@@ -10,11 +10,3 @@ namespace task
 		return hal::SysTickClock::Instance();
 	}
 }
-
-namespace bsp
-{
-	bsp::IDelayer &DI_Delayer()
-	{
-		return task::TaskDelayer::Instance();
-	}
-}
