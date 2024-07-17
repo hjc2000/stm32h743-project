@@ -1,5 +1,6 @@
 #pragma once
 #include <atomic>
+#include <base/LockGuard.h>
 #include <hal.h>
 #include <task/BinarySemaphore.h>
 
@@ -12,6 +13,7 @@ extern "C"
 namespace hal
 {
 	class Flash
+		: public base::ILock
 	{
 	private:
 		Flash();
@@ -52,8 +54,8 @@ namespace hal
 			return o;
 		}
 
-		void Lock();
-		void Unlock();
+		void Lock() override;
+		void Unlock() override;
 
 		/// @brief 擦除一整个 bank。
 		/// @note stm32h743 有 2 个 bank。典型用法是：bank1 用来存放程序，bank2 用来存放数据。
