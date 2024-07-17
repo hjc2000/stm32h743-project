@@ -6,6 +6,7 @@
 #include <bsp-interface/key/KeyScanner.h>
 #include <functional>
 #include <hal-wrapper/Cache.h>
+#include <hal-wrapper/Flash.h>
 #include <hal-wrapper/clock/ClockSignal.h>
 #include <hal-wrapper/clock/Delayer.h>
 #include <hal-wrapper/clock/Osc.h>
@@ -185,5 +186,27 @@ void TestUniversalTimer1()
 		value %= config.Period();
 		compare_output_config.SetPulse(value);
 		hal::PwmModeTimer3::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
+	}
+}
+
+void TestFlash()
+{
+	try
+	{
+		auto &flash = hal::Flash::Instance();
+		flash.Unlock();
+		uint32_t value = flash.ReadBankUInt32(2, 0);
+		flash.EraseSector(2, 0, 1);
+		value = flash.ReadBankUInt32(2, 0);
+		flash.Lock();
+		while (true)
+		{
+			BSP::Delayer().Delay(std::chrono::milliseconds{1000});
+			BSP::GreenDigitalLed().Toggle();
+		}
+	}
+	catch (std::exception const &e)
+	{
+		std::string str = e.what();
 	}
 }

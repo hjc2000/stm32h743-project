@@ -40,3 +40,4 @@ public:
 
 void TestWindowWatchDog();
 void TestUniversalTimer1();
+void TestFlash();

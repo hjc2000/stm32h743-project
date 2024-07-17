@@ -1,12 +1,20 @@
 #pragma once
+#include <atomic>
 #include <hal.h>
+#include <task/BinarySemaphore.h>
+
+extern "C"
+{
+	void HAL_FLASH_EndOfOperationCallback(uint32_t ReturnValue);
+	void HAL_FLASH_OperationErrorCallback(uint32_t ReturnValue);
+}
 
 namespace hal
 {
 	class Flash
 	{
 	private:
-		Flash() = default;
+		Flash();
 
 #pragma region 地址和大小
 		static consteval size_t Bank1BaseAddress()
@@ -31,9 +39,14 @@ namespace hal
 #pragma endregion
 
 		static uint32_t SectorIndexToDefine(int32_t index);
+		friend void ::HAL_FLASH_EndOfOperationCallback(uint32_t ReturnValue);
+		friend void ::HAL_FLASH_OperationErrorCallback(uint32_t ReturnValue);
+
+		std::atomic_bool _operation_failed = false;
+		task::BinarySemaphore _operation_completed;
 
 	public:
-		Flash &Instance()
+		static Flash &Instance()
 		{
 			static Flash o;
 			return o;

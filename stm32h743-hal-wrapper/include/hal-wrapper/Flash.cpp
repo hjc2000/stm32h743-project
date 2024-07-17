@@ -1,5 +1,11 @@
 #include "Flash.h"
+#include <hal-wrapper/interrupt/Interrupt.h>
 #include <stdexcept>
+
+hal::Flash::Flash()
+{
+	hal::Interrupt::EnableIRQ(IRQn_Type::FLASH_IRQn);
+}
 
 uint32_t hal::Flash::SectorIndexToDefine(int32_t index)
 {
@@ -91,18 +97,19 @@ void hal::Flash::EraseBank(int32_t bank_id)
 	// 每次擦除 64 位，直到擦除整个 bank。越高的电压擦除时并行的位数就越多。
 	def.VoltageRange = FLASH_VOLTAGE_RANGE_4;
 
-	uint32_t error_sector_index;
-
 	/* 擦除到某个扇区的时候如果发生错误，会停止擦除，将扇区索引赋值给 error_sector_index，
 	 * 然后返回。
 	 */
-	HAL_StatusTypeDef result = HAL_FLASHEx_Erase(&def, &error_sector_index);
+	HAL_StatusTypeDef result = HAL_FLASHEx_Erase_IT(&def);
 	if (result != HAL_StatusTypeDef::HAL_OK)
 	{
-		std::string msg = "擦除第 ";
-		msg += std::to_string(error_sector_index);
-		msg += " 个扇区时出错。";
-		throw std::runtime_error{msg};
+		throw std::runtime_error{"启动擦除流程失败"};
+	}
+
+	_operation_completed.Acquire();
+	if (_operation_failed)
+	{
+		throw std::runtime_error{"擦除流程结束，出错了"};
 	}
 
 	SCB_CleanInvalidateDCache();
@@ -140,18 +147,19 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 	// 每次擦除 64 位，直到擦除整个 bank。越高的电压擦除时并行的位数就越多。
 	def.VoltageRange = FLASH_VOLTAGE_RANGE_4;
 
-	uint32_t error_sector_index;
-
 	/* 擦除到某个扇区的时候如果发生错误，会停止擦除，将扇区索引赋值给 error_sector_index，
 	 * 然后返回。
 	 */
-	HAL_StatusTypeDef result = HAL_FLASHEx_Erase(&def, &error_sector_index);
+	HAL_StatusTypeDef result = HAL_FLASHEx_Erase_IT(&def);
 	if (result != HAL_StatusTypeDef::HAL_OK)
 	{
-		std::string msg = "擦除第 ";
-		msg += std::to_string(error_sector_index);
-		msg += " 个扇区时出错。";
-		throw std::runtime_error{msg};
+		throw std::runtime_error{"启动擦除流程失败"};
+	}
+
+	_operation_completed.Acquire();
+	if (_operation_failed)
+	{
+		throw std::runtime_error{"擦除流程结束，出错了"};
 	}
 
 	SCB_CleanInvalidateDCache();
@@ -208,5 +216,17 @@ extern "C"
 	void FLASH_IRQHandler()
 	{
 		HAL_FLASH_IRQHandler();
+	}
+
+	void HAL_FLASH_EndOfOperationCallback(uint32_t ReturnValue)
+	{
+		hal::Flash::Instance()._operation_failed = false;
+		hal::Flash::Instance()._operation_completed.ReleaseFromISR();
+	}
+
+	void HAL_FLASH_OperationErrorCallback(uint32_t ReturnValue)
+	{
+		hal::Flash::Instance()._operation_failed = true;
+		hal::Flash::Instance()._operation_completed.ReleaseFromISR();
 	}
 }
