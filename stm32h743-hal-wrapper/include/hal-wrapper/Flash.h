@@ -6,6 +6,8 @@ namespace hal
 	class Flash
 	{
 	private:
+		Flash() = default;
+
 #pragma region 地址和大小
 		static consteval size_t Bank1BaseAddress()
 		{
@@ -29,6 +31,12 @@ namespace hal
 #pragma endregion
 
 	public:
+		Flash &Instance()
+		{
+			static Flash o;
+			return o;
+		}
+
 		void Lock();
 		void Unlock();
 
