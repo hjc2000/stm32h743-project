@@ -202,14 +202,14 @@ void TestFlash()
 			if (BSP::KeyScanner().HasKeyDownEvent(static_cast<uint16_t>(KeyIndex::Key0)))
 			{
 				base::UnlockGuard ul{flash};
-				uint32_t value = flash.ReadBankUInt32(2, 10 * 128);
+				uint32_t value = flash.ReadUInt32(2, 10 * 128);
 				// flash.EraseBank(2);
 				for (int i = 0; i <= 7; i++)
 				{
 					flash.EraseSector(2, i, 1);
 				}
 
-				value = flash.ReadBankUInt32(2, 10 * 128);
+				value = flash.ReadUInt32(2, 10 * 128);
 				BSP::GreenDigitalLed().Toggle();
 			}
 		}

@@ -68,6 +68,7 @@ void hal::Flash::Unlock()
 	}
 }
 
+#pragma region 擦除
 void hal::Flash::EraseBank(int32_t bank_id)
 {
 	FLASH_EraseInitTypeDef def;
@@ -164,6 +165,7 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 
 	SCB_CleanInvalidateDCache();
 }
+#pragma endregion
 
 uint32_t hal::Flash::ReadUInt32(size_t addr)
 {
@@ -176,7 +178,7 @@ uint32_t hal::Flash::ReadUInt32(size_t addr)
 	return *p;
 }
 
-uint32_t hal::Flash::ReadBankUInt32(int32_t bank_id, size_t addr)
+uint32_t hal::Flash::ReadUInt32(int32_t bank_id, size_t addr)
 {
 	size_t base_addr;
 	switch (bank_id)

@@ -77,6 +77,6 @@ namespace hal
 		/// @param bank_id bank 的 id。例如 bank1 的 id 是 1.
 		/// @param addr 相对于此 bank 的起始地址的地址。
 		/// @return 该地址的数据。
-		uint32_t ReadBankUInt32(int32_t bank_id, size_t addr);
+		uint32_t ReadUInt32(int32_t bank_id, size_t addr);
 	};
 }
