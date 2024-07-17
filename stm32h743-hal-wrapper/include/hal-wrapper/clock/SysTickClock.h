@@ -21,18 +21,18 @@ namespace hal
 			return o;
 		}
 
-		/// @brief 获取 Systic 的时钟频率。
+		/// @brief 获取当前的实际的 Systic 的频率。
 		/// @note stm32h743 的 Systic 永远只能与 CPU 频率相同，即只能使用系统时钟信号
 		/// 作为时钟源，无法使用系统时钟信号 8 分频后的信号作为时钟源。
 		/// @return
-		uint32_t Frequency() override;
+		uint32_t Frequency() const override;
 
 		/// @brief 获取 SysTick 的 LOAD 寄存器的 RELOAD 部分的值。
 		/// RELOAD 占据 LOAD 寄存器的低 23 位。
 		/// @note RELOAD 是用来在计数值递减到 0 后，下一个时钟周期装载到计数器中的。
 		/// @note 使用了 freertos 后，重装载值会被 freertos 设置。
 		/// @return
-		uint32_t ReloadValue() override;
+		uint32_t ReloadValue() const override;
 
 		/// @brief 获取 SysTick 的 VAL 寄存器的 CURRENT 部分的值。
 		/// @note CURRENT 部分占据了寄存器的低 23 位，表示当前计数值。
@@ -40,6 +40,6 @@ namespace hal
 		/// 写入 CURRENT 会导致 CURRENT 清零，同时会导致 CTRL 寄存器的 COUNTFLAG 位清零。
 		///
 		/// @return 当前计数值
-		uint32_t CurrentValue() override;
+		uint32_t CurrentValue() const override;
 	};
 }
