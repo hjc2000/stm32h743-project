@@ -11,7 +11,8 @@ extern "C"
 		/* 无论 sync_to_cpu 是什么，都应该返回系统时钟频率，因为 stm32h743 不支持让
 		 * SysTick 与 CPU 不同频率。
 		 */
-		return hal::SysTickClock::Instance().Frequency();
+		uint32_t freq = HAL_RCC_GetSysClockFreq();
+		return freq;
 	}
 
 	void SysTick_Handler()
