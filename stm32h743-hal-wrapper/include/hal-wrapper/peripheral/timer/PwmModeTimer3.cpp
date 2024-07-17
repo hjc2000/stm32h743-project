@@ -1,16 +1,18 @@
-#include"PwmModeTimer3.h"
-#include<hal-wrapper/interrupt/Interrupt.h>
-#include<hal-wrapper/interrupt/IsrManager.h>
-#include<hal-wrapper/peripheral/gpio/GpioPort.h>
+#include "PwmModeTimer3.h"
+#include <hal-wrapper/interrupt/Interrupt.h>
+#include <hal-wrapper/interrupt/IsrManager.h>
+#include <hal-wrapper/peripheral/gpio/GpioPort.h>
 
 void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
 	hal::Interrupt::SetPriority(IRQn_Type::TIM3_IRQn, 10, 0);
-	hal::GetIsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), []()
+
+	auto tim3_isr = []()
 	{
 		HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance().Handle());
-	});
+	};
+	hal::GetIsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), tim3_isr);
 
 	hal::GpioPortB::Instance().EnableClock();
 	hal::GpioPinConfig config;

@@ -1,14 +1,14 @@
 #pragma once
-#include<base/HandleWrapper.h>
-#include<hal.h>
+#include <base/HandleWrapper.h>
+#include <hal.h>
 
 namespace hal
 {
-	class UniversalTimerBaseConfig :
-		public base::HandleWrapper<TIM_Base_InitTypeDef>
+	class UniversalTimerBaseConfig
+		: public base::HandleWrapper<TIM_Base_InitTypeDef>
 	{
 	private:
-		TIM_Base_InitTypeDef _handle { };
+		TIM_Base_InitTypeDef _handle{};
 
 	public:
 		TIM_Base_InitTypeDef &Handle() override;

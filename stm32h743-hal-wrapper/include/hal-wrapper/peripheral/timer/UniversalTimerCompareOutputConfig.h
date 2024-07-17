@@ -1,15 +1,15 @@
 #pragma once
-#include<base/HandleWrapper.h>
-#include<hal.h>
-#include<stdint.h>
+#include <base/HandleWrapper.h>
+#include <hal.h>
+#include <stdint.h>
 
 namespace hal
 {
-	class UniversalTimerCompareOutputConfig :
-		public base::HandleWrapper<TIM_OC_InitTypeDef>
+	class UniversalTimerCompareOutputConfig
+		: public base::HandleWrapper<TIM_OC_InitTypeDef>
 	{
 	private:
-		TIM_OC_InitTypeDef _handle { };
+		TIM_OC_InitTypeDef _handle{};
 
 	public:
 		TIM_OC_InitTypeDef &Handle() override
@@ -44,10 +44,9 @@ namespace hal
 			_handle.OCMode = static_cast<uint32_t>(value);
 		}
 
-		/// <summary>
-		///		比较值，可以用来设置占空比。
-		///		* 范围：[0x0000, 0xffff]
-		/// </summary>
+		/// @brief 比较值，可以用来设置占空比。
+		/// @note 范围：[0x0000, 0xffff]
+		/// @return
 		uint32_t Pulse()
 		{
 			return _handle.Pulse;

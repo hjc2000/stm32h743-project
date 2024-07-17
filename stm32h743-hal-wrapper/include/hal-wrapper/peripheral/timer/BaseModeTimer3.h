@@ -1,23 +1,23 @@
 #pragma once
-#include<base/HandleWrapper.h>
-#include<functional>
-#include<hal.h>
-#include<hal-wrapper/clock/ClockSignal.h>
-#include<hal-wrapper/peripheral/timer/TimerChannelEnum.h>
-#include<hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h>
-#include<hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>
-#include<stdexcept>
-#include<task/Critical.h>
+#include <base/HandleWrapper.h>
+#include <functional>
+#include <hal-wrapper/clock/ClockSignal.h>
+#include <hal-wrapper/peripheral/timer/TimerChannelEnum.h>
+#include <hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h>
+#include <hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>
+#include <hal.h>
+#include <stdexcept>
+#include <task/Critical.h>
 
 namespace hal
 {
-	class BaseModeTimer3 :
-		public base::HandleWrapper<TIM_HandleTypeDef>
+	class BaseModeTimer3
+		: public base::HandleWrapper<TIM_HandleTypeDef>
 	{
 	private:
-		TIM_HandleTypeDef _handle { };
-		hal::UniversalTimerBaseConfig _base_config { };
-		std::function<void()> _period_elapsed_callback { };
+		TIM_HandleTypeDef _handle{};
+		hal::UniversalTimerBaseConfig _base_config{};
+		std::function<void()> _period_elapsed_callback{};
 
 		TIM_TypeDef *HardwareInstance() const
 		{
@@ -36,30 +36,26 @@ namespace hal
 
 		TIM_HandleTypeDef &Handle() override;
 
-		/// <summary>
-		///		初始化为基本定时器。
-		/// </summary>
-		/// <param name="config"></param>
+		/// @brief 初始化为基本定时器。
+		/// @param config
 		void BaseInitialize(hal::UniversalTimerBaseConfig &config);
 
 		void SetPeriodElapsedCallback(std::function<void()> func)
 		{
-			task::Critical::Run([&]()
+			auto critical_func = [&]()
 			{
 				_period_elapsed_callback = func;
-			});
+			};
+			task::Critical::Run(critical_func);
 		}
 
-		/// <summary>
-		///		输入到分频器的时钟信号的频率
-		/// </summary>
-		/// <returns></returns>
+		/// @brief 输入到分频器的时钟信号的频率
+		/// @return
 		uint32_t PrescalerInputClockSignalFrequency()
 		{
 			hal::ClockSignalConfig config = hal::ClockSignal::GetConfig();
 			uint32_t pclk1_freq = hal::ClockSignal::Pclk1Freq();
-			if (config._system_clk_config._hclk_config._apb1clk_config._input_divider
-				== hal::Apb1ClkConfig::InputDivider::DIV1)
+			if (config._system_clk_config._hclk_config._apb1clk_config._input_divider == hal::Apb1ClkConfig::InputDivider::DIV1)
 			{
 				return pclk1_freq;
 			}
@@ -68,10 +64,8 @@ namespace hal
 			return pclk1_freq * 2;
 		}
 
-		/// <summary>
-		///		分频器的输出，输入到定时器的计数器中的时钟频率。
-		/// </summary>
-		/// <returns></returns>
+		/// @brief 分频器的输出，输入到定时器的计数器中的时钟频率。
+		/// @return
 		uint32_t CounterFrequency()
 		{
 			return PrescalerInputClockSignalFrequency() / (_base_config.Prescaler() + 1);
