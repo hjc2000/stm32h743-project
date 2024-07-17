@@ -38,6 +38,46 @@ namespace hal
 		{
 			return 0x081fffff - Bank2BaseAddress() + 1;
 		}
+
+		/// @brief 将相对于指定 bank 的起始地址的地址转化为绝对地址。
+		/// @tparam RetPtrType 返回的指针的类型。
+		/// @param bank_id 相对于哪一个 bank 的起始地址？
+		/// @param addr 相对于此 bank 起始地址的地址。
+		/// @return 返回可以用来直接解引用从而操作该地址的指针。
+		template <typename RetPtrType>
+		RetPtrType *GetAbsoluteAddress(int32_t bank_id, size_t addr)
+		{
+			size_t base_addr;
+			switch (bank_id)
+			{
+			case 1:
+			{
+				if (addr >= Bank1Size())
+				{
+					throw std::out_of_range{"地址超出范围"};
+				}
+
+				base_addr = Bank1BaseAddress();
+				break;
+			}
+			case 2:
+			{
+				if (addr >= Bank2Size())
+				{
+					throw std::out_of_range{"地址超出范围"};
+				}
+
+				base_addr = Bank2BaseAddress();
+				break;
+			}
+			default:
+			{
+				throw std::invalid_argument{"非法 bank_id"};
+			}
+			}
+
+			return reinterpret_cast<RetPtrType *>(base_addr + addr);
+		}
 #pragma endregion
 
 		static uint32_t SectorIndexToDefine(int32_t index);
@@ -68,15 +108,20 @@ namespace hal
 		/// @param sector_count 要擦除的扇区的数量。
 		void EraseSector(int32_t bank_id, int32_t start_sector_index, int32_t sector_count);
 
-		/// @brief 读取指定地址的 32 位数据。
-		/// @param addr 相对于此 flash 储存器起始地址的地址。
-		/// @return 该地址的数据。
-		uint32_t ReadUInt32(size_t addr);
-
 		/// @brief 读取指定 bank 的指定地址的 32 位数据
 		/// @param bank_id bank 的 id。例如 bank1 的 id 是 1.
 		/// @param addr 相对于此 bank 的起始地址的地址。
 		/// @return 该地址的数据。
 		uint32_t ReadUInt32(int32_t bank_id, size_t addr);
+
+		/// @brief 对齐地写 bank
+		/// @param bank_id 要写入的 bank 的 id.
+		///
+		/// @param addr 要写入的数据相对于此 bank 的起始地址的地址。
+		/// @warning 此地址必须能被 32 整除。
+		///
+		/// @param buffer 要写入的数据所在的缓冲区。
+		/// @param count 要写入的字节数。
+		void WriteInAlignment(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count);
 	};
 }

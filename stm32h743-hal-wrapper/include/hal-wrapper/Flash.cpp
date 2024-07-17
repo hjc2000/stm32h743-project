@@ -167,50 +167,14 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 }
 #pragma endregion
 
-uint32_t hal::Flash::ReadUInt32(size_t addr)
+uint32_t hal::Flash::ReadUInt32(int32_t bank_id, size_t addr)
 {
-	if (addr >= Bank1Size() + Bank2Size())
-	{
-		throw std::out_of_range{"地址超出范围"};
-	}
-
-	volatile uint32_t *p = reinterpret_cast<volatile uint32_t *>(Bank1BaseAddress() + addr);
+	volatile uint32_t *p = GetAbsoluteAddress<uint32_t>(bank_id, addr);
 	return *p;
 }
 
-uint32_t hal::Flash::ReadUInt32(int32_t bank_id, size_t addr)
+void hal::Flash::WriteInAlignment(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count)
 {
-	size_t base_addr;
-	switch (bank_id)
-	{
-	case 1:
-	{
-		if (addr >= Bank1Size())
-		{
-			throw std::out_of_range{"地址超出范围"};
-		}
-
-		base_addr = Bank1BaseAddress();
-		break;
-	}
-	case 2:
-	{
-		if (addr >= Bank2Size())
-		{
-			throw std::out_of_range{"地址超出范围"};
-		}
-
-		base_addr = Bank2BaseAddress();
-		break;
-	}
-	default:
-	{
-		throw std::invalid_argument{"非法 bank_id"};
-	}
-	}
-
-	volatile uint32_t *p = reinterpret_cast<volatile uint32_t *>(base_addr + addr);
-	return *p;
 }
 
 extern "C"
