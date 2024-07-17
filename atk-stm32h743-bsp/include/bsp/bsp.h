@@ -4,6 +4,7 @@
 #include <bsp-interface/IEventDrivenKey.h>
 #include <bsp-interface/IIndependentWatchDog.h>
 #include <bsp-interface/ISerial.h>
+#include <bsp-interface/interrupt/IInterruptSwitch.h>
 #include <bsp-interface/key/IKeyScanner.h>
 
 enum class KeyIndex : uint16_t
@@ -36,6 +37,8 @@ public:
 	/// @brief 独立看门狗。
 	/// @return
 	static bsp::IIndependentWatchDog &IndependentWatchDog();
+
+	static bsp::IInterruptSwitch &InterruptSwitch();
 };
 
 void TestWindowWatchDog();

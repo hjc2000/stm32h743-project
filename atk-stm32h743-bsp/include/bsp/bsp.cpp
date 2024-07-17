@@ -10,6 +10,7 @@
 #include <hal-wrapper/clock/ClockSignal.h>
 #include <hal-wrapper/clock/Delayer.h>
 #include <hal-wrapper/clock/Osc.h>
+#include <hal-wrapper/interrupt/InterruptSwitch.h>
 #include <hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
 #include <hal-wrapper/peripheral/serial/Serial.h>
 #include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
@@ -138,6 +139,11 @@ bsp::ISerial &BSP::Serial()
 bsp::IIndependentWatchDog &BSP::IndependentWatchDog()
 {
 	return hal::IndependentWatchDog::Instance();
+}
+
+bsp::IInterruptSwitch &BSP::InterruptSwitch()
+{
+	return hal::InterruptSwitch::Instance();
 }
 
 void TestWindowWatchDog()
