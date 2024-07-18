@@ -68,7 +68,7 @@ void hal::Flash::Unlock()
 	}
 }
 
-size_t hal::Flash::GetBankBaseAddress(int32_t bank_id)
+size_t hal::Flash::GetBankBaseAddress(int32_t bank_id) const
 {
 	switch (bank_id)
 	{
@@ -87,7 +87,7 @@ size_t hal::Flash::GetBankBaseAddress(int32_t bank_id)
 	}
 }
 
-size_t hal::Flash::GetBankSize(int32_t bank_id)
+size_t hal::Flash::GetBankSize(int32_t bank_id) const
 {
 	switch (bank_id)
 	{

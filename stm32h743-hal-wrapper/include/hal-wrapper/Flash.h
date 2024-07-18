@@ -38,7 +38,7 @@ namespace hal
 
 		/// @brief 获取此 flash 的 bank 数量。
 		/// @return
-		int32_t BankCount() override
+		int32_t BankCount() const override
 		{
 			return 2;
 		}
@@ -46,7 +46,7 @@ namespace hal
 		/// @brief 获取指定 bank 的扇区数量。
 		/// @param bank_id
 		/// @return
-		int32_t GetBankSectorCount(int32_t bank_id)
+		int32_t GetBankSectorCount(int32_t bank_id) const override
 		{
 			return 8;
 		}
@@ -54,18 +54,18 @@ namespace hal
 		/// @brief 获取指定 bank 的基地址。
 		/// @param bank_id
 		/// @return
-		size_t GetBankBaseAddress(int32_t bank_id) override;
+		size_t GetBankBaseAddress(int32_t bank_id) const override;
 
 		/// @brief 获取指定 bank 的大小。单位：字节。
 		/// @param bank_id
 		/// @return
-		virtual size_t GetBankSize(int32_t bank_id) override;
+		virtual size_t GetBankSize(int32_t bank_id) const override;
 
 		/// @brief flash 的最小编程单位。单位：字节。
 		/// @note 最小单位是一次编程必须写入这么多字节，即使要写入的数据没有这么多，在一次
 		/// 写入后，整个单位大小的区域都无法再次写入了，除非擦除整个扇区。
 		/// @return 返回此 flash 编程的最小单位。
-		int32_t MinProgrammingUnit() override
+		int32_t MinProgrammingUnit() const override
 		{
 			return 32;
 		}
