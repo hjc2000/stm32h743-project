@@ -107,11 +107,11 @@ namespace hal
 		/// @param sector_count 要擦除的扇区的数量。
 		void EraseSector(int32_t bank_id, int32_t start_sector_index, int32_t sector_count);
 
-		/// @brief 读取指定 bank 的指定地址的 32 位数据
+		/// @brief 读取指定 bank 的指定地址的 1 字节数据。
 		/// @param bank_id bank 的 id。例如 bank1 的 id 是 1.
 		/// @param addr 相对于此 bank 的起始地址的地址。
-		/// @return 该地址的数据。
-		uint32_t ReadUInt32(int32_t bank_id, size_t addr);
+		/// @return
+		uint8_t ReadUInt8(int32_t bank_id, size_t addr);
 
 		/// @brief 编程
 		/// @param bank_id 要写入的 bank 的 id.

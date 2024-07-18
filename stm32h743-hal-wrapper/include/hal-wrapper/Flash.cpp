@@ -167,9 +167,9 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 }
 #pragma endregion
 
-uint32_t hal::Flash::ReadUInt32(int32_t bank_id, size_t addr)
+uint8_t hal::Flash::ReadUInt8(int32_t bank_id, size_t addr)
 {
-	volatile uint32_t *p = reinterpret_cast<uint32_t *>(GetAbsoluteAddress(bank_id, addr));
+	volatile uint8_t *p = reinterpret_cast<uint8_t *>(GetAbsoluteAddress(bank_id, addr));
 	return *p;
 }
 
