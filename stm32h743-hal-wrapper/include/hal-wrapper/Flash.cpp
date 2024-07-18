@@ -169,8 +169,9 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 
 uint8_t hal::Flash::ReadUInt8(int32_t bank_id, size_t addr)
 {
-	volatile uint8_t *p = reinterpret_cast<uint8_t *>(GetAbsoluteAddress(bank_id, addr));
-	return *p;
+	uint8_t ret;
+	ReadBuffer(bank_id, addr, reinterpret_cast<uint8_t *>(&ret), sizeof(ret));
+	return ret;
 }
 
 uint16_t hal::Flash::ReadUInt16(int32_t bank_id, size_t addr)
