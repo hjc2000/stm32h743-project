@@ -205,25 +205,10 @@ void hal::Flash::ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32
 
 void hal::Flash::Program(int32_t bank_id, size_t addr, std::array<uint32_t, 8> const &datas)
 {
-	if (addr % 32 != 0)
-	{
-		throw std::invalid_argument{"addr 必须 32 字节对齐，即要能被 32 整除"};
-	}
-
-	HAL_StatusTypeDef result = HAL_FLASH_Program_IT(FLASH_TYPEPROGRAM_FLASHWORD,
-													static_cast<uint32_t>(GetAbsoluteAddress(bank_id, addr)),
-													reinterpret_cast<uint32_t>(datas.data()));
-
-	_operation_completed.Acquire();
-	if (result != HAL_StatusTypeDef::HAL_OK)
-	{
-		throw std::runtime_error{"启动编程时发生错误"};
-	}
-
-	SCB_CleanInvalidateDCache();
+	Program(bank_id, addr, datas.data());
 }
 
-void hal::Flash::Program(int32_t bank_id, size_t addr, uint32_t *buffer)
+void hal::Flash::Program(int32_t bank_id, size_t addr, uint32_t const *buffer)
 {
 	if (addr % 32 != 0)
 	{

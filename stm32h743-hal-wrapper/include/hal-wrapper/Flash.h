@@ -146,6 +146,6 @@ namespace hal
 		///
 		/// @param buffer 要写入到 flash 的数据所在的缓冲区。
 		/// @warning buffer 的元素个数必须 >= 8，否则将发生内存访问越界。
-		void Program(int32_t bank_id, size_t addr, uint32_t *buffer);
+		void Program(int32_t bank_id, size_t addr, uint32_t const *buffer);
 	};
 }
