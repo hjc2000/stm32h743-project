@@ -207,7 +207,7 @@ void TestFlash()
 				}
 
 				uint32_t value = flash.ReadUInt32(2, 0);
-				flash.Program(2, 0, buffer);
+				flash.Program(2, 0, reinterpret_cast<uint8_t *>(buffer.data()));
 				value = flash.ReadUInt32(2, 0);
 				BSP::GreenDigitalLed().Toggle();
 			}

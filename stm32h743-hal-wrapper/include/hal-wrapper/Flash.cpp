@@ -167,6 +167,7 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 }
 #pragma endregion
 
+#pragma region 读取
 uint8_t hal::Flash::ReadUInt8(int32_t bank_id, size_t addr)
 {
 	uint8_t ret;
@@ -200,12 +201,43 @@ void hal::Flash::ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32
 	uint8_t *absolute_address = reinterpret_cast<uint8_t *>(GetAbsoluteAddress(bank_id, addr));
 	std::copy(absolute_address, absolute_address + count, buffer);
 }
+#pragma endregion
 
 void hal::Flash::Program(int32_t bank_id, size_t addr, std::array<uint32_t, 8> const &datas)
 {
+	if (addr % 32 != 0)
+	{
+		throw std::invalid_argument{"addr 必须 32 字节对齐，即要能被 32 整除"};
+	}
+
 	HAL_StatusTypeDef result = HAL_FLASH_Program_IT(FLASH_TYPEPROGRAM_FLASHWORD,
 													static_cast<uint32_t>(GetAbsoluteAddress(bank_id, addr)),
 													reinterpret_cast<uint32_t>(datas.data()));
+
+	_operation_completed.Acquire();
+	if (result != HAL_StatusTypeDef::HAL_OK)
+	{
+		throw std::runtime_error{"启动编程时发生错误"};
+	}
+
+	SCB_CleanInvalidateDCache();
+}
+
+void hal::Flash::Program(int32_t bank_id, size_t addr, uint8_t *buffer)
+{
+	if (addr % 32 != 0)
+	{
+		throw std::invalid_argument{"addr 必须 32 字节对齐，即要能被 32 整除"};
+	}
+
+	if (reinterpret_cast<size_t>(buffer) % 4 != 0)
+	{
+		throw std::invalid_argument{"buffer 必须 4 字节对齐，即要能被 4 整除"};
+	}
+
+	HAL_StatusTypeDef result = HAL_FLASH_Program_IT(FLASH_TYPEPROGRAM_FLASHWORD,
+													static_cast<uint32_t>(GetAbsoluteAddress(bank_id, addr)),
+													reinterpret_cast<uint32_t>(buffer));
 
 	_operation_completed.Acquire();
 	if (result != HAL_StatusTypeDef::HAL_OK)
