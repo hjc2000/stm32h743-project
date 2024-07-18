@@ -206,9 +206,9 @@ void TestFlash()
 					flash.EraseSector(2, i, 1);
 				}
 
-				uint32_t value = flash.ReadUInt8(2, 0);
+				uint32_t value = flash.ReadUInt32(2, 0);
 				flash.Program(2, 0, buffer);
-				value = flash.ReadUInt8(2, 0);
+				value = flash.ReadUInt32(2, 0);
 				BSP::GreenDigitalLed().Toggle();
 			}
 		}

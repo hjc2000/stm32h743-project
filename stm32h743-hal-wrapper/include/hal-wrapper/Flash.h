@@ -112,6 +112,10 @@ namespace hal
 		/// @param addr 相对于此 bank 的起始地址的地址。
 		/// @return
 		uint8_t ReadUInt8(int32_t bank_id, size_t addr);
+		uint16_t ReadUInt16(int32_t bank_id, size_t addr);
+		uint32_t ReadUInt32(int32_t bank_id, size_t addr);
+		uint64_t ReadUInt64(int32_t bank_id, size_t addr);
+		void ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count);
 
 		/// @brief 编程
 		/// @param bank_id 要写入的 bank 的 id.
