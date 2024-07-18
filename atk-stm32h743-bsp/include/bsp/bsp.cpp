@@ -193,20 +193,22 @@ void TestFlash()
 	try
 	{
 		auto &flash = hal::Flash::Instance();
+		std::array<uint32_t, 8> buffer = {1, 2, 3};
 		while (true)
 		{
 			BSP::KeyScanner().ScanKeys();
 			if (BSP::KeyScanner().HasKeyDownEvent(static_cast<uint16_t>(KeyIndex::Key0)))
 			{
 				base::UnlockGuard ul{flash};
-				uint32_t value = flash.ReadUInt32(2, 10 * 128);
 				// flash.EraseBank(2);
 				for (int i = 0; i <= 7; i++)
 				{
 					flash.EraseSector(2, i, 1);
 				}
 
-				value = flash.ReadUInt32(2, 10 * 128);
+				uint32_t value = flash.ReadUInt32(2, 0);
+				flash.Program(2, 0, buffer);
+				value = flash.ReadUInt32(2, 0);
 				BSP::GreenDigitalLed().Toggle();
 			}
 		}
