@@ -105,14 +105,6 @@ namespace hal
 			return 32;
 		}
 
-		/// @brief flash 的地址需要对齐到的字节数。本类中其他方法，凡事要传入 flash 地址的，
-		/// 都需要对齐到本属性。
-		/// @return
-		int32_t FlashAddressAlign() override
-		{
-			return 32;
-		}
-
 		/// @brief 擦除一整个 bank。
 		/// @note stm32h743 有 2 个 bank。典型用法是：bank1 用来存放程序，bank2 用来存放数据。
 		/// @param bank_id 要擦除的扇区的 id。例如要擦除 bank1，就传入 1，要擦除 bank2 就传入 2.
