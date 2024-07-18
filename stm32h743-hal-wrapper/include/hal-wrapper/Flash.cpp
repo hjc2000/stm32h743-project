@@ -68,6 +68,44 @@ void hal::Flash::Unlock()
 	}
 }
 
+size_t hal::Flash::GetBankBaseAddress(int32_t bank_id)
+{
+	switch (bank_id)
+	{
+	case 1:
+	{
+		return 0x08000000;
+	}
+	case 2:
+	{
+		return 0x08100000;
+	}
+	default:
+	{
+		throw std::invalid_argument{"非法 bank_id"};
+	}
+	}
+}
+
+size_t hal::Flash::GetBankSize(int32_t bank_id)
+{
+	switch (bank_id)
+	{
+	case 1:
+	{
+		return 0x080fffff - GetBankBaseAddress(1) + 1;
+	}
+	case 2:
+	{
+		return 0x081fffff - GetBankBaseAddress(2) + 1;
+	}
+	default:
+	{
+		throw std::invalid_argument{"非法 bank_id"};
+	}
+	}
+}
+
 #pragma region 擦除
 void hal::Flash::EraseBank(int32_t bank_id)
 {
@@ -173,11 +211,16 @@ void hal::Flash::ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32
 	std::copy(absolute_address, absolute_address + count, buffer);
 }
 
-void hal::Flash::Program(int32_t bank_id, size_t addr, uint32_t const *buffer)
+void hal::Flash::Program(int32_t bank_id, size_t addr, uint8_t const *buffer)
 {
 	if (addr % MinProgrammingUnit() != 0)
 	{
 		throw std::invalid_argument{"addr 必须 32 字节对齐，即要能被 32 整除"};
+	}
+
+	if (reinterpret_cast<size_t>(buffer) % 4 != 0)
+	{
+		throw std::invalid_argument{"buffer 必须 4 字节对齐，即要能被 4 整除"};
 	}
 
 	HAL_StatusTypeDef result = HAL_FLASH_Program_IT(FLASH_TYPEPROGRAM_FLASHWORD,

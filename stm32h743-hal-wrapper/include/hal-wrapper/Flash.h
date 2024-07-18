@@ -19,66 +19,6 @@ namespace hal
 	private:
 		Flash();
 
-#pragma region 地址和大小
-		static consteval size_t Bank1BaseAddress()
-		{
-			return 0x08000000;
-		}
-
-		static consteval size_t Bank1Size()
-		{
-			return 0x080fffff - Bank1BaseAddress() + 1;
-		}
-
-		static consteval size_t Bank2BaseAddress()
-		{
-			return 0x08100000;
-		}
-
-		static consteval size_t Bank2Size()
-		{
-			return 0x081fffff - Bank2BaseAddress() + 1;
-		}
-
-		/// @brief 将相对于指定 bank 的起始地址的地址转化为绝对地址。
-		/// @param bank_id 相对于哪一个 bank 的起始地址？
-		/// @param addr 相对于此 bank 起始地址的地址。
-		/// @return 绝对地址。可以被强制转换为指针。
-		size_t GetAbsoluteAddress(int32_t bank_id, size_t addr)
-		{
-			size_t base_addr;
-			switch (bank_id)
-			{
-			case 1:
-			{
-				if (addr >= Bank1Size())
-				{
-					throw std::out_of_range{"地址超出范围"};
-				}
-
-				base_addr = Bank1BaseAddress();
-				break;
-			}
-			case 2:
-			{
-				if (addr >= Bank2Size())
-				{
-					throw std::out_of_range{"地址超出范围"};
-				}
-
-				base_addr = Bank2BaseAddress();
-				break;
-			}
-			default:
-			{
-				throw std::invalid_argument{"非法 bank_id"};
-			}
-			}
-
-			return base_addr + addr;
-		}
-#pragma endregion
-
 		static uint32_t SectorIndexToDefine(int32_t index);
 		friend void ::HAL_FLASH_EndOfOperationCallback(uint32_t ReturnValue);
 		friend void ::HAL_FLASH_OperationErrorCallback(uint32_t ReturnValue);
@@ -95,6 +35,23 @@ namespace hal
 
 		void Lock() override;
 		void Unlock() override;
+
+		/// @brief 获取此 flash 的 bank 数量。
+		/// @return
+		int32_t BankCount() override
+		{
+			return 2;
+		}
+
+		/// @brief 获取指定 bank 的基地址。
+		/// @param bank_id
+		/// @return
+		size_t GetBankBaseAddress(int32_t bank_id) override;
+
+		/// @brief 获取指定 bank 的大小。单位：字节。
+		/// @param bank_id
+		/// @return
+		virtual size_t GetBankSize(int32_t bank_id) override;
 
 		/// @brief flash 的最小编程单位。单位：字节。
 		/// @note 最小单位是一次编程必须写入这么多字节，即使要写入的数据没有这么多，在一次
@@ -118,14 +75,6 @@ namespace hal
 
 		void ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count) override;
 
-		/// @brief 编程
-		/// @param bank_id 要写入的 bank 的 id.
-		///
-		/// @param addr 要写入的数据相对于此 bank 的起始地址的地址。
-		/// @warning 此地址要 32 字节对齐。
-		///
-		/// @param buffer 要写入到 flash 的数据所在的缓冲区。
-		/// @warning buffer 的元素个数必须 >= MinProgrammingUnit，否则将发生内存访问越界。
-		void Program(int32_t bank_id, size_t addr, uint32_t const *buffer) override;
+		void Program(int32_t bank_id, size_t addr, uint8_t const *buffer) override;
 	};
 }
