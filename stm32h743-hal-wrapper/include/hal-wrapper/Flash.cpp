@@ -68,46 +68,46 @@ void hal::Flash::Unlock()
 	}
 }
 
-size_t hal::Flash::GetBankBaseAddress(int32_t bank_id) const
+size_t hal::Flash::GetBankBaseAddress(int32_t bank_index) const
 {
-	switch (bank_id)
+	switch (bank_index)
 	{
-	case 1:
+	case 0:
 	{
 		return 0x08000000;
 	}
-	case 2:
+	case 1:
 	{
 		return 0x08100000;
 	}
 	default:
 	{
-		throw std::invalid_argument{"非法 bank_id"};
+		throw std::out_of_range{"bank_index 超出范围"};
 	}
 	}
 }
 
-size_t hal::Flash::GetBankSize(int32_t bank_id) const
+size_t hal::Flash::GetBankSize(int32_t bank_index) const
 {
-	switch (bank_id)
+	switch (bank_index)
 	{
-	case 1:
+	case 0:
 	{
 		return 0x080fffff - GetBankBaseAddress(1) + 1;
 	}
-	case 2:
+	case 1:
 	{
 		return 0x081fffff - GetBankBaseAddress(2) + 1;
 	}
 	default:
 	{
-		throw std::invalid_argument{"非法 bank_id"};
+		throw std::out_of_range{"bank_index 超出范围"};
 	}
 	}
 }
 
 #pragma region 擦除
-void hal::Flash::EraseBank(int32_t bank_id)
+void hal::Flash::EraseBank(int32_t bank_index)
 {
 	FLASH_EraseInitTypeDef def;
 
@@ -115,21 +115,21 @@ void hal::Flash::EraseBank(int32_t bank_id)
 	def.TypeErase = FLASH_TYPEERASE_MASSERASE;
 
 	// 选择 bank
-	switch (bank_id)
+	switch (bank_index)
 	{
-	case 1:
+	case 0:
 	{
 		def.Banks = FLASH_BANK_1;
 		break;
 	}
-	case 2:
+	case 1:
 	{
 		def.Banks = FLASH_BANK_2;
 		break;
 	}
 	default:
 	{
-		throw std::invalid_argument{"非法 bank_id"};
+		throw std::out_of_range{"bank_index 超出范围"};
 	}
 	}
 
@@ -154,7 +154,7 @@ void hal::Flash::EraseBank(int32_t bank_id)
 	SCB_CleanInvalidateDCache();
 }
 
-void hal::Flash::EraseSector(int32_t bank_id, int32_t sector_index)
+void hal::Flash::EraseSector(int32_t bank_index, int32_t sector_index)
 {
 	FLASH_EraseInitTypeDef def;
 
@@ -162,21 +162,21 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t sector_index)
 	def.TypeErase = FLASH_TYPEERASE_SECTORS;
 
 	// 选择 bank
-	switch (bank_id)
+	switch (bank_index)
 	{
-	case 1:
+	case 0:
 	{
 		def.Banks = FLASH_BANK_1;
 		break;
 	}
-	case 2:
+	case 1:
 	{
 		def.Banks = FLASH_BANK_2;
 		break;
 	}
 	default:
 	{
-		throw std::invalid_argument{"非法 bank_id"};
+		throw std::out_of_range{"bank_index 超出范围"};
 	}
 	}
 
@@ -206,13 +206,13 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t sector_index)
 
 #pragma endregion
 
-void hal::Flash::ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count)
+void hal::Flash::ReadBuffer(int32_t bank_index, size_t addr, uint8_t *buffer, int32_t count)
 {
-	uint8_t *absolute_address = reinterpret_cast<uint8_t *>(GetAbsoluteAddress(bank_id, addr));
+	uint8_t *absolute_address = reinterpret_cast<uint8_t *>(GetAbsoluteAddress(bank_index, addr));
 	std::copy(absolute_address, absolute_address + count, buffer);
 }
 
-void hal::Flash::Program(int32_t bank_id, size_t addr, uint8_t const *buffer)
+void hal::Flash::Program(int32_t bank_index, size_t addr, uint8_t const *buffer)
 {
 	if (addr % MinProgrammingUnit() != 0)
 	{
@@ -225,7 +225,7 @@ void hal::Flash::Program(int32_t bank_id, size_t addr, uint8_t const *buffer)
 	}
 
 	HAL_StatusTypeDef result = HAL_FLASH_Program_IT(FLASH_TYPEPROGRAM_FLASHWORD,
-													static_cast<uint32_t>(GetAbsoluteAddress(bank_id, addr)),
+													static_cast<uint32_t>(GetAbsoluteAddress(bank_index, addr)),
 													reinterpret_cast<uint32_t>(buffer));
 
 	if (result != HAL_StatusTypeDef::HAL_OK)

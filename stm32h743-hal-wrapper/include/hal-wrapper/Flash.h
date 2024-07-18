@@ -44,22 +44,22 @@ namespace hal
 		}
 
 		/// @brief 获取指定 bank 的扇区数量。
-		/// @param bank_id
+		/// @param bank_index
 		/// @return
-		int32_t GetBankSectorCount(int32_t bank_id) const override
+		int32_t GetBankSectorCount(int32_t bank_index) const override
 		{
 			return 8;
 		}
 
 		/// @brief 获取指定 bank 的基地址。
-		/// @param bank_id
+		/// @param bank_index
 		/// @return
-		size_t GetBankBaseAddress(int32_t bank_id) const override;
+		size_t GetBankBaseAddress(int32_t bank_index) const override;
 
 		/// @brief 获取指定 bank 的大小。单位：字节。
-		/// @param bank_id
+		/// @param bank_index
 		/// @return
-		virtual size_t GetBankSize(int32_t bank_id) const override;
+		virtual size_t GetBankSize(int32_t bank_index) const override;
 
 		/// @brief flash 的最小编程单位。单位：字节。
 		/// @note 最小单位是一次编程必须写入这么多字节，即使要写入的数据没有这么多，在一次
@@ -72,17 +72,17 @@ namespace hal
 
 		/// @brief 擦除一整个 bank。
 		/// @note stm32h743 有 2 个 bank。典型用法是：bank1 用来存放程序，bank2 用来存放数据。
-		/// @param bank_id 要擦除的扇区的 id。例如要擦除 bank1，就传入 1，要擦除 bank2 就传入 2.
-		void EraseBank(int32_t bank_id) override;
+		/// @param bank_index
+		void EraseBank(int32_t bank_index) override;
 
 		/// @brief 擦除指定 bank 的指定扇区。
-		/// @param bank_id 要擦除的扇区所在的 bank
+		/// @param bank_index
 		/// @param sector_index 要擦除的扇区索引。
-		void EraseSector(int32_t bank_id, int32_t sector_index);
+		void EraseSector(int32_t bank_index, int32_t sector_index);
 		using bsp::IFlash::EraseSector;
 
-		void ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count) override;
+		void ReadBuffer(int32_t bank_index, size_t addr, uint8_t *buffer, int32_t count) override;
 
-		void Program(int32_t bank_id, size_t addr, uint8_t const *buffer) override;
+		void Program(int32_t bank_index, size_t addr, uint8_t const *buffer) override;
 	};
 }

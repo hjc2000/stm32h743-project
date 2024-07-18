@@ -204,11 +204,11 @@ void TestFlash()
 				base::UnlockGuard ul{flash};
 				_should_toggle = true;
 				// flash.EraseBank(2);
-				flash.EraseSector(2, 0);
+				flash.EraseSector(1, 0);
 
-				uint32_t value = flash.ReadUInt32(2, 0);
-				flash.Program(2, 0, reinterpret_cast<uint8_t *>(buffer.data()));
-				value = flash.ReadUInt32(2, 0);
+				uint32_t value = flash.ReadUInt32(1, 0);
+				flash.Program(1, 0, reinterpret_cast<uint8_t *>(buffer.data()));
+				value = flash.ReadUInt32(1, 0);
 				BSP::GreenDigitalLed().Toggle();
 				_should_toggle = false;
 			}
