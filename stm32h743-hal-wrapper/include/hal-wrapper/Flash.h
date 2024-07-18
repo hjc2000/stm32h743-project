@@ -43,6 +43,14 @@ namespace hal
 			return 2;
 		}
 
+		/// @brief 获取指定 bank 的扇区数量。
+		/// @param bank_id
+		/// @return
+		int32_t GetBankSectorCount(int32_t bank_id)
+		{
+			return 8;
+		}
+
 		/// @brief 获取指定 bank 的基地址。
 		/// @param bank_id
 		/// @return
@@ -67,11 +75,11 @@ namespace hal
 		/// @param bank_id 要擦除的扇区的 id。例如要擦除 bank1，就传入 1，要擦除 bank2 就传入 2.
 		void EraseBank(int32_t bank_id) override;
 
-		/// @brief 擦除指定 bank 中从 start_sector_index 开始的 sector_count 个扇区。
-		/// @param bank_id 要擦除的扇区所在的 bank 的 id。
-		/// @param start_sector_index 要擦除的扇区的起始索引。
-		/// @param sector_count 要擦除的扇区的数量。
-		void EraseSector(int32_t bank_id, int32_t start_sector_index, int32_t sector_count) override;
+		/// @brief 擦除指定 bank 的指定扇区。
+		/// @param bank_id 要擦除的扇区所在的 bank
+		/// @param sector_index 要擦除的扇区索引。
+		void EraseSector(int32_t bank_id, int32_t sector_index);
+		using bsp::IFlash::EraseSector;
 
 		void ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count) override;
 

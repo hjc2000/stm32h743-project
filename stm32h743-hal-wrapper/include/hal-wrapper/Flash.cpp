@@ -154,7 +154,7 @@ void hal::Flash::EraseBank(int32_t bank_id)
 	SCB_CleanInvalidateDCache();
 }
 
-void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_t sector_count)
+void hal::Flash::EraseSector(int32_t bank_id, int32_t sector_index)
 {
 	FLASH_EraseInitTypeDef def;
 
@@ -180,8 +180,8 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 	}
 	}
 
-	def.Sector = SectorIndexToDefine(start_sector_index);
-	def.NbSectors = sector_count;
+	def.Sector = SectorIndexToDefine(sector_index);
+	def.NbSectors = 1;
 
 	// 每次擦除 64 位，直到擦除整个 bank。越高的电压擦除时并行的位数就越多。
 	def.VoltageRange = FLASH_VOLTAGE_RANGE_4;
@@ -203,6 +203,7 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 
 	SCB_CleanInvalidateDCache();
 }
+
 #pragma endregion
 
 void hal::Flash::ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count)
