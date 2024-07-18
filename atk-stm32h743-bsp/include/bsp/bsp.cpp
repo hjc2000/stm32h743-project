@@ -188,6 +188,8 @@ void TestUniversalTimer1()
 	}
 }
 
+volatile bool _should_toggle = false;
+
 void TestFlash()
 {
 	try
@@ -200,6 +202,7 @@ void TestFlash()
 			if (BSP::KeyScanner().HasKeyDownEvent(static_cast<uint16_t>(KeyIndex::Key0)))
 			{
 				base::UnlockGuard ul{flash};
+				_should_toggle = true;
 				// flash.EraseBank(2);
 				flash.EraseSector(2, 0, 1);
 
@@ -207,6 +210,7 @@ void TestFlash()
 				flash.Program(2, 0, reinterpret_cast<uint8_t *>(buffer.data()));
 				value = flash.ReadUInt32(2, 0);
 				BSP::GreenDigitalLed().Toggle();
+				_should_toggle = false;
 			}
 		}
 	}
@@ -228,6 +232,13 @@ void TestGpio()
 	while (true)
 	{
 		bsp::DI_Delayer().Delay(std::chrono::milliseconds{1});
-		hal::GpioPortA::Instance().DigitalTogglePin(hal::GpioPinConfig::PinEnum::Pin4);
+		if (_should_toggle)
+		{
+			hal::GpioPortA::Instance().DigitalTogglePin(hal::GpioPinConfig::PinEnum::Pin4);
+		}
+		else
+		{
+			hal::GpioPortA::Instance().DigitalWritePin(hal::GpioPinConfig::PinEnum::Pin4, 0);
+		}
 	}
 }
