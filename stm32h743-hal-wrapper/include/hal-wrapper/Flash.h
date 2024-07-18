@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 #include <atomic>
 #include <base/LockGuard.h>
 #include <bsp-interface/flash/IFlash.h>
