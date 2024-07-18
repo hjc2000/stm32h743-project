@@ -201,10 +201,7 @@ void TestFlash()
 			{
 				base::UnlockGuard ul{flash};
 				// flash.EraseBank(2);
-				for (int i = 0; i <= 7; i++)
-				{
-					flash.EraseSector(2, i, 1);
-				}
+				flash.EraseSector(2, 0, 1);
 
 				uint32_t value = flash.ReadUInt32(2, 0);
 				flash.Program(2, 0, reinterpret_cast<uint8_t *>(buffer.data()));
@@ -216,5 +213,21 @@ void TestFlash()
 	catch (std::exception const &e)
 	{
 		std::string str = e.what();
+	}
+}
+
+void TestGpio()
+{
+	hal::GpioPinConfig options;
+	options.SetPin(hal::GpioPinConfig::PinEnum::Pin4);
+	options.SetMode(hal::GpioPinConfig::ModeEnum::Output_PushPull);
+	options.SetPull(hal::GpioPinConfig::PullOption::PullUp);
+	options.SetSpeed(hal::GpioPinConfig::SpeedOption::High);
+	hal::GpioPortA::Instance().InitPin(options);
+
+	while (true)
+	{
+		bsp::DI_Delayer().Delay(std::chrono::milliseconds{1});
+		hal::GpioPortA::Instance().DigitalTogglePin(hal::GpioPinConfig::PinEnum::Pin4);
 	}
 }

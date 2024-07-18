@@ -1,10 +1,10 @@
-#include"Serial.h"
-#include<FreeRTOS.h>
-#include<hal-wrapper/clock/SysTickClock.h>
-#include<hal-wrapper/interrupt/Interrupt.h>
-#include<hal-wrapper/peripheral/dma/DmaConfig.h>
-#include<hal-wrapper/peripheral/gpio/GpioPort.h>
-#include<task.h>
+#include "Serial.h"
+#include <FreeRTOS.h>
+#include <hal-wrapper/clock/SysTickClock.h>
+#include <hal-wrapper/interrupt/Interrupt.h>
+#include <hal-wrapper/peripheral/dma/DmaConfig.h>
+#include <hal-wrapper/peripheral/gpio/GpioPort.h>
+#include <task.h>
 
 using namespace bsp;
 using namespace hal;
@@ -60,7 +60,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 	{
 		__HAL_RCC_DMA1_CLK_ENABLE();
 
-		hal::DmaConfig dma_config { };
+		hal::DmaConfig dma_config{};
 		dma_config._request = hal::DmaConfig::Request::Usart1Tx;
 		dma_config._direction = hal::DmaConfig::Direction::MemoryToPeripheral;
 		dma_config._peripheral_address_increase = hal::DmaConfig::PeripheralAddressIncrease::Disable;
@@ -83,7 +83,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 	{
 		__HAL_RCC_DMA1_CLK_ENABLE();
 
-		hal::DmaConfig dma_config { };
+		hal::DmaConfig dma_config{};
 		dma_config._request = hal::DmaConfig::Request::Usart1Rx;
 		dma_config._direction = hal::DmaConfig::Direction::PeripheralToMemory;
 		dma_config._peripheral_address_increase = hal::DmaConfig::PeripheralAddressIncrease::Disable;
@@ -140,26 +140,27 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
 {
 	if (count > UINT16_MAX)
 	{
-		throw std::invalid_argument { "count 太大" };
+		throw std::invalid_argument{"count 太大"};
 	}
 
-	task::MutexLockGuard l { _read_lock };
+	task::MutexLockGuard l{_read_lock};
 	while (true)
 	{
-		task::Critical::Run([&]()
+		auto critical_func = [&]()
 		{
 			// HAL_UART_Receive_DMA
 			// HAL_UARTEx_ReceiveToIdle_DMA
 			HAL_UART_Receive_DMA(&_uart_handle, buffer + offset, count);
 
 			/*
-			* 通过赋值为空指针，把传输半满回调给禁用，不然接收的数据较长，超过缓冲区一半时，
-			* 即使是一次性接收的，UART 也会回调 OnReceiveEventCallback 两次。
-			*
-			* 这个操作需要在临界区中，并且 DMA 的中断要处于 freertos 的管理范围内，否则无效。
-			*/
+			 * 通过赋值为空指针，把传输半满回调给禁用，不然接收的数据较长，超过缓冲区一半时，
+			 * 即使是一次性接收的，UART 也会回调 OnReceiveEventCallback 两次。
+			 *
+			 * 这个操作需要在临界区中，并且 DMA 的中断要处于 freertos 的管理范围内，否则无效。
+			 */
 			_rx_dma_handle.XferHalfCpltCallback = nullptr;
-		});
+		};
+		task::Critical::Run(critical_func);
 
 		_receive_complete_signal.Acquire();
 		if (HaveRead() > 0)
@@ -175,7 +176,7 @@ void Serial::Write(uint8_t const *buffer, int32_t offset, int32_t count)
 	HAL_StatusTypeDef ret = HAL_UART_Transmit_DMA(&_uart_handle, buffer + offset, count);
 	if (ret != HAL_StatusTypeDef::HAL_OK)
 	{
-		throw std::runtime_error { "发送失败" };
+		throw std::runtime_error{"发送失败"};
 	}
 }
 
@@ -199,7 +200,7 @@ void Serial::SetBaudRate(uint32_t value)
 {
 	if (_have_begun)
 	{
-		throw std::runtime_error { "串口打开后不允许更改设置" };
+		throw std::runtime_error{"串口打开后不允许更改设置"};
 	}
 
 	_baud_rate = value;
@@ -214,7 +215,7 @@ void Serial::SetDataBits(uint8_t value)
 {
 	if (_have_begun)
 	{
-		throw std::runtime_error { "串口打开后不允许更改设置" };
+		throw std::runtime_error{"串口打开后不允许更改设置"};
 	}
 
 	_data_bits = value;
@@ -229,7 +230,7 @@ void Serial::SetParity(ISerial::ParityOption value)
 {
 	if (_have_begun)
 	{
-		throw std::runtime_error { "串口打开后不允许更改设置" };
+		throw std::runtime_error{"串口打开后不允许更改设置"};
 	}
 
 	_parity = value;
@@ -244,7 +245,7 @@ void Serial::SetStopBits(ISerial::StopBitsOption value)
 {
 	if (_have_begun)
 	{
-		throw std::runtime_error { "串口打开后不允许更改设置" };
+		throw std::runtime_error{"串口打开后不允许更改设置"};
 	}
 
 	_stop_bits = value;
@@ -259,7 +260,7 @@ void Serial::SetHardwareFlowControl(ISerial::HardwareFlowControlOption value)
 {
 	if (_have_begun)
 	{
-		throw std::runtime_error { "串口打开后不允许更改设置" };
+		throw std::runtime_error{"串口打开后不允许更改设置"};
 	}
 
 	_hardware_flow_control = value;
@@ -299,10 +300,10 @@ void Serial::Open()
 	_have_begun = true;
 
 	/*
-	* 先立刻释放一次信号量，等会 Write 方法被调用时直接通过，不被阻塞。
-	* 然后在发送完成之前，第二次 Write 就会被阻塞了，这还能防止 Write
-	* 被多线程同时调用。
-	*/
+	 * 先立刻释放一次信号量，等会 Write 方法被调用时直接通过，不被阻塞。
+	 * 然后在发送完成之前，第二次 Write 就会被阻塞了，这还能防止 Write
+	 * 被多线程同时调用。
+	 */
 	_send_complete_signal.Release();
 
 	hal::UartConfig config;
@@ -318,9 +319,9 @@ void Serial::Open()
 	SetReadTimeoutByFrameCount(2);
 
 	/*
-	* HAL_UART_Init 函数会把中断处理函数中回调的函数都设为默认的，所以必须在 HAL_UART_Init
-	* 之后对函数指针赋值。
-	*/
+	 * HAL_UART_Init 函数会把中断处理函数中回调的函数都设为默认的，所以必须在 HAL_UART_Init
+	 * 之后对函数指针赋值。
+	 */
 	_uart_handle.RxEventCallback = OnReceiveEventCallback;
 	_uart_handle.TxCpltCallback = OnSendCompleteCallback;
 	_uart_handle.ErrorCallback = OnReadTimeout;

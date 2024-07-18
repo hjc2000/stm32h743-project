@@ -33,8 +33,9 @@ int main(void)
 			{
 				while (true)
 				{
-					bsp::DI_Delayer().Delay(std::chrono::milliseconds{50});
-					BSP::RedDigitalLed().Toggle();
+					// bsp::DI_Delayer().Delay(std::chrono::milliseconds{50});
+					// BSP::RedDigitalLed().Toggle();
+					TestGpio();
 				}
 			};
 			std::shared_ptr<task::Task> blink_red_led_task = task::Task::Create(blink_red_led, 512);

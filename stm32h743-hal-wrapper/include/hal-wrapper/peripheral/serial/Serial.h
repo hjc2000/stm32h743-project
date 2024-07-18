@@ -1,10 +1,10 @@
 #pragma once
-#include<base/HandleWrapper.h>
-#include<bsp-interface/ISerial.h>
-#include<hal-wrapper/peripheral/uart/UartConfig.h>
-#include<task/BinarySemaphore.h>
-#include<task/Critical.h>
-#include<task/Mutex.h>
+#include <base/HandleWrapper.h>
+#include <bsp-interface/ISerial.h>
+#include <hal-wrapper/peripheral/uart/UartConfig.h>
+#include <task/BinarySemaphore.h>
+#include <task/Critical.h>
+#include <task/Mutex.h>
 
 extern "C"
 {
@@ -15,33 +15,31 @@ extern "C"
 
 namespace hal
 {
-	class Serial :
-		public bsp::ISerial,
-		public base::HandleWrapper<UART_HandleTypeDef>
+	class Serial
+		: public bsp::ISerial,
+		  public base::HandleWrapper<UART_HandleTypeDef>
 	{
 	private:
 		Serial() = default;
 
-		#pragma region 属性的字段
+#pragma region 属性的字段
 		uint32_t _baud_rate = 115200;
 		uint8_t _data_bits = 8;
 		bsp::ISerial::ParityOption _parity = bsp::ISerial::ParityOption::None;
 		bsp::ISerial::StopBitsOption _stop_bits = bsp::ISerial::StopBitsOption::One;
 		bsp::ISerial::HardwareFlowControlOption _hardware_flow_control = bsp::ISerial::HardwareFlowControlOption::None;
-		#pragma endregion
+#pragma endregion
 
 		bool _have_begun = false;
-		UART_HandleTypeDef _uart_handle { };
-		DMA_HandleTypeDef _tx_dma_handle { };
-		DMA_HandleTypeDef _rx_dma_handle { };
+		UART_HandleTypeDef _uart_handle{};
+		DMA_HandleTypeDef _tx_dma_handle{};
+		DMA_HandleTypeDef _rx_dma_handle{};
 		task::BinarySemaphore _send_complete_signal;
 		task::BinarySemaphore _receive_complete_signal;
-		task::Mutex _read_lock { };
+		task::Mutex _read_lock{};
 
-		/// <summary>
-		///		通过串口句柄和 DMA 寄存器，获取当前 DMA 接收了多少个字节。
-		/// </summary>
-		/// <returns></returns>
+		/// @brief 通过串口句柄和 DMA 寄存器，获取当前 DMA 接收了多少个字节。
+		/// @return
 		int32_t HaveRead();
 
 		friend void ::USART1_IRQHandler();
@@ -49,11 +47,11 @@ namespace hal
 		friend void ::DMA_STR1_IRQHandler();
 		static void OnMspInitCallback(UART_HandleTypeDef *huart);
 
-		#pragma region 被中断处理函数回调的函数
+#pragma region 被中断处理函数回调的函数
 		static void OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos);
 		static void OnSendCompleteCallback(UART_HandleTypeDef *huart);
 		static void OnReadTimeout(UART_HandleTypeDef *huart);
-		#pragma endregion
+#pragma endregion
 
 	public:
 		static Serial &Instance()
@@ -64,7 +62,7 @@ namespace hal
 
 		UART_HandleTypeDef &Handle() override;
 
-		#pragma region Stream
+#pragma region Stream
 		/// <summary>
 		///		调用后临时启动 DMA 接收一次数据。
 		///		* 本类没有缓冲机制，所以上层应用如果调用 Read 不及时，会丢失数据。
@@ -84,18 +82,16 @@ namespace hal
 		/// <returns></returns>
 		int32_t Read(uint8_t *buffer, int32_t offset, int32_t count) override;
 
-		/// <summary>
-		///		调用后临时启动 DMA 进行一次发送。
-		/// </summary>
-		/// <param name="buffer"></param>
-		/// <param name="offset"></param>
-		/// <param name="count"></param>
+		/// @brief 调用后临时启动 DMA 进行一次发送。
+		/// @param buffer
+		/// @param offset
+		/// @param count
 		void Write(uint8_t const *buffer, int32_t offset, int32_t count) override;
 
 		void Close() override;
-		#pragma endregion
+#pragma endregion
 
-		#pragma region 属性
+#pragma region 属性
 		uint32_t BaudRate() const override;
 		void SetBaudRate(uint32_t value) override;
 
@@ -110,18 +106,15 @@ namespace hal
 
 		bsp::ISerial::HardwareFlowControlOption HardwareFlowControl() const override;
 		void SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption value) override;
-		#pragma endregion
+#pragma endregion
 
 		void SetReadTimeoutByBaudCount(uint32_t value);
 		void SetReadTimeoutByFrameCount(uint32_t value);
 
-		/// <summary>
-		///		启动串口。
-		///		* 本函数幂等，调用后，启动串口，再次调用会直接返回，只有调用 Close
-		///		  后才能重新启动串口。
-		///		* 本函数不是线程安全和可重入的，包括实现幂等的机制也不是线程安全和可重入的。
-		/// </summary>
-		/// <param name="baud_rate">想要的波特率</param>
+		/// @brief 启动串口。
+		/// @note 本函数幂等，调用后，启动串口，再次调用会直接返回，只有调用 Close
+		/// 后才能重新启动串口。
+		/// @note 本函数不是线程安全和可重入的，包括实现幂等的机制也不是线程安全和可重入的。
 		void Open() override;
 	};
 }

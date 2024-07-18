@@ -1,15 +1,15 @@
 #pragma once
-#include<base/HandleWrapper.h>
-#include<hal.h>
-#include<hal-wrapper/peripheral/gpio/PinAlternate.h>
+#include <base/HandleWrapper.h>
+#include <hal-wrapper/peripheral/gpio/PinAlternate.h>
+#include <hal.h>
 
 namespace hal
 {
 	class GpioPinConfig
-		:public base::HandleWrapper<GPIO_InitTypeDef>
+		: public base::HandleWrapper<GPIO_InitTypeDef>
 	{
 	private:
-		GPIO_InitTypeDef _handle { };
+		GPIO_InitTypeDef _handle{};
 
 	public:
 		GPIO_InitTypeDef &Handle() override
@@ -17,9 +17,7 @@ namespace hal
 			return _handle;
 		}
 
-		/// <summary>
-		///		定义 GPIO 引脚。
-		/// </summary>
+		/// @brief 定义 GPIO 引脚。
 		enum class PinEnum : uint16_t
 		{
 			Pin0 = GPIO_PIN_0,
@@ -49,9 +47,7 @@ namespace hal
 			_handle.Pin = static_cast<uint32_t>(value);
 		}
 
-		/// <summary>
-		///		定义 GPIO 引脚模式。
-		/// </summary>
+		/// @brief 定义 GPIO 引脚模式。
 		enum class ModeEnum
 		{
 			Input = GPIO_MODE_INPUT,
@@ -82,9 +78,7 @@ namespace hal
 			_handle.Mode = static_cast<uint32_t>(value);
 		}
 
-		/// <summary>
-		///		定义 GPIO 引脚的上下拉模式。
-		/// </summary>
+		/// @brief 定义 GPIO 引脚的上下拉模式。
 		enum class PullOption
 		{
 			NoPull = GPIO_NOPULL,
@@ -101,9 +95,7 @@ namespace hal
 			_handle.Pull = static_cast<uint32_t>(value);
 		}
 
-		/// <summary>
-		///		定义 GPIO 引脚的最大速度。
-		/// </summary>
+		/// @brief 定义 GPIO 引脚的最大速度。
 		enum class SpeedOption
 		{
 			Low = GPIO_SPEED_FREQ_LOW,
@@ -121,9 +113,8 @@ namespace hal
 			_handle.Speed = static_cast<uint32_t>(value);
 		}
 
-		/// <summary>
-		///		参考 PinAlternate.h
-		/// </summary>
+		/// @brief 参考 PinAlternate.h
+		/// @return
 		uint32_t Alternate() const
 		{
 			return _handle.Alternate;
@@ -135,4 +126,5 @@ namespace hal
 	};
 }
 
-hal::GpioPinConfig::PinEnum operator|(hal::GpioPinConfig::PinEnum left, hal::GpioPinConfig::PinEnum right);
+hal::GpioPinConfig::PinEnum operator|(hal::GpioPinConfig::PinEnum left,
+									  hal::GpioPinConfig::PinEnum right);
