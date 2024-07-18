@@ -175,7 +175,7 @@ void hal::Flash::ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32
 
 void hal::Flash::Program(int32_t bank_id, size_t addr, uint32_t const *buffer)
 {
-	if (addr % 32 != 0)
+	if (addr % FlashAddressAlign() != 0)
 	{
 		throw std::invalid_argument{"addr 必须 32 字节对齐，即要能被 32 整除"};
 	}
