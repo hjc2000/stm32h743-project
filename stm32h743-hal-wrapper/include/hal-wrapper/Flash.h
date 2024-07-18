@@ -117,13 +117,13 @@ namespace hal
 		/// @brief 擦除一整个 bank。
 		/// @note stm32h743 有 2 个 bank。典型用法是：bank1 用来存放程序，bank2 用来存放数据。
 		/// @param bank_id 要擦除的扇区的 id。例如要擦除 bank1，就传入 1，要擦除 bank2 就传入 2.
-		void EraseBank(int32_t bank_id);
+		void EraseBank(int32_t bank_id) override;
 
 		/// @brief 擦除指定 bank 中从 start_sector_index 开始的 sector_count 个扇区。
 		/// @param bank_id 要擦除的扇区所在的 bank 的 id。
 		/// @param start_sector_index 要擦除的扇区的起始索引。
 		/// @param sector_count 要擦除的扇区的数量。
-		void EraseSector(int32_t bank_id, int32_t start_sector_index, int32_t sector_count);
+		void EraseSector(int32_t bank_id, int32_t start_sector_index, int32_t sector_count) override;
 
 		void ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count) override;
 
