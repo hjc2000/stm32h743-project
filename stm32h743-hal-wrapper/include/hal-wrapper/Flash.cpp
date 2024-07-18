@@ -184,10 +184,15 @@ void hal::Flash::Program(int32_t bank_id, size_t addr, uint32_t const *buffer)
 													static_cast<uint32_t>(GetAbsoluteAddress(bank_id, addr)),
 													reinterpret_cast<uint32_t>(buffer));
 
-	_operation_completed.Acquire();
 	if (result != HAL_StatusTypeDef::HAL_OK)
 	{
 		throw std::runtime_error{"启动编程时发生错误"};
+	}
+
+	_operation_completed.Acquire();
+	if (_operation_failed)
+	{
+		throw std::runtime_error{"擦除流程结束，出错了"};
 	}
 
 	SCB_CleanInvalidateDCache();
