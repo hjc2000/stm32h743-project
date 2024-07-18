@@ -145,9 +145,7 @@ namespace hal
 		/// @warning 此地址要 32 字节对齐。
 		///
 		/// @param buffer 要写入到 flash 的数据所在的缓冲区。
-		/// @warning 此地址要 4 字节对齐。
-		/// @warning buffer 的大小必须是 32 字节，即等于 MinProgrammingUnit 否则将发生
-		/// 内存越界访问。
-		void Program(int32_t bank_id, size_t addr, uint8_t *buffer);
+		/// @warning buffer 的元素个数必须 >= 8，否则将发生内存访问越界。
+		void Program(int32_t bank_id, size_t addr, uint32_t *buffer);
 	};
 }

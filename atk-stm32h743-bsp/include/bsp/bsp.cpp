@@ -193,7 +193,7 @@ void TestFlash()
 	try
 	{
 		auto &flash = hal::Flash::Instance();
-		std::array<uint32_t, 8> buffer = {1, 2, 3};
+		std::array<uint32_t, 8> buffer = {666, 2, 3};
 		while (true)
 		{
 			BSP::KeyScanner().ScanKeys();
@@ -207,7 +207,7 @@ void TestFlash()
 				}
 
 				uint32_t value = flash.ReadUInt32(2, 0);
-				flash.Program(2, 0, reinterpret_cast<uint8_t *>(buffer.data()));
+				flash.Program(2, 0, buffer.data());
 				value = flash.ReadUInt32(2, 0);
 				BSP::GreenDigitalLed().Toggle();
 			}

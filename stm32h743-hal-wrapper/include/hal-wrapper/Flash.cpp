@@ -223,16 +223,11 @@ void hal::Flash::Program(int32_t bank_id, size_t addr, std::array<uint32_t, 8> c
 	SCB_CleanInvalidateDCache();
 }
 
-void hal::Flash::Program(int32_t bank_id, size_t addr, uint8_t *buffer)
+void hal::Flash::Program(int32_t bank_id, size_t addr, uint32_t *buffer)
 {
 	if (addr % 32 != 0)
 	{
 		throw std::invalid_argument{"addr 必须 32 字节对齐，即要能被 32 整除"};
-	}
-
-	if (reinterpret_cast<size_t>(buffer) % 4 != 0)
-	{
-		throw std::invalid_argument{"buffer 必须 4 字节对齐，即要能被 4 整除"};
 	}
 
 	HAL_StatusTypeDef result = HAL_FLASH_Program_IT(FLASH_TYPEPROGRAM_FLASHWORD,
