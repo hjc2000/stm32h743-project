@@ -167,45 +167,10 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 }
 #pragma endregion
 
-#pragma region 读取
-uint8_t hal::Flash::ReadUInt8(int32_t bank_id, size_t addr)
-{
-	uint8_t ret;
-	ReadBuffer(bank_id, addr, reinterpret_cast<uint8_t *>(&ret), sizeof(ret));
-	return ret;
-}
-
-uint16_t hal::Flash::ReadUInt16(int32_t bank_id, size_t addr)
-{
-	uint16_t ret;
-	ReadBuffer(bank_id, addr, reinterpret_cast<uint8_t *>(&ret), sizeof(ret));
-	return ret;
-}
-
-uint32_t hal::Flash::ReadUInt32(int32_t bank_id, size_t addr)
-{
-	uint32_t ret;
-	ReadBuffer(bank_id, addr, reinterpret_cast<uint8_t *>(&ret), sizeof(ret));
-	return ret;
-}
-
-uint64_t hal::Flash::ReadUInt64(int32_t bank_id, size_t addr)
-{
-	uint64_t ret;
-	ReadBuffer(bank_id, addr, reinterpret_cast<uint8_t *>(&ret), sizeof(ret));
-	return ret;
-}
-
 void hal::Flash::ReadBuffer(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count)
 {
 	uint8_t *absolute_address = reinterpret_cast<uint8_t *>(GetAbsoluteAddress(bank_id, addr));
 	std::copy(absolute_address, absolute_address + count, buffer);
-}
-#pragma endregion
-
-void hal::Flash::Program(int32_t bank_id, size_t addr, std::array<uint32_t, 8> const &datas)
-{
-	Program(bank_id, addr, datas.data());
 }
 
 void hal::Flash::Program(int32_t bank_id, size_t addr, uint32_t const *buffer)
