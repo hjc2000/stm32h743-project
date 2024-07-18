@@ -169,12 +169,23 @@ void hal::Flash::EraseSector(int32_t bank_id, int32_t start_sector_index, int32_
 
 uint32_t hal::Flash::ReadUInt32(int32_t bank_id, size_t addr)
 {
-	volatile uint32_t *p = GetAbsoluteAddress<uint32_t>(bank_id, addr);
+	volatile uint32_t *p = reinterpret_cast<uint32_t *>(GetAbsoluteAddress(bank_id, addr));
 	return *p;
 }
 
-void hal::Flash::WriteInAlignment(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count)
+void hal::Flash::Program(int32_t bank_id, size_t addr, std::array<uint32_t, 8> const &datas)
 {
+	HAL_StatusTypeDef result = HAL_FLASH_Program_IT(FLASH_TYPEPROGRAM_FLASHWORD,
+													static_cast<uint32_t>(GetAbsoluteAddress(bank_id, addr)),
+													reinterpret_cast<uint32_t>(datas.data()));
+
+	_operation_completed.Acquire();
+	if (result != HAL_StatusTypeDef::HAL_OK)
+	{
+		throw std::runtime_error{"启动编程时发生错误"};
+	}
+
+	SCB_CleanInvalidateDCache();
 }
 
 extern "C"

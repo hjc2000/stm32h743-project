@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <atomic>
 #include <base/LockGuard.h>
 #include <hal.h>
@@ -40,12 +41,10 @@ namespace hal
 		}
 
 		/// @brief 将相对于指定 bank 的起始地址的地址转化为绝对地址。
-		/// @tparam RetPtrType 返回的指针的类型。
 		/// @param bank_id 相对于哪一个 bank 的起始地址？
 		/// @param addr 相对于此 bank 起始地址的地址。
-		/// @return 返回可以用来直接解引用从而操作该地址的指针。
-		template <typename RetPtrType>
-		RetPtrType *GetAbsoluteAddress(int32_t bank_id, size_t addr)
+		/// @return 绝对地址。可以被强制转换为指针。
+		size_t GetAbsoluteAddress(int32_t bank_id, size_t addr)
 		{
 			size_t base_addr;
 			switch (bank_id)
@@ -76,7 +75,7 @@ namespace hal
 			}
 			}
 
-			return reinterpret_cast<RetPtrType *>(base_addr + addr);
+			return base_addr + addr;
 		}
 #pragma endregion
 
@@ -114,14 +113,16 @@ namespace hal
 		/// @return 该地址的数据。
 		uint32_t ReadUInt32(int32_t bank_id, size_t addr);
 
-		/// @brief 对齐地写 bank
+		/// @brief 编程
 		/// @param bank_id 要写入的 bank 的 id.
 		///
 		/// @param addr 要写入的数据相对于此 bank 的起始地址的地址。
 		/// @warning 此地址必须能被 32 整除。
 		///
-		/// @param buffer 要写入的数据所在的缓冲区。
-		/// @param count 要写入的字节数。
-		void WriteInAlignment(int32_t bank_id, size_t addr, uint8_t *buffer, int32_t count);
+		/// @param datas 要写入的数据。
+		/// @note 要写入的数据必须是 32 位对齐，所以只能是 uint32_t 数组。
+		/// @note 8 个 uint32_t 是编程的最小单位，必须一次性写入，不需要写入这么多时，
+		/// 剩余部分需要用 0 填充，否则编程后没有写的地方会变成随机数据。
+		void Program(int32_t bank_id, size_t addr, std::array<uint32_t, 8> const &datas);
 	};
 }
