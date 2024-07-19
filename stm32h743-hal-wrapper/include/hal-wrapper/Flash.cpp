@@ -93,11 +93,11 @@ size_t hal::Flash::GetBankSize(int32_t bank_index) const
 	{
 	case 0:
 	{
-		return 0x080fffff - GetBankBaseAddress(1) + 1;
+		return 0x080fffff - GetBankBaseAddress(0) + 1;
 	}
 	case 1:
 	{
-		return 0x081fffff - GetBankBaseAddress(2) + 1;
+		return 0x081fffff - GetBankBaseAddress(1) + 1;
 	}
 	default:
 	{
