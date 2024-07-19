@@ -70,6 +70,7 @@ namespace hal
 			return 32;
 		}
 
+#pragma region 擦除
 		/// @brief 擦除一整个 bank。
 		/// @note stm32h743 有 2 个 bank。典型用法是：bank1 用来存放程序，bank2 用来存放数据。
 		/// @param bank_index
@@ -84,11 +85,14 @@ namespace hal
 		using bsp::IFlash::EraseSector;
 
 		void EraseSector_NoIT(int32_t bank_index, int32_t sector_index);
+#pragma endregion
 
 		void ReadBuffer(int32_t bank_index, size_t addr, uint8_t *buffer, int32_t count) override;
 
+#pragma region 编程
 		void Program(int32_t bank_index, size_t addr, uint8_t const *buffer) override;
 
 		void Program_NoIT(int32_t bank_index, size_t addr, uint8_t const *buffer);
+#pragma endregion
 	};
 }

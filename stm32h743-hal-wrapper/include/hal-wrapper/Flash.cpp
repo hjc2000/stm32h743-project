@@ -302,6 +302,7 @@ void hal::Flash::ReadBuffer(int32_t bank_index, size_t addr, uint8_t *buffer, in
 	std::copy(absolute_address, absolute_address + count, buffer);
 }
 
+#pragma region 编程
 void hal::Flash::Program(int32_t bank_index, size_t addr, uint8_t const *buffer)
 {
 	if (addr % MinProgrammingUnit() != 0)
@@ -355,6 +356,7 @@ void hal::Flash::Program_NoIT(int32_t bank_index, size_t addr, uint8_t const *bu
 
 	SCB_CleanInvalidateDCache();
 }
+#pragma endregion
 
 extern "C"
 {
