@@ -154,6 +154,48 @@ void hal::Flash::EraseBank(int32_t bank_index)
 	SCB_CleanInvalidateDCache();
 }
 
+void hal::Flash::EraseBank_NoIT(int32_t bank_index)
+{
+	FLASH_EraseInitTypeDef def;
+
+	// 擦除类型为 bank 擦除
+	def.TypeErase = FLASH_TYPEERASE_MASSERASE;
+
+	// 选择 bank
+	switch (bank_index)
+	{
+	case 0:
+	{
+		def.Banks = FLASH_BANK_1;
+		break;
+	}
+	case 1:
+	{
+		def.Banks = FLASH_BANK_2;
+		break;
+	}
+	default:
+	{
+		throw std::out_of_range{"bank_index 超出范围"};
+	}
+	}
+
+	// 每次擦除 64 位，直到擦除整个 bank。越高的电压擦除时并行的位数就越多。
+	def.VoltageRange = FLASH_VOLTAGE_RANGE_4;
+
+	/* 擦除到某个扇区的时候如果发生错误，会停止擦除，将扇区索引赋值给 error_sector_index，
+	 * 然后返回。
+	 */
+	uint32_t error_code;
+	HAL_StatusTypeDef result = HAL_FLASHEx_Erase(&def, &error_code);
+	if (result != HAL_StatusTypeDef::HAL_OK)
+	{
+		throw std::runtime_error{"启动擦除流程失败"};
+	}
+
+	SCB_CleanInvalidateDCache();
+}
+
 void hal::Flash::EraseSector(int32_t bank_index, int32_t sector_index)
 {
 	FLASH_EraseInitTypeDef def;
@@ -204,6 +246,50 @@ void hal::Flash::EraseSector(int32_t bank_index, int32_t sector_index)
 	SCB_CleanInvalidateDCache();
 }
 
+void hal::Flash::EraseSector_NoIT(int32_t bank_index, int32_t sector_index)
+{
+	FLASH_EraseInitTypeDef def;
+
+	// 擦除类型为扇区擦除
+	def.TypeErase = FLASH_TYPEERASE_SECTORS;
+
+	// 选择 bank
+	switch (bank_index)
+	{
+	case 0:
+	{
+		def.Banks = FLASH_BANK_1;
+		break;
+	}
+	case 1:
+	{
+		def.Banks = FLASH_BANK_2;
+		break;
+	}
+	default:
+	{
+		throw std::out_of_range{"bank_index 超出范围"};
+	}
+	}
+
+	def.Sector = SectorIndexToDefine(sector_index);
+	def.NbSectors = 1;
+
+	// 每次擦除 64 位，直到擦除整个 bank。越高的电压擦除时并行的位数就越多。
+	def.VoltageRange = FLASH_VOLTAGE_RANGE_4;
+
+	/* 擦除到某个扇区的时候如果发生错误，会停止擦除，将扇区索引赋值给 error_sector_index，
+	 * 然后返回。
+	 */
+	uint32_t error_code;
+	HAL_StatusTypeDef result = HAL_FLASHEx_Erase(&def, &error_code);
+	if (result != HAL_StatusTypeDef::HAL_OK)
+	{
+		throw std::runtime_error{"启动擦除流程失败"};
+	}
+
+	SCB_CleanInvalidateDCache();
+}
 #pragma endregion
 
 void hal::Flash::ReadBuffer(int32_t bank_index, size_t addr, uint8_t *buffer, int32_t count)
@@ -237,6 +323,30 @@ void hal::Flash::Program(int32_t bank_index, size_t addr, uint8_t const *buffer)
 	if (_operation_failed)
 	{
 		throw std::runtime_error{"擦除流程结束，出错了"};
+	}
+
+	SCB_CleanInvalidateDCache();
+}
+
+void hal::Flash::Program_NoIT(int32_t bank_index, size_t addr, uint8_t const *buffer)
+{
+	if (addr % MinProgrammingUnit() != 0)
+	{
+		throw std::invalid_argument{"addr 必须 32 字节对齐，即要能被 32 整除"};
+	}
+
+	if (reinterpret_cast<size_t>(buffer) % 4 != 0)
+	{
+		throw std::invalid_argument{"buffer 必须 4 字节对齐，即要能被 4 整除"};
+	}
+
+	HAL_StatusTypeDef result = HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD,
+												 static_cast<uint32_t>(GetAbsoluteAddress(bank_index, addr)),
+												 reinterpret_cast<uint32_t>(buffer));
+
+	if (result != HAL_StatusTypeDef::HAL_OK)
+	{
+		throw std::runtime_error{"启动编程时发生错误"};
 	}
 
 	SCB_CleanInvalidateDCache();

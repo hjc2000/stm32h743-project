@@ -75,14 +75,20 @@ namespace hal
 		/// @param bank_index
 		void EraseBank(int32_t bank_index) override;
 
+		void EraseBank_NoIT(int32_t bank_index);
+
 		/// @brief 擦除指定 bank 的指定扇区。
 		/// @param bank_index
 		/// @param sector_index 要擦除的扇区索引。
 		void EraseSector(int32_t bank_index, int32_t sector_index);
 		using bsp::IFlash::EraseSector;
 
+		void EraseSector_NoIT(int32_t bank_index, int32_t sector_index);
+
 		void ReadBuffer(int32_t bank_index, size_t addr, uint8_t *buffer, int32_t count) override;
 
 		void Program(int32_t bank_index, size_t addr, uint8_t const *buffer) override;
+
+		void Program_NoIT(int32_t bank_index, size_t addr, uint8_t const *buffer);
 	};
 }

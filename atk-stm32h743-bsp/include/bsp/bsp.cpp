@@ -189,6 +189,7 @@ void TestUniversalTimer1()
 }
 
 volatile bool _should_toggle = false;
+uint64_t _count = 0;
 
 void TestFlash()
 {
@@ -205,12 +206,11 @@ void TestFlash()
 				_should_toggle = true;
 				// flash.EraseBank(2);
 				flash.EraseSector(1, 0);
-
 				uint32_t value = flash.ReadUInt32(1, 0);
 				flash.Program(1, 0, reinterpret_cast<uint8_t *>(buffer.data()));
 				value = flash.ReadUInt32(1, 0);
-				BSP::GreenDigitalLed().Toggle();
 				_should_toggle = false;
+				BSP::GreenDigitalLed().Toggle();
 			}
 		}
 	}
@@ -231,7 +231,8 @@ void TestGpio()
 
 	while (true)
 	{
-		bsp::DI_Delayer().Delay(std::chrono::milliseconds{1});
+		// bsp::DI_Delayer().Delay(std::chrono::milliseconds{1});
+		_count++;
 		if (_should_toggle)
 		{
 			hal::GpioPortA::Instance().DigitalTogglePin(hal::GpioPinConfig::PinEnum::Pin4);
