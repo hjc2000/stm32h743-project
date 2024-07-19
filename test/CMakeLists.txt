@@ -11,9 +11,12 @@ set(CMAKE_C_STANDARD 99)
 
 add_executable(${ProjectName})
 target_import_src(${ProjectName})
+
+target_link_libraries(${ProjectName} PUBLIC -Wl,--start-group)
 target_import_freertos(${ProjectName} PUBLIC)
-target_link_libraries(${ProjectName} PUBLIC c m atk-stm32h743-bsp)
 target_import_task(${ProjectName} PUBLIC)
+target_link_libraries(${ProjectName} PUBLIC c m atk-stm32h743-bsp)
+target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
 
 add_custom_command(TARGET ${ProjectName} POST_BUILD 
 				   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${ProjectName}>)

@@ -13,8 +13,11 @@ set(CMAKE_C_STANDARD 99)
 
 add_library(${ProjectName})
 target_import_src(${ProjectName})
+
+target_link_libraries(${ProjectName} PUBLIC -Wl,--start-group)
 target_import_bsp_interface(${ProjectName} PUBLIC)
 target_import_freertos(${ProjectName} PUBLIC)
 target_import_base(${ProjectName} PUBLIC)
 target_import_task(${ProjectName} PUBLIC)
 target_link_libraries(${ProjectName} PRIVATE stm32h743-hal-wrapper)
+target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
