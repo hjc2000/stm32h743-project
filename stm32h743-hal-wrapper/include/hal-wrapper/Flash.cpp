@@ -133,7 +133,8 @@ void hal::Flash::EraseBank(int32_t bank_index)
 	}
 	}
 
-	// 每次擦除 64 位，直到擦除整个 bank。越高的电压擦除时并行的位数就越多。
+	// 每次擦除 64 位，直到擦除整个 bank。
+	// 越高的电压擦除时并行的位数就越多。
 	def.VoltageRange = FLASH_VOLTAGE_RANGE_4;
 
 	/* 擦除到某个扇区的时候如果发生错误，会停止擦除，将扇区索引赋值给 error_sector_index，
@@ -180,7 +181,8 @@ void hal::Flash::EraseBank_NoIT(int32_t bank_index)
 	}
 	}
 
-	// 每次擦除 64 位，直到擦除整个 bank。越高的电压擦除时并行的位数就越多。
+	// 每次擦除 64 位，直到擦除整个 bank。
+	// 越高的电压擦除时并行的位数就越多。
 	def.VoltageRange = FLASH_VOLTAGE_RANGE_4;
 
 	/* 擦除到某个扇区的时候如果发生错误，会停止擦除，将扇区索引赋值给 error_sector_index，
@@ -225,7 +227,8 @@ void hal::Flash::EraseSector(int32_t bank_index, int32_t sector_index)
 	def.Sector = SectorIndexToDefine(sector_index);
 	def.NbSectors = 1;
 
-	// 每次擦除 64 位，直到擦除整个 bank。越高的电压擦除时并行的位数就越多。
+	// 每次擦除 64 位，直到擦除整个 bank。
+	// 越高的电压擦除时并行的位数就越多。
 	def.VoltageRange = FLASH_VOLTAGE_RANGE_4;
 
 	/* 擦除到某个扇区的时候如果发生错误，会停止擦除，将扇区索引赋值给 error_sector_index，
@@ -275,7 +278,8 @@ void hal::Flash::EraseSector_NoIT(int32_t bank_index, int32_t sector_index)
 	def.Sector = SectorIndexToDefine(sector_index);
 	def.NbSectors = 1;
 
-	// 每次擦除 64 位，直到擦除整个 bank。越高的电压擦除时并行的位数就越多。
+	// 每次擦除 64 位，直到擦除整个 bank。
+	// 越高的电压擦除时并行的位数就越多。
 	def.VoltageRange = FLASH_VOLTAGE_RANGE_4;
 
 	/* 擦除到某个扇区的时候如果发生错误，会停止擦除，将扇区索引赋值给 error_sector_index，
