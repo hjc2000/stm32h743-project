@@ -4,7 +4,7 @@
 
 void TestIndependentWatchDog()
 {
-	bsp::DI_Delayer().Delay(std::chrono::milliseconds{500});
+	DI_Delayer().Delay(std::chrono::milliseconds{500});
 	BSP::RedDigitalLed().TurnOn();
 	BSP::IndependentWatchDog().SetWatchDogTimeoutDuration(std::chrono::milliseconds(1000));
 

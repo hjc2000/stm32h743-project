@@ -155,7 +155,7 @@ bsp::IInterruptSwitch &BSP::InterruptSwitch()
 
 void TestWindowWatchDog()
 {
-	bsp::DI_Delayer().Delay(std::chrono::seconds{1});
+	DI_Delayer().Delay(std::chrono::seconds{1});
 	BSP::RedDigitalLed().TurnOn();
 
 	hal::WindowWatchDogConfig config;
@@ -172,7 +172,7 @@ void TestWindowWatchDog()
 	while (true)
 	{
 		BSP::RedDigitalLed().Toggle();
-		bsp::DI_Delayer().Delay(std::chrono::seconds{1});
+		DI_Delayer().Delay(std::chrono::seconds{1});
 	}
 }
 
@@ -194,7 +194,7 @@ void TestUniversalTimer1()
 	uint32_t value = 500 / 2;
 	while (true)
 	{
-		bsp::DI_Delayer().Delay(std::chrono::milliseconds{1000});
+		DI_Delayer().Delay(std::chrono::milliseconds{1000});
 		BSP::GreenDigitalLed().Toggle();
 
 		value += config.Period() + config.Period() / 4;

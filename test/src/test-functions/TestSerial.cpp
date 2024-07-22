@@ -5,7 +5,7 @@
 
 void TestSerial()
 {
-	bsp::DI_Delayer().Delay(std::chrono::seconds{1});
+	DI_Delayer().Delay(std::chrono::seconds{1});
 	BSP::RedDigitalLed().TurnOn();
 	BSP::Serial().Open();
 	std::unique_ptr<uint8_t[]> buffer{new uint8_t[128]{}};
