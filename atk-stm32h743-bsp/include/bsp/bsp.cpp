@@ -20,6 +20,21 @@
 
 using namespace bsp;
 
+void BSP::InitializeInstance()
+{
+	RedDigitalLed();
+	GreenDigitalLed();
+
+	KeyScanner();
+	WakeUpKey();
+
+	Serial();
+
+	IndependentWatchDog();
+
+	InterruptSwitch();
+}
+
 void BSP::Initialize()
 {
 	auto init_clock = []()
@@ -67,6 +82,7 @@ void BSP::Initialize()
 	hal::Cache::Enable();
 	HAL_Init();
 	init_clock();
+	InitializeInstance();
 }
 
 IDigitalLed &BSP::RedDigitalLed()
