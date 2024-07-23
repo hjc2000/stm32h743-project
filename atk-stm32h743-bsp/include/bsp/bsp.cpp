@@ -33,6 +33,9 @@ void BSP::InitializeInstance()
 	IndependentWatchDog();
 
 	InterruptSwitch();
+
+	DI_SysTick();
+	DI_Delayer();
 }
 
 void BSP::Initialize()
