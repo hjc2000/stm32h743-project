@@ -1,5 +1,6 @@
 #include "Serial.h"
 #include <FreeRTOS.h>
+#include <base/Initializer.h>
 #include <hal-wrapper/clock/SysTickClock.h>
 #include <hal-wrapper/interrupt/Interrupt.h>
 #include <hal-wrapper/peripheral/dma/DmaConfig.h>
@@ -341,3 +342,9 @@ void Serial::Open()
 
 	enable_interrupt();
 }
+
+static base::Initializer _initializer{
+	[]()
+	{
+		hal::Serial::Instance();
+	}};

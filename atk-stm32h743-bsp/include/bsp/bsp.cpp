@@ -3,6 +3,7 @@
 #include <ExtiWakeUpKey.h>
 #include <Key.h>
 #include <atomic>
+#include <base/Initializer.h>
 #include <bsp-interface/key/KeyScanner.h>
 #include <functional>
 #include <hal-wrapper/Cache.h>
@@ -19,24 +20,6 @@
 #include <task/TaskDelayer.h>
 
 using namespace bsp;
-
-void BSP::InitializeInstance()
-{
-	RedDigitalLed();
-	GreenDigitalLed();
-
-	KeyScanner();
-	WakeUpKey();
-
-	Serial();
-
-	IndependentWatchDog();
-
-	InterruptSwitch();
-
-	DI_SysTick();
-	DI_Delayer();
-}
 
 void BSP::Initialize()
 {
@@ -85,7 +68,7 @@ void BSP::Initialize()
 	hal::Cache::Enable();
 	HAL_Init();
 	init_clock();
-	InitializeInstance();
+	base::Initializer::Initialize();
 }
 
 IDigitalLed &BSP::RedDigitalLed()
@@ -135,6 +118,12 @@ bsp::IKeyScanner &BSP::KeyScanner()
 
 	return KeyScannerInitializer::Instance().Scanner();
 }
+
+base::Initializer _key_scanner_initializer{
+	[]()
+	{
+		BSP::KeyScanner();
+	}};
 
 bsp::IEventDrivenKey &BSP::WakeUpKey()
 {

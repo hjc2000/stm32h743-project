@@ -22,12 +22,6 @@ class BSP
 private:
 	BSP() = delete;
 
-	/// @brief 将 BSP 类中返回单例引用的静态函数全部调用一遍，触发局部 static 变量的初始化。
-	/// 在单线程中，即 freertos 还没启动时执行一次本函数，进行初始化，可以防止 static 变量
-	/// 初始化发生竟态。
-	/// @note 本函数会在 Initialize 函数中被执行。
-	static void InitializeInstance();
-
 public:
 	static void Initialize();
 

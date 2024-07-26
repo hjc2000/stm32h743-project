@@ -1,4 +1,5 @@
-#include"DigitalLed.h"
+#include "DigitalLed.h"
+#include <base/Initializer.h>
 
 using namespace bsp;
 
@@ -39,3 +40,15 @@ void bsp::GreenDigitalLed::Toggle()
 	hal::GpioPortB::Instance().DigitalTogglePin(hal::GpioPinConfig::PinEnum::Pin0);
 }
 #pragma endregion
+
+static base::Initializer _red_led_initializer{
+	[]()
+	{
+		bsp::RedDigitalLed::Instance();
+	}};
+
+static base::Initializer _green_led_initializer{
+	[]()
+	{
+		bsp::GreenDigitalLed::Instance();
+	}};

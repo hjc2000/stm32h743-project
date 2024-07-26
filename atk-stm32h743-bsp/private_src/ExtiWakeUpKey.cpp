@@ -1,4 +1,5 @@
-#include"ExtiWakeUpKey.h"
+#include "ExtiWakeUpKey.h"
+#include <base/Initializer.h>
 
 using namespace bsp;
 using namespace hal;
@@ -16,9 +17,14 @@ ExtiWakeUpKey::ExtiWakeUpKey()
 	Port().InitPin(options);
 
 	Exti::Instance().UseLine([&]()
-	{
+							 {
 		// 这是在中断函数中，禁止使用 Delayer 进行延时。
 		hal::SysTickClock::Instance().Delay(std::chrono::milliseconds { 20 });
-		_is_pressed = Port().DigitalReadPin(Pin());
-	}, Pin());
+		_is_pressed = Port().DigitalReadPin(Pin()); }, Pin());
 }
+
+base::Initializer _initializer{
+	[]()
+	{
+		bsp::ExtiWakeUpKey::Instance();
+	}};

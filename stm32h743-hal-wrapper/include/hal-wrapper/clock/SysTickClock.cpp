@@ -1,4 +1,5 @@
 #include "SysTickClock.h"
+#include <base/Initializer.h>
 #include <hal-wrapper/clock/ClockSignal.h>
 #include <task/TaskDelayer.h>
 
@@ -30,3 +31,9 @@ extern "C"
 		task::TaskDelayer::Instance().Delay(std::chrono::milliseconds{ms});
 	}
 }
+
+base::Initializer _systick_initializer{
+	[]()
+	{
+		hal::SysTickClock::Instance();
+	}};
