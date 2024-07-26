@@ -23,7 +23,7 @@ ExtiWakeUpKey::ExtiWakeUpKey()
 		_is_pressed = Port().DigitalReadPin(Pin()); }, Pin());
 }
 
-base::Initializer _initializer{
+static base::Initializer _initializer{
 	[]()
 	{
 		bsp::ExtiWakeUpKey::Instance();

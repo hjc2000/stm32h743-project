@@ -119,7 +119,7 @@ bsp::IKeyScanner &BSP::KeyScanner()
 	return KeyScannerInitializer::Instance().Scanner();
 }
 
-base::Initializer _key_scanner_initializer{
+static base::Initializer _key_scanner_initializer{
 	[]()
 	{
 		BSP::KeyScanner();

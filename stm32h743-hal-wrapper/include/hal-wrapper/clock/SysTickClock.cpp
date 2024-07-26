@@ -32,7 +32,7 @@ extern "C"
 	}
 }
 
-base::Initializer _systick_initializer{
+static base::Initializer _systick_initializer{
 	[]()
 	{
 		hal::SysTickClock::Instance();
