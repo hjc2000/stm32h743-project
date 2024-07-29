@@ -4,6 +4,7 @@
 #include <Key.h>
 #include <atomic>
 #include <base/Initializer.h>
+#include <bsp-interface/di.h>
 #include <bsp-interface/key/KeyScanner.h>
 #include <functional>
 #include <hal-wrapper/Cache.h>
@@ -20,6 +21,13 @@
 #include <task/TaskDelayer.h>
 
 using namespace bsp;
+
+static base::Initializer _key_scanner_initializer{
+	[]()
+	{
+		DI_KeyCollection();
+		DI_KeyScanner();
+	}};
 
 void BSP::Initialize()
 {
@@ -80,50 +88,6 @@ IDigitalLed &BSP::GreenDigitalLed()
 {
 	return GreenDigitalLed::Instance();
 }
-
-bsp::IKeyScanner &BSP::KeyScanner()
-{
-	class KeyScannerInitializer
-	{
-	private:
-		KeyScannerInitializer()
-		{
-			_keys[(uint16_t)KeyIndex::Key0] = &Key0::Instance();
-			_keys[(uint16_t)KeyIndex::Key1] = &Key1::Instance();
-			_keys[(uint16_t)KeyIndex::Key2] = &Key2::Instance();
-			_keys[(uint16_t)KeyIndex::KeyWakeUp] = &KeyWakeUp::Instance();
-			_key_scanner = std::shared_ptr<bsp::KeyScanner>{new bsp::KeyScanner{_keys}};
-		}
-
-		KeyScannerInitializer(KeyScannerInitializer const &o) = delete;
-		KeyScannerInitializer(KeyScannerInitializer &&o) = delete;
-		KeyScannerInitializer &operator=(KeyScannerInitializer const &o) = delete;
-		KeyScannerInitializer &operator=(KeyScannerInitializer &&o) = delete;
-
-		std::vector<bsp::IKey *> _keys{(size_t)KeyIndex::EnumEndFlag};
-		std::shared_ptr<bsp::KeyScanner> _key_scanner;
-
-	public:
-		static KeyScannerInitializer &Instance()
-		{
-			static KeyScannerInitializer o;
-			return o;
-		}
-
-		IKeyScanner &Scanner()
-		{
-			return *_key_scanner;
-		}
-	};
-
-	return KeyScannerInitializer::Instance().Scanner();
-}
-
-static base::Initializer _key_scanner_initializer{
-	[]()
-	{
-		BSP::KeyScanner();
-	}};
 
 bsp::IEventDrivenKey &BSP::WakeUpKey()
 {
@@ -207,8 +171,8 @@ void TestFlash()
 		std::array<uint32_t, 8> buffer = {666, 2, 3};
 		while (true)
 		{
-			BSP::KeyScanner().ScanKeys();
-			if (BSP::KeyScanner().HasKeyDownEvent(static_cast<uint16_t>(KeyIndex::Key0)))
+			DI_KeyScanner().ScanKeys();
+			if (DI_KeyScanner().HasKeyDownEvent(static_cast<uint16_t>(KeyIndex::Key0)))
 			{
 				base::UnlockGuard ul{flash};
 				_should_toggle = true;
@@ -251,3 +215,42 @@ void TestGpio()
 		}
 	}
 }
+
+#pragma region DI_KeyScanner
+/// @brief 按键集合。
+/// @return
+base::IReadOnlyCollection<int, bsp::IKey *> &DI_KeyCollection()
+{
+	class Collection
+		: public base::IReadOnlyCollection<int, bsp::IKey *>
+	{
+	private:
+		std::array<bsp::IKey *, 4> _key_array{
+			&Key0::Instance(),
+			&Key1::Instance(),
+			&Key2::Instance(),
+			&Key2::Instance(),
+		};
+
+	public:
+		int Count() const override
+		{
+			return _key_array.size();
+		}
+
+		bsp::IKey *Get(int key) const override
+		{
+			return _key_array[key];
+		}
+	};
+
+	static Collection o;
+	return o;
+}
+
+bsp::IKeyScanner &DI_KeyScanner()
+{
+	static bsp::KeyScanner o{};
+	return o;
+}
+#pragma endregion

@@ -25,7 +25,8 @@ int main(void)
 			auto lvgl_init_task_func = []()
 			{
 				// TestUniversalTimer1();
-				TestFlash();
+				// TestFlash();
+				TestKeyScanner();
 			};
 			std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create(lvgl_init_task_func, 512);
 

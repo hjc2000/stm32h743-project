@@ -1,6 +1,5 @@
 #include "BaseModeTimer3.h"
 #include <hal-wrapper/interrupt/Interrupt.h>
-#include <hal-wrapper/interrupt/IsrManager.h>
 #include <hal-wrapper/peripheral/gpio/GpioPort.h>
 
 void hal::BaseModeTimer3::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
