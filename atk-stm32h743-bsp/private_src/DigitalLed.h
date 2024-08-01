@@ -1,13 +1,11 @@
 #pragma once
-#include<bsp-interface/IDigitalLed.h>
-#include<hal-wrapper/peripheral/gpio/GpioPort.h>
+#include <bsp-interface/IDigitalLed.h>
+#include <hal-wrapper/peripheral/gpio/GpioPort.h>
 
 namespace bsp
 {
-	/// <summary>
-	///		红色 LED
-	/// </summary>
-	class RedDigitalLed :public bsp::IDigitalLed
+	/// @brief 红色 LED
+	class RedDigitalLed : public bsp::IDigitalLed
 	{
 	public:
 		RedDigitalLed()
@@ -16,8 +14,8 @@ namespace bsp
 			hal::GpioPortB::Instance().EnableClock();
 
 			/* 使能时钟后写输出寄存器的操作就有效了。先关闭 LED，然后配置为输出模式，
-			* 这样 LED 的初始状态就是关闭的。
-			*/
+			 * 这样 LED 的初始状态就是关闭的。
+			 */
 			TurnOff();
 			hal::GpioPinConfig gpio_pin_options;
 			gpio_pin_options.SetPin(hal::GpioPinConfig::PinEnum::Pin1);
@@ -38,10 +36,8 @@ namespace bsp
 		void Toggle() override;
 	};
 
-	/// <summary>
-	///		绿色 LED
-	/// </summary>
-	class GreenDigitalLed :public bsp::IDigitalLed
+	/// @brief 绿色 LED
+	class GreenDigitalLed : public bsp::IDigitalLed
 	{
 	public:
 		GreenDigitalLed()
@@ -50,8 +46,8 @@ namespace bsp
 			hal::GpioPortB::Instance().EnableClock();
 
 			/* 使能时钟后写输出寄存器的操作就有效了。先关闭 LED，然后配置为输出模式，
-			* 这样 LED 的初始状态就是关闭的。
-			*/
+			 * 这样 LED 的初始状态就是关闭的。
+			 */
 			TurnOff();
 			hal::GpioPinConfig gpio_pin_options;
 			gpio_pin_options.SetPin(hal::GpioPinConfig::PinEnum::Pin0);

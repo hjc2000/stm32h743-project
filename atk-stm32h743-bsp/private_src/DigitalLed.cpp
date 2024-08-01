@@ -3,6 +3,13 @@
 
 using namespace bsp;
 
+static base::Initializer _initializer{
+	[]()
+	{
+		bsp::RedDigitalLed::Instance();
+		bsp::GreenDigitalLed::Instance();
+	}};
+
 #pragma region RedDigitalLed
 void bsp::RedDigitalLed::TurnOn()
 {
@@ -40,15 +47,3 @@ void bsp::GreenDigitalLed::Toggle()
 	hal::GpioPortB::Instance().DigitalTogglePin(hal::GpioPinConfig::PinEnum::Pin0);
 }
 #pragma endregion
-
-static base::Initializer _red_led_initializer{
-	[]()
-	{
-		bsp::RedDigitalLed::Instance();
-	}};
-
-static base::Initializer _green_led_initializer{
-	[]()
-	{
-		bsp::GreenDigitalLed::Instance();
-	}};
