@@ -4,6 +4,7 @@
 #include <Key.h>
 #include <atomic>
 #include <base/Initializer.h>
+#include <base/container/StdMapValuesEnumerable.h>
 #include <bsp-interface/di.h>
 #include <bsp-interface/key/KeyScanner.h>
 #include <functional>
@@ -172,7 +173,7 @@ void TestFlash()
 		while (true)
 		{
 			DI_KeyScanner().ScanKeys();
-			if (DI_KeyScanner().HasKeyDownEvent(static_cast<uint16_t>(KeyIndex::Key0)))
+			if (DI_KeyScanner().HasKeyDownEvent("key0"))
 			{
 				base::UnlockGuard ul{flash};
 				_should_toggle = true;
@@ -219,28 +220,49 @@ void TestGpio()
 #pragma region DI_KeyScanner
 /// @brief 按键集合。
 /// @return
-base::IReadOnlyCollection<int, bsp::IKey *> &DI_KeyCollection()
+base::IReadOnlyCollection<std::string, bsp::IKey *> &DI_KeyCollection()
 {
 	class Collection
-		: public base::IReadOnlyCollection<int, bsp::IKey *>
+		: public base::IReadOnlyCollection<std::string, bsp::IKey *>
 	{
 	private:
-		std::array<bsp::IKey *, 4> _key_array{
-			&Key0::Instance(),
-			&Key1::Instance(),
-			&Key2::Instance(),
-			&Key2::Instance(),
-		};
+		std::map<std::string, bsp::IKey *> _map;
 
-	public:
-		int Count() const override
+		void AddKey(bsp::IKey *key)
 		{
-			return _key_array.size();
+			_map[key->KeyName()] = key;
 		}
 
-		bsp::IKey *Get(int key) const override
+	public:
+		Collection()
 		{
-			return _key_array[key];
+			AddKey(&Key0::Instance());
+			AddKey(&Key1::Instance());
+			AddKey(&Key2::Instance());
+		}
+
+		int Count() const override
+		{
+			return static_cast<int>(_map.size());
+		}
+
+		bsp::IKey *Get(std::string key) const override
+		{
+			auto map = const_cast<Collection *>(this)->_map;
+			auto it = map.find(key);
+			if (it == map.end())
+			{
+				throw std::runtime_error{"找不到此按键"};
+			}
+
+			return it->second;
+		}
+
+		std::shared_ptr<base::IEnumerator<bsp::IKey *>> GetEnumerator() override
+		{
+			return std::shared_ptr<base::IEnumerator<bsp::IKey *>>{
+				new base::StdMapValuesEnumerator<std::string, bsp::IKey *>{&_map},
+			};
 		}
 	};
 

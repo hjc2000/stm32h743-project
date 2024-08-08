@@ -1,6 +1,6 @@
 #pragma once
 #include <base/HandleWrapper.h>
-#include <bsp-interface/ISerial.h>
+#include <bsp-interface/serial/ISerial.h>
 #include <hal-wrapper/peripheral/uart/UartConfig.h>
 #include <task/BinarySemaphore.h>
 #include <task/Critical.h>

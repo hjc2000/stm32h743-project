@@ -15,6 +15,11 @@ namespace bsp
 			return key;
 		}
 
+		std::string KeyName() override
+		{
+			return "key0";
+		}
+
 		hal::IGpioPort &Port()
 		{
 			return hal::GpioPortH::Instance();
@@ -37,6 +42,11 @@ namespace bsp
 		{
 			static Key1 key{};
 			return key;
+		}
+
+		std::string KeyName() override
+		{
+			return "key1";
 		}
 
 		hal::IGpioPort &Port()
@@ -63,6 +73,11 @@ namespace bsp
 			return key;
 		}
 
+		std::string KeyName() override
+		{
+			return "key2";
+		}
+
 		hal::IGpioPort &Port()
 		{
 			return hal::GpioPortC::Instance();
@@ -85,6 +100,11 @@ namespace bsp
 		{
 			static KeyWakeUp key{};
 			return key;
+		}
+
+		std::string KeyName() override
+		{
+			return "key_wake_up";
 		}
 
 		hal::IGpioPort &Port()

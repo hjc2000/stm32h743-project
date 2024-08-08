@@ -1,6 +1,6 @@
 #pragma once
-#include<bsp-interface/ISerial.h>
-#include<hal.h>
+#include <bsp-interface/serial/ISerial.h>
+#include <hal.h>
 
 namespace hal
 {
