@@ -1,9 +1,9 @@
 #pragma once
 #include <base/HandleWrapper.h>
 #include <bsp-interface/serial/ISerial.h>
-#include <hal-wrapper/peripheral/uart/UartConfig.h>
 #include <task/BinarySemaphore.h>
 #include <task/Critical.h>
+#include <hal-wrapper/peripheral/serial/SerialOptions.h>
 #include <task/Mutex.h>
 
 extern "C"
@@ -21,14 +21,6 @@ namespace hal
 	{
 	private:
 		Serial() = default;
-
-#pragma region 属性的字段
-		uint32_t _baud_rate = 115200;
-		uint8_t _data_bits = 8;
-		bsp::ISerial::ParityOption _parity = bsp::ISerial::ParityOption::None;
-		bsp::ISerial::StopBitsOption _stop_bits = bsp::ISerial::StopBitsOption::One;
-		bsp::ISerial::HardwareFlowControlOption _hardware_flow_control = bsp::ISerial::HardwareFlowControlOption::None;
-#pragma endregion
 
 		bool _have_begun = false;
 		UART_HandleTypeDef _uart_handle{};
@@ -53,11 +45,18 @@ namespace hal
 		static void OnReadTimeout(UART_HandleTypeDef *huart);
 #pragma endregion
 
+		void SetReadTimeoutByBaudCount(uint32_t value);
+
 	public:
 		static Serial &Instance()
 		{
 			static Serial o;
 			return o;
+		}
+
+		std::string Name() override
+		{
+			return "usart1";
 		}
 
 		UART_HandleTypeDef &Handle() override;
@@ -91,30 +90,8 @@ namespace hal
 		void Close() override;
 #pragma endregion
 
-#pragma region 属性
-		uint32_t BaudRate() const override;
-		void SetBaudRate(uint32_t value) override;
-
-		uint8_t DataBits() const override;
-		void SetDataBits(uint8_t value) override;
-
-		bsp::ISerial::ParityOption Parity() const override;
-		void SetParity(bsp::ISerial::ParityOption value) override;
-
-		bsp::ISerial::StopBitsOption StopBits() const override;
-		void SetStopBits(bsp::ISerial::StopBitsOption value) override;
-
-		bsp::ISerial::HardwareFlowControlOption HardwareFlowControl() const override;
-		void SetHardwareFlowControl(bsp::ISerial::HardwareFlowControlOption value) override;
-#pragma endregion
-
-		void SetReadTimeoutByBaudCount(uint32_t value);
-		void SetReadTimeoutByFrameCount(uint32_t value);
-
-		/// @brief 启动串口。
-		/// @note 本函数幂等，调用后，启动串口，再次调用会直接返回，只有调用 Close
-		/// 后才能重新启动串口。
-		/// @note 本函数不是线程安全和可重入的，包括实现幂等的机制也不是线程安全和可重入的。
-		void Open() override;
+		/// @brief 打开串口
+		/// @param options
+		void Open(bsp::ISerialOptions const &options) override;
 	};
 }

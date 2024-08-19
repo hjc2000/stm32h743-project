@@ -11,12 +11,12 @@ void TestIndependentWatchDog()
 	while (true)
 	{
 		DI_KeyScanner().ScanKeys();
-		if (DI_KeyScanner().HasKeyDownEvent((uint16_t)KeyIndex::Key0))
+		if (DI_KeyScanner().HasKeyDownEvent("key0"))
 		{
 			BSP::IndependentWatchDog().Feed();
 		}
 
-		if (DI_KeyScanner().HasKeyDownEvent((uint16_t)KeyIndex::Key1))
+		if (DI_KeyScanner().HasKeyDownEvent("key1"))
 		{
 			BSP::IndependentWatchDog().Feed();
 		}

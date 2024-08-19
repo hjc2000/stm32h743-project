@@ -1,10 +1,11 @@
 #include "Flash.h"
-#include <hal-wrapper/interrupt/Interrupt.h>
 #include <stdexcept>
+#include <bsp-interface/di.h>
+#include <stm32h743iit6-interrupt/Interrupt.h>
 
 hal::Flash::Flash()
 {
-	hal::Interrupt::EnableIRQ(IRQn_Type::FLASH_IRQn);
+	DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::FLASH_IRQn));
 }
 
 uint32_t hal::Flash::SectorIndexToDefine(int32_t index)

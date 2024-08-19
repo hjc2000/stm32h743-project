@@ -2,13 +2,20 @@
 #include <FreeRTOS.h>
 #include <base/Initializer.h>
 #include <hal-wrapper/clock/SysTickClock.h>
-#include <hal-wrapper/interrupt/Interrupt.h>
+#include <bsp-interface/di.h>
+#include <stm32h743iit6-interrupt/Interrupt.h>
 #include <hal-wrapper/peripheral/dma/DmaConfig.h>
 #include <hal-wrapper/peripheral/gpio/GpioPort.h>
 #include <task.h>
 
 using namespace bsp;
 using namespace hal;
+
+static base::Initializer _initializer{
+	[]()
+	{
+		hal::Serial::Instance();
+	}};
 
 #pragma region 中断处理函数
 extern "C"
@@ -184,87 +191,10 @@ void Serial::Write(uint8_t const *buffer, int32_t offset, int32_t count)
 void Serial::Close()
 {
 	HAL_UART_DMAStop(&_uart_handle);
-	hal::Interrupt::DisableIRQ(IRQn_Type::USART1_IRQn);
-	hal::Interrupt::DisableIRQ(IRQn_Type::DMA1_Stream0_IRQn);
-	hal::Interrupt::DisableIRQ(IRQn_Type::DMA1_Stream1_IRQn);
+	DI_InterruptSwitch().DisableInterrupt(static_cast<uint32_t>(IRQn_Type::USART1_IRQn));
+	DI_InterruptSwitch().DisableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream0_IRQn));
+	DI_InterruptSwitch().DisableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream1_IRQn));
 	_have_begun = false;
-}
-#pragma endregion
-
-#pragma region 属性
-uint32_t Serial::BaudRate() const
-{
-	return _baud_rate;
-}
-
-void Serial::SetBaudRate(uint32_t value)
-{
-	if (_have_begun)
-	{
-		throw std::runtime_error{"串口打开后不允许更改设置"};
-	}
-
-	_baud_rate = value;
-}
-
-uint8_t Serial::DataBits() const
-{
-	return _data_bits;
-}
-
-void Serial::SetDataBits(uint8_t value)
-{
-	if (_have_begun)
-	{
-		throw std::runtime_error{"串口打开后不允许更改设置"};
-	}
-
-	_data_bits = value;
-}
-
-ISerial::ParityOption Serial::Parity() const
-{
-	return _parity;
-}
-
-void Serial::SetParity(ISerial::ParityOption value)
-{
-	if (_have_begun)
-	{
-		throw std::runtime_error{"串口打开后不允许更改设置"};
-	}
-
-	_parity = value;
-}
-
-ISerial::StopBitsOption Serial::StopBits() const
-{
-	return _stop_bits;
-}
-
-void Serial::SetStopBits(ISerial::StopBitsOption value)
-{
-	if (_have_begun)
-	{
-		throw std::runtime_error{"串口打开后不允许更改设置"};
-	}
-
-	_stop_bits = value;
-}
-
-ISerial::HardwareFlowControlOption Serial::HardwareFlowControl() const
-{
-	return _hardware_flow_control;
-}
-
-void Serial::SetHardwareFlowControl(ISerial::HardwareFlowControlOption value)
-{
-	if (_have_begun)
-	{
-		throw std::runtime_error{"串口打开后不允许更改设置"};
-	}
-
-	_hardware_flow_control = value;
 }
 #pragma endregion
 
@@ -286,12 +216,7 @@ void hal::Serial::SetReadTimeoutByBaudCount(uint32_t value)
 	}
 }
 
-void hal::Serial::SetReadTimeoutByFrameCount(uint32_t value)
-{
-	SetReadTimeoutByBaudCount(CalculateFramesBaudCount(value));
-}
-
-void Serial::Open()
+void hal::Serial::Open(bsp::ISerialOptions const &options)
 {
 	if (_have_begun)
 	{
@@ -307,17 +232,14 @@ void Serial::Open()
 	 */
 	_send_complete_signal.Release();
 
-	hal::UartConfig config;
-	config.Deserialize(*this);
-	config._baud_rate = _baud_rate;
-
 	_uart_handle.Instance = USART1;
-	_uart_handle.Init = config;
+	SerialOptions const &serial_options = static_cast<SerialOptions const &>(options);
+	_uart_handle.Init = serial_options;
 	_uart_handle.MspInitCallback = OnMspInitCallback;
 	HAL_UART_Init(&_uart_handle);
 
 	// 超时在串口初始化后设置才有效
-	SetReadTimeoutByFrameCount(2);
+	SetReadTimeoutByBaudCount(serial_options.CalculateFramesBaudCount(2));
 
 	/*
 	 * HAL_UART_Init 函数会把中断处理函数中回调的函数都设为默认的，所以必须在 HAL_UART_Init
@@ -331,20 +253,14 @@ void Serial::Open()
 	auto enable_interrupt = []()
 	{
 		hal::Interrupt::SetPriority(IRQn_Type::USART1_IRQn, 10, 0);
-		hal::Interrupt::EnableIRQ(IRQn_Type::USART1_IRQn);
+		DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::USART1_IRQn));
 
 		hal::Interrupt::SetPriority(IRQn_Type::DMA1_Stream0_IRQn, 10, 0);
-		hal::Interrupt::EnableIRQ(IRQn_Type::DMA1_Stream0_IRQn);
+		DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream0_IRQn));
 
 		hal::Interrupt::SetPriority(IRQn_Type::DMA1_Stream1_IRQn, 10, 0);
-		hal::Interrupt::EnableIRQ(IRQn_Type::DMA1_Stream1_IRQn);
+		DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream1_IRQn));
 	};
 
 	enable_interrupt();
 }
-
-static base::Initializer _initializer{
-	[]()
-	{
-		hal::Serial::Instance();
-	}};

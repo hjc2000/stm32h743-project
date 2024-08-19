@@ -1,7 +1,6 @@
 #include <TestExtiKey.h>
 #include <TestIndependentWatchDog.h>
 #include <TestKeyScanner.h>
-#include <TestSerial.h>
 #include <atomic>
 #include <bsp-interface/di.h>
 #include <bsp/bsp.h>
@@ -27,7 +26,6 @@ int main(void)
 				// TestUniversalTimer1();
 				// TestFlash();
 				// TestKeyScanner();
-				TestSerial();
 			};
 			std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create(lvgl_init_task_func, 512);
 

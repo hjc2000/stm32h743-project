@@ -1,6 +1,5 @@
 #include "bsp.h"
 #include <DigitalLed.h>
-#include <ExtiWakeUpKey.h>
 #include <Key.h>
 #include <atomic>
 #include <base/Initializer.h>
@@ -12,11 +11,10 @@
 #include <hal-wrapper/Flash.h>
 #include <hal-wrapper/clock/ClockSignal.h>
 #include <hal-wrapper/clock/Osc.h>
-#include <hal-wrapper/interrupt/InterruptSwitch.h>
+#include <bsp-interface/di.h>
 #include <hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
 #include <hal-wrapper/peripheral/serial/Serial.h>
 #include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
-#include <hal-wrapper/peripheral/window-watch-dog/WindowWatchDog.h>
 #include <hal.h>
 #include <stdint.h>
 #include <task/TaskDelayer.h>
@@ -90,11 +88,6 @@ IDigitalLed &BSP::GreenDigitalLed()
 	return GreenDigitalLed::Instance();
 }
 
-bsp::IEventDrivenKey &BSP::WakeUpKey()
-{
-	return bsp::ExtiWakeUpKey::Instance();
-}
-
 bsp::ISerial &BSP::Serial()
 {
 	return hal::Serial::Instance();
@@ -103,34 +96,6 @@ bsp::ISerial &BSP::Serial()
 bsp::IIndependentWatchDog &BSP::IndependentWatchDog()
 {
 	return hal::IndependentWatchDog::Instance();
-}
-
-bsp::IInterruptSwitch &BSP::InterruptSwitch()
-{
-	return hal::InterruptSwitch::Instance();
-}
-
-void TestWindowWatchDog()
-{
-	DI_Delayer().Delay(std::chrono::seconds{1});
-	BSP::RedDigitalLed().TurnOn();
-
-	hal::WindowWatchDogConfig config;
-	config.SetCounterReloadValue(0x7f);
-	config.SetWindow(0x5f);
-	config.SetPrescaler(hal::WindowWatchDogConfig::PrescalerOption::DIV8);
-	config.SetEarlyWakeupInterrupt(hal::WindowWatchDogConfig::EarlyWakeupInterruptOption::Enable);
-
-	hal::WindowWatchDog::Instance().SetEarlyWakeupInterruptCallback([&]()
-																	{ BSP::GreenDigitalLed().Toggle(); });
-
-	hal::WindowWatchDog::Instance().Initialize(config);
-
-	while (true)
-	{
-		BSP::RedDigitalLed().Toggle();
-		DI_Delayer().Delay(std::chrono::seconds{1});
-	}
 }
 
 void TestUniversalTimer1()

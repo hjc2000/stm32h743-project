@@ -1,7 +1,7 @@
 #include "PwmModeTimer3.h"
 #include <bsp-interface/di.h>
-#include <hal-wrapper/interrupt/Interrupt.h>
 #include <hal-wrapper/peripheral/gpio/GpioPort.h>
+#include <stm32h743iit6-interrupt/Interrupt.h>
 
 void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 {
