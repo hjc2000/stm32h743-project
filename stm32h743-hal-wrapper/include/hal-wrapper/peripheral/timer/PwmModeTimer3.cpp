@@ -1,6 +1,5 @@
 #include "PwmModeTimer3.h"
 #include <bsp-interface/di.h>
-#include <hal-wrapper/peripheral/gpio/GpioPort.h>
 
 void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 {
@@ -13,14 +12,15 @@ void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 							   HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance().Handle());
 						   });
 
-	hal::GpioPortB::Instance().EnableClock();
-	hal::GpioPinConfig config;
-	config.SetPin(hal::GpioPinConfig::PinEnum::Pin1);
-	config.SetMode(hal::GpioPinConfig::ModeEnum::AlternateFunction_PushPull);
-	config.SetPull(hal::GpioPinConfig::PullOption::PullUp);
-	config.SetSpeed(hal::GpioPinConfig::SpeedOption::VeryHigh);
-	config.SetAlternate(GPIO_AF2_TIM3);
-	hal::GpioPortB::Instance().InitPin(config);
+	auto options = DICreate_GpioPinOptions();
+	options->SetAlternateFunction("timer3");
+	options->SetDriver(bsp::IGpioPinDriver::PushPull);
+	options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
+	options->SetSpeedLevel(3);
+	options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
+
+	auto pin = DI_GpioPinCollection().Get("PB1");
+	pin->Open(*options);
 }
 
 TIM_HandleTypeDef &hal::PwmModeTimer3::Handle()

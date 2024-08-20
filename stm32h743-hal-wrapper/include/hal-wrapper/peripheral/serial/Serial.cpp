@@ -4,7 +4,6 @@
 #include <hal-wrapper/clock/SysTickClock.h>
 #include <bsp-interface/di.h>
 #include <hal-wrapper/peripheral/dma/DmaConfig.h>
-#include <hal-wrapper/peripheral/gpio/GpioPort.h>
 #include <task.h>
 
 using namespace bsp;
@@ -45,22 +44,33 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 {
 	auto init_gpio = []()
 	{
-		hal::GpioPortA::Instance().EnableClock();
 		__HAL_RCC_USART1_CLK_ENABLE();
 
-		// 发送引脚 PA9
-		hal::GpioPinConfig options;
-		options.SetPin(hal::GpioPinConfig::PinEnum::Pin9);
-		options.SetMode(hal::GpioPinConfig::ModeEnum::AlternateFunction_PushPull);
-		options.SetPull(hal::GpioPinConfig::PullOption::NoPull);
-		options.SetSpeed(hal::GpioPinConfig::SpeedOption::High);
-		options.SetAlternate(hal::PA9Alternate::usart1);
-		hal::GpioPortA::Instance().InitPin(options);
+		{
+			// 发送引脚 PA9
+			auto options = DICreate_GpioPinOptions();
+			options->SetAlternateFunction("usart1");
+			options->SetDriver(bsp::IGpioPinDriver::PushPull);
+			options->SetPullMode(bsp::IGpioPinPullMode::NoPull);
+			options->SetSpeedLevel(3);
+			options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
 
-		// 接收引脚 PA10
-		options.SetPin(hal::GpioPinConfig::PinEnum::Pin10);
-		options.SetAlternate(hal::PA10Alternate::usart1);
-		hal::GpioPortA::Instance().InitPin(options);
+			auto pin = DI_GpioPinCollection().Get("PA9");
+			pin->Open(*options);
+		}
+
+		{
+			// 接收引脚 PA10
+			auto options = DICreate_GpioPinOptions();
+			options->SetAlternateFunction("usart1");
+			options->SetDriver(bsp::IGpioPinDriver::PushPull);
+			options->SetPullMode(bsp::IGpioPinPullMode::NoPull);
+			options->SetSpeedLevel(3);
+			options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
+
+			auto pin = DI_GpioPinCollection().Get("PA10");
+			pin->Open(*options);
+		}
 	};
 
 	auto init_tx_dma = []()
