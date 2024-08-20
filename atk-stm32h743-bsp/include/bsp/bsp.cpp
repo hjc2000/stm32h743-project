@@ -9,7 +9,6 @@
 #include <hal-wrapper/Cache.h>
 #include <hal-wrapper/clock/ClockSignal.h>
 #include <hal-wrapper/clock/Osc.h>
-#include <hal-wrapper/Flash.h>
 #include <hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
 #include <hal-wrapper/peripheral/serial/Serial.h>
 #include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
@@ -120,31 +119,31 @@ void TestUniversalTimer1()
 bool volatile _should_toggle = false;
 uint64_t _count = 0;
 
-void TestFlash()
-{
-    try
-    {
-        auto &flash = hal::Flash::Instance();
-        std::array<uint32_t, 8> buffer = {666, 2, 3};
-        while (true)
-        {
-            DI_KeyScanner().ScanKeys();
-            if (DI_KeyScanner().HasKeyDownEvent("key0"))
-            {
-                base::UnlockGuard ul{flash};
-                _should_toggle = true;
-                // flash.EraseBank(2);
-                flash.EraseSector(1, 0);
-                uint32_t value = flash.ReadUInt32(1, 0);
-                flash.Program(1, 0, reinterpret_cast<uint8_t *>(buffer.data()));
-                value = flash.ReadUInt32(1, 0);
-                _should_toggle = false;
-                BSP::GreenDigitalLed().Toggle();
-            }
-        }
-    }
-    catch (std::exception const &e)
-    {
-        std::string str = e.what();
-    }
-}
+// void TestFlash()
+// {
+//     try
+//     {
+//         auto &flash = hal::Flash::Instance();
+//         std::array<uint32_t, 8> buffer = {666, 2, 3};
+//         while (true)
+//         {
+//             DI_KeyScanner().ScanKeys();
+//             if (DI_KeyScanner().HasKeyDownEvent("key0"))
+//             {
+//                 base::UnlockGuard ul{flash};
+//                 _should_toggle = true;
+//                 // flash.EraseBank(2);
+//                 flash.EraseSector(1, 0);
+//                 uint32_t value = flash.ReadUInt32(1, 0);
+//                 flash.Program(1, 0, reinterpret_cast<uint8_t *>(buffer.data()));
+//                 value = flash.ReadUInt32(1, 0);
+//                 _should_toggle = false;
+//                 BSP::GreenDigitalLed().Toggle();
+//             }
+//         }
+//     }
+//     catch (std::exception const &e)
+//     {
+//         std::string str = e.what();
+//     }
+// }
