@@ -3,7 +3,6 @@
 #include <base/Initializer.h>
 #include <hal-wrapper/clock/SysTickClock.h>
 #include <bsp-interface/di.h>
-#include <stm32h743iit6-interrupt/Interrupt.h>
 #include <hal-wrapper/peripheral/dma/DmaConfig.h>
 #include <hal-wrapper/peripheral/gpio/GpioPort.h>
 #include <task.h>
@@ -252,14 +251,9 @@ void hal::Serial::Open(bsp::ISerialOptions const &options)
 	// 启用中断
 	auto enable_interrupt = []()
 	{
-		hal::Interrupt::SetPriority(IRQn_Type::USART1_IRQn, 10, 0);
-		DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::USART1_IRQn));
-
-		hal::Interrupt::SetPriority(IRQn_Type::DMA1_Stream0_IRQn, 10, 0);
-		DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream0_IRQn));
-
-		hal::Interrupt::SetPriority(IRQn_Type::DMA1_Stream1_IRQn, 10, 0);
-		DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream1_IRQn));
+		DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::USART1_IRQn), 10);
+		DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream0_IRQn), 10);
+		DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream1_IRQn), 10);
 	};
 
 	enable_interrupt();

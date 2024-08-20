@@ -1,7 +1,6 @@
 #include "Flash.h"
 #include <stdexcept>
 #include <bsp-interface/di.h>
-#include <stm32h743iit6-interrupt/Interrupt.h>
 
 hal::Flash::Flash()
 {

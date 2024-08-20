@@ -1,13 +1,11 @@
 #include "BaseModeTimer3.h"
 #include <hal-wrapper/peripheral/gpio/GpioPort.h>
-#include <stm32h743iit6-interrupt/Interrupt.h>
 #include <bsp-interface/di.h>
 
 void hal::BaseModeTimer3::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
-	hal::Interrupt::SetPriority(IRQn_Type::TIM3_IRQn, 10, 0);
-	DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn));
+	DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), 10);
 }
 
 void hal::BaseModeTimer3::OnPeriodElapsed(TIM_HandleTypeDef *handle)
