@@ -1,5 +1,4 @@
 #include <atomic>
-#include <bsp-interface/di.h>
 #include <bsp/bsp.h>
 #include <memory>
 #include <stdexcept>

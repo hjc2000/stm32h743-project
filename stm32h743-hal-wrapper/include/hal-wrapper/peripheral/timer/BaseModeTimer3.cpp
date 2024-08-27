@@ -1,5 +1,5 @@
 #include "BaseModeTimer3.h"
-#include <bsp-interface/di.h>
+#include <bsp-interface/di/interrupt.h>
 
 void hal::BaseModeTimer3::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
 {

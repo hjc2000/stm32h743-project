@@ -1,5 +1,5 @@
 #pragma once
-#include <bsp-interface/di.h>
+#include <bsp-interface/di/gpio.h>
 #include <bsp-interface/IDigitalLed.h>
 
 namespace bsp

@@ -2,7 +2,7 @@
 #include <atomic>
 #include <base/container/StdMapValuesEnumerable.h>
 #include <base/Initializer.h>
-#include <bsp-interface/di.h>
+#include <bsp-interface/di/delayer.h>
 #include <bsp-interface/key/KeyScanner.h>
 #include <DigitalLed.h>
 #include <functional>
