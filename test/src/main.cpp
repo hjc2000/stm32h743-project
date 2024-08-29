@@ -7,7 +7,6 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <task/Task.h>
-#include <TestExtiKey.h>
 
 bool std_exception_occurred = false;
 bool unknow_exception_occurred = false;

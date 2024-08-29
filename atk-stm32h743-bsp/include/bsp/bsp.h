@@ -24,9 +24,6 @@ private:
 public:
     static void Initialize();
 
-    static bsp::IDigitalLed &RedDigitalLed();
-    static bsp::IDigitalLed &GreenDigitalLed();
-
     static bsp::IEventDrivenKey &WakeUpKey();
 
     static bsp::ISerial &Serial();

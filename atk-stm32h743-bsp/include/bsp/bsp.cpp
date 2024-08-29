@@ -68,16 +68,6 @@ void BSP::Initialize()
     base::Initializer::Initialize();
 }
 
-IDigitalLed &BSP::RedDigitalLed()
-{
-    return RedDigitalLed::Instance();
-}
-
-IDigitalLed &BSP::GreenDigitalLed()
-{
-    return GreenDigitalLed::Instance();
-}
-
 bsp::ISerial &BSP::Serial()
 {
     return hal::Serial::Instance();
@@ -107,8 +97,6 @@ void TestUniversalTimer1()
     while (true)
     {
         DI_Delayer().Delay(std::chrono::milliseconds{1000});
-        BSP::GreenDigitalLed().Toggle();
-
         value += config.Period() + config.Period() / 4;
         value %= config.Period();
         compare_output_config.SetPulse(value);
