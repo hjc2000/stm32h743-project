@@ -1,13 +1,13 @@
 #include <atomic>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/led.h>
+#include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
 #include <bsp/bsp.h>
 #include <memory>
 #include <stdexcept>
 #include <stdint.h>
 #include <task/Task.h>
-#include <TestKeyScanner.h>
 
 bool std_exception_occurred = false;
 bool unknow_exception_occurred = false;
@@ -28,7 +28,7 @@ int main(void)
                     // TestKeyScanner();
 
                     // bsp::TestSerial();
-                    TestKeyScanner();
+                    bsp::TestKeyScanner();
 
                     // while (true)
                     // {
