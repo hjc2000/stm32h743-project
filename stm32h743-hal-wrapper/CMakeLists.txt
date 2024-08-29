@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-include(${cpp_lib_build_scripts_path}/cmake-module/setup.cmake)
+include($ENV{cpp_lib_build_scripts_path}/cmake-module/setup.cmake)
 include(target_import_stm32h743iit6_hal)
 include(target_import_stm32h743iit6_interrupt)
 include(target_import_stm32h743iit6_gpio)

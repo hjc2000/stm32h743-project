@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-include(${cpp_lib_build_scripts_path}/cmake-module/setup.cmake)
+include($ENV{cpp_lib_build_scripts_path}/cmake-module/setup.cmake)
 include(target_import_freertos)
 include(target_import_task)
 
@@ -18,7 +18,7 @@ target_import_task(${ProjectName} PUBLIC)
 target_link_libraries(${ProjectName} PUBLIC c m atk-stm32h743-bsp)
 target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
 
-add_custom_command(TARGET ${ProjectName} POST_BUILD 
+add_custom_command(TARGET ${ProjectName} POST_BUILD
 				   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${ProjectName}>)
 
 add_custom_command(TARGET ${ProjectName} POST_BUILD
