@@ -49,16 +49,10 @@ namespace bsp
 
         /// @brief 此 DMA 要被连接到哪里
         /// @return
-        std::string Parent() const override
-        {
-            return _parent;
-        }
+        std::string Parent() const override;
 
         /// @brief 此 DMA 要被连接到哪里
         /// @param value
-        void SetParent(std::string value) override
-        {
-            _parent = value;
-        }
+        void SetParent(std::string value) override;
     };
 } // namespace bsp

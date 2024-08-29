@@ -1,6 +1,15 @@
 #include "DmaOptions.h"
+#include <base/Initializer.h>
+#include <map>
 
-using namespace bsp;
+static std::map<std::string, uint32_t> const &RequestMap()
+{
+    static std::map<std::string, uint32_t> o{
+        {"usart1_tx", DMA_REQUEST_USART1_TX},
+    };
+
+    return o;
+}
 
 bsp::DmaOptions::DmaOptions()
 {
@@ -16,7 +25,7 @@ bsp::DmaOptions::operator DMA_InitTypeDef() const
     return _init_type_def;
 }
 
-IDmaOptions_Direction bsp::DmaOptions::Direction() const
+bsp::IDmaOptions_Direction bsp::DmaOptions::Direction() const
 {
     switch (_init_type_def.Direction)
     {
@@ -193,7 +202,7 @@ void bsp::DmaOptions::SetMemoryDataAlignment(int value)
     }
 }
 
-IDmaOptions_Priority bsp::DmaOptions::Priority() const
+bsp::IDmaOptions_Priority bsp::DmaOptions::Priority() const
 {
     switch (_init_type_def.Priority)
     {
@@ -250,3 +259,26 @@ void bsp::DmaOptions::SetPriority(IDmaOptions_Priority value)
         }
     }
 }
+
+std::string bsp::DmaOptions::Parent() const
+{
+    return _parent;
+}
+
+void bsp::DmaOptions::SetParent(std::string value)
+{
+    _parent = value;
+    auto it = RequestMap().find(_parent);
+    if (it == RequestMap().end())
+    {
+        throw std::runtime_error{"不支持被附加到此设备"};
+    }
+
+    _init_type_def.Request = it->second;
+}
+
+static base::Initializer _initializer{
+    []()
+    {
+        RequestMap();
+    }};
