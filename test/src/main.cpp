@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <task/Task.h>
+#include <TestKeyScanner.h>
 
 bool std_exception_occurred = false;
 bool unknow_exception_occurred = false;
@@ -26,7 +27,8 @@ int main(void)
                     // TestFlash();
                     // TestKeyScanner();
 
-                    bsp::TestSerial();
+                    // bsp::TestSerial();
+                    TestKeyScanner();
 
                     // while (true)
                     // {
@@ -41,10 +43,12 @@ int main(void)
         }
         catch (std::exception const &e)
         {
+            DI_RedDigitalLed().TurnOn();
             std_exception_occurred = true;
         }
         catch (...)
         {
+            DI_RedDigitalLed().TurnOn();
             unknow_exception_occurred = true;
         }
     }
