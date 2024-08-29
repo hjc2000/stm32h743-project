@@ -1,6 +1,7 @@
 #include <atomic>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/led.h>
+#include <bsp-interface/test/TestIndependentWatchDog.h>
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
 #include <bsp/bsp.h>
@@ -28,7 +29,8 @@ int main(void)
                     // TestKeyScanner();
 
                     // bsp::TestSerial();
-                    bsp::TestKeyScanner();
+                    // bsp::TestKeyScanner();
+                    bsp::TestIndependentWatchDog();
 
                     // while (true)
                     // {
