@@ -1,4 +1,7 @@
 #include <atomic>
+#include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/led.h>
+#include <bsp-interface/test/TestSerial.h>
 #include <bsp/bsp.h>
 #include <memory>
 #include <stdexcept>
@@ -15,7 +18,6 @@ int main(void)
     {
         try
         {
-
             BSP::Initialize();
 
             std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create(
@@ -24,6 +26,15 @@ int main(void)
                     // TestUniversalTimer1();
                     // TestFlash();
                     // TestKeyScanner();
+
+                    bsp::TestSerial();
+
+                    // while (true)
+                    // {
+                    //     DI_GreenDigitalLed().Toggle();
+                    //     DI_RedDigitalLed().Toggle();
+                    //     DI_Delayer().Delay(std::chrono::seconds{1});
+                    // }
                 },
                 512);
 
