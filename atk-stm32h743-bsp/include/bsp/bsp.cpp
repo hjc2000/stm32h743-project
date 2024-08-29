@@ -9,7 +9,6 @@
 #include <hal-wrapper/Cache.h>
 #include <hal-wrapper/clock/ClockSignal.h>
 #include <hal-wrapper/clock/Osc.h>
-#include <hal-wrapper/peripheral/independent-watch-dog/IndependentWatchDog.h>
 #include <hal-wrapper/peripheral/serial/Serial.h>
 #include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
 #include <hal.h>
@@ -71,11 +70,6 @@ void BSP::Initialize()
 bsp::ISerial &BSP::Serial()
 {
     return hal::Serial::Instance();
-}
-
-bsp::IIndependentWatchDog &BSP::IndependentWatchDog()
-{
-    return hal::IndependentWatchDog::Instance();
 }
 
 void TestUniversalTimer1()

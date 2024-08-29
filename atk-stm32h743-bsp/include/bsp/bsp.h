@@ -28,10 +28,6 @@ public:
 
     static bsp::ISerial &Serial();
 
-    /// @brief 独立看门狗。
-    /// @return
-    static bsp::IIndependentWatchDog &IndependentWatchDog();
-
     static bsp::IInterruptSwitch &InterruptSwitch();
 };
 
