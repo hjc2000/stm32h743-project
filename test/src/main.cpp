@@ -26,18 +26,10 @@ int main(void)
                 {
                     // TestUniversalTimer1();
                     // TestFlash();
-                    // TestKeyScanner();
 
                     // bsp::TestSerial();
                     // bsp::TestKeyScanner();
                     bsp::TestIndependentWatchDog();
-
-                    // while (true)
-                    // {
-                    //     DI_GreenDigitalLed().Toggle();
-                    //     DI_RedDigitalLed().Toggle();
-                    //     DI_Delayer().Delay(std::chrono::seconds{1});
-                    // }
                 },
                 512);
 
