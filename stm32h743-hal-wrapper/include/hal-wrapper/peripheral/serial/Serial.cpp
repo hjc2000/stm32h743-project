@@ -16,16 +16,6 @@ extern "C"
     {
         HAL_UART_IRQHandler(&Serial::Instance()._uart_handle);
     }
-
-    void DMA_STR0_IRQHandler()
-    {
-        HAL_DMA_IRQHandler(Serial::Instance()._uart_handle.hdmatx);
-    }
-
-    void DMA_STR1_IRQHandler()
-    {
-        HAL_DMA_IRQHandler(Serial::Instance()._uart_handle.hdmarx);
-    }
 }
 #pragma endregion
 
@@ -223,6 +213,18 @@ void hal::Serial::Open(bsp::ISerialOptions const &options)
 
     // 启用中断
     {
+        DI_IsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::DMA1_Stream0_IRQn),
+                               []()
+                               {
+                                   HAL_DMA_IRQHandler(Serial::Instance()._uart_handle.hdmatx);
+                               });
+
+        DI_IsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::DMA1_Stream1_IRQn),
+                               []()
+                               {
+                                   HAL_DMA_IRQHandler(Serial::Instance()._uart_handle.hdmarx);
+                               });
+
         DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::USART1_IRQn), 10);
         DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream0_IRQn), 10);
         DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream1_IRQn), 10);
