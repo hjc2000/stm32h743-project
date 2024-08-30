@@ -157,7 +157,7 @@ int32_t Serial::Read(uint8_t *buffer, int32_t offset, int32_t count)
                  *
                  * 这个操作需要在临界区中，并且 DMA 的中断要处于 freertos 的管理范围内，否则无效。
                  */
-                _rx_dma_handle.XferHalfCpltCallback = nullptr;
+                Serial::Instance()._uart_handle.hdmarx->XferHalfCpltCallback = nullptr;
             });
 
         _receive_complete_signal.Acquire();

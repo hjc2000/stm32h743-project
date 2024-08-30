@@ -1,5 +1,17 @@
 #include "LinkDma.h"
 
+void bsp::LinkDmaToParent(DMA_HandleTypeDef &dma, void *parent)
+{
+    switch (dma.Init.Request)
+    {
+    case DMA_REQUEST_USART1_TX:
+        {
+            bsp::LinkDmaToUartTx(dma, *static_cast<UART_HandleTypeDef *>(parent));
+            break;
+        }
+    }
+}
+
 void bsp::LinkDmaToUartTx(DMA_HandleTypeDef &dma, UART_HandleTypeDef &uart)
 {
     uart.hdmatx = &dma;
