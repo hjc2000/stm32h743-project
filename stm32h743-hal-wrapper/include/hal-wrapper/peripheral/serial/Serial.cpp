@@ -34,7 +34,7 @@ extern "C"
 
 int32_t hal::Serial::HaveRead()
 {
-    return _uart_handle.RxXferSize - __HAL_DMA_GET_COUNTER(&_rx_dma_handle);
+    return _uart_handle.RxXferSize - __HAL_DMA_GET_COUNTER(_uart_handle.hdmarx);
 }
 
 void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
@@ -97,11 +97,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         options->SetPeripheralIncrement(false);
         options->SetPriority(bsp::IDmaOptions_Priority::Medium);
         options->SetRequest("usart1_rx");
-
-        Serial::Instance()._rx_dma_handle.Instance = DMA1_Stream1;
-        Serial::Instance()._rx_dma_handle.Init = static_cast<bsp::DmaOptions &>(*options);
-        HAL_DMA_Init(&Serial::Instance()._rx_dma_handle);
-        bsp::LinkDmaToUartRx(Serial::Instance()._rx_dma_handle, Serial::Instance()._uart_handle);
+        DI_DmaChannelCollection().Get("dma1_stream1")->Open(*options, &Serial::Instance()._uart_handle);
     };
 
     init_gpio();

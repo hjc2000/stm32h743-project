@@ -1,4 +1,5 @@
 #include "Dma1Stream0.h"
+#include "Dma1Stream1.h"
 #include "DmaOptions.h"
 #include <base/container/Collection.h>
 #include <base/SingletonGetter.h>
@@ -19,6 +20,7 @@ base::ICollection<std::string, bsp::IDmaChannel *> const &DI_DmaChannelCollectio
         Initializer()
         {
             Add(&bsp::Dma1Stream0::Instance());
+            Add(&bsp::Dma1Stream1::Instance());
         }
 
         void Add(bsp::IDmaChannel *o)
