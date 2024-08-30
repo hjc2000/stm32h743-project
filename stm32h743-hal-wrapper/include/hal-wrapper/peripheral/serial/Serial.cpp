@@ -1,5 +1,4 @@
 #include "Serial.h"
-#include "Dma1Stream0.h"
 #include "DmaOptions.h"
 #include "LinkDma.h"
 #include <bsp-interface/di/dma.h>
@@ -83,7 +82,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         options->SetPeripheralIncrement(false);
         options->SetPriority(bsp::IDmaOptions_Priority::Medium);
         options->SetRequest("usart1_tx");
-        bsp::Dma1Stream0::Instance().Open(*options, &Serial::Instance()._uart_handle);
+        DI_DmaChannelCollection().Get("dma1_stream0")->Open(*options, &Serial::Instance()._uart_handle);
     };
 
     auto init_rx_dma = []()

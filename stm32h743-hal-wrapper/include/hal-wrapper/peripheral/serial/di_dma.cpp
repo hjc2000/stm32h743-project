@@ -11,7 +11,7 @@ std::shared_ptr<bsp::IDmaOptions> DICreate_DmaOptions()
     return std::shared_ptr<bsp::IDmaOptions>{new bsp::DmaOptions{}};
 }
 
-base::ICollection<std::string, bsp::IDmaChannel *> const &DI_DmaChannel()
+base::ICollection<std::string, bsp::IDmaChannel *> const &DI_DmaChannelCollection()
 {
     class Initializer
     {
