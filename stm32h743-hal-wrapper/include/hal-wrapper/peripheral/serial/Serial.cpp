@@ -9,16 +9,6 @@
 using namespace bsp;
 using namespace hal;
 
-#pragma region 中断处理函数
-extern "C"
-{
-    void USART1_IRQHandler()
-    {
-        HAL_UART_IRQHandler(&Serial::Instance()._uart_handle);
-    }
-}
-#pragma endregion
-
 int32_t hal::Serial::HaveRead()
 {
     return _uart_handle.RxXferSize - __HAL_DMA_GET_COUNTER(_uart_handle.hdmarx);
@@ -213,6 +203,12 @@ void hal::Serial::Open(bsp::ISerialOptions const &options)
 
     // 启用中断
     {
+        DI_IsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::USART1_IRQn),
+                               []()
+                               {
+                                   HAL_UART_IRQHandler(&Serial::Instance()._uart_handle);
+                               });
+
         DI_IsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::DMA1_Stream0_IRQn),
                                []()
                                {
