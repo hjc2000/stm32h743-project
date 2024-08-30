@@ -12,6 +12,7 @@ std::map<std::string, uint32_t> const &bsp::DmaOptions::RequestMap()
             return std::unique_ptr<std::map<std::string, uint32_t>>{
                 new std::map<std::string, uint32_t>{
                     {"usart1_tx", DMA_REQUEST_USART1_TX},
+                    {"usart1_rx", DMA_REQUEST_USART1_RX},
                 },
             };
         }

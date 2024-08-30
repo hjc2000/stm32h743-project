@@ -12,7 +12,6 @@ namespace bsp
     private:
         DMA_InitTypeDef _init_type_def;
         std::string _parent;
-
         std::map<std::string, uint32_t> const &RequestMap();
 
     public:
