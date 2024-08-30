@@ -1,6 +1,7 @@
 #pragma once
 #include <base/HandleWrapper.h>
 #include <base/SingletonGetter.h>
+#include <bsp-interface/di/dma.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/serial/ISerial.h>
 #include <hal-wrapper/peripheral/serial/SerialOptions.h>
@@ -27,6 +28,9 @@ namespace hal
         task::BinarySemaphore _send_complete_signal;
         task::BinarySemaphore _receive_complete_signal;
         task::Mutex _read_lock{};
+
+        bsp::IDmaChannel *_rx_dma_channel = nullptr;
+        bsp::IDmaChannel *_tx_dma_channel = nullptr;
 
         /// @brief 通过串口句柄和 DMA 寄存器，获取当前 DMA 接收了多少个字节。
         /// @return

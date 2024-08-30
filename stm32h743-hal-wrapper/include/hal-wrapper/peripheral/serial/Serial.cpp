@@ -1,5 +1,4 @@
 #include "Serial.h"
-#include <bsp-interface/di/dma.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
 #include <FreeRTOS.h>
@@ -57,7 +56,9 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         options->SetPeripheralIncrement(false);
         options->SetPriority(bsp::IDmaOptions_Priority::Medium);
         options->SetRequest("usart1_tx");
-        DI_DmaChannelCollection().Get("dma1_stream0")->Open(*options, &Serial::Instance()._uart_handle);
+
+        Serial::Instance()._tx_dma_channel = DI_DmaChannelCollection().Get("dma1_stream0");
+        Serial::Instance()._tx_dma_channel->Open(*options, &Serial::Instance()._uart_handle);
     }
 
     // 初始化接收 DMA
@@ -70,7 +71,9 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         options->SetPeripheralIncrement(false);
         options->SetPriority(bsp::IDmaOptions_Priority::Medium);
         options->SetRequest("usart1_rx");
-        DI_DmaChannelCollection().Get("dma1_stream1")->Open(*options, &Serial::Instance()._uart_handle);
+
+        Serial::Instance()._rx_dma_channel = DI_DmaChannelCollection().Get("dma1_stream1");
+        Serial::Instance()._rx_dma_channel->Open(*options, &Serial::Instance()._uart_handle);
     }
 }
 
