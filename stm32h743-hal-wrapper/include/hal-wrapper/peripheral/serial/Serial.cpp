@@ -10,7 +10,7 @@ using namespace hal;
 
 int32_t hal::Serial::HaveRead()
 {
-    return _uart_handle.RxXferSize - __HAL_DMA_GET_COUNTER(_uart_handle.hdmarx);
+    return _uart_handle.RxXferSize - _rx_dma_channel->RemainingUntransmittedBytes();
 }
 
 void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
