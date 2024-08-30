@@ -8,7 +8,7 @@ namespace bsp
         public bsp::IDmaChannel
     {
     private:
-        DMA_HandleTypeDef _handle{};
+        DMA_HandleTypeDef _dma_handle{};
         bool _is_open = false;
 
     public:

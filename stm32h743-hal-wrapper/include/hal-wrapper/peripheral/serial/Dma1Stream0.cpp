@@ -16,7 +16,7 @@ void bsp::Dma1Stream0::Open(bsp::IDmaOptions const &options, void *parent)
     _is_open = true;
 
     __HAL_RCC_DMA1_CLK_ENABLE();
-    _handle.Instance = DMA1_Stream0;
-    _handle.Init = static_cast<bsp::DmaOptions const &>(options);
-    HAL_DMA_Init(&_handle);
+    _dma_handle.Instance = DMA1_Stream0;
+    _dma_handle.Init = static_cast<bsp::DmaOptions const &>(options);
+    HAL_DMA_Init(&_dma_handle);
 }

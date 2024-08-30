@@ -1,4 +1,5 @@
 #include "Serial.h"
+#include "LinkDma.h"
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
 #include <FreeRTOS.h>
@@ -113,20 +114,11 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         HAL_DMA_Init(&Serial::Instance()._rx_dma_handle);
     };
 
-    // 连接到 DMA 发送通道
-    auto link_dma_channel = []()
-    {
-        Serial::Instance()._uart_handle.hdmatx = &Serial::Instance()._tx_dma_handle;
-        Serial::Instance()._tx_dma_handle.Parent = &Serial::Instance()._uart_handle;
-
-        Serial::Instance()._uart_handle.hdmarx = &Serial::Instance()._rx_dma_handle;
-        Serial::Instance()._rx_dma_handle.Parent = &Serial::Instance()._uart_handle;
-    };
-
     init_gpio();
     init_tx_dma();
     init_rx_dma();
-    link_dma_channel();
+    bsp::LinkDmaToUartTx(Serial::Instance()._tx_dma_handle, Serial::Instance()._uart_handle);
+    bsp::LinkDmaToUartRx(Serial::Instance()._rx_dma_handle, Serial::Instance()._uart_handle);
 }
 
 #pragma region 被中断处理函数回调的函数
