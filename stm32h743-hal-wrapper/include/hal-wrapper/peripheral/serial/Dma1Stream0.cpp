@@ -3,7 +3,7 @@
 
 std::string bsp::Dma1Stream0::Name() const
 {
-    return "dma1_channel5";
+    return "dma1_stream0";
 }
 
 void bsp::Dma1Stream0::Open(bsp::IDmaOptions const &options)
