@@ -40,8 +40,8 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
     {
         __HAL_RCC_USART1_CLK_ENABLE();
 
+        // 发送引脚 PA9
         {
-            // 发送引脚 PA9
             auto options = DICreate_GpioPinOptions();
             options->SetAlternateFunction("usart1");
             options->SetDriver(bsp::IGpioPinDriver::PushPull);
@@ -53,8 +53,8 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
             pin->Open(*options);
         }
 
+        // 接收引脚 PA10
         {
-            // 接收引脚 PA10
             auto options = DICreate_GpioPinOptions();
             options->SetAlternateFunction("usart1");
             options->SetDriver(bsp::IGpioPinDriver::PushPull);
