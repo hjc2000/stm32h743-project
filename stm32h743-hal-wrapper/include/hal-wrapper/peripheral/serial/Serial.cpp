@@ -22,12 +22,12 @@ extern "C"
 
     void DMA_STR0_IRQHandler()
     {
-        HAL_DMA_IRQHandler(&Serial::Instance()._tx_dma_handle);
+        HAL_DMA_IRQHandler(Serial::Instance()._uart_handle.hdmatx);
     }
 
     void DMA_STR1_IRQHandler()
     {
-        HAL_DMA_IRQHandler(&Serial::Instance()._rx_dma_handle);
+        HAL_DMA_IRQHandler(Serial::Instance()._uart_handle.hdmarx);
     }
 }
 #pragma endregion
