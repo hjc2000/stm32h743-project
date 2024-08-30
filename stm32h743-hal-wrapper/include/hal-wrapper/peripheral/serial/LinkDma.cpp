@@ -1,4 +1,5 @@
 #include "LinkDma.h"
+#include <stdexcept>
 
 void bsp::LinkDmaToParent(DMA_HandleTypeDef &dma, void *parent)
 {
@@ -13,6 +14,10 @@ void bsp::LinkDmaToParent(DMA_HandleTypeDef &dma, void *parent)
         {
             bsp::LinkDmaToUartRx(dma, *static_cast<UART_HandleTypeDef *>(parent));
             break;
+        }
+    default:
+        {
+            throw std::runtime_error{"不支持的请求"};
         }
     }
 }
