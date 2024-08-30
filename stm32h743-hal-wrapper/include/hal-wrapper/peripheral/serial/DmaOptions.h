@@ -11,6 +11,7 @@ namespace bsp
     {
     private:
         DMA_InitTypeDef _init_type_def;
+        std::string _request;
 
     public:
         DmaOptions();
@@ -46,6 +47,20 @@ namespace bsp
         /// @return
         IDmaOptions_Priority Priority() const override;
         void SetPriority(IDmaOptions_Priority value) override;
+
+        /// @brief DMA 的用途。
+        /// @return
+        std::string Request() const override
+        {
+            return _request;
+        }
+
+        /// @brief DMA 的用途。
+        /// @param value
+        void SetRequest(std::string value) override
+        {
+            _request = value;
+        }
 
         /// @brief 返回底层的 DMA 句柄。
         /// @note 注意，句柄不是指 IDmaOptions 或它的派生类的指针。
