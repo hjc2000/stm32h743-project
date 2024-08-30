@@ -2,36 +2,6 @@
 #include <base/SingletonGetter.h>
 #include <bsp-interface/di/interrupt.h>
 
-std::map<std::string, uint32_t> const &bsp::DmaOptions::RequestMap()
-{
-    class Getter : public base::SingletonGetter<std::map<std::string, uint32_t>>
-    {
-    public:
-        std::unique_ptr<std::map<std::string, uint32_t>> Create() override
-        {
-            return std::unique_ptr<std::map<std::string, uint32_t>>{
-                new std::map<std::string, uint32_t>{
-                    {"usart1_rx", DMA_REQUEST_USART1_RX},
-                    {"usart1_tx", DMA_REQUEST_USART1_TX},
-                },
-            };
-        }
-
-        void Lock() override
-        {
-            DI_InterruptSwitch().DisableGlobalInterrupt();
-        }
-
-        void Unlock() override
-        {
-            DI_InterruptSwitch().EnableGlobalInterrupt();
-        }
-    };
-
-    Getter g;
-    return g.Instance();
-}
-
 bsp::DmaOptions::DmaOptions()
 {
     _init_type_def.Mode = DMA_NORMAL;
@@ -43,11 +13,6 @@ bsp::DmaOptions::DmaOptions()
 
 bsp::DmaOptions::operator DMA_InitTypeDef() const
 {
-    if (_parent == "")
-    {
-        throw std::runtime_error{"需要设置 DMA 被附加到的设备"};
-    }
-
     return _init_type_def;
 }
 
@@ -284,21 +249,4 @@ void bsp::DmaOptions::SetPriority(IDmaOptions_Priority value)
             throw std::invalid_argument{"非法优先级"};
         }
     }
-}
-
-std::string bsp::DmaOptions::Parent() const
-{
-    return _parent;
-}
-
-void bsp::DmaOptions::SetParent(std::string value)
-{
-    _parent = value;
-    auto it = RequestMap().find(_parent);
-    if (it == RequestMap().end())
-    {
-        throw std::runtime_error{"不支持被附加到此设备"};
-    }
-
-    _init_type_def.Request = it->second;
 }
