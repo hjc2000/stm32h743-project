@@ -222,12 +222,9 @@ void hal::Serial::Open(bsp::ISerialOptions const &options)
     _uart_handle.ErrorCallback = OnReadTimeout;
 
     // 启用中断
-    auto enable_interrupt = []()
     {
         DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::USART1_IRQn), 10);
         DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream0_IRQn), 10);
         DI_InterruptSwitch().EnableInterrupt(static_cast<uint32_t>(IRQn_Type::DMA1_Stream1_IRQn), 10);
-    };
-
-    enable_interrupt();
+    }
 }
