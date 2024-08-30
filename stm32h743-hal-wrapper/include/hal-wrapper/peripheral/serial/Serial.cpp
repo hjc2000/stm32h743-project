@@ -39,7 +39,7 @@ int32_t hal::Serial::HaveRead()
 
 void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
 {
-    auto init_gpio = []()
+    // 初始化 GPIO
     {
         __HAL_RCC_USART1_CLK_ENABLE();
 
@@ -68,12 +68,10 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
             auto pin = DI_GpioPinCollection().Get("PA10");
             pin->Open(*options);
         }
-    };
+    }
 
-    auto init_tx_dma = []()
+    // 初始化发送 DMA
     {
-        __HAL_RCC_DMA1_CLK_ENABLE();
-
         auto options = DICreate_DmaOptions();
         options->SetDirection(bsp::IDmaOptions_Direction::MemoryToPeripheral);
         options->SetMemoryDataAlignment(1);
@@ -83,12 +81,10 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         options->SetPriority(bsp::IDmaOptions_Priority::Medium);
         options->SetRequest("usart1_tx");
         DI_DmaChannelCollection().Get("dma1_stream0")->Open(*options, &Serial::Instance()._uart_handle);
-    };
+    }
 
-    auto init_rx_dma = []()
+    // 初始化接受 DMA
     {
-        __HAL_RCC_DMA1_CLK_ENABLE();
-
         auto options = DICreate_DmaOptions();
         options->SetDirection(bsp::IDmaOptions_Direction::PeripheralToMemory);
         options->SetMemoryDataAlignment(1);
@@ -98,11 +94,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         options->SetPriority(bsp::IDmaOptions_Priority::Medium);
         options->SetRequest("usart1_rx");
         DI_DmaChannelCollection().Get("dma1_stream1")->Open(*options, &Serial::Instance()._uart_handle);
-    };
-
-    init_gpio();
-    init_tx_dma();
-    init_rx_dma();
+    }
 }
 
 #pragma region 被中断处理函数回调的函数
