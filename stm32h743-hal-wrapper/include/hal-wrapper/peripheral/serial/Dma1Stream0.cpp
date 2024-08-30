@@ -6,7 +6,7 @@ std::string bsp::Dma1Stream0::Name() const
     return "dma1_stream0";
 }
 
-void bsp::Dma1Stream0::Open(bsp::IDmaOptions const &options)
+void bsp::Dma1Stream0::Open(bsp::IDmaOptions const &options, void *parent)
 {
     if (_is_open)
     {

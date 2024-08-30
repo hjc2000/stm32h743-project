@@ -19,7 +19,7 @@ namespace bsp
         }
 
         std::string Name() const override;
-        void Open(bsp::IDmaOptions const &options) override;
+        void Open(bsp::IDmaOptions const &options, void *parent) override;
 
         bool IsOpen() const override
         {
@@ -29,13 +29,6 @@ namespace bsp
         void Close() override
         {
             _is_open = false;
-        }
-
-        /// @brief 返回底层的句柄。
-        /// @return
-        virtual void *Handle() override
-        {
-            return &_handle;
         }
     };
 } // namespace bsp
