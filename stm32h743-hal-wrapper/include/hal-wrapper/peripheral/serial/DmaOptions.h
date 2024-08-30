@@ -61,13 +61,5 @@ namespace bsp
         {
             _request = value;
         }
-
-        /// @brief 返回底层的 DMA 句柄。
-        /// @note 注意，句柄不是指 IDmaOptions 或它的派生类的指针。
-        /// @return
-        void *DmaHandle() override
-        {
-            return &_init_type_def;
-        }
     };
 } // namespace bsp
