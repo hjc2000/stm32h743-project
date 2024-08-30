@@ -1,41 +1,79 @@
 #include <AtkKey.h>
 #include <base/container/Collection.h>
-#include <base/Initializer.h>
+#include <base/SingletonGetter.h>
+#include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/key.h>
 #include <bsp-interface/key/KeyScanner.h>
 
-static base::Initializer _initializer{
-    []()
-    {
-        DI_KeyCollection();
-        DI_KeyScanner();
-    }};
-
-class Collection
-{
-public:
-    Collection()
-    {
-        AddKey(&bsp::Key0::Instance());
-        AddKey(&bsp::Key1::Instance());
-    }
-
-    base::Collection<std::string, bsp::IKey *> _collection;
-
-    void AddKey(bsp::IKey *key)
-    {
-        _collection.Put(key->KeyName(), key);
-    }
-};
-
 base::ICollection<std::string, bsp::IKey *> const &DI_KeyCollection()
 {
-    static Collection o;
-    return o._collection;
+    class Initializer
+    {
+    private:
+        Initializer()
+        {
+            AddKey(&bsp::Key0::Instance());
+            AddKey(&bsp::Key1::Instance());
+        }
+
+        void AddKey(bsp::IKey *key)
+        {
+            _collection.Put(key->KeyName(), key);
+        }
+
+    public:
+        base::Collection<std::string, bsp::IKey *> _collection;
+
+        static Initializer &Instance()
+        {
+            class Getter : public base::SingletonGetter<Initializer>
+            {
+            public:
+                std::unique_ptr<Initializer> Create() override
+                {
+                    return std::unique_ptr<Initializer>{new Initializer{}};
+                }
+
+                void Lock() override
+                {
+                    DI_InterruptSwitch().DisableGlobalInterrupt();
+                }
+
+                void Unlock() override
+                {
+                    DI_InterruptSwitch().EnableGlobalInterrupt();
+                }
+            };
+
+            Getter g;
+            return g.Instance();
+        }
+    };
+
+    return Initializer::Instance()._collection;
 }
 
 bsp::IKeyScanner &DI_KeyScanner()
 {
-    static bsp::KeyScanner key_scanner{};
-    return key_scanner;
+    class Getter : public base::SingletonGetter<bsp::KeyScanner>
+    {
+    public:
+        std::unique_ptr<bsp::KeyScanner> Create() override
+        {
+            return std::unique_ptr<bsp::KeyScanner>{new bsp::KeyScanner{}};
+        }
+
+        void Lock() override
+        {
+            DI_InterruptSwitch().DisableGlobalInterrupt();
+        }
+
+        void Unlock() override
+        {
+            DI_InterruptSwitch().EnableGlobalInterrupt();
+        }
+    };
+
+    Getter g;
+    return g.Instance();
 }

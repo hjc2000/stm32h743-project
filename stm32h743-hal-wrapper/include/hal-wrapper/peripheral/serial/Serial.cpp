@@ -1,5 +1,4 @@
 #include "Serial.h"
-#include <base/Initializer.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
 #include <FreeRTOS.h>
@@ -9,12 +8,6 @@
 
 using namespace bsp;
 using namespace hal;
-
-static base::Initializer _initializer{
-    []()
-    {
-        hal::Serial::Instance();
-    }};
 
 #pragma region 中断处理函数
 extern "C"

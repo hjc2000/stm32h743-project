@@ -1,14 +1,6 @@
 #include "DigitalLed.h"
-#include <base/Initializer.h>
 
 using namespace bsp;
-
-static base::Initializer _initializer{
-    []()
-    {
-        bsp::RedDigitalLed::Instance();
-        bsp::GreenDigitalLed::Instance();
-    }};
 
 #pragma region RedDigitalLed
 

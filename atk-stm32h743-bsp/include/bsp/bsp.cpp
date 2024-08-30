@@ -1,7 +1,6 @@
 #include "bsp.h"
 #include <atomic>
 #include <base/container/StdMapValuesEnumerable.h>
-#include <base/Initializer.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/key/KeyScanner.h>
 #include <DigitalLed.h>
@@ -64,7 +63,6 @@ void BSP::Initialize()
     hal::Cache::Enable();
     HAL_Init();
     init_clock();
-    base::Initializer::Initialize();
 }
 
 bsp::ISerial &BSP::Serial()

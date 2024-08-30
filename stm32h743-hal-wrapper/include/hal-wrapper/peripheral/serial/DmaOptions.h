@@ -1,6 +1,7 @@
 #pragma once
 #include <bsp-interface/di/dma.h>
 #include <hal.h>
+#include <map>
 
 namespace bsp
 {
@@ -11,6 +12,8 @@ namespace bsp
     private:
         DMA_InitTypeDef _init_type_def;
         std::string _parent;
+
+        std::map<std::string, uint32_t> const &RequestMap();
 
     public:
         DmaOptions();

@@ -1,14 +1,34 @@
 #include "DmaOptions.h"
-#include <base/Initializer.h>
-#include <map>
+#include <base/SingletonGetter.h>
+#include <bsp-interface/di/interrupt.h>
 
-static std::map<std::string, uint32_t> const &RequestMap()
+std::map<std::string, uint32_t> const &bsp::DmaOptions::RequestMap()
 {
-    static std::map<std::string, uint32_t> o{
-        {"usart1_tx", DMA_REQUEST_USART1_TX},
+    class Getter : public base::SingletonGetter<std::map<std::string, uint32_t>>
+    {
+    public:
+        std::unique_ptr<std::map<std::string, uint32_t>> Create() override
+        {
+            return std::unique_ptr<std::map<std::string, uint32_t>>{
+                new std::map<std::string, uint32_t>{
+                    {"usart1_tx", DMA_REQUEST_USART1_TX},
+                },
+            };
+        }
+
+        void Lock() override
+        {
+            DI_InterruptSwitch().DisableGlobalInterrupt();
+        }
+
+        void Unlock() override
+        {
+            DI_InterruptSwitch().EnableGlobalInterrupt();
+        }
     };
 
-    return o;
+    Getter g;
+    return g.Instance();
 }
 
 bsp::DmaOptions::DmaOptions()
@@ -276,9 +296,3 @@ void bsp::DmaOptions::SetParent(std::string value)
 
     _init_type_def.Request = it->second;
 }
-
-static base::Initializer _initializer{
-    []()
-    {
-        RequestMap();
-    }};

@@ -1,13 +1,6 @@
 #include "SysTickClock.h"
-#include <base/Initializer.h>
 #include <hal-wrapper/clock/ClockSignal.h>
 #include <task/TaskDelayer.h>
-
-static base::Initializer _systick_initializer{
-    []()
-    {
-        hal::SysTickClock::Instance();
-    }};
 
 uint32_t hal::SysTickClock::Frequency() const
 {
