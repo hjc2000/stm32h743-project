@@ -1,12 +1,9 @@
 #include "Serial.h"
-#include "DmaOptions.h"
-#include "LinkDma.h"
 #include <bsp-interface/di/dma.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
 #include <FreeRTOS.h>
 #include <hal-wrapper/clock/SysTickClock.h>
-#include <hal-wrapper/peripheral/dma/DmaConfig.h>
 #include <task.h>
 
 using namespace bsp;
