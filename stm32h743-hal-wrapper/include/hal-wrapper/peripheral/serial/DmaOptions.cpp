@@ -43,6 +43,11 @@ bsp::DmaOptions::DmaOptions()
 
 bsp::DmaOptions::operator DMA_InitTypeDef() const
 {
+    if (_parent == "")
+    {
+        throw std::runtime_error{"需要设置 DMA 被附加到的设备"};
+    }
+
     return _init_type_def;
 }
 
