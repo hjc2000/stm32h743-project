@@ -9,6 +9,11 @@ void bsp::LinkDmaToParent(DMA_HandleTypeDef &dma, void *parent)
             bsp::LinkDmaToUartTx(dma, *static_cast<UART_HandleTypeDef *>(parent));
             break;
         }
+    case DMA_REQUEST_USART1_RX:
+        {
+            bsp::LinkDmaToUartRx(dma, *static_cast<UART_HandleTypeDef *>(parent));
+            break;
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 #include "Serial.h"
+#include "Dma1Stream0.h"
 #include "DmaOptions.h"
 #include "LinkDma.h"
 #include <bsp-interface/di/dma.h>
@@ -82,10 +83,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         options->SetPeripheralIncrement(false);
         options->SetPriority(bsp::IDmaOptions_Priority::Medium);
         options->SetRequest("usart1_tx");
-
-        Serial::Instance()._tx_dma_handle.Instance = DMA1_Stream0;
-        Serial::Instance()._tx_dma_handle.Init = static_cast<bsp::DmaOptions &>(*options);
-        HAL_DMA_Init(&Serial::Instance()._tx_dma_handle);
+        bsp::Dma1Stream0::Instance().Open(*options, &Serial::Instance()._uart_handle);
     };
 
     auto init_rx_dma = []()
@@ -104,13 +102,12 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         Serial::Instance()._rx_dma_handle.Instance = DMA1_Stream1;
         Serial::Instance()._rx_dma_handle.Init = static_cast<bsp::DmaOptions &>(*options);
         HAL_DMA_Init(&Serial::Instance()._rx_dma_handle);
+        bsp::LinkDmaToUartRx(Serial::Instance()._rx_dma_handle, Serial::Instance()._uart_handle);
     };
 
     init_gpio();
     init_tx_dma();
     init_rx_dma();
-    bsp::LinkDmaToUartTx(Serial::Instance()._tx_dma_handle, Serial::Instance()._uart_handle);
-    bsp::LinkDmaToUartRx(Serial::Instance()._rx_dma_handle, Serial::Instance()._uart_handle);
 }
 
 #pragma region 被中断处理函数回调的函数
