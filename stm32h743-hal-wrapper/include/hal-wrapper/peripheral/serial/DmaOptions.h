@@ -12,6 +12,7 @@ namespace bsp
     private:
         DMA_InitTypeDef _init_type_def;
         std::string _request;
+        std::map<std::string, uint32_t> const &RequestMap();
 
     public:
         DmaOptions();
@@ -50,16 +51,10 @@ namespace bsp
 
         /// @brief DMA 的用途。
         /// @return
-        std::string Request() const override
-        {
-            return _request;
-        }
+        std::string Request() const override;
 
         /// @brief DMA 的用途。
         /// @param value
-        void SetRequest(std::string value) override
-        {
-            _request = value;
-        }
+        void SetRequest(std::string value) override;
     };
 } // namespace bsp

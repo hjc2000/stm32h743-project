@@ -2,6 +2,36 @@
 #include <base/SingletonGetter.h>
 #include <bsp-interface/di/interrupt.h>
 
+std::map<std::string, uint32_t> const &bsp::DmaOptions::RequestMap()
+{
+    class Getter : public base::SingletonGetter<std::map<std::string, uint32_t>>
+    {
+    public:
+        std::unique_ptr<std::map<std::string, uint32_t>> Create() override
+        {
+            return std::unique_ptr<std::map<std::string, uint32_t>>{
+                new std::map<std::string, uint32_t>{
+                    {"usart1_rx", DMA_REQUEST_USART1_RX},
+                    {"usart1_tx", DMA_REQUEST_USART1_TX},
+                },
+            };
+        }
+
+        void Lock() override
+        {
+            DI_InterruptSwitch().DisableGlobalInterrupt();
+        }
+
+        void Unlock() override
+        {
+            DI_InterruptSwitch().EnableGlobalInterrupt();
+        }
+    };
+
+    Getter o;
+    return o.Instance();
+}
+
 bsp::DmaOptions::DmaOptions()
 {
     _init_type_def.Mode = DMA_NORMAL;
@@ -249,4 +279,21 @@ void bsp::DmaOptions::SetPriority(IDmaOptions_Priority value)
             throw std::invalid_argument{"非法优先级"};
         }
     }
+}
+
+std::string bsp::DmaOptions::Request() const
+{
+    return _request;
+}
+
+void bsp::DmaOptions::SetRequest(std::string value)
+{
+    _request = value;
+    auto it = RequestMap().find(_request);
+    if (it == RequestMap().end())
+    {
+        throw std::runtime_error{"不支持此请求"};
+    }
+
+    _init_type_def.Request = it->second;
 }

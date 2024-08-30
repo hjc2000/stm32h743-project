@@ -1,5 +1,7 @@
 #include "Serial.h"
+#include "DmaOptions.h"
 #include "LinkDma.h"
+#include <bsp-interface/di/dma.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
 #include <FreeRTOS.h>
@@ -72,22 +74,17 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
     {
         __HAL_RCC_DMA1_CLK_ENABLE();
 
-        hal::DmaConfig dma_config{};
-        dma_config._request = hal::DmaConfig::Request::Usart1Tx;
-        dma_config._direction = hal::DmaConfig::Direction::MemoryToPeripheral;
-        dma_config._peripheral_address_increase = hal::DmaConfig::PeripheralAddressIncrease::Disable;
-        dma_config._memory_address_increase = hal::DmaConfig::MemoryAddressIncrease::Enable;
-        dma_config._peripheral_data_alignment = hal::DmaConfig::PeripheralDataAlignment::Byte;
-        dma_config._memory_data_alignment = hal::DmaConfig::MemoryDataAlignment::Byte;
-        dma_config._mode = hal::DmaConfig::Mode::Normal;
-        dma_config._priority = hal::DmaConfig::Priority::Medium;
-        dma_config._fifo_mode = hal::DmaConfig::FifoMode::Disable;
-        dma_config._fifo_threshold = hal::DmaConfig::FifoThreshold::Threshold_4_div_4;
-        dma_config._memory_burst = hal::DmaConfig::MemoryBurst::Single;
-        dma_config._peripheral_burst = hal::DmaConfig::PeripheralBurst::Single;
+        auto options = DICreate_DmaOptions();
+        options->SetDirection(bsp::IDmaOptions_Direction::MemoryToPeripheral);
+        options->SetMemoryDataAlignment(1);
+        options->SetMemoryIncrement(true);
+        options->SetPeripheralDataAlignment(1);
+        options->SetPeripheralIncrement(false);
+        options->SetPriority(bsp::IDmaOptions_Priority::Medium);
+        options->SetRequest("usart1_tx");
 
         Serial::Instance()._tx_dma_handle.Instance = DMA1_Stream0;
-        Serial::Instance()._tx_dma_handle.Init = dma_config;
+        Serial::Instance()._tx_dma_handle.Init = static_cast<bsp::DmaOptions &>(*options);
         HAL_DMA_Init(&Serial::Instance()._tx_dma_handle);
     };
 
