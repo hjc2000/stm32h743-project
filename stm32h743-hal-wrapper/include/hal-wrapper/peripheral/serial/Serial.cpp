@@ -83,7 +83,7 @@ void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
         DI_DmaChannelCollection().Get("dma1_stream0")->Open(*options, &Serial::Instance()._uart_handle);
     }
 
-    // 初始化接受 DMA
+    // 初始化接收 DMA
     {
         auto options = DICreate_DmaOptions();
         options->SetDirection(bsp::IDmaOptions_Direction::PeripheralToMemory);
