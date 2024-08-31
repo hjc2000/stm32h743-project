@@ -37,7 +37,6 @@ namespace hal
         int32_t HaveRead();
 
         friend void ::USART1_IRQHandler();
-        static void OnMspInitCallback(UART_HandleTypeDef *huart);
 
 #pragma region 被中断处理函数回调的函数
         static void OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos);

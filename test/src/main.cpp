@@ -24,8 +24,8 @@ int main(void)
                 {
                     // TestUniversalTimer1();
                     // TestFlash();
-                    TestExtiKey();
-                    // bsp::TestSerial();
+                    // TestExtiKey();
+                    bsp::TestSerial();
                     // bsp::TestKeyScanner();
                     // bsp::TestIndependentWatchDog();
                 },

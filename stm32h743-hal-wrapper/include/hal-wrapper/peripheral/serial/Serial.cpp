@@ -13,70 +13,6 @@ int32_t hal::Serial::HaveRead()
     return _uart_handle.RxXferSize - _rx_dma_channel->RemainingUntransmittedBytes();
 }
 
-void Serial::OnMspInitCallback(UART_HandleTypeDef *huart)
-{
-    // 初始化 GPIO
-    {
-        __HAL_RCC_USART1_CLK_ENABLE();
-
-        // 发送引脚 PA9
-        {
-            auto options = DICreate_GpioPinOptions();
-            options->SetAlternateFunction("usart1");
-            options->SetDriver(bsp::IGpioPinDriver::PushPull);
-            options->SetPullMode(bsp::IGpioPinPullMode::NoPull);
-            options->SetSpeedLevel(3);
-            options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
-
-            auto pin = DI_GpioPinCollection().Get("PA9");
-            pin->Open(*options);
-        }
-
-        // 接收引脚 PA10
-        {
-            auto options = DICreate_GpioPinOptions();
-            options->SetAlternateFunction("usart1");
-            options->SetDriver(bsp::IGpioPinDriver::PushPull);
-            options->SetPullMode(bsp::IGpioPinPullMode::NoPull);
-            options->SetSpeedLevel(3);
-            options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
-
-            auto pin = DI_GpioPinCollection().Get("PA10");
-            pin->Open(*options);
-        }
-    }
-
-    // 初始化发送 DMA
-    {
-        auto options = DICreate_DmaOptions();
-        options->SetDirection(bsp::IDmaOptions_Direction::MemoryToPeripheral);
-        options->SetMemoryDataAlignment(1);
-        options->SetMemoryIncrement(true);
-        options->SetPeripheralDataAlignment(1);
-        options->SetPeripheralIncrement(false);
-        options->SetPriority(bsp::IDmaOptions_Priority::Medium);
-        options->SetRequest("usart1_tx");
-
-        Serial::Instance()._tx_dma_channel = DI_DmaChannelCollection().Get("dma1_stream0");
-        Serial::Instance()._tx_dma_channel->Open(*options, &Serial::Instance()._uart_handle);
-    }
-
-    // 初始化接收 DMA
-    {
-        auto options = DICreate_DmaOptions();
-        options->SetDirection(bsp::IDmaOptions_Direction::PeripheralToMemory);
-        options->SetMemoryDataAlignment(1);
-        options->SetMemoryIncrement(true);
-        options->SetPeripheralDataAlignment(1);
-        options->SetPeripheralIncrement(false);
-        options->SetPriority(bsp::IDmaOptions_Priority::Medium);
-        options->SetRequest("usart1_rx");
-
-        Serial::Instance()._rx_dma_channel = DI_DmaChannelCollection().Get("dma1_stream1");
-        Serial::Instance()._rx_dma_channel->Open(*options, &Serial::Instance()._uart_handle);
-    }
-}
-
 #pragma region 被中断处理函数回调的函数
 
 void Serial::OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos)
@@ -187,10 +123,71 @@ void hal::Serial::Open(bsp::ISerialOptions const &options)
      */
     _send_complete_signal.Release();
 
+    // 初始化 GPIO
+    {
+        __HAL_RCC_USART1_CLK_ENABLE();
+
+        // 发送引脚 PA9
+        {
+            auto options = DICreate_GpioPinOptions();
+            options->SetAlternateFunction("usart1");
+            options->SetDriver(bsp::IGpioPinDriver::PushPull);
+            options->SetPullMode(bsp::IGpioPinPullMode::NoPull);
+            options->SetSpeedLevel(3);
+            options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
+
+            auto pin = DI_GpioPinCollection().Get("PA9");
+            pin->Open(*options);
+        }
+
+        // 接收引脚 PA10
+        {
+            auto options = DICreate_GpioPinOptions();
+            options->SetAlternateFunction("usart1");
+            options->SetDriver(bsp::IGpioPinDriver::PushPull);
+            options->SetPullMode(bsp::IGpioPinPullMode::NoPull);
+            options->SetSpeedLevel(3);
+            options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
+
+            auto pin = DI_GpioPinCollection().Get("PA10");
+            pin->Open(*options);
+        }
+    }
+
+    // 初始化发送 DMA
+    {
+        auto options = DICreate_DmaOptions();
+        options->SetDirection(bsp::IDmaOptions_Direction::MemoryToPeripheral);
+        options->SetMemoryDataAlignment(1);
+        options->SetMemoryIncrement(true);
+        options->SetPeripheralDataAlignment(1);
+        options->SetPeripheralIncrement(false);
+        options->SetPriority(bsp::IDmaOptions_Priority::Medium);
+        options->SetRequest("usart1_tx");
+
+        Serial::Instance()._tx_dma_channel = DI_DmaChannelCollection().Get("dma1_stream0");
+        Serial::Instance()._tx_dma_channel->Open(*options, &Serial::Instance()._uart_handle);
+    }
+
+    // 初始化接收 DMA
+    {
+        auto options = DICreate_DmaOptions();
+        options->SetDirection(bsp::IDmaOptions_Direction::PeripheralToMemory);
+        options->SetMemoryDataAlignment(1);
+        options->SetMemoryIncrement(true);
+        options->SetPeripheralDataAlignment(1);
+        options->SetPeripheralIncrement(false);
+        options->SetPriority(bsp::IDmaOptions_Priority::Medium);
+        options->SetRequest("usart1_rx");
+
+        Serial::Instance()._rx_dma_channel = DI_DmaChannelCollection().Get("dma1_stream1");
+        Serial::Instance()._rx_dma_channel->Open(*options, &Serial::Instance()._uart_handle);
+    }
+
     _uart_handle.Instance = USART1;
     SerialOptions const &serial_options = static_cast<SerialOptions const &>(options);
     _uart_handle.Init = serial_options;
-    _uart_handle.MspInitCallback = OnMspInitCallback;
+    _uart_handle.MspInitCallback = nullptr;
     HAL_UART_Init(&_uart_handle);
 
     // 超时在串口初始化后设置才有效
