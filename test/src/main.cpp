@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <task/Task.h>
+#include <TestExtiKey.h>
 
 int main(void)
 {
@@ -23,8 +24,8 @@ int main(void)
                 {
                     // TestUniversalTimer1();
                     // TestFlash();
-
-                    bsp::TestSerial();
+                    TestExtiKey();
+                    // bsp::TestSerial();
                     // bsp::TestKeyScanner();
                     // bsp::TestIndependentWatchDog();
                 },
