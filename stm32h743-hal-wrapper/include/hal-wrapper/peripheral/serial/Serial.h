@@ -9,16 +9,10 @@
 #include <task/Critical.h>
 #include <task/Mutex.h>
 
-extern "C"
-{
-    void USART1_IRQHandler();
-}
-
 namespace hal
 {
     class Serial :
-        public bsp::ISerial,
-        public base::HandleWrapper<UART_HandleTypeDef>
+        public bsp::ISerial
     {
     private:
         Serial() = default;
@@ -32,11 +26,16 @@ namespace hal
         bsp::IDmaChannel *_rx_dma_channel = nullptr;
         bsp::IDmaChannel *_tx_dma_channel = nullptr;
 
+#pragma region 初始化
+        void InitializeGpio();
+        void InitializeDma();
+        void HalUartInit(SerialOptions const &options);
+        void InitializeInterrupt();
+#pragma endregion
+
         /// @brief 通过串口句柄和 DMA 寄存器，获取当前 DMA 接收了多少个字节。
         /// @return
         int32_t HaveRead();
-
-        friend void ::USART1_IRQHandler();
 
 #pragma region 被中断处理函数回调的函数
         static void OnReceiveEventCallback(UART_HandleTypeDef *huart, uint16_t pos);
@@ -76,8 +75,6 @@ namespace hal
         {
             return "serial";
         }
-
-        UART_HandleTypeDef &Handle() override;
 
 #pragma region Stream
         /// @brief 调用后临时启动 DMA 接收一次数据。
