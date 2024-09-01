@@ -28,7 +28,7 @@ namespace hal
 #pragma region 初始化
         void InitializeGpio();
         void InitializeDma();
-        void HalUartInit(SerialOptions const &options);
+        void InitializeUart(SerialOptions const &options);
         void InitializeInterrupt();
 #pragma endregion
 

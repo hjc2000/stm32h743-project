@@ -74,7 +74,7 @@ void hal::Serial::InitializeDma()
     }
 }
 
-void hal::Serial::HalUartInit(SerialOptions const &options)
+void hal::Serial::InitializeUart(SerialOptions const &options)
 {
     _uart_handle.Instance = USART1;
     _uart_handle.Init = options;
@@ -231,6 +231,6 @@ void hal::Serial::Open(bsp::ISerialOptions const &options)
     _sending_completion_signal.Release();
     InitializeGpio();
     InitializeDma();
-    HalUartInit(static_cast<SerialOptions const &>(options));
+    InitializeUart(static_cast<SerialOptions const &>(options));
     InitializeInterrupt();
 }
