@@ -18,8 +18,8 @@ namespace hal
 
         bool _have_begun = false;
         UART_HandleTypeDef _uart_handle{};
-        task::BinarySemaphore _send_complete_signal;
-        task::BinarySemaphore _receive_complete_signal;
+        task::BinarySemaphore _sending_completion_signal;
+        task::BinarySemaphore _receiving_completion_signal;
         task::Mutex _read_lock{};
 
         bsp::IDmaChannel *_rx_dma_channel = nullptr;
