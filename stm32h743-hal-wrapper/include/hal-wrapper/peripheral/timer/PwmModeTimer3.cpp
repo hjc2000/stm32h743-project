@@ -10,7 +10,7 @@ void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
     DI_IsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn),
                            []()
                            {
-                               HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance().Handle());
+                               HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance()._handle);
                            });
 
     auto options = DICreate_GpioPinOptions();
@@ -24,16 +24,11 @@ void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
     pin->Open(*options);
 }
 
-TIM_HandleTypeDef &hal::PwmModeTimer3::Handle()
-{
-    return _handle;
-}
-
 void hal::PwmModeTimer3::PwmInitialize(hal::UniversalTimerBaseConfig &config)
 {
     _base_config = config;
     _handle.Instance = HardwareInstance();
-    _handle.Init = _base_config.Handle();
+    _handle.Init = _base_config._handle;
     _handle.PWM_MspInitCallback = OnPwmMspInitCallback;
     HAL_TIM_PWM_Init(&_handle);
 }

@@ -15,16 +15,11 @@ void hal::BaseModeTimer3::OnPeriodElapsed(TIM_HandleTypeDef *handle)
     }
 }
 
-TIM_HandleTypeDef &hal::BaseModeTimer3::Handle()
-{
-    return _handle;
-}
-
 void hal::BaseModeTimer3::BaseInitialize(hal::UniversalTimerBaseConfig &config)
 {
     _base_config = config;
     _handle.Instance = HardwareInstance();
-    _handle.Init = _base_config.Handle();
+    _handle.Init = _base_config._handle;
     _handle.Base_MspInitCallback = OnBaseMspInitCallback;
     HAL_TIM_Base_Init(&_handle);
 

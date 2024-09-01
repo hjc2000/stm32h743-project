@@ -1,5 +1,4 @@
 #pragma once
-#include <base/HandleWrapper.h>
 #include <base/SingletonGetter.h>
 #include <bsp-interface/di/dma.h>
 #include <bsp-interface/di/interrupt.h>
