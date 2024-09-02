@@ -8,7 +8,6 @@
 #include <hal-wrapper/Cache.h>
 #include <hal-wrapper/clock/ClockSignal.h>
 #include <hal-wrapper/clock/Osc.h>
-#include <hal-wrapper/peripheral/serial/Serial.h>
 #include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
 #include <hal.h>
 #include <stdint.h>
@@ -63,11 +62,6 @@ void BSP::Initialize()
     hal::Cache::Enable();
     HAL_Init();
     init_clock();
-}
-
-bsp::ISerial &BSP::Serial()
-{
-    return hal::Serial::Instance();
 }
 
 void TestUniversalTimer1()

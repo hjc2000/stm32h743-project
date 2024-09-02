@@ -23,12 +23,6 @@ private:
 
 public:
     static void Initialize();
-
-    static bsp::IEventDrivenKey &WakeUpKey();
-
-    static bsp::ISerial &Serial();
-
-    static bsp::IInterruptSwitch &InterruptSwitch();
 };
 
 void TestWindowWatchDog();
