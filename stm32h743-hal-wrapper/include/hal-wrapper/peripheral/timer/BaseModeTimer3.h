@@ -39,11 +39,10 @@ namespace hal
 
         void SetPeriodElapsedCallback(std::function<void()> func)
         {
-            auto critical_func = [&]()
-            {
-                _period_elapsed_callback = func;
-            };
-            task::Critical::Run(critical_func);
+            task::Critical::Run([&]()
+                                {
+                                    _period_elapsed_callback = func;
+                                });
         }
 
         /// @brief 输入到分频器的时钟信号的频率
