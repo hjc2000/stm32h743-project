@@ -1,5 +1,5 @@
 #pragma once
-#include <base/SingletonGetter.h>
+#include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/ISysTick.h>
 #include <chrono>

@@ -1,6 +1,6 @@
 #include <AtkKey.h>
 #include <base/container/Collection.h>
-#include <base/SingletonGetter.h>
+#include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/key.h>
 #include <bsp-interface/key/KeyScanner.h>
