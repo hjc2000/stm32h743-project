@@ -1,14 +1,15 @@
 #pragma once
+#include <base/define.h>
 
 namespace hal
 {
-	class Cache
-	{
-	private:
-		Cache() = delete;
+    class Cache
+    {
+    private:
+        Cache() = delete;
 
-	public:
-		static void Enable();
-		static void Disable();
-	};
-}
+    public:
+        static_function void Enable();
+        static_function void Disable();
+    };
+} // namespace hal

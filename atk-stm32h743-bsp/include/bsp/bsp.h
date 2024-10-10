@@ -1,4 +1,5 @@
 #pragma once
+#include <base/define.h>
 #include <bsp-interface/IDelayer.h>
 #include <bsp-interface/IDigitalLed.h>
 #include <bsp-interface/IIndependentWatchDog.h>
@@ -22,7 +23,7 @@ private:
     BSP() = delete;
 
 public:
-    static void Initialize();
+    static_function void Initialize();
 };
 
 void TestWindowWatchDog();

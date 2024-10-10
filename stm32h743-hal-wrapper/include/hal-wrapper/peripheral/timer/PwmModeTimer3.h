@@ -21,10 +21,10 @@ namespace hal
             return TIM3;
         }
 
-        static void OnPwmMspInitCallback(TIM_HandleTypeDef *handle);
+        static_function void OnPwmMspInitCallback(TIM_HandleTypeDef *handle);
 
     public:
-        static PwmModeTimer3 &Instance()
+        static_function PwmModeTimer3 &Instance()
         {
             static PwmModeTimer3 o;
             return o;

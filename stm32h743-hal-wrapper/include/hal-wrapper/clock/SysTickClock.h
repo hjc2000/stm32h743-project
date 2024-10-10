@@ -1,4 +1,5 @@
 #pragma once
+#include <base/define.h>
 #include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/ISysTick.h>
@@ -16,7 +17,7 @@ namespace hal
         SysTickClock() = default;
 
     public:
-        static SysTickClock &Instance()
+        static_function SysTickClock &Instance()
         {
             class Getter : public base::SingletonGetter<SysTickClock>
             {

@@ -1,5 +1,6 @@
 #pragma once
 #include <atomic>
+#include <base/define.h>
 #include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
@@ -19,7 +20,7 @@ namespace bsp
         bsp::IGpioPin *_pin = nullptr;
 
     public:
-        static ExtiWakeUpKey &Instance()
+        static_function ExtiWakeUpKey &Instance()
         {
             class Getter : public base::SingletonGetter<ExtiWakeUpKey>
             {

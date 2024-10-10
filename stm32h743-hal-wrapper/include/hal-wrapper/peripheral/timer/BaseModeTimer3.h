@@ -21,13 +21,13 @@ namespace hal
             return TIM3;
         }
 
-        static void OnBaseMspInitCallback(TIM_HandleTypeDef *handle);
-        static void OnPeriodElapsed(TIM_HandleTypeDef *handle);
+        static_function void OnBaseMspInitCallback(TIM_HandleTypeDef *handle);
+        static_function void OnPeriodElapsed(TIM_HandleTypeDef *handle);
 
     public:
         TIM_HandleTypeDef _handle{};
 
-        static BaseModeTimer3 &Instance()
+        static_function BaseModeTimer3 &Instance()
         {
             static BaseModeTimer3 o;
             return o;

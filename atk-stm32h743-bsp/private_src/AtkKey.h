@@ -1,4 +1,5 @@
 #pragma once
+#include <base/define.h>
 #include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
@@ -15,7 +16,7 @@ namespace bsp
     public:
         Key0();
 
-        static Key0 &Instance()
+        static_function Key0 &Instance()
         {
             class Getter : public base::SingletonGetter<Key0>
             {
@@ -57,7 +58,7 @@ namespace bsp
     public:
         Key1();
 
-        static Key1 &Instance()
+        static_function Key1 &Instance()
         {
             class Getter : public base::SingletonGetter<Key1>
             {

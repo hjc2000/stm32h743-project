@@ -1,4 +1,5 @@
 #pragma once
+#include <base/define.h>
 #include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
@@ -29,7 +30,7 @@ namespace bsp
         bsp::IGpioPin *_pin = nullptr;
 
     public:
-        static RedDigitalLed &Instance()
+        static_function RedDigitalLed &Instance()
         {
             class Getter : public base::SingletonGetter<RedDigitalLed>
             {
@@ -81,7 +82,7 @@ namespace bsp
         bsp::IGpioPin *_pin = nullptr;
 
     public:
-        static GreenDigitalLed &Instance()
+        static_function GreenDigitalLed &Instance()
         {
             class Getter : public base::SingletonGetter<GreenDigitalLed>
             {
