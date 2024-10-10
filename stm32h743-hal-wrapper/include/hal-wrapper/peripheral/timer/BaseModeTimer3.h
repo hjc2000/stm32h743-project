@@ -1,4 +1,5 @@
 #pragma once
+#include <bsp-interface/di/interrupt.h>
 #include <functional>
 #include <hal-wrapper/clock/ClockSignal.h>
 #include <hal-wrapper/peripheral/timer/TimerChannelEnum.h>
@@ -6,7 +7,6 @@
 #include <hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>
 #include <hal.h>
 #include <stdexcept>
-#include <task/Critical.h>
 
 namespace hal
 {
@@ -39,10 +39,11 @@ namespace hal
 
         void SetPeriodElapsedCallback(std::function<void()> func)
         {
-            task::Critical::Run([&]()
-                                {
-                                    _period_elapsed_callback = func;
-                                });
+            DI_InterruptSwitch().DoGlobalCriticalWork(
+                [&]()
+                {
+                    _period_elapsed_callback = func;
+                });
         }
 
         /// @brief 输入到分频器的时钟信号的频率

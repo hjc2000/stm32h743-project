@@ -6,7 +6,6 @@
 #include <hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>
 #include <hal.h>
 #include <stdexcept>
-#include <task/Critical.h>
 
 namespace hal
 {

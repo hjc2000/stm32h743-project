@@ -1,6 +1,7 @@
 #include <atomic>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/led.h>
+#include <bsp-interface/di/task.h>
 #include <bsp-interface/test/TestIndependentWatchDog.h>
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
@@ -8,7 +9,6 @@
 #include <memory>
 #include <stdexcept>
 #include <stdint.h>
-#include <task/Task.h>
 #include <TestExtiKey.h>
 
 int main(void)
@@ -19,7 +19,7 @@ int main(void)
         {
             BSP::Initialize();
 
-            task::Task::Create(
+            DI_TaskManager().Create(
                 []()
                 {
                     // TestUniversalTimer1();
@@ -31,7 +31,7 @@ int main(void)
                 },
                 512);
 
-            vTaskStartScheduler();
+            DI_TaskManager().StartScheduler();
         }
         catch (std::exception const &e)
         {
