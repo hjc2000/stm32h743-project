@@ -1,6 +1,6 @@
 #include "SysTickClock.h"
+#include <bsp-interface/di/delayer.h>
 #include <hal-wrapper/clock/ClockSignal.h>
-#include <task/TaskDelayer.h>
 
 uint32_t hal::SysTickClock::Frequency() const
 {
@@ -27,6 +27,6 @@ extern "C"
     /// @param ms 要延时的毫秒数。
     void HAL_Delay(uint32_t ms)
     {
-        task::TaskDelayer::Instance().Delay(std::chrono::milliseconds{ms});
+        DI_Delayer().Delay(std::chrono::milliseconds{ms});
     }
 }
