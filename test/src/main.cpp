@@ -19,7 +19,7 @@ int main(void)
         {
             BSP::Initialize();
 
-            std::shared_ptr<task::Task> lvgl_init_task = task::Task::Create(
+            task::Task::Create(
                 []()
                 {
                     // TestUniversalTimer1();
