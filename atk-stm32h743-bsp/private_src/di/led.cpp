@@ -16,8 +16,14 @@ base::IDictionary<std::string, bsp::IDigitalLed *> const &DI_DigitalLedCollectio
         {
             return std::unique_ptr<base::Dictionary<std::string, bsp::IDigitalLed *>>{
                 new base::Dictionary<std::string, bsp::IDigitalLed *>{
-                    std::pair<std::string, bsp::IDigitalLed *>{"red_led", &bsp::RedDigitalLed::Instance()},
-                    std::pair<std::string, bsp::IDigitalLed *>{"green_led", &bsp::GreenDigitalLed::Instance()},
+                    std::pair<std::string, bsp::IDigitalLed *>{
+                        "red_led",
+                        &bsp::RedDigitalLed::Instance(),
+                    },
+                    std::pair<std::string, bsp::IDigitalLed *>{
+                        "green_led",
+                        &bsp::GreenDigitalLed::Instance(),
+                    },
                 },
             };
         }
