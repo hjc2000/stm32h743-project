@@ -90,14 +90,11 @@ void TestUniversalTimer1()
     }
 }
 
-bool volatile _should_toggle = false;
-uint64_t _count = 0;
-
 void TestFlash()
 {
     try
     {
-        bsp::IFlash *flash = DI_FlashCollection().Get("flash");
+        bsp::IFlash *flash = DI_FlashCollection().Get("internal-flash");
         std::array<uint32_t, 8> buffer = {666, 2, 3};
         while (true)
         {
@@ -105,14 +102,19 @@ void TestFlash()
             if (DI_KeyScanner().HasKeyDownEvent("key0"))
             {
                 base::UnlockGuard ul{*flash};
-                _should_toggle = true;
-                // flash.EraseBank(2);
                 flash->EraseSector(1, 0);
                 uint32_t value = flash->ReadUInt32(1, 0);
+                if (value == static_cast<uint32_t>(-1))
+                {
+                    DI_RedDigitalLed().TurnOn();
+                }
+
                 flash->Program(1, 0, reinterpret_cast<uint8_t *>(buffer.data()));
                 value = flash->ReadUInt32(1, 0);
-                _should_toggle = false;
-                DI_GreenDigitalLed().Toggle();
+                if (value == 666)
+                {
+                    DI_GreenDigitalLed().TurnOn();
+                }
             }
         }
     }
