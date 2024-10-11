@@ -95,7 +95,7 @@ void TestFlash()
     try
     {
         bsp::IFlash *flash = DI_FlashCollection().Get("internal-flash");
-        std::array<uint32_t, 8> buffer = {666, 2, 3};
+        std::array<uint32_t, 8> buffer{666, 2, 3};
         while (true)
         {
             DI_KeyScanner().ScanKeys();
