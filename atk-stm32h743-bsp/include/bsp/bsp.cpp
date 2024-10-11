@@ -1,7 +1,9 @@
 #include "bsp.h"
 #include <atomic>
 #include <bsp-interface/di/delayer.h>
-#include <bsp-interface/key/KeyScanner.h>
+#include <bsp-interface/di/flash.h>
+#include <bsp-interface/di/key.h>
+#include <bsp-interface/di/led.h>
 #include <DigitalLed.h>
 #include <functional>
 #include <hal-wrapper/Cache.h>
@@ -91,31 +93,31 @@ void TestUniversalTimer1()
 bool volatile _should_toggle = false;
 uint64_t _count = 0;
 
-// void TestFlash()
-// {
-//     try
-//     {
-//         auto &flash = hal::Flash::Instance();
-//         std::array<uint32_t, 8> buffer = {666, 2, 3};
-//         while (true)
-//         {
-//             DI_KeyScanner().ScanKeys();
-//             if (DI_KeyScanner().HasKeyDownEvent("key0"))
-//             {
-//                 base::UnlockGuard ul{flash};
-//                 _should_toggle = true;
-//                 // flash.EraseBank(2);
-//                 flash.EraseSector(1, 0);
-//                 uint32_t value = flash.ReadUInt32(1, 0);
-//                 flash.Program(1, 0, reinterpret_cast<uint8_t *>(buffer.data()));
-//                 value = flash.ReadUInt32(1, 0);
-//                 _should_toggle = false;
-//                 BSP::GreenDigitalLed().Toggle();
-//             }
-//         }
-//     }
-//     catch (std::exception const &e)
-//     {
-//         std::string str = e.what();
-//     }
-// }
+void TestFlash()
+{
+    try
+    {
+        bsp::IFlash *flash = DI_FlashCollection().Get("flash");
+        std::array<uint32_t, 8> buffer = {666, 2, 3};
+        while (true)
+        {
+            DI_KeyScanner().ScanKeys();
+            if (DI_KeyScanner().HasKeyDownEvent("key0"))
+            {
+                base::UnlockGuard ul{*flash};
+                _should_toggle = true;
+                // flash.EraseBank(2);
+                flash->EraseSector(1, 0);
+                uint32_t value = flash->ReadUInt32(1, 0);
+                flash->Program(1, 0, reinterpret_cast<uint8_t *>(buffer.data()));
+                value = flash->ReadUInt32(1, 0);
+                _should_toggle = false;
+                DI_GreenDigitalLed().Toggle();
+            }
+        }
+    }
+    catch (std::exception const &e)
+    {
+        std::string str = e.what();
+    }
+}
