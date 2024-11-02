@@ -103,17 +103,21 @@ void TestFlash()
             {
                 base::UnlockGuard ul{*flash};
                 flash->EraseSector(1, 5);
-                uint32_t value = flash->ReadUInt32(1, 5, 0);
+                uint32_t value = flash->ReadUInt32(5, 0);
                 if (value == static_cast<uint32_t>(-1))
                 {
                     DI_RedDigitalLed().TurnOn();
                 }
 
-                flash->Program(1, 5, 0, reinterpret_cast<uint8_t *>(buffer.data()));
-                value = flash->ReadUInt32(1, 5, 0);
+                flash->Program(5, 0, reinterpret_cast<uint8_t *>(buffer.data()));
+                value = flash->ReadUInt32(5, 0);
                 if (value == 666)
                 {
-                    DI_GreenDigitalLed().TurnOn();
+                    while (true)
+                    {
+                        DI_GreenDigitalLed().Toggle();
+                        DI_Delayer().Delay(std::chrono::seconds{1});
+                    }
                 }
             }
         }

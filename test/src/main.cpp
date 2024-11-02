@@ -35,11 +35,9 @@ int main(void)
         }
         catch (std::exception const &e)
         {
-            DI_RedDigitalLed().TurnOn();
         }
         catch (...)
         {
-            DI_RedDigitalLed().TurnOn();
         }
     }
 }
