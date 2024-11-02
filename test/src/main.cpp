@@ -1,4 +1,6 @@
 #include <atomic>
+#include <base/RentedPtrFactory.h>
+#include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/led.h>
 #include <bsp-interface/di/task.h>
@@ -23,8 +25,16 @@ int main(void)
             DI_TaskManager().Create(
                 []()
                 {
+                    DI_Serial().Open(*DICreate_ISerialOptions());
+                    DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
+                    while (true)
+                    {
+                        bsp::Console::Instance().WriteLine("6666666666");
+                        DI_Delayer().Delay(std::chrono::seconds{1});
+                    }
+
                     // TestUniversalTimer1();
-                    bsp::TestFlash();
+                    // bsp::TestFlash();
                     // TestExtiKey();
                     // bsp::TestSerial();
                     // bsp::TestKeyScanner();
