@@ -2,6 +2,7 @@
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/led.h>
 #include <bsp-interface/di/task.h>
+#include <bsp-interface/test/TestFlash.h>
 #include <bsp-interface/test/TestIndependentWatchDog.h>
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
@@ -23,7 +24,7 @@ int main(void)
                 []()
                 {
                     // TestUniversalTimer1();
-                    TestFlash();
+                    bsp::TestFlash();
                     // TestExtiKey();
                     // bsp::TestSerial();
                     // bsp::TestKeyScanner();
