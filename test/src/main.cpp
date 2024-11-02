@@ -29,7 +29,7 @@ int main(void)
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     while (true)
                     {
-                        bsp::Console::Instance().WriteLine("6666666666");
+                        DI_Console().WriteLine("6666666666");
                         DI_Delayer().Delay(std::chrono::seconds{1});
                     }
 
