@@ -41,9 +41,11 @@ int main(void)
         }
         catch (std::exception const &e)
         {
+            DI_Console().WriteError(e.what());
         }
         catch (...)
         {
+            DI_Console().WriteError("发生了未知的异常");
         }
     }
 }
