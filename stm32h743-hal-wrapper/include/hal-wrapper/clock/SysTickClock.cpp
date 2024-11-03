@@ -2,6 +2,32 @@
 #include <bsp-interface/di/delayer.h>
 #include <hal-wrapper/clock/ClockSignal.h>
 
+hal::SysTickClock &hal::SysTickClock::Instance()
+{
+    class Getter :
+        public base::SingletonGetter<SysTickClock>
+    {
+    public:
+        std::unique_ptr<SysTickClock> Create() override
+        {
+            return std::unique_ptr<SysTickClock>{new SysTickClock{}};
+        }
+
+        void Lock() override
+        {
+            DI_InterruptSwitch().DisableGlobalInterrupt();
+        }
+
+        void Unlock() override
+        {
+            DI_InterruptSwitch().EnableGlobalInterrupt();
+        }
+    };
+
+    Getter g;
+    return g.Instance();
+}
+
 uint32_t hal::SysTickClock::Frequency() const
 {
     // stm32h743 不支持 8 分频。

@@ -18,30 +18,7 @@ namespace hal
         SysTickClock() = default;
 
     public:
-        static_function SysTickClock &Instance()
-        {
-            class Getter : public base::SingletonGetter<SysTickClock>
-            {
-            public:
-                std::unique_ptr<SysTickClock> Create() override
-                {
-                    return std::unique_ptr<SysTickClock>{new SysTickClock{}};
-                }
-
-                void Lock() override
-                {
-                    DI_InterruptSwitch().DisableGlobalInterrupt();
-                }
-
-                void Unlock() override
-                {
-                    DI_InterruptSwitch().EnableGlobalInterrupt();
-                }
-            };
-
-            Getter g;
-            return g.Instance();
-        }
+        static_function SysTickClock &Instance();
 
         /// @brief 获取当前的实际的 Systic 的频率。
         /// @note stm32h743 的 Systic 永远只能与 CPU 频率相同，即只能使用系统时钟信号
