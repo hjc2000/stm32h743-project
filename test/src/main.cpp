@@ -27,14 +27,9 @@ int main(void)
                 {
                     DI_Serial().Open(*DICreate_ISerialOptions());
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
-                    while (true)
-                    {
-                        DI_Console().WriteLine("6666666666");
-                        DI_Delayer().Delay(std::chrono::seconds{1});
-                    }
 
                     // TestUniversalTimer1();
-                    // bsp::TestFlash();
+                    bsp::TestFlash();
                     // TestExtiKey();
                     // bsp::TestSerial();
                     // bsp::TestKeyScanner();
