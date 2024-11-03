@@ -2,7 +2,7 @@
 #include <base/define.h>
 #include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/interrupt.h>
-#include <bsp-interface/ISysTick.h>
+#include <bsp-interface/timer/ISysTick.h>
 #include <chrono>
 #include <hal.h>
 #include <stdint.h>
@@ -11,7 +11,8 @@ namespace hal
 {
     /// @brief stm32h743 的 SysTick 不支持设置时钟源。他只能与 CPU 相同频率，
     /// 即使用系统时钟信号。
-    class SysTickClock : public bsp::ISysTick
+    class SysTickClock :
+        public bsp::ISysTick
     {
     private:
         SysTickClock() = default;
