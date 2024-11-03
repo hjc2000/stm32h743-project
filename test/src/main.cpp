@@ -29,11 +29,11 @@ int main(void)
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
 
                     // TestUniversalTimer1();
-                    // bsp::TestFlash();
+                    bsp::TestFlash();
                     // TestExtiKey();
                     // bsp::TestSerial();
                     // bsp::TestKeyScanner();
-                    bsp::TestIndependentWatchDog();
+                    // bsp::TestIndependentWatchDog();
                 },
                 512);
 
