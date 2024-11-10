@@ -1,5 +1,6 @@
 #include "bsp.h"
 #include <atomic>
+#include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/flash.h>
 #include <bsp-interface/di/key.h>
@@ -26,8 +27,10 @@ void BSP::Initialize()
         {
         }
 
+        DI_ClockSourceCollection().Get("hse")->Open(25);
+
         hal::OscConfig osc_config;
-        osc_config._oscillator_type = hal::OscConfig::OscillatorType::HSE;
+        osc_config._oscillator_type = hal::OscConfig::OscillatorType::NONE;
         osc_config._hse_state = hal::OscConfig::HseState::On;
         osc_config._hsi_state = hal::OscConfig::HsiState::Off;
         osc_config._csi_state = hal::OscConfig::CsiState::Off;
