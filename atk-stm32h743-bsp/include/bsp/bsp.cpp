@@ -30,10 +30,6 @@ void BSP::Initialize()
         DI_ClockSourceCollection().Get("hse")->Open(25);
 
         hal::OscConfig osc_config;
-        osc_config._oscillator_type = hal::OscConfig::OscillatorType::NONE;
-        osc_config._hse_state = hal::OscConfig::HseState::On;
-        osc_config._hsi_state = hal::OscConfig::HsiState::Off;
-        osc_config._csi_state = hal::OscConfig::CsiState::Off;
         osc_config._pll_config._state = hal::PllConfig::PllState::On;
         osc_config._pll_config._source = hal::PllConfig::PllSource::HSE;
         osc_config._pll_config._m = 5;
