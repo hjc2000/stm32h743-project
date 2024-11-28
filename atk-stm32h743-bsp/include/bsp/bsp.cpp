@@ -31,7 +31,7 @@ void BSP::Initialize()
 
         {
             base::Dictionary<std::string, int> factors;
-            factors.Set("m", 56);
+            factors.Set("m", 5);
             factors.Set("n", 192);
             factors.Set("p", 2);
             factors.Set("q", 2);

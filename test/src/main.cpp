@@ -1,5 +1,6 @@
 #include <atomic>
 #include <base/RentedPtrFactory.h>
+#include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/led.h>
@@ -30,6 +31,8 @@ int main(void)
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();
+                        base::Hz freq = DI_ClockSourceCollection().Get("pll")->Frequency("p");
+                        DI_Console().WriteLine(static_cast<base::Fraction>(freq).ToString());
                         DI_Delayer().Delay(std::chrono::seconds{1});
                     }
 
