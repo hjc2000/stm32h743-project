@@ -1,5 +1,6 @@
 #include "bsp.h"
 #include <atomic>
+#include <base/container/Dictionary.h>
 #include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/flash.h>
@@ -9,7 +10,6 @@
 #include <functional>
 #include <hal-wrapper/Cache.h>
 #include <hal-wrapper/clock/ClockSignal.h>
-#include <hal-wrapper/clock/Osc.h>
 #include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
 #include <hal.h>
 #include <stdint.h>
@@ -29,18 +29,15 @@ void BSP::Initialize()
 
         DI_ClockSourceCollection().Get("hse")->Open(25);
 
-        hal::OscConfig osc_config{};
-        osc_config._oscillator_type = hal::OscConfig::OscillatorType::NONE;
-        osc_config._pll_config._state = hal::PllConfig::PllState::On;
-        osc_config._pll_config._source = hal::PllConfig::PllSource::HSE;
-        osc_config._pll_config._m = 5;
-        osc_config._pll_config._n = 192;
-        osc_config._pll_config._p = 2;
-        osc_config._pll_config._q = 2;
-        osc_config._pll_config._r = 2;
-        osc_config._pll_config._vco_range = hal::PllConfig::Pll1VcoRange::Wide;
-        osc_config._pll_config._vci_range = hal::PllConfig::Pll1VciRange::Range2;
-        hal::Osc::SetConfig(osc_config);
+        {
+            base::Dictionary<std::string, int> factors;
+            factors.Set("m", 56);
+            factors.Set("n", 192);
+            factors.Set("p", 2);
+            factors.Set("q", 2);
+            factors.Set("r", 2);
+            DI_ClockSourceCollection().Get("pll")->Open("hse", factors);
+        }
 
         hal::ClockSignalConfig clock_signal_config;
         clock_signal_config.SelectAllClockType();
