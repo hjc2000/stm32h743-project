@@ -39,6 +39,13 @@ void BSP::Initialize()
             DI_ClockSourceCollection().Get("pll")->Open("hse", factors);
         }
 
+        /* 时钟源的特点是可能有多个输入、输出通道。
+         *
+         * 时钟信号的特点是输入通道只有一个，输出通道一般有多个，因为要分给各个子系统使用。
+         * 并且支持灵活的输入、输出分频。
+         *
+         * 系统时钟比较特殊，输入通道有多个，可以选择不同的时钟源。
+         */
         hal::ClockSignalConfig clock_signal_config;
         clock_signal_config.SelectAllClockType();
         clock_signal_config._flash_latency = hal::ClockSignalConfig::FlashLatency::Latency2;
