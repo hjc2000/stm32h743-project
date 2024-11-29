@@ -65,6 +65,7 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
     DI_Delayer().Delay(std::chrono::microseconds{500});      // 至少延时200us
     SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_PALL, 1, 0);             // 对所有存储区预充电
     SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_AUTOREFRESH_MODE, 8, 0); // 设置自刷新次数
+
     // 配置模式寄存器,SDRAM的bit0~bit2为指定突发访问的长度，
     // bit3为指定突发访问的类型，bit4~bit6为CAS值，bit7和bit8为运行模式
     // bit9为指定的写突发模式，bit10和bit11位保留位
@@ -98,7 +99,7 @@ void SDRAM_Init(void)
     SDRAM_Handler.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE; // 失能写保护
     SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;             // SDRAM时钟为HCLK/2=200M/2=100M=10ns
     SDRAM_Handler.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;                  // 使能突发
-    SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_0;              // 读通道延时
+    SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_1;              // 读通道延时
     SDRAM_Handler.MspInitCallback = HAL_SDRAM_MspInit;
 
     SDRAM_Timing.LoadToActiveDelay = 2;    // 加载模式寄存器到激活时间的延迟为2个时钟周期
