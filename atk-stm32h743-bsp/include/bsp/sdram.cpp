@@ -48,6 +48,10 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
         pin->Open(*options);
         pin = DI_GpioPinCollection().Get("PC3");
         pin->Open(*options);
+        pin = DI_GpioPinCollection().Get("PD0");
+        pin->Open(*options);
+        pin = DI_GpioPinCollection().Get("PD1");
+        pin->Open(*options);
     }
 
     // 初始化PC0,2,3
@@ -55,7 +59,7 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
     GPIO_Initure.Pull = GPIO_PULLUP;                // 上拉
     GPIO_Initure.Speed = GPIO_SPEED_FREQ_VERY_HIGH; // 高速
     GPIO_Initure.Alternate = GPIO_AF12_FMC;         // 复用为FMC
-    GPIO_Initure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15;
+    GPIO_Initure.Pin = GPIO_PIN_1 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15;
     HAL_GPIO_Init(GPIOD, &GPIO_Initure); // 初始化PD0,1,8,9,10,14,15
 
     GPIO_Initure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
