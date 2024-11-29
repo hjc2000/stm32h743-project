@@ -1,4 +1,5 @@
 #include "sdram.h"
+#include <bsp-interface/di/gpio.h>
 #include <hal.h>
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -34,14 +35,27 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
     //	HAL_SYSCFG_AnalogSwitchConfig(SYSCFG_SWITCH_PC2,SYSCFG_SWITCH_PC2_CLOSE);
     //	HAL_SYSCFG_AnalogSwitchConfig(SYSCFG_SWITCH_PC3,SYSCFG_SWITCH_PC3_CLOSE);
 
+    {
+        std::shared_ptr<bsp::IGpioPinOptions> options = DICreate_GpioPinOptions();
+        options->SetAlternateFunction("fmc");
+        options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
+        options->SetDriver(bsp::IGpioPinDriver::PushPull);
+        options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
+        options->SetSpeedLevel(3);
+
+        bsp::IGpioPin *pin = DI_GpioPinCollection().Get("PC0");
+        pin->Open(*options);
+        pin = DI_GpioPinCollection().Get("PC2");
+        pin->Open(*options);
+        pin = DI_GpioPinCollection().Get("PC3");
+        pin->Open(*options);
+    }
+
     // 初始化PC0,2,3
-    GPIO_Initure.Pin = GPIO_PIN_0 | GPIO_PIN_2 | GPIO_PIN_3;
     GPIO_Initure.Mode = GPIO_MODE_AF_PP;            // 推挽复用
     GPIO_Initure.Pull = GPIO_PULLUP;                // 上拉
     GPIO_Initure.Speed = GPIO_SPEED_FREQ_VERY_HIGH; // 高速
     GPIO_Initure.Alternate = GPIO_AF12_FMC;         // 复用为FMC
-    HAL_GPIO_Init(GPIOC, &GPIO_Initure);            // 初始化
-
     GPIO_Initure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15;
     HAL_GPIO_Init(GPIOD, &GPIO_Initure); // 初始化PD0,1,8,9,10,14,15
 
