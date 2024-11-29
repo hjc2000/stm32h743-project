@@ -28,6 +28,7 @@ int main(void)
                 {
                     DI_Serial().Open(*DICreate_ISerialOptions());
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
+
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();

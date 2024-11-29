@@ -13,7 +13,6 @@ set(CMAKE_C_STANDARD 99)
 
 add_library(${ProjectName})
 target_import_src(${ProjectName})
-
 target_import_bsp_interface(${ProjectName} PUBLIC)
 target_import_freertos(${ProjectName} PUBLIC)
 target_import_base(${ProjectName} PUBLIC)
