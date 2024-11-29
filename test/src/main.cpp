@@ -10,11 +10,27 @@
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
 #include <bsp/bsp.h>
+#include <bsp/sdram.h>
 #include <littlefs/LfsFlashPort.h>
 #include <memory>
 #include <stdexcept>
 #include <stdint.h>
 #include <TestExtiKey.h>
+
+inline void TestSdram()
+{
+    SDRAM_Init(); // 初始化SDRAM
+    uint32_t *buffer = reinterpret_cast<uint32_t *>(0XC0000000);
+    for (uint8_t i = 0; i < 10; i++)
+    {
+        buffer[i] = i;
+    }
+
+    for (uint8_t i = 0; i < 10; i++)
+    {
+        DI_Console().WriteLine(std::to_string(static_cast<int>(buffer[i])));
+    }
+}
 
 int main(void)
 {
@@ -29,7 +45,8 @@ int main(void)
                 {
                     DI_Serial().Open(*DICreate_ISerialOptions());
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
-                    Lfs::TestLittleFs();
+                    // Lfs::TestLittleFs();
+                    TestSdram();
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();
