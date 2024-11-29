@@ -20,7 +20,7 @@
 inline void TestSdram()
 {
     SDRAM_Init(); // 初始化SDRAM
-    uint32_t *buffer = reinterpret_cast<uint32_t *>(0XC0000000);
+    uint32_t volatile *buffer = reinterpret_cast<uint32_t volatile *>(0XC0000000);
     for (uint8_t i = 0; i < 10; i++)
     {
         buffer[i] = i;
