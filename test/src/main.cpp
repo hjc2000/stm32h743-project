@@ -10,6 +10,7 @@
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
 #include <bsp/bsp.h>
+#include <littlefs/LfsFlashPort.h>
 #include <memory>
 #include <stdexcept>
 #include <stdint.h>
@@ -28,12 +29,17 @@ int main(void)
                 {
                     DI_Serial().Open(*DICreate_ISerialOptions());
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
-
+                    Lfs::LfsFlashPort port{"internal-flash"};
+                    int erase_result = port.Port().erase(&port.Port(), 0);
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();
-                        base::Hz freq = DI_ClockSourceCollection().Get("pll")->Frequency("p");
-                        DI_Console().WriteLine(static_cast<base::Fraction>(freq).ToString());
+                        for (std::pair<std::string const, bsp::IFlash *> pair : DI_FlashCollection())
+                        {
+                            DI_Console().WriteLine(pair.first);
+                        }
+
+                        DI_Console().WriteLine(std::to_string(erase_result));
                         DI_Delayer().Delay(std::chrono::seconds{1});
                     }
 
