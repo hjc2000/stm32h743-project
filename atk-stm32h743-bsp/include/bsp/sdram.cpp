@@ -25,14 +25,9 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
 
     __HAL_RCC_SYSCFG_CLK_ENABLE(); // 使能SYSCFG时钟
     __HAL_RCC_FMC_CLK_ENABLE();    // 使能FMC时钟
-    __HAL_RCC_GPIOD_CLK_ENABLE();  // 使能GPIOD时钟
     __HAL_RCC_GPIOE_CLK_ENABLE();  // 使能GPIOE时钟
     __HAL_RCC_GPIOF_CLK_ENABLE();  // 使能GPIOF时钟
     __HAL_RCC_GPIOG_CLK_ENABLE();  // 使能GPIOG时钟
-
-    // PC2,3引脚模拟开关关闭！！！！！
-    //	HAL_SYSCFG_AnalogSwitchConfig(SYSCFG_SWITCH_PC2,SYSCFG_SWITCH_PC2_CLOSE);
-    //	HAL_SYSCFG_AnalogSwitchConfig(SYSCFG_SWITCH_PC3,SYSCFG_SWITCH_PC3_CLOSE);
 
     {
         std::shared_ptr<bsp::IGpioPinOptions> options = DICreate_GpioPinOptions();
