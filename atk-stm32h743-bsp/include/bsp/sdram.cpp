@@ -37,18 +37,20 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
         options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
         options->SetSpeedLevel(3);
 
-        bsp::IGpioPin *pin = DI_GpioPinCollection().Get("PC0");
-        pin->Open(*options);
-        pin = DI_GpioPinCollection().Get("PC2");
-        pin->Open(*options);
-        pin = DI_GpioPinCollection().Get("PC3");
-        pin->Open(*options);
-        pin = DI_GpioPinCollection().Get("PD0");
-        pin->Open(*options);
-        pin = DI_GpioPinCollection().Get("PD1");
-        pin->Open(*options);
-        pin = DI_GpioPinCollection().Get("PD8");
-        pin->Open(*options);
+        char const *pin_names[] = {
+            "PC0",
+            "PC2",
+            "PC3",
+            "PD0",
+            "PD1",
+            "PD8",
+        };
+
+        for (char const *pin_name : pin_names)
+        {
+            bsp::IGpioPin *pin = DI_GpioPinCollection().Get(pin_name);
+            pin->Open(*options);
+        }
     }
 
     // 初始化PC0,2,3
