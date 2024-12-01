@@ -25,7 +25,6 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
 
     __HAL_RCC_SYSCFG_CLK_ENABLE(); // 使能SYSCFG时钟
     __HAL_RCC_FMC_CLK_ENABLE();    // 使能FMC时钟
-    __HAL_RCC_GPIOE_CLK_ENABLE();  // 使能GPIOE时钟
     __HAL_RCC_GPIOF_CLK_ENABLE();  // 使能GPIOF时钟
     __HAL_RCC_GPIOG_CLK_ENABLE();  // 使能GPIOG时钟
 
@@ -58,6 +57,7 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
             "PE12",
             "PE13",
             "PE14",
+            "PE15",
         };
 
         for (char const *pin_name : pin_names)
@@ -72,9 +72,6 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
     GPIO_Initure.Pull = GPIO_PULLUP;                // 上拉
     GPIO_Initure.Speed = GPIO_SPEED_FREQ_VERY_HIGH; // 高速
     GPIO_Initure.Alternate = GPIO_AF12_FMC;         // 复用为FMC
-    GPIO_Initure.Pin = GPIO_PIN_15;
-    HAL_GPIO_Init(GPIOE, &GPIO_Initure); // 初始化PE0,1,7,8,9,10,11,12,13,14,15
-
     GPIO_Initure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
     HAL_GPIO_Init(GPIOF, &GPIO_Initure); // 初始化PF0,1,2,3,4,5,11,12,13,14,15
 
