@@ -21,8 +21,7 @@ SDRAM_HandleTypeDef SDRAM_Handler{}; // SDRAM句柄
 // hsdram:SDRAM句柄
 void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
 {
-    __HAL_RCC_SYSCFG_CLK_ENABLE(); // 使能SYSCFG时钟
-    __HAL_RCC_FMC_CLK_ENABLE();    // 使能FMC时钟
+    __HAL_RCC_FMC_CLK_ENABLE(); // 使能FMC时钟
 
     {
         std::shared_ptr<bsp::IGpioPinOptions> options = DICreate_GpioPinOptions();
