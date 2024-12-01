@@ -68,6 +68,7 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
             "PF15",
             "PG0",
             "PG1",
+            "PG2",
         };
 
         for (char const *pin_name : pin_names)
@@ -82,7 +83,7 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
     GPIO_Initure.Pull = GPIO_PULLUP;                // 上拉
     GPIO_Initure.Speed = GPIO_SPEED_FREQ_VERY_HIGH; // 高速
     GPIO_Initure.Alternate = GPIO_AF12_FMC;         // 复用为FMC
-    GPIO_Initure.Pin = GPIO_PIN_2 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_15;
+    GPIO_Initure.Pin = GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_15;
     HAL_GPIO_Init(GPIOG, &GPIO_Initure); // 初始化PG0,1,2,4,5,8,15
 }
 
