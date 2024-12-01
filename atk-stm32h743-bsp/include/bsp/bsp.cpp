@@ -58,7 +58,8 @@ void BSP::Initialize()
         clock_signal_config._system_clk_config._hclk_config._apb4clk_config._input_divider = hal::Apb4ClkConfig::InputDivider::DIV4;
         hal::ClockSignal::SetConfig(clock_signal_config);
 
-        __HAL_RCC_CSI_ENABLE();
+        /* 这个基本上是一定要调用的，SYSCFG 时钟与所有外设时钟相关，如果不使能，所有外设都用不了。
+         */
         __HAL_RCC_SYSCFG_CLK_ENABLE();
         HAL_EnableCompensationCell();
     };
