@@ -44,6 +44,8 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
             "PD0",
             "PD1",
             "PD8",
+            "PD9",
+            "PD10",
         };
 
         for (char const *pin_name : pin_names)
