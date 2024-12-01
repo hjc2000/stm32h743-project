@@ -173,30 +173,3 @@ uint8_t SDRAM_Send_Cmd(uint8_t bankx, uint8_t cmd, uint8_t refresh, uint16_t reg
         return 1;
     }
 }
-
-// 在指定地址(WriteAddr+Bank5_SDRAM_ADDR)开始,连续写入n个字节.
-// pBuffer:字节指针
-// WriteAddr:要写入的地址
-// n:要写入的字节数
-void FMC_SDRAM_WriteBuffer(uint8_t *pBuffer, uint32_t WriteAddr, uint32_t n)
-{
-    for (; n != 0; n--)
-    {
-        *(uint8_t volatile *)(Bank5_SDRAM_ADDR + WriteAddr) = *pBuffer;
-        WriteAddr++;
-        pBuffer++;
-    }
-}
-
-// 在指定地址((WriteAddr+Bank5_SDRAM_ADDR))开始,连续读出n个字节.
-// pBuffer:字节指针
-// ReadAddr:要读出的起始地址
-// n:要写入的字节数
-void FMC_SDRAM_ReadBuffer(uint8_t *pBuffer, uint32_t ReadAddr, uint32_t n)
-{
-    for (; n != 0; n--)
-    {
-        *pBuffer++ = *(uint8_t volatile *)(Bank5_SDRAM_ADDR + ReadAddr);
-        ReadAddr++;
-    }
-}
