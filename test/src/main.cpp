@@ -168,7 +168,7 @@ int main(void)
                     SDRAM_Init();
                     // Lfs::TestLittleFs();
                     TestSdram();
-                    TestFatFs();
+                    // TestFatFs();
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();
