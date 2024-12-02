@@ -8,8 +8,8 @@
 namespace
 {
     /// @brief 定义一个静态数组作为磁盘存储空间
-    uint8_t *_buffer = reinterpret_cast<uint8_t *>(0XC0000000);
-    int const _buffer_size = 16 * 1024 * 1024;
+    int const _buffer_size = 200 * 1024;
+    uint8_t _buffer[_buffer_size];
 
     // 每个扇区的大小（单位：字节）
     int const _sector_size = 512;

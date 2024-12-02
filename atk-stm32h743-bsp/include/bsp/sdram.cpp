@@ -79,7 +79,7 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
     // bit9为指定的写突发模式，bit10和bit11位保留位
     temp = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_1 | // 设置突发长度:1(可以是1/2/4/8)
            SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL |    // 设置突发类型:连续(可以是连续/交错)
-           SDRAM_MODEREG_CAS_LATENCY_3 |            // 设置CAS值:3(可以是2/3)
+           SDRAM_MODEREG_CAS_LATENCY_2 |            // 设置CAS值:3(可以是2/3)
            SDRAM_MODEREG_OPERATING_MODE_STANDARD |  // 设置操作模式:0,标准模式
            SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;    // 设置突发写模式:1,单点访问
 
@@ -89,7 +89,7 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
     // COUNT=SDRAM刷新周期/行数-20=SDRAM刷新周期(us)*SDCLK频率(Mhz)/行数
     // 我们使用的SDRAM刷新周期为64ms,SDCLK=200/2=100Mhz,行数为8192(2^13).
     // 所以,COUNT=64*1000*100/8192-20=761
-    int const period = 64 * 1000 * 240 / 3 / 8192 - 20;
+    int const period = 64 * 1000 * 240 / 2 / 8192 - 20;
     HAL_SDRAM_ProgramRefreshRate(&SDRAM_Handler, period);
 }
 
@@ -104,9 +104,9 @@ void SDRAM_Init(void)
     SDRAM_Handler.Init.RowBitsNumber = FMC_SDRAM_ROW_BITS_NUM_13;
     SDRAM_Handler.Init.MemoryDataWidth = FMC_SDRAM_MEM_BUS_WIDTH_16;
     SDRAM_Handler.Init.InternalBankNumber = FMC_SDRAM_INTERN_BANKS_NUM_4;
-    SDRAM_Handler.Init.CASLatency = FMC_SDRAM_CAS_LATENCY_3;
+    SDRAM_Handler.Init.CASLatency = FMC_SDRAM_CAS_LATENCY_2;
     SDRAM_Handler.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE;
-    SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_3;
+    SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
     SDRAM_Handler.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;
     SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;
     SDRAM_Handler.MspInitCallback = HAL_SDRAM_MspInit;

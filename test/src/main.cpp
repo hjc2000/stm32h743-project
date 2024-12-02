@@ -21,41 +21,57 @@
 
 inline void TestSdram()
 {
-    using element_type = uint8_t;
-    element_type *buffer = reinterpret_cast<element_type *>(0XC0000000);
-    int const buffer_size = 16 * 1024 * 1024 / sizeof(element_type);
-    for (uint32_t i = 0; i < buffer_size; i++)
+    while (true)
     {
-        element_type value = static_cast<element_type>(i);
-        buffer[i] = value;
-    }
+        using element_type = uint8_t;
+        int const one_MB = 1024 * 1024;
+        int const count = 2 * one_MB / sizeof(element_type);
+        element_type *buffer = reinterpret_cast<element_type *>(0XC0000000 + one_MB * 16);
 
-    for (uint32_t i = 0; i < buffer_size; i++)
-    {
-        element_type value = static_cast<element_type>(i);
-        if (buffer[i] != value)
+        for (uint32_t i = 0; i < count; i++)
         {
-            DI_Console().WriteLine("sdram error, value = " + std::to_string(value) +
-                                   ", buffer[i] = " + std::to_string(buffer[i]));
-            return;
+            element_type value = static_cast<element_type>(i);
+            buffer[i] = value;
         }
-    }
 
-    DI_Console().WriteLine("sdram no error");
+        for (uint32_t i = 0; i < count; i++)
+        {
+            element_type value = static_cast<element_type>(i);
+            if (buffer[i] != value)
+            {
+                DI_Console().WriteLine("sdram error, value = " + std::to_string(value) +
+                                       ", buffer[i] = " + std::to_string(buffer[i]));
+                return;
+            }
+        }
+
+        DI_Console().WriteLine("sdram no error");
+    }
 }
 
-BYTE work[FF_MAX_SS]; // 工作缓冲区
+BYTE work[FF_MAX_SS * 2]; // 工作缓冲区
 
 inline void TestFatFs()
 {
     FATFS fatfs{};
     FRESULT res{};
 
+    res = f_mount(&fatfs, "", 0); // 挂载文件系统
+    if (res != FR_OK)
+    {
+        // 处理错误
+        DI_Console().WriteLine("f_mount error: " + std::to_string(res));
+    }
+    else
+    {
+        DI_Console().WriteLine("f_mount successfully: " + std::to_string(res));
+    }
+
     // 创建格式化参数结构体
     MKFS_PARM mkfs_parm{};
     mkfs_parm.fmt = FM_FAT; // 设置文件系统类型为FAT，并创建一个简单的FAT12/FAT16分区
     mkfs_parm.n_fat = 1;    // 设置FAT表的数量为1
-    mkfs_parm.align = 0;    // 数据区域对齐为1扇区
+    mkfs_parm.align = 1;    // 数据区域对齐为1扇区
     mkfs_parm.n_root = 0;   // 根目录条目数为0（自动选择）
     mkfs_parm.au_size = 0;  // 分配单元大小为自动选择
 
@@ -111,31 +127,31 @@ inline void TestFatFs()
         DI_Console().WriteLine("open failed:" + std::to_string(res));
     }
 
-    // // 重新打开文件以读取
-    // res = f_open(&file, filename, FA_READ);
-    // if (res == FR_OK)
-    // {
-    //     char buffer[128] = {0}; // 假设文件内容不会超过127个字符
-    //     UINT bytesRead;
+    // 重新打开文件以读取
+    res = f_open(&file, filename, FA_READ);
+    if (res == FR_OK)
+    {
+        char buffer[128] = {0}; // 假设文件内容不会超过127个字符
+        UINT bytesRead;
 
-    //     // 从文件读取内容
-    //     res = f_read(&file, buffer, sizeof(buffer) - 1, &bytesRead);
-    //     if (res != FR_OK)
-    //     {
-    //         printf("读取文件失败: %d\n", res);
-    //     }
-    //     else
-    //     {
-    //         printf("成功读取 %u 字节: %s\n", bytesRead, buffer);
-    //     }
+        // 从文件读取内容
+        res = f_read(&file, buffer, sizeof(buffer) - 1, &bytesRead);
+        if (res != FR_OK)
+        {
+            printf("读取文件失败: %d\n", res);
+        }
+        else
+        {
+            printf("成功读取 %u 字节: %s\n", bytesRead, buffer);
+        }
 
-    //     // 关闭文件
-    //     f_close(&file);
-    // }
-    // else
-    // {
-    //     printf("打开文件失败: %d\n", res);
-    // }
+        // 关闭文件
+        f_close(&file);
+    }
+    else
+    {
+        printf("打开文件失败: %d\n", res);
+    }
 
     // 卸载文件系统
     f_mount(NULL, "", 0);
@@ -156,12 +172,8 @@ int main(void)
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     SDRAM_Init();
                     // Lfs::TestLittleFs();
-                    while (true)
-                    {
-                        TestSdram();
-                    }
-
-                    // TestFatFs();
+                    // TestSdram();
+                    TestFatFs();
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();
