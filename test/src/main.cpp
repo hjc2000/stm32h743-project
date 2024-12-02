@@ -19,30 +19,6 @@
 #include <stdint.h>
 #include <TestExtiKey.h>
 
-inline void TestSdram()
-{
-    uint64_t *buffer = reinterpret_cast<uint64_t *>(0XC0000000);
-    int const buffer_size = 16 * 1024 * 1024 / sizeof(*buffer);
-
-    for (uint64_t i = 0; i < buffer_size; i++)
-    {
-        buffer[i] = 0xff;
-    }
-
-    DI_Delayer().Delay(std::chrono::seconds{10});
-
-    for (uint64_t i = 0; i < buffer_size; i++)
-    {
-        if (buffer[i] != 0xff)
-        {
-            DI_Console().WriteLine("sdram error");
-            return;
-        }
-    }
-
-    DI_Console().WriteLine("sdram no error");
-}
-
 BYTE work[FF_MAX_SS]; // 工作缓冲区
 
 inline void TestFatFs()
@@ -167,7 +143,6 @@ int main(void)
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     SDRAM_Init();
                     // Lfs::TestLittleFs();
-                    TestSdram();
                     TestFatFs();
                     while (true)
                     {
