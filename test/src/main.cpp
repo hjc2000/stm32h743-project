@@ -19,6 +19,42 @@
 #include <stdint.h>
 #include <TestExtiKey.h>
 
+inline void TestSdram()
+{
+    uint8_t *buffer = reinterpret_cast<uint8_t *>(0XC0000000);
+    int const buffer_size = 16 * 1024 * 1024 / sizeof(*buffer);
+
+    for (uint64_t i = 0; i < buffer_size; i++)
+    {
+        auto value = buffer[0];
+        buffer[i] = static_cast<decltype(value)>(i);
+    }
+
+    for (uint64_t i = 0; i < buffer_size; i++)
+    {
+        auto value = buffer[0];
+        buffer[i] = static_cast<decltype(value)>(i);
+    }
+
+    for (uint64_t i = 0; i < 1024; i++)
+    {
+        DI_Console().WriteLine(std::to_string(buffer[i]));
+    }
+
+    for (uint64_t i = 0; i < buffer_size; i++)
+    {
+        auto value = buffer[0];
+        if (buffer[i] != static_cast<decltype(value)>(i))
+        {
+            DI_Console().WriteLine("sdram error, i = " + std::to_string(i) +
+                                   ", buffer[i] = " + std::to_string(buffer[i]));
+            return;
+        }
+    }
+
+    DI_Console().WriteLine("sdram no error");
+}
+
 BYTE work[FF_MAX_SS]; // 工作缓冲区
 
 inline void TestFatFs()
@@ -30,21 +66,9 @@ inline void TestFatFs()
     MKFS_PARM mkfs_parm{};
     mkfs_parm.fmt = FM_FAT; // 设置文件系统类型为FAT，并创建一个简单的FAT12/FAT16分区
     mkfs_parm.n_fat = 1;    // 设置FAT表的数量为1
-    mkfs_parm.align = 1;    // 数据区域对齐为1扇区
+    mkfs_parm.align = 0;    // 数据区域对齐为1扇区
     mkfs_parm.n_root = 0;   // 根目录条目数为0（自动选择）
     mkfs_parm.au_size = 0;  // 分配单元大小为自动选择
-
-    // 初始化FatFs模块
-    res = f_mount(&fatfs, "", 0); // 卸载任何已挂载的卷
-    if (res != FR_OK)
-    {
-        // 处理错误
-        DI_Console().WriteLine("f_mount error: " + std::to_string(res));
-    }
-    else
-    {
-        DI_Console().WriteLine("f_mount successfully: " + std::to_string(res));
-    }
 
     // 格式化磁盘
     res = f_mkfs("", &mkfs_parm, work, sizeof(work));
@@ -143,6 +167,7 @@ int main(void)
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     SDRAM_Init();
                     // Lfs::TestLittleFs();
+                    TestSdram();
                     TestFatFs();
                     while (true)
                     {
