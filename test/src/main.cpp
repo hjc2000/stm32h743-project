@@ -80,6 +80,102 @@ void TestLittleFs()
     lfs_unmount(&lfs);
 }
 
+inline void TestFatFs()
+{
+    FATFS fatfs{};
+    BYTE work[FF_MAX_SS]; // 工作缓冲区
+    FRESULT res{};
+
+    // 初始化FatFs模块
+    res = f_mount(&fatfs, "", 0); // 卸载任何已挂载的卷
+    if (res != FR_OK)
+    {
+        // 处理错误
+        DI_Console().WriteLine("f_mount error: " + std::to_string(res));
+    }
+
+    // 创建格式化参数结构体
+    MKFS_PARM mkfs_parm{};
+    mkfs_parm.fmt = FM_FAT; // 设置文件系统类型为FAT，并创建一个简单的FAT12/FAT16分区
+    mkfs_parm.n_fat = 1;    // 设置FAT表的数量为1
+    mkfs_parm.align = 1;    // 数据区域对齐为1扇区
+    mkfs_parm.n_root = 0;   // 根目录条目数为0（自动选择）
+    mkfs_parm.au_size = 0;  // 分配单元大小为自动选择
+
+    // 格式化磁盘
+    res = f_mkfs("", &mkfs_parm, work, sizeof(work));
+    if (res != FR_OK)
+    {
+        // 处理错误
+        DI_Console().WriteLine("f_mkfs error: " + std::to_string(res));
+    }
+
+    // 重新挂载文件系统
+    res = f_mount(&fatfs, "", 1); // 挂载文件系统
+    if (res != FR_OK)
+    {
+        // 处理错误
+        DI_Console().WriteLine("f_mount error: " + std::to_string(res));
+    }
+
+    FIL file{};
+    char const *filename = "example.txt";
+    char const *str = "Hello, FATFS!";
+
+    // 打开或创建文件
+    res = f_open(&file, filename, FA_CREATE_ALWAYS | FA_WRITE);
+    if (res == FR_OK)
+    {
+        // 写入字符串到文件
+        UINT bytesWritten;
+        res = f_write(&file, str, strlen(str), &bytesWritten);
+        if (res != FR_OK || bytesWritten != strlen(str))
+        {
+            DI_Console().WriteLine("写入文件失败: " + std::to_string(res));
+        }
+        else
+        {
+            DI_Console().WriteLine("成功写入 " + std::to_string(bytesWritten) + " 字节到文件。");
+        }
+
+        // 关闭文件
+        f_close(&file);
+    }
+    else
+    {
+        DI_Console().WriteLine("打开文件失败: " + std::to_string(res));
+    }
+
+    // 重新打开文件以读取
+    res = f_open(&file, filename, FA_READ);
+    if (res == FR_OK)
+    {
+        char buffer[128] = {0}; // 假设文件内容不会超过127个字符
+        UINT bytesRead;
+
+        // 从文件读取内容
+        res = f_read(&file, buffer, sizeof(buffer) - 1, &bytesRead);
+        if (res != FR_OK)
+        {
+            DI_Console().WriteLine("读取文件失败: " + std::to_string(res));
+        }
+        else
+        {
+            DI_Console().WriteLine("成功读取 " + std::to_string(bytesRead) + " 字节");
+        }
+
+        // 关闭文件
+        f_close(&file);
+    }
+    else
+    {
+        DI_Console().WriteLine("打开文件失败: " + std::to_string(res));
+    }
+
+    // 卸载文件系统
+    f_mount(NULL, "", 0);
+}
+
 int main(void)
 {
     while (true)
@@ -94,7 +190,8 @@ int main(void)
                     DI_Serial().Open(*DICreate_ISerialOptions());
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     SDRAM_Init();
-                    TestLittleFs();
+                    // TestLittleFs();
+                    TestFatFs();
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();
