@@ -21,26 +21,24 @@
 
 inline void TestSdram()
 {
-    uint8_t *buffer = reinterpret_cast<uint8_t *>(0XC0000000);
-    int const buffer_size = 16 * 1024 * 1024 / sizeof(*buffer);
-
-    for (uint64_t i = 0; i < buffer_size; i++)
+    using element_type = uint8_t;
+    element_type *buffer = reinterpret_cast<element_type *>(0XC0000000);
+    int const buffer_size = 16 * 1024 * 1024 / sizeof(element_type);
+    for (uint32_t i = 0; i < buffer_size; i++)
     {
-        auto value = buffer[0];
-        buffer[i] = static_cast<decltype(value)>(i);
-    }
-
-    for (uint64_t i = 0; i < 1024; i++)
-    {
-        DI_Console().WriteLine(std::to_string(buffer[i]));
-    }
-
-    for (uint64_t i = 0; i < buffer_size; i++)
-    {
-        auto value = buffer[0];
-        if (buffer[i] != static_cast<decltype(value)>(i))
+        element_type value = static_cast<element_type>(i);
+        while (buffer[i] != value)
         {
-            DI_Console().WriteLine("sdram error, i = " + std::to_string(i) +
+            buffer[i] = value;
+        }
+    }
+
+    for (uint32_t i = 0; i < buffer_size; i++)
+    {
+        element_type value = static_cast<element_type>(i);
+        if (buffer[i] != value)
+        {
+            DI_Console().WriteLine("sdram error, i = " + std::to_string(value) +
                                    ", buffer[i] = " + std::to_string(buffer[i]));
             return;
         }

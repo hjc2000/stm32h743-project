@@ -2,81 +2,64 @@
 #include <bsp-interface/di/gpio.h>
 #include <hal.h>
 
-//////////////////////////////////////////////////////////////////////////////////
-// 本程序只供学习使用，未经作者许可，不得用于其它任何用途
-// ALIENTEK STM32F7开发板
-// SDRAM驱动代码
-// 正点原子@ALIENTEK
-// 技术论坛:www.openedv.com
-// 创建日期:2015/11/27
-// 版本：V1.0
-// 版权所有，盗版必究。
-// Copyright(C) 广州市星翼电子科技有限公司 2014-2024
-// All rights reserved
-//////////////////////////////////////////////////////////////////////////////////
 SDRAM_HandleTypeDef SDRAM_Handler{}; // SDRAM句柄
 
-// SDRAM底层驱动，引脚配置，时钟使能
-// 此函数会被HAL_SDRAM_Init()调用
-// hsdram:SDRAM句柄
 void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
 {
-    __HAL_RCC_FMC_CLK_ENABLE(); // 使能FMC时钟
+    __HAL_RCC_FMC_CLK_ENABLE();
 
+    std::shared_ptr<bsp::IGpioPinOptions> options = DICreate_GpioPinOptions();
+    options->SetAlternateFunction("fmc");
+    options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
+    options->SetDriver(bsp::IGpioPinDriver::PushPull);
+    options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
+    options->SetSpeedLevel(3);
+
+    char const *pin_names[] = {
+        "PC0",
+        "PC2",
+        "PC3",
+        "PD0",
+        "PD1",
+        "PD8",
+        "PD9",
+        "PD10",
+        "PD14",
+        "PD15",
+        "PE0",
+        "PE1",
+        "PE7",
+        "PE8",
+        "PE9",
+        "PE10",
+        "PE11",
+        "PE12",
+        "PE13",
+        "PE14",
+        "PE15",
+        "PF0",
+        "PF1",
+        "PF2",
+        "PF3",
+        "PF4",
+        "PF5",
+        "PF11",
+        "PF12",
+        "PF14",
+        "PF15",
+        "PG0",
+        "PG1",
+        "PG2",
+        "PG4",
+        "PG5",
+        "PG8",
+        "PG15",
+    };
+
+    for (char const *pin_name : pin_names)
     {
-        std::shared_ptr<bsp::IGpioPinOptions> options = DICreate_GpioPinOptions();
-        options->SetAlternateFunction("fmc");
-        options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
-        options->SetDriver(bsp::IGpioPinDriver::PushPull);
-        options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
-        options->SetSpeedLevel(3);
-
-        char const *pin_names[] = {
-            "PC0",
-            "PC2",
-            "PC3",
-            "PD0",
-            "PD1",
-            "PD8",
-            "PD9",
-            "PD10",
-            "PD14",
-            "PD15",
-            "PE0",
-            "PE1",
-            "PE7",
-            "PE8",
-            "PE9",
-            "PE10",
-            "PE11",
-            "PE12",
-            "PE13",
-            "PE14",
-            "PE15",
-            "PF0",
-            "PF1",
-            "PF2",
-            "PF3",
-            "PF4",
-            "PF5",
-            "PF11",
-            "PF12",
-            "PF14",
-            "PF15",
-            "PG0",
-            "PG1",
-            "PG2",
-            "PG4",
-            "PG5",
-            "PG8",
-            "PG15",
-        };
-
-        for (char const *pin_name : pin_names)
-        {
-            bsp::IGpioPin *pin = DI_GpioPinCollection().Get(pin_name);
-            pin->Open(*options);
-        }
+        bsp::IGpioPin *pin = DI_GpioPinCollection().Get(pin_name);
+        pin->Open(*options);
     }
 }
 
