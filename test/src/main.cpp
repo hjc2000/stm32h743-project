@@ -30,12 +30,6 @@ inline void TestSdram()
         buffer[i] = static_cast<decltype(value)>(i);
     }
 
-    for (uint64_t i = 0; i < buffer_size; i++)
-    {
-        auto value = buffer[0];
-        buffer[i] = static_cast<decltype(value)>(i);
-    }
-
     for (uint64_t i = 0; i < 1024; i++)
     {
         DI_Console().WriteLine(std::to_string(buffer[i]));
