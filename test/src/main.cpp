@@ -162,6 +162,7 @@ inline void TestFatFs()
         else
         {
             DI_Console().WriteLine("成功读取 " + std::to_string(bytesRead) + " 字节");
+            DI_Console().WriteLine(buffer);
         }
 
         // 关闭文件
