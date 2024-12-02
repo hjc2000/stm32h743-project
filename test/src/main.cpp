@@ -21,15 +21,15 @@
 
 inline void TestSdram()
 {
-    uint8_t *buffer = reinterpret_cast<uint8_t *>(0XC0000000);
-    int const buffer_size = 16 * 1024 * 1024;
+    uint64_t *buffer = reinterpret_cast<uint64_t *>(0XC0000000);
+    int const buffer_size = 16 * 1024 * 1024 / sizeof(*buffer);
 
     for (uint64_t i = 0; i < buffer_size; i++)
     {
         buffer[i] = 0xff;
     }
 
-    DI_Delayer().Delay(std::chrono::seconds{1});
+    DI_Delayer().Delay(std::chrono::seconds{10});
 
     for (uint64_t i = 0; i < buffer_size; i++)
     {
