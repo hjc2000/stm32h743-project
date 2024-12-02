@@ -28,7 +28,7 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
         options->SetAlternateFunction("fmc");
         options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
         options->SetDriver(bsp::IGpioPinDriver::PushPull);
-        options->SetPullMode(bsp::IGpioPinPullMode::PullDown);
+        options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
         options->SetSpeedLevel(3);
 
         char const *pin_names[] = {
