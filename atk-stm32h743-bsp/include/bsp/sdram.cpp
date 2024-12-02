@@ -115,17 +115,17 @@ void SDRAM_Init(void)
 {
     FMC_SDRAM_TimingTypeDef SDRAM_Timing;
 
-    SDRAM_Handler.Instance = FMC_SDRAM_DEVICE;                               // SDRAM在BANK5,6
-    SDRAM_Handler.Init.SDBank = FMC_SDRAM_BANK1;                             // SDRAM接在BANK5上
-    SDRAM_Handler.Init.ColumnBitsNumber = FMC_SDRAM_COLUMN_BITS_NUM_9;       // 列数量
-    SDRAM_Handler.Init.RowBitsNumber = FMC_SDRAM_ROW_BITS_NUM_13;            // 行数量
-    SDRAM_Handler.Init.MemoryDataWidth = FMC_SDRAM_MEM_BUS_WIDTH_16;         // 数据宽度为16位
-    SDRAM_Handler.Init.InternalBankNumber = FMC_SDRAM_INTERN_BANKS_NUM_4;    // 一共4个BANK
-    SDRAM_Handler.Init.CASLatency = FMC_SDRAM_CAS_LATENCY_3;                 // CAS为2
-    SDRAM_Handler.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE; // 失能写保护
-    SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;             // SDRAM时钟为HCLK/2=200M/2=100M=10ns
-    SDRAM_Handler.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;                  // 使能突发
-    SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;              // 读通道延时
+    SDRAM_Handler.Instance = FMC_SDRAM_DEVICE;
+    SDRAM_Handler.Init.SDBank = FMC_SDRAM_BANK1;
+    SDRAM_Handler.Init.ColumnBitsNumber = FMC_SDRAM_COLUMN_BITS_NUM_9;
+    SDRAM_Handler.Init.RowBitsNumber = FMC_SDRAM_ROW_BITS_NUM_13;
+    SDRAM_Handler.Init.MemoryDataWidth = FMC_SDRAM_MEM_BUS_WIDTH_16;
+    SDRAM_Handler.Init.InternalBankNumber = FMC_SDRAM_INTERN_BANKS_NUM_4;
+    SDRAM_Handler.Init.CASLatency = FMC_SDRAM_CAS_LATENCY_3;
+    SDRAM_Handler.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE;
+    SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
+    SDRAM_Handler.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;
+    SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;
     SDRAM_Handler.MspInitCallback = HAL_SDRAM_MspInit;
 
     SDRAM_Timing.LoadToActiveDelay = 2;
