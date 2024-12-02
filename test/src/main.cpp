@@ -1,5 +1,6 @@
 #include <atomic>
 #include <base/RentedPtrFactory.h>
+#include <base/string/ToHexString.h>
 #include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
@@ -21,30 +22,41 @@
 inline void TestSdram()
 {
     uint8_t *buffer = reinterpret_cast<uint8_t *>(0XC0000000);
-    for (uint8_t i = 0; i < 10; i++)
+    int const buffer_size = 16 * 1024 * 1024;
+
+    for (uint64_t i = 0; i < buffer_size; i++)
     {
-        buffer[i] = i;
+        buffer[i] = 0xff;
     }
 
-    for (uint8_t i = 0; i < 10; i++)
+    DI_Delayer().Delay(std::chrono::seconds{1});
+
+    for (uint64_t i = 0; i < buffer_size; i++)
     {
-        DI_Console().WriteLine(std::to_string(static_cast<int>(buffer[i])));
+        if (buffer[i] != 0xff)
+        {
+            DI_Console().WriteLine("sdram error");
+            return;
+        }
     }
+
+    DI_Console().WriteLine("sdram no error");
 }
+
+BYTE work[FF_MAX_SS]; // 工作缓冲区
 
 inline void TestFatFs()
 {
     FATFS fatfs{};
-    BYTE work[FF_MAX_SS]; // 工作缓冲区
     FRESULT res{};
 
     // 创建格式化参数结构体
     MKFS_PARM mkfs_parm{};
-    mkfs_parm.fmt = FM_FAT | FM_SFD; // 设置文件系统类型为FAT，并创建一个简单的FAT12/FAT16分区
-    mkfs_parm.n_fat = 1;             // 设置FAT表的数量为1
-    mkfs_parm.align = 1;             // 数据区域对齐为1扇区
-    mkfs_parm.n_root = 0;            // 根目录条目数为0（自动选择）
-    mkfs_parm.au_size = 0;           // 分配单元大小为自动选择
+    mkfs_parm.fmt = FM_FAT; // 设置文件系统类型为FAT，并创建一个简单的FAT12/FAT16分区
+    mkfs_parm.n_fat = 1;    // 设置FAT表的数量为1
+    mkfs_parm.align = 1;    // 数据区域对齐为1扇区
+    mkfs_parm.n_root = 0;   // 根目录条目数为0（自动选择）
+    mkfs_parm.au_size = 0;  // 分配单元大小为自动选择
 
     // 初始化FatFs模块
     res = f_mount(&fatfs, "", 0); // 卸载任何已挂载的卷
@@ -155,7 +167,7 @@ int main(void)
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     SDRAM_Init();
                     // Lfs::TestLittleFs();
-                    // TestSdram();
+                    TestSdram();
                     TestFatFs();
                     while (true)
                     {
@@ -170,7 +182,7 @@ int main(void)
                     // bsp::TestKeyScanner();
                     // bsp::TestIndependentWatchDog();
                 },
-                512);
+                1024);
 
             DI_TaskManager().StartScheduler();
         }

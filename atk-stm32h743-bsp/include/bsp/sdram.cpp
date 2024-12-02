@@ -106,7 +106,7 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
     // COUNT=SDRAM刷新周期/行数-20=SDRAM刷新周期(us)*SDCLK频率(Mhz)/行数
     // 我们使用的SDRAM刷新周期为64ms,SDCLK=200/2=100Mhz,行数为8192(2^13).
     // 所以,COUNT=64*1000*100/8192-20=761
-    HAL_SDRAM_ProgramRefreshRate(&SDRAM_Handler, 761);
+    HAL_SDRAM_ProgramRefreshRate(&SDRAM_Handler, 600);
 }
 
 // SDRAM初始化

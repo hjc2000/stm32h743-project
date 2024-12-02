@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <base/stream/Span.h>
 #include <chrono>
 #include <cstdint>
 #include <diskio.h>
@@ -8,10 +9,11 @@ namespace
 {
     /// @brief 定义一个静态数组作为磁盘存储空间
     uint8_t *_buffer = reinterpret_cast<uint8_t *>(0XC0000000);
+    int const _buffer_size = 16 * 1024 * 1024;
 
     // 每个扇区的大小（单位：字节）
-    constinit int _sector_size = 512;
-    constinit int _sector_count = 1024 * (1024 / 512);
+    int const _sector_size = 512;
+    int const _sector_count = _buffer_size / _sector_size;
 
 } // namespace
 
@@ -22,7 +24,8 @@ extern "C"
     /// @return
     DSTATUS disk_initialize(BYTE pdrv)
     {
-        // 这里假设初始化总是成功的
+        base::Span span{_buffer, _buffer_size};
+        span.FillWithZero();
         return 0; // 返回0表示成功
     }
 
@@ -52,7 +55,10 @@ extern "C"
 
     DRESULT disk_write(BYTE pdrv, const BYTE *buff, LBA_t sector, UINT count)
     {
-        std::copy(buff, buff + count * _sector_size, _buffer + sector * _sector_size);
+        std::copy(buff,
+                  buff + count * _sector_size,
+                  _buffer + sector * _sector_size);
+
         return RES_OK; // 成功
     }
 
