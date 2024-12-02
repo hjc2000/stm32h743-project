@@ -27,10 +27,7 @@ inline void TestSdram()
     for (uint32_t i = 0; i < buffer_size; i++)
     {
         element_type value = static_cast<element_type>(i);
-        while (buffer[i] != value)
-        {
-            buffer[i] = value;
-        }
+        buffer[i] = value;
     }
 
     for (uint32_t i = 0; i < buffer_size; i++)
@@ -38,7 +35,7 @@ inline void TestSdram()
         element_type value = static_cast<element_type>(i);
         if (buffer[i] != value)
         {
-            DI_Console().WriteLine("sdram error, i = " + std::to_string(value) +
+            DI_Console().WriteLine("sdram error, value = " + std::to_string(value) +
                                    ", buffer[i] = " + std::to_string(buffer[i]));
             return;
         }
@@ -159,7 +156,11 @@ int main(void)
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     SDRAM_Init();
                     // Lfs::TestLittleFs();
-                    TestSdram();
+                    while (true)
+                    {
+                        TestSdram();
+                    }
+
                     // TestFatFs();
                     while (true)
                     {
