@@ -7,18 +7,8 @@
 namespace
 {
     bool _initialized = false;
-}
 
-void DI_DoBasicInitialization()
-{
-    if (_initialized)
-    {
-        return;
-    }
-
-    _initialized = true;
-
-    auto init_clock = []()
+    void InitializeClock()
     {
         MODIFY_REG(PWR->CR3, PWR_CR3_SCUEN, 0);
         __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
@@ -50,9 +40,19 @@ void DI_DoBasicInitialization()
 
         DI_ClockSignalCollection().Get("sysclk")->Open(bsp::IClockSignal_OutputDivisionFactor{1},
                                                        bsp::IClockSignal_ClockSource{"pll"});
-    };
+    }
+} // namespace
+
+void DI_DoBasicInitialization()
+{
+    if (_initialized)
+    {
+        return;
+    }
+
+    _initialized = true;
 
     hal::Cache::Enable();
     HAL_Init();
-    init_clock();
+    InitializeClock();
 }
