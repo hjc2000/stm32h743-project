@@ -16,14 +16,5 @@ enum class KeyIndex : uint16_t
     EnumEndFlag,
 };
 
-class BSP
-{
-private:
-    BSP() = delete;
-
-public:
-    static_function void Initialize();
-};
-
 void TestWindowWatchDog();
 void TestUniversalTimer1();

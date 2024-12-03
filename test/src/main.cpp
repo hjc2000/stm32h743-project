@@ -3,6 +3,7 @@
 #include <base/string/ToHexString.h>
 #include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/console.h>
+#include <bsp-interface/di/core.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/led.h>
 #include <bsp-interface/di/task.h>
@@ -184,7 +185,7 @@ int main(void)
     {
         try
         {
-            BSP::Initialize();
+            DI_DoBasicInitialization();
 
             DI_TaskManager().Create(
                 []()
