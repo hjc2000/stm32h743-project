@@ -26,6 +26,9 @@ void BSP::Initialize()
         {
         }
 
+        __HAL_RCC_SYSCFG_CLK_ENABLE();
+        HAL_EnableCompensationCell();
+
         DI_ClockSourceCollection().Get("hse")->Open(25);
 
         {
@@ -46,9 +49,6 @@ void BSP::Initialize()
 
         DI_ClockSignalCollection().Get("sysclk")->Open(bsp::IClockSignal_OutputDivisionFactor{1},
                                                        bsp::IClockSignal_ClockSource{"pll"});
-
-        __HAL_RCC_SYSCFG_CLK_ENABLE();
-        HAL_EnableCompensationCell();
     };
 
     hal::Cache::Enable();
