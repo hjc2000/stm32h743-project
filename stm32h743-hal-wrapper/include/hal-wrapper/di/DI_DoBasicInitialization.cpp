@@ -4,8 +4,20 @@
 #include <hal-wrapper/Cache.h>
 #include <hal.h>
 
+namespace
+{
+    bool _initialized = false;
+}
+
 void DI_DoBasicInitialization()
 {
+    if (_initialized)
+    {
+        return;
+    }
+
+    _initialized = true;
+
     auto init_clock = []()
     {
         MODIFY_REG(PWR->CR3, PWR_CR3_SCUEN, 0);
