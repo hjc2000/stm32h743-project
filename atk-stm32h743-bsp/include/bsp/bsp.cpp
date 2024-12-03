@@ -39,6 +39,8 @@ void BSP::Initialize()
             DI_ClockSourceCollection().Get("pll")->Open("hse", factors);
         }
 
+        DI_ClockSignalCollection().Get("hclk")->Open(bsp::IClockSignal_InputDivisionFactor{2});
+
         /* 时钟源的特点是可能有多个输入、输出通道。
          *
          * 时钟信号的特点是输入通道只有一个，输出通道一般有多个，因为要分给各个子系统使用。
@@ -57,8 +59,6 @@ void BSP::Initialize()
         clock_signal_config._system_clk_config._hclk_config._apb3clk_config._input_divider = hal::Apb3ClkConfig::InputDivider::DIV2;
         clock_signal_config._system_clk_config._hclk_config._apb4clk_config._input_divider = hal::Apb4ClkConfig::InputDivider::DIV4;
         hal::ClockSignal::SetConfig(clock_signal_config);
-
-        DI_ClockSignalCollection().Get("hclk")->Open(bsp::IClockSignal_InputDivisionFactor{2});
 
         __HAL_RCC_SYSCFG_CLK_ENABLE();
         HAL_EnableCompensationCell();
