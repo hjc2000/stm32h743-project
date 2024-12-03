@@ -4,28 +4,28 @@
 #include <bsp-interface/di/led.h>
 #include <DigitalLed.h>
 
-/// @brief 数字 LED 灯集合。
-/// @return
-base::IDictionary<std::string, bsp::IDigitalLed *> const &DI_DigitalLedCollection()
+namespace
 {
-    class Getter :
-        public base::SingletonGetter<base::Dictionary<std::string, bsp::IDigitalLed *>>
+    class Initializer
     {
-    protected:
-        std::unique_ptr<base::Dictionary<std::string, bsp::IDigitalLed *>> Create() override
+    public:
+        Initializer()
         {
-            return std::unique_ptr<base::Dictionary<std::string, bsp::IDigitalLed *>>{
-                new base::Dictionary<std::string, bsp::IDigitalLed *>{
-                    std::pair<std::string, bsp::IDigitalLed *>{
-                        "red_led",
-                        &bsp::RedDigitalLed::Instance(),
-                    },
-                    std::pair<std::string, bsp::IDigitalLed *>{
-                        "green_led",
-                        &bsp::GreenDigitalLed::Instance(),
-                    },
-                },
-            };
+            _dic.Add("red_led", &bsp::RedDigitalLed::Instance());
+            _dic.Add("green_led", &bsp::GreenDigitalLed::Instance());
+        }
+
+        base::Dictionary<std::string, bsp::IDigitalLed *> _dic;
+    };
+
+    /// @brief 单例获取器
+    class Getter :
+        public base::SingletonGetter<Initializer>
+    {
+    public:
+        std::unique_ptr<Initializer> Create() override
+        {
+            return std::unique_ptr<Initializer>{new Initializer{}};
         }
 
         void Lock() override
@@ -38,9 +38,14 @@ base::IDictionary<std::string, bsp::IDigitalLed *> const &DI_DigitalLedCollectio
             DI_InterruptSwitch().EnableGlobalInterrupt();
         }
     };
+} // namespace
 
-    Getter o;
-    return o.Instance();
+/// @brief 数字 LED 灯集合。
+/// @return
+base::IDictionary<std::string, bsp::IDigitalLed *> const &DI_DigitalLedCollection()
+{
+    Getter g;
+    return g.Instance()._dic;
 }
 
 bsp::IDigitalLed &DI_RedDigitalLed()
