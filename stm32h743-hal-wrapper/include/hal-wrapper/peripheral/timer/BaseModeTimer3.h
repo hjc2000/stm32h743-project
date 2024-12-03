@@ -53,10 +53,10 @@ namespace hal
         {
             hal::ClockSignalConfig config = hal::ClockSignal::GetConfig();
             uint32_t pclk1_freq = static_cast<int64_t>(DI_ClockSignalCollection().Get("pclk1")->Frequency());
-            if (config._system_clk_config._hclk_config._apb1clk_config._input_divider == hal::Apb1ClkConfig::InputDivider::DIV1)
-            {
-                return pclk1_freq;
-            }
+            // if (config._system_clk_config._hclk_config._apb1clk_config._input_divider == hal::Apb1ClkConfig::InputDivider::DIV1)
+            // {
+            //     return pclk1_freq;
+            // }
 
             /* 如果 pclk1 对输入不是 1 分频，定时器内部会对来自 pclk1 的信号进行 2 倍频。 */
             return pclk1_freq * 2;
