@@ -58,6 +58,8 @@ void BSP::Initialize()
         clock_signal_config._system_clk_config._hclk_config._apb4clk_config._input_divider = hal::Apb4ClkConfig::InputDivider::DIV4;
         hal::ClockSignal::SetConfig(clock_signal_config);
 
+        DI_ClockSignalCollection().Get("hclk")->Open(bsp::IClockSignal_InputDivisionFactor{2});
+
         __HAL_RCC_SYSCFG_CLK_ENABLE();
         HAL_EnableCompensationCell();
     };

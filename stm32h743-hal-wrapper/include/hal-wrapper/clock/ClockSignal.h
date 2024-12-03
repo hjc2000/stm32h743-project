@@ -23,20 +23,5 @@ namespace hal
         /// <param name="flash_latency"></param>
         /// <returns></returns>
         static_function void SetConfig(ClockSignalConfig const &config);
-
-        static_function uint32_t HclkFreq()
-        {
-            return HAL_RCC_GetHCLKFreq();
-        }
-
-        static_function uint32_t Pclk1Freq()
-        {
-            return HAL_RCC_GetPCLK1Freq();
-        }
-
-        static_function uint32_t Pclk2Freq()
-        {
-            return HAL_RCC_GetPCLK2Freq();
-        }
     };
 } // namespace hal
