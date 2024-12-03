@@ -15,7 +15,6 @@ namespace hal
         enum class ClockType
         {
             SYSCLK = RCC_CLOCKTYPE_SYSCLK,
-            D1PCLK1 = RCC_CLOCKTYPE_D1PCLK1,
             D3PCLK1 = RCC_CLOCKTYPE_D3PCLK1,
         };
 

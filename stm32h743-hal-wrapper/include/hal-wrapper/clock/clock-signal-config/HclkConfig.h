@@ -6,7 +6,6 @@ namespace hal
     class HclkConfig
     {
     public:
-        Apb3ClkConfig _apb3clk_config{};
         Apb4ClkConfig _apb4clk_config{};
 
         void Serialize(RCC_ClkInitTypeDef &o) const;
