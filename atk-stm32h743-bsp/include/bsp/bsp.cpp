@@ -45,22 +45,8 @@ void BSP::Initialize()
         DI_ClockSignalCollection().Get("d1pclk1")->Open(bsp::IClockSignal_InputDivisionFactor{2});
         DI_ClockSignalCollection().Get("d3pclk1")->Open(bsp::IClockSignal_InputDivisionFactor{2});
 
-        // DI_ClockSignalCollection().Get("sysclk")->Open(bsp::IClockSignal_OutputDivisionFactor{1},
-        //                                                bsp::IClockSignal_ClockSource{"pll"});
-
-        /* 时钟源的特点是可能有多个输入、输出通道。
-         *
-         * 时钟信号的特点是输入通道只有一个，输出通道一般有多个，因为要分给各个子系统使用。
-         * 并且支持灵活的输入、输出分频。
-         *
-         * 系统时钟比较特殊，输入通道有多个，可以选择不同的时钟源。
-         */
-        hal::ClockSignalConfig clock_signal_config;
-        clock_signal_config.SelectAllClockType();
-        clock_signal_config._flash_latency = hal::ClockSignalConfig::FlashLatency::Latency2;
-        clock_signal_config._system_clk_config._clock_source = hal::SystemClockConfig::ClockSource::PLLCLK;
-        clock_signal_config._system_clk_config._output_divider = hal::SystemClockConfig::OutputDivider::DIV1;
-        hal::ClockSignal::SetConfig(clock_signal_config);
+        DI_ClockSignalCollection().Get("sysclk")->Open(bsp::IClockSignal_OutputDivisionFactor{1},
+                                                       bsp::IClockSignal_ClockSource{"pll"});
 
         __HAL_RCC_SYSCFG_CLK_ENABLE();
         HAL_EnableCompensationCell();
