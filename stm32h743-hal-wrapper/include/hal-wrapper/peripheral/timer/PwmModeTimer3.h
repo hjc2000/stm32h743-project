@@ -1,7 +1,7 @@
 #pragma once
+#include <base/define.h>
 #include <bsp-interface/di/clock.h>
 #include <functional>
-#include <hal-wrapper/clock/ClockSignal.h>
 #include <hal-wrapper/peripheral/timer/TimerChannelEnum.h>
 #include <hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h>
 #include <hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>

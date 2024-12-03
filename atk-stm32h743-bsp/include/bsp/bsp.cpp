@@ -9,7 +9,6 @@
 #include <DigitalLed.h>
 #include <functional>
 #include <hal-wrapper/Cache.h>
-#include <hal-wrapper/clock/ClockSignal.h>
 #include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
 #include <hal.h>
 #include <stdint.h>
