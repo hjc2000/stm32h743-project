@@ -1,5 +1,6 @@
 #pragma once
 #include <hal-wrapper/clock/clock-signal-config/SystemClockConfig.h>
+#include <hal.h>
 
 namespace hal
 {
@@ -15,7 +16,6 @@ namespace hal
         enum class ClockType
         {
             SYSCLK = RCC_CLOCKTYPE_SYSCLK,
-            D3PCLK1 = RCC_CLOCKTYPE_D3PCLK1,
         };
 
         /// @brief 选择要配置哪个时钟。

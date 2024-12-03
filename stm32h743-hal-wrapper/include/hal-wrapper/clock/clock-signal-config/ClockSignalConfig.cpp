@@ -35,7 +35,7 @@ ClockSignalConfig::operator RCC_ClkInitTypeDef() const
 
 void hal::ClockSignalConfig::SelectAllClockType()
 {
-    _clock_type = ClockType::SYSCLK | ClockType::D3PCLK1;
+    _clock_type = ClockType::SYSCLK;
 }
 
 hal::ClockSignalConfig::ClockType operator|(
