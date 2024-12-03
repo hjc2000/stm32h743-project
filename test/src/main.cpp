@@ -14,6 +14,7 @@
 #include <bsp/bsp.h>
 #include <bsp/sdram.h>
 #include <ff.h>
+#include <format>
 #include <littlefs/LfsFlashPort.h>
 #include <memory>
 #include <stdexcept>
@@ -91,7 +92,7 @@ inline void TestFatFs()
     if (res != FR_OK)
     {
         // 处理错误
-        DI_Console().WriteLine("f_mount error: " + std::to_string(res));
+        DI_Console().WriteLine(std::format("f_mount error: {}", std::to_string(res)));
     }
 
     // 创建格式化参数结构体
@@ -107,7 +108,7 @@ inline void TestFatFs()
     if (res != FR_OK)
     {
         // 处理错误
-        DI_Console().WriteLine("f_mkfs error: " + std::to_string(res));
+        DI_Console().WriteLine(std::format("f_mkfs error: {}", std::to_string(res)));
     }
 
     // 重新挂载文件系统
@@ -115,7 +116,7 @@ inline void TestFatFs()
     if (res != FR_OK)
     {
         // 处理错误
-        DI_Console().WriteLine("f_mount error: " + std::to_string(res));
+        DI_Console().WriteLine(std::format("f_mount error: {}", std::to_string(res)));
     }
 
     FIL file{};
@@ -131,11 +132,11 @@ inline void TestFatFs()
         res = f_write(&file, str, strlen(str), &bytesWritten);
         if (res != FR_OK || bytesWritten != strlen(str))
         {
-            DI_Console().WriteLine("写入文件失败: " + std::to_string(res));
+            DI_Console().WriteLine(std::format("write failed: {}", std::to_string(res)));
         }
         else
         {
-            DI_Console().WriteLine("成功写入 " + std::to_string(bytesWritten) + " 字节到文件。");
+            DI_Console().WriteLine(std::format("write {} bytes to the file successfully", bytesWritten));
         }
 
         // 关闭文件
@@ -143,7 +144,7 @@ inline void TestFatFs()
     }
     else
     {
-        DI_Console().WriteLine("打开文件失败: " + std::to_string(res));
+        DI_Console().WriteLine(std::format("open file failed: {}", std::to_string(res)));
     }
 
     // 重新打开文件以读取
@@ -157,11 +158,11 @@ inline void TestFatFs()
         res = f_read(&file, buffer, sizeof(buffer) - 1, &bytesRead);
         if (res != FR_OK)
         {
-            DI_Console().WriteLine("读取文件失败: " + std::to_string(res));
+            DI_Console().WriteLine("read file failed: " + std::to_string(res));
         }
         else
         {
-            DI_Console().WriteLine("成功读取 " + std::to_string(bytesRead) + " 字节");
+            DI_Console().WriteLine("read file successfully, have read " + std::to_string(bytesRead) + " bytes");
             DI_Console().WriteLine(buffer);
         }
 
@@ -170,7 +171,7 @@ inline void TestFatFs()
     }
     else
     {
-        DI_Console().WriteLine("打开文件失败: " + std::to_string(res));
+        DI_Console().WriteLine("open file failed: " + std::to_string(res));
     }
 
     // 卸载文件系统
