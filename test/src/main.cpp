@@ -193,11 +193,12 @@ int main(void)
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     SDRAM_Init();
                     // TestLittleFs();
-                    TestFatFs();
+                    // TestFatFs();
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();
                         DI_Delayer().Delay(std::chrono::seconds{1});
+                        DI_Console().WriteLine(DI_GetClockSignalFrequency("hclk"));
                     }
 
                     // TestUniversalTimer1();

@@ -8,11 +8,16 @@
 
 namespace
 {
-    /// @brief 定义一个静态数组作为磁盘存储空间
-    uint8_t _buffer[200 * 1024];
+    int const _buffer_size = 200 * 1024;
 
-    // 每个扇区的大小（单位：字节）
+    /// @brief 每个扇区的大小（单位：字节）
     int const _sector_size = 512;
+
+    /// @brief 扇区数量。
+    int const _sector_count = _buffer_size / _sector_size;
+
+    /// @brief 定义一个静态数组作为磁盘存储空间
+    uint8_t _buffer[_buffer_size];
 
 } // namespace
 
@@ -76,7 +81,7 @@ extern "C"
             }
         case GET_SECTOR_COUNT: // 获取磁盘上的总扇区数
             {
-                *reinterpret_cast<DWORD *>(buff) = sizeof(_buffer) / _sector_size;
+                *reinterpret_cast<DWORD *>(buff) = _sector_count;
                 break;
             }
         case GET_SECTOR_SIZE: // 获取每个扇区的大小
