@@ -16,7 +16,6 @@ namespace hal
         {
             SYSCLK = RCC_CLOCKTYPE_SYSCLK,
             D1PCLK1 = RCC_CLOCKTYPE_D1PCLK1,
-            PCLK2 = RCC_CLOCKTYPE_PCLK2,
             D3PCLK1 = RCC_CLOCKTYPE_D3PCLK1,
         };
 
