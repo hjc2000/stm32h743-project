@@ -43,7 +43,7 @@ namespace
     }
 } // namespace
 
-void DI_DoBasicInitialization()
+void DI_Initialize()
 {
     if (_initialized)
     {

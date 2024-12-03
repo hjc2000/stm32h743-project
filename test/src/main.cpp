@@ -185,7 +185,7 @@ int main(void)
     {
         try
         {
-            DI_DoBasicInitialization();
+            DI_Initialize();
 
             DI_TaskManager().Create(
                 []()
