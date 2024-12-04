@@ -15,7 +15,6 @@
 #include <bsp/bsp.h>
 #include <bsp/sdram.h>
 #include <ff.h>
-#include <format>
 #include <littlefs/LfsFlashPort.h>
 #include <memory>
 #include <stdexcept>
@@ -92,8 +91,7 @@ inline void TestFatFs()
     res = f_mount(&fatfs, "", 0); // 卸载任何已挂载的卷
     if (res != FR_OK)
     {
-        // 处理错误
-        DI_Console().WriteLine(std::format("f_mount error: {}", std::to_string(res)));
+        std::cout << "f_mount error: " << res << std::endl;
     }
 
     // 创建格式化参数结构体
@@ -108,16 +106,14 @@ inline void TestFatFs()
     res = f_mkfs("", &mkfs_parm, work, sizeof(work));
     if (res != FR_OK)
     {
-        // 处理错误
-        DI_Console().WriteLine(std::format("f_mkfs error: {}", std::to_string(res)));
+        std::cout << "f_mkfs error: " << res << std::endl;
     }
 
     // 重新挂载文件系统
     res = f_mount(&fatfs, "", 1); // 挂载文件系统
     if (res != FR_OK)
     {
-        // 处理错误
-        DI_Console().WriteLine(std::format("f_mount error: {}", std::to_string(res)));
+        std::cout << "f_mount error: " << res << std::endl;
     }
 
     FIL file{};
@@ -133,11 +129,14 @@ inline void TestFatFs()
         res = f_write(&file, str, strlen(str), &bytesWritten);
         if (res != FR_OK || bytesWritten != strlen(str))
         {
-            DI_Console().WriteLine(std::format("write failed: {}", std::to_string(res)));
+            std::cout << "write failed: " << res << std::endl;
         }
         else
         {
-            DI_Console().WriteLine(std::format("write {} bytes to the file successfully", bytesWritten));
+            std::cout << "write "
+                      << bytesWritten
+                      << " bytes to the file successfully"
+                      << std::endl;
         }
 
         // 关闭文件
@@ -145,7 +144,7 @@ inline void TestFatFs()
     }
     else
     {
-        DI_Console().WriteLine(std::format("open file failed: {}", std::to_string(res)));
+        std::cout << "open file failed: " << res << std::endl;
     }
 
     // 重新打开文件以读取
@@ -159,11 +158,15 @@ inline void TestFatFs()
         res = f_read(&file, buffer, sizeof(buffer) - 1, &bytesRead);
         if (res != FR_OK)
         {
-            DI_Console().WriteLine("read file failed: " + std::to_string(res));
+            std::cout << "read file failed: " << res << std::endl;
         }
         else
         {
-            DI_Console().WriteLine("read file successfully, have read " + std::to_string(bytesRead) + " bytes");
+            std::cout << "read file successfully, have read "
+                      << bytesRead
+                      << " bytes"
+                      << std::endl;
+
             DI_Console().WriteLine(buffer);
         }
 
@@ -172,7 +175,7 @@ inline void TestFatFs()
     }
     else
     {
-        DI_Console().WriteLine("open file failed: " + std::to_string(res));
+        std::cout << "open file failed: " << res << std::endl;
     }
 
     // 卸载文件系统
