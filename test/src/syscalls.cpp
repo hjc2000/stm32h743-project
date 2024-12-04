@@ -62,27 +62,6 @@ extern "C"
         return EIO;
     }
 
-    /// @brief stdio 底层会调用本函数。
-    ///
-    /// @param file 文件描述符
-    /// @note 对于标准输出，file = 1，对于错误输出，file = 2。
-    ///
-    /// @param ptr
-    /// @param len
-    /// @return
-    int _write(int file, char *ptr, int len)
-    {
-        try
-        {
-            DI_Console().Write(ptr, len);
-            return len;
-        }
-        catch (...)
-        {
-            return EIO;
-        }
-    }
-
     int _close(int file)
     {
         (void)file;
