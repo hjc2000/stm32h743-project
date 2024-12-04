@@ -200,7 +200,7 @@ int main(void)
                         DI_GreenDigitalLed().Toggle();
                         DI_Delayer().Delay(std::chrono::seconds{1});
                         // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
-                        printf("666\n");
+                        std::cout << "C++ std::cout" << std::endl;
                     }
 
                     // TestUniversalTimer1();
