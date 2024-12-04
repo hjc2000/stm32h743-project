@@ -74,25 +74,7 @@ extern "C"
     {
         try
         {
-            if (len == 0)
-            {
-                return EIO;
-            }
-
-            if (ptr == nullptr)
-            {
-                return EIO;
-            }
-
-            if (DI_Console().OutStream() == nullptr)
-            {
-                return EIO;
-            }
-
-            DI_Console().OutStream()->Write(reinterpret_cast<uint8_t const *>(ptr),
-                                            0,
-                                            len);
-
+            DI_Console().Write(ptr, len);
             return len;
         }
         catch (...)
