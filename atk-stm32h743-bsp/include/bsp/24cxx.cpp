@@ -1,11 +1,17 @@
 #include "24cxx.h"
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/gpio.h>
+#include <bsp-interface/di/iic.h>
+#include <bsp-interface/serial/GpioSoftwareIicHost.h>
+#include <hal.h>
+
+bsp::IIicHost *_iic_host = nullptr;
 
 // 初始化IIC接口
-void AT24CXX_Init(void)
+void AT24CXX_Init()
 {
-    IIC_Init(); // IIC初始化
+    _iic_host = DI_IicHostCollection().Get("eerom_iic_host");
+    _iic_host->Open();
 }
 
 // 在AT24CXX指定地址读出一个数据
@@ -14,22 +20,22 @@ void AT24CXX_Init(void)
 uint8_t AT24CXX_ReadOneByte(uint16_t ReadAddr)
 {
     uint8_t temp = 0;
-    IIC_Start();
+    _iic_host->SendStartingSignal();
     if (EE_TYPE > AT24C16)
     {
-        IIC_Send_Byte(0XA0);          // 发送写命令
-        IIC_Send_Byte(ReadAddr >> 8); // 发送高地址
+        _iic_host->SendByte(0XA0);          // 发送写命令
+        _iic_host->SendByte(ReadAddr >> 8); // 发送高地址
     }
     else
     {
-        IIC_Send_Byte(0XA0 + ((ReadAddr / 256) << 1)); // 发送器件地址0XA0,写数据
+        _iic_host->SendByte(0XA0 + ((ReadAddr / 256) << 1)); // 发送器件地址0XA0,写数据
     }
 
-    IIC_Send_Byte(ReadAddr % 256); // 发送低地址
-    IIC_Start();
-    IIC_Send_Byte(0XA1); // 进入接收模式
-    temp = IIC_Read_Byte(0);
-    IIC_Stop(); // 产生一个停止条件
+    _iic_host->SendByte(ReadAddr % 256); // 发送低地址
+    _iic_host->SendStartingSignal();
+    _iic_host->SendByte(0XA1); // 进入接收模式
+    temp = _iic_host->ReceiveByte(1);
+    _iic_host->SendStoppingSignal(); // 产生一个停止条件
     return temp;
 }
 
@@ -38,20 +44,20 @@ uint8_t AT24CXX_ReadOneByte(uint16_t ReadAddr)
 // DataToWrite:要写入的数据
 void AT24CXX_WriteOneByte(uint16_t WriteAddr, uint8_t DataToWrite)
 {
-    IIC_Start();
+    _iic_host->SendStartingSignal();
     if (EE_TYPE > AT24C16)
     {
-        IIC_Send_Byte(0XA0);           // 发送写命令
-        IIC_Send_Byte(WriteAddr >> 8); // 发送高地址
+        _iic_host->SendByte(0XA0);           // 发送写命令
+        _iic_host->SendByte(WriteAddr >> 8); // 发送高地址
     }
     else
     {
-        IIC_Send_Byte(0XA0 + ((WriteAddr / 256) << 1)); // 发送器件地址0XA0,写数据
+        _iic_host->SendByte(0XA0 + ((WriteAddr / 256) << 1)); // 发送器件地址0XA0,写数据
     }
 
-    IIC_Send_Byte(WriteAddr % 256); // 发送低地址
-    IIC_Send_Byte(DataToWrite);     // 发送字节
-    IIC_Stop();                     // 产生一个停止条件
+    _iic_host->SendByte(WriteAddr % 256); // 发送低地址
+    _iic_host->SendByte(DataToWrite);     // 发送字节
+    _iic_host->SendStoppingSignal();      // 产生一个停止条件
     DI_Delayer().Delay(std::chrono::milliseconds{10});
 }
 
@@ -92,7 +98,7 @@ uint32_t AT24CXX_ReadLenByte(uint16_t ReadAddr, uint8_t Len)
 // 如果用其他24C系列,这个地址要修改
 // 返回1:检测失败
 // 返回0:检测成功
-uint8_t AT24CXX_Check(void)
+uint8_t AT24CXX_Check()
 {
     uint8_t temp;
     temp = AT24CXX_ReadOneByte(255); // 避免每次开机都写AT24CXX
