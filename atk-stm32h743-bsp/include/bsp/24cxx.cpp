@@ -17,8 +17,7 @@ uint8_t AT24CXX_ReadOneByte(uint16_t ReadAddr)
     IIC_Start();
     if (EE_TYPE > AT24C16)
     {
-        IIC_Send_Byte(0XA0); // 发送写命令
-        IIC_Wait_Ack();
+        IIC_Send_Byte(0XA0);          // 发送写命令
         IIC_Send_Byte(ReadAddr >> 8); // 发送高地址
     }
     else
@@ -26,12 +25,9 @@ uint8_t AT24CXX_ReadOneByte(uint16_t ReadAddr)
         IIC_Send_Byte(0XA0 + ((ReadAddr / 256) << 1)); // 发送器件地址0XA0,写数据
     }
 
-    IIC_Wait_Ack();
     IIC_Send_Byte(ReadAddr % 256); // 发送低地址
-    IIC_Wait_Ack();
     IIC_Start();
     IIC_Send_Byte(0XA1); // 进入接收模式
-    IIC_Wait_Ack();
     temp = IIC_Read_Byte(0);
     IIC_Stop(); // 产生一个停止条件
     return temp;
@@ -45,8 +41,7 @@ void AT24CXX_WriteOneByte(uint16_t WriteAddr, uint8_t DataToWrite)
     IIC_Start();
     if (EE_TYPE > AT24C16)
     {
-        IIC_Send_Byte(0XA0); // 发送写命令
-        IIC_Wait_Ack();
+        IIC_Send_Byte(0XA0);           // 发送写命令
         IIC_Send_Byte(WriteAddr >> 8); // 发送高地址
     }
     else
@@ -54,12 +49,9 @@ void AT24CXX_WriteOneByte(uint16_t WriteAddr, uint8_t DataToWrite)
         IIC_Send_Byte(0XA0 + ((WriteAddr / 256) << 1)); // 发送器件地址0XA0,写数据
     }
 
-    IIC_Wait_Ack();
     IIC_Send_Byte(WriteAddr % 256); // 发送低地址
-    IIC_Wait_Ack();
-    IIC_Send_Byte(DataToWrite); // 发送字节
-    IIC_Wait_Ack();
-    IIC_Stop(); // 产生一个停止条件
+    IIC_Send_Byte(DataToWrite);     // 发送字节
+    IIC_Stop();                     // 产生一个停止条件
     DI_Delayer().Delay(std::chrono::milliseconds{10});
 }
 
