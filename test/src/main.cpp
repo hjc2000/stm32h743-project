@@ -12,6 +12,7 @@
 #include <bsp-interface/test/TestIndependentWatchDog.h>
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
+#include <bsp/24cxx.h>
 #include <bsp/bsp.h>
 #include <bsp/sdram.h>
 #include <ff.h>
@@ -196,12 +197,14 @@ int main(void)
                     DI_Serial().Open(*DICreate_ISerialOptions());
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     SDRAM_Init();
+                    AT24CXX_Init();
                     // TestLittleFs();
                     // TestFatFs();
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();
-                        std::cout << "C++ std::cout" << std::endl;
+                        AT24CXX_WriteOneByte(0, 6);
+                        std::cout << static_cast<int>(AT24CXX_ReadOneByte(0)) << std::endl;
                         // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
                         DI_Delayer().Delay(std::chrono::seconds{1});
                     }
