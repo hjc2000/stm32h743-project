@@ -184,11 +184,6 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
-namespace
-{
-    bsp::IIicHost *_iic_host = nullptr;
-}
-
 int main(void)
 {
     DI_Initialize();
