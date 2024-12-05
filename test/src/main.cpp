@@ -191,50 +191,47 @@ namespace
 
 int main(void)
 {
-    while (true)
-    {
-        try
-        {
-            DI_Initialize();
+    DI_Initialize();
 
-            DI_TaskManager().Create(
-                []()
+    DI_TaskManager().Create(
+        []()
+        {
+            try
+            {
+                DI_Serial().Open(*DICreate_ISerialOptions());
+                DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
+                SDRAM_Init();
+
+                bsp::AT24C02_EEROM eerom{DI_IicHostCollection().Get("eerom_iic_host")};
+
+                // TestLittleFs();
+                // TestFatFs();
+                while (true)
                 {
-                    DI_Serial().Open(*DICreate_ISerialOptions());
-                    DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
-                    SDRAM_Init();
+                    DI_GreenDigitalLed().Toggle();
+                    eerom.WriteByte(0, 6);
+                    std::cout << static_cast<int>(eerom.ReadByte(0)) << std::endl;
+                    // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
+                    DI_Delayer().Delay(std::chrono::seconds{1});
+                }
 
-                    bsp::AT24C02_EEROM eerom{DI_IicHostCollection().Get("eerom_iic_host")};
+                // TestUniversalTimer1();
+                // bsp::TestFlash();
+                // TestExtiKey();
+                // bsp::TestSerial();
+                // bsp::TestKeyScanner();
+                // bsp::TestIndependentWatchDog();
+            }
+            catch (std::exception const &e)
+            {
+                DI_Console().WriteError(e.what());
+            }
+            catch (...)
+            {
+                DI_Console().WriteError("发生了未知的异常");
+            }
+        },
+        1024);
 
-                    // TestLittleFs();
-                    // TestFatFs();
-                    while (true)
-                    {
-                        DI_GreenDigitalLed().Toggle();
-                        eerom.WriteByte(0, 6);
-                        std::cout << static_cast<int>(eerom.ReadByte(0)) << std::endl;
-                        // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
-                        DI_Delayer().Delay(std::chrono::seconds{1});
-                    }
-
-                    // TestUniversalTimer1();
-                    // bsp::TestFlash();
-                    // TestExtiKey();
-                    // bsp::TestSerial();
-                    // bsp::TestKeyScanner();
-                    // bsp::TestIndependentWatchDog();
-                },
-                1024);
-
-            DI_TaskManager().StartScheduler();
-        }
-        catch (std::exception const &e)
-        {
-            DI_Console().WriteError(e.what());
-        }
-        catch (...)
-        {
-            DI_Console().WriteError("发生了未知的异常");
-        }
-    }
+    DI_TaskManager().StartScheduler();
 }
