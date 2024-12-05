@@ -1,7 +1,10 @@
 #include "myiic.h"
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/gpio.h>
+#include <bsp-interface/serial/GpioSoftwareIicHost.h>
 #include <hal.h>
+
+bsp::GpioSoftwareIicHost _iic_host{"iic", "PH4", "PH5"};
 
 // IO操作
 #define IIC_SCL(n) (n ? HAL_GPIO_WritePin(GPIOH, GPIO_PIN_4, GPIO_PIN_SET) : HAL_GPIO_WritePin(GPIOH, GPIO_PIN_4, GPIO_PIN_RESET)) // SCL
@@ -23,19 +26,7 @@
 // IIC初始化
 void IIC_Init(void)
 {
-    GPIO_InitTypeDef GPIO_Initure;
-
-    __HAL_RCC_GPIOH_CLK_ENABLE(); // 使能GPIOH时钟
-
-    // PH4,5初始化设置
-    GPIO_Initure.Pin = GPIO_PIN_4 | GPIO_PIN_5;
-    GPIO_Initure.Mode = GPIO_MODE_OUTPUT_PP;        // 推挽输出
-    GPIO_Initure.Pull = GPIO_PULLUP;                // 上拉
-    GPIO_Initure.Speed = GPIO_SPEED_FREQ_VERY_HIGH; // 快速
-    HAL_GPIO_Init(GPIOH, &GPIO_Initure);
-
-    IIC_SDA(1);
-    IIC_SCL(1);
+    _iic_host.Open();
 }
 
 // 产生IIC起始信号
@@ -152,6 +143,7 @@ uint8_t IIC_Read_Byte(unsigned char ack)
 
         DI_Delayer().Delay(std::chrono::microseconds{1});
     }
+
     if (!ack)
     {
         IIC_NAck(); // 发送nACK
