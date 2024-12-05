@@ -5,14 +5,15 @@
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/core.h>
 #include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/led.h>
 #include <bsp-interface/di/task.h>
+#include <bsp-interface/eerom/AT24C02_EEROM.h>
 #include <bsp-interface/flash/RmaFlash.h>
 #include <bsp-interface/test/TestFlash.h>
 #include <bsp-interface/test/TestIndependentWatchDog.h>
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
-#include <bsp/24cxx.h>
 #include <bsp/bsp.h>
 #include <bsp/sdram.h>
 #include <ff.h>
@@ -183,6 +184,11 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
+namespace
+{
+    bsp::IIicHost *_iic_host = nullptr;
+}
+
 int main(void)
 {
     while (true)
@@ -197,14 +203,16 @@ int main(void)
                     DI_Serial().Open(*DICreate_ISerialOptions());
                     DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                     SDRAM_Init();
-                    AT24CXX_Init();
+
+                    bsp::AT24C02_EEROM eerom{DI_IicHostCollection().Get("eerom_iic_host")};
+
                     // TestLittleFs();
                     // TestFatFs();
                     while (true)
                     {
                         DI_GreenDigitalLed().Toggle();
-                        AT24CXX_WriteOneByte(0, 6);
-                        std::cout << static_cast<int>(AT24CXX_ReadOneByte(0)) << std::endl;
+                        eerom.WriteByte(0, 6);
+                        std::cout << static_cast<int>(eerom.ReadByte(0)) << std::endl;
                         // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
                         DI_Delayer().Delay(std::chrono::seconds{1});
                     }
