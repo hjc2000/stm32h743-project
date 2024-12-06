@@ -14,16 +14,8 @@ namespace bsp
     private:
         RedDigitalLed()
         {
-            auto options = DICreate_GpioPinOptions();
-            options->SetDirection(bsp::IGpioPinDirection::Output);
-            options->SetDriver(bsp::IGpioPinDriver::PushPull);
-            options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
-            options->SetSpeedLevel(3);
-            options->SetWorkMode(bsp::IGpioPinWorkMode::Gpio);
-
             _pin = DI_GpioPinCollection().Get("PB1");
-            _pin->Open(*options);
-
+            _pin->OpenAsOutputMode(bsp::IGpioPinPullMode::PullUp, bsp::IGpioPinDriver::PushPull);
             TurnOff();
         }
 
@@ -66,16 +58,8 @@ namespace bsp
     private:
         GreenDigitalLed()
         {
-            auto options = DICreate_GpioPinOptions();
-            options->SetDirection(bsp::IGpioPinDirection::Output);
-            options->SetDriver(bsp::IGpioPinDriver::PushPull);
-            options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
-            options->SetSpeedLevel(3);
-            options->SetWorkMode(bsp::IGpioPinWorkMode::Gpio);
-
             _pin = DI_GpioPinCollection().Get("PB0");
-            _pin->Open(*options);
-
+            _pin->OpenAsOutputMode(bsp::IGpioPinPullMode::PullUp, bsp::IGpioPinDriver::PushPull);
             TurnOff();
         }
 

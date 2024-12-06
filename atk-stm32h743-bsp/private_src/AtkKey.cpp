@@ -4,13 +4,8 @@
 
 bsp::Key0::Key0()
 {
-    auto options = DICreate_GpioPinOptions();
-    options->SetDirection(bsp::IGpioPinDirection::Input);
-    options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
-    options->SetSpeedLevel(3);
-    options->SetWorkMode(bsp::IGpioPinWorkMode::Gpio);
     _pin = DI_GpioPinCollection().Get("PH3");
-    _pin->Open(*options);
+    _pin->OpenAsInputMode(bsp::IGpioPinPullMode::PullUp, bsp::IGpioPinTriggerEdge::Disable);
 }
 
 bool bsp::Key0::KeyIsDown()
@@ -25,13 +20,8 @@ bool bsp::Key0::KeyIsDown()
 
 bsp::Key1::Key1()
 {
-    auto options = DICreate_GpioPinOptions();
-    options->SetDirection(bsp::IGpioPinDirection::Input);
-    options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
-    options->SetSpeedLevel(3);
-    options->SetWorkMode(bsp::IGpioPinWorkMode::Gpio);
     _pin = DI_GpioPinCollection().Get("PH2");
-    _pin->Open(*options);
+    _pin->OpenAsInputMode(bsp::IGpioPinPullMode::PullUp, bsp::IGpioPinTriggerEdge::Disable);
 }
 
 bool bsp::Key1::KeyIsDown()

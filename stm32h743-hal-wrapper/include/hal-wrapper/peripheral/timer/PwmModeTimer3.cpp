@@ -13,15 +13,10 @@ void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
                                HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance()._handle);
                            });
 
-    auto options = DICreate_GpioPinOptions();
-    options->SetAlternateFunction("timer3");
-    options->SetDriver(bsp::IGpioPinDriver::PushPull);
-    options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
-    options->SetSpeedLevel(3);
-    options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
-
     auto pin = DI_GpioPinCollection().Get("PB1");
-    pin->Open(*options);
+    pin->OpenAsAlternateFunctionMode("timer3",
+                                     bsp::IGpioPinPullMode::PullUp,
+                                     bsp::IGpioPinDriver::PushPull);
 }
 
 void hal::PwmModeTimer3::PwmInitialize(hal::UniversalTimerBaseConfig &config)

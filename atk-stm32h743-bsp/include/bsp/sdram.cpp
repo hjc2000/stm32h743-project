@@ -8,13 +8,6 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
 {
     __HAL_RCC_FMC_CLK_ENABLE();
 
-    std::shared_ptr<bsp::IGpioPinOptions> options = DICreate_GpioPinOptions();
-    options->SetAlternateFunction("fmc");
-    options->SetWorkMode(bsp::IGpioPinWorkMode::AlternateFunction);
-    options->SetDriver(bsp::IGpioPinDriver::PushPull);
-    options->SetPullMode(bsp::IGpioPinPullMode::PullUp);
-    options->SetSpeedLevel(3);
-
     char const *pin_names[] = {
         "PC0",
         "PC2",
@@ -59,7 +52,9 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
     for (char const *pin_name : pin_names)
     {
         bsp::IGpioPin *pin = DI_GpioPinCollection().Get(pin_name);
-        pin->Open(*options);
+        pin->OpenAsAlternateFunctionMode("fmc",
+                                         bsp::IGpioPinPullMode::PullUp,
+                                         bsp::IGpioPinDriver::PushPull);
     }
 }
 
