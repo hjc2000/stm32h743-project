@@ -9,7 +9,6 @@
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/led.h>
 #include <bsp-interface/di/task.h>
-#include <bsp-interface/eerom/AT24C02_EEROM.h>
 #include <bsp-interface/flash/RmaFlash.h>
 #include <bsp-interface/test/TestFlash.h>
 #include <bsp-interface/test/TestIndependentWatchDog.h>
@@ -205,8 +204,8 @@ int main(void)
                 while (true)
                 {
                     DI_GreenDigitalLed().Toggle();
-                    eerom->WriteByte(0, 6);
-                    std::cout << static_cast<int>(eerom->ReadByte(0)) << std::endl;
+                    eerom->WriteUInt64(0, 65536);
+                    std::cout << eerom->ReadUInt64(0) << std::endl;
                     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
                     DI_Delayer().Delay(std::chrono::seconds{1});
                 }
