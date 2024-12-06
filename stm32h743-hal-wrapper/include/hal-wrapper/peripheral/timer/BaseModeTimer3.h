@@ -39,7 +39,7 @@ namespace hal
 
         void SetPeriodElapsedCallback(std::function<void()> func)
         {
-            DI_InterruptSwitch().DoGlobalCriticalWork(
+            DI_DoGlobalCriticalWork(
                 [&]()
                 {
                     _period_elapsed_callback = func;
