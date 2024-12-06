@@ -5,6 +5,7 @@
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/core.h>
 #include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/eerom.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/led.h>
 #include <bsp-interface/di/task.h>
@@ -197,15 +198,15 @@ int main(void)
                 DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                 SDRAM_Init();
 
-                bsp::AT24C02_EEROM eerom{DI_IicHostCollection().Get("gpio_iic_host")};
+                bsp::IEEROM *eerom = DI_EEROMCollection().Get("at24c02");
 
                 // TestLittleFs();
                 // TestFatFs();
                 while (true)
                 {
                     DI_GreenDigitalLed().Toggle();
-                    eerom.WriteByte(0, 6);
-                    std::cout << static_cast<int>(eerom.ReadByte(0)) << std::endl;
+                    eerom->WriteByte(0, 6);
+                    std::cout << static_cast<int>(eerom->ReadByte(0)) << std::endl;
                     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
                     DI_Delayer().Delay(std::chrono::seconds{1});
                 }
