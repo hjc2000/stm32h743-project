@@ -9,8 +9,8 @@ namespace
     class Initializer
     {
     private:
-        /// @brief 连接着 EEROM 芯片的软件模拟 IIC 主机接口。
-        bsp::GpioSoftwareIicHost _eerom_iic_host{"eerom_iic_host", "PH4", "PH5"};
+        /// @brief 连接着 EEROM 芯片和 PCF8574T 芯片的 GPIO 模拟 IIC 主机接口。
+        bsp::GpioSoftwareIicHost _gpio_iic_host{"gpio_iic_host", "PH4", "PH5"};
 
         void Add(bsp::IIicHost *host)
         {
@@ -20,7 +20,7 @@ namespace
     public:
         Initializer()
         {
-            Add(&_eerom_iic_host);
+            Add(&_gpio_iic_host);
         }
 
         base::Dictionary<std::string, bsp::IIicHost *> _dic;

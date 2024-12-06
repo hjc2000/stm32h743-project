@@ -197,7 +197,7 @@ int main(void)
                 DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                 SDRAM_Init();
 
-                bsp::AT24C02_EEROM eerom{DI_IicHostCollection().Get("eerom_iic_host")};
+                bsp::AT24C02_EEROM eerom{DI_IicHostCollection().Get("gpio_iic_host")};
 
                 // TestLittleFs();
                 // TestFatFs();
