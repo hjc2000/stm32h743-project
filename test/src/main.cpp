@@ -198,13 +198,13 @@ int main(void)
                 SDRAM_Init();
 
                 bsp::IEEROM *eerom = DI_EEROMCollection().Get("at24c02");
+                eerom->WriteUInt64(0, 123456789);
 
                 // TestLittleFs();
                 // TestFatFs();
                 while (true)
                 {
                     DI_GreenDigitalLed().Toggle();
-                    eerom->WriteUInt64(0, 65536);
                     std::cout << eerom->ReadUInt64(0) << std::endl;
                     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
                     DI_Delayer().Delay(std::chrono::seconds{1});
