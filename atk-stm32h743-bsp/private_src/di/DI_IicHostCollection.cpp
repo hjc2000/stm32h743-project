@@ -2,7 +2,7 @@
 #include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/interrupt.h>
-#include <bsp-interface/serial/GpioSoftwareIicHost.h>
+#include <bsp-interface/iic/GpioSoftwareIicHost.h>
 
 namespace
 {
