@@ -213,6 +213,7 @@ int main(void)
                 eerom->WriteUInt64(0, 123456789);
 
                 bsp::IExpandedIoPort *ex_io = DI_ExpandedIoPortCollection().Get("ex_io");
+                ex_io->WriteBit(0, true);
 
                 // TestLittleFs();
                 // TestFatFs();
