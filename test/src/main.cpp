@@ -6,11 +6,11 @@
 #include <bsp-interface/di/core.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/eerom.h>
+#include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/led.h>
 #include <bsp-interface/di/task.h>
-#include <bsp-interface/expanded_io/PCF8574.h>
 #include <bsp-interface/flash/RmaFlash.h>
 #include <bsp-interface/test/TestFlash.h>
 #include <bsp-interface/test/TestIndependentWatchDog.h>
@@ -186,6 +186,16 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
+// PCF8574各个IO的功能
+#define BEEP_IO 0      // 蜂鸣器控制引脚  	P0
+#define AP_INT_IO 1    // AP3216C中断引脚	P1
+#define DCMI_PWDN_IO 2 // DCMI的电源控制引脚	P2
+#define USB_PWR_IO 3   // USB电源控制引脚	P3
+#define EX_IO 4        // 扩展IO,自定义使用 	P4
+#define MPU_INT_IO 5   // MPU9250中断引脚	P5
+#define RS485_RE_IO 6  // RS485_RE引脚		P6
+#define ETH_RESET_IO 7 // 以太网复位引脚		P7
+
 int main(void)
 {
     DI_Initialize();
@@ -202,12 +212,7 @@ int main(void)
                 bsp::IEEROM *eerom = DI_EEROMCollection().Get("at24c02");
                 eerom->WriteUInt64(0, 123456789);
 
-                bsp::PCF8574 io{
-                    "ex_io",
-                    DI_GpioPinCollection().Get("PB12"),
-                    DI_IicHostCollection().Get("gpio_iic_host"),
-                    0,
-                };
+                bsp::IExpandedIoPort *ex_io = DI_ExpandedIoPortCollection().Get("ex_io");
 
                 // TestLittleFs();
                 // TestFatFs();
@@ -216,7 +221,7 @@ int main(void)
                     DI_GreenDigitalLed().Toggle();
                     std::cout << eerom->ReadUInt64(0) << std::endl;
                     DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
-                    // io.ToggleBit(0);
+                    // ex_io->ToggleBit(0);
                     DI_Delayer().Delay(std::chrono::seconds{1});
                 }
 
