@@ -6,9 +6,11 @@
 #include <bsp-interface/di/core.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/eerom.h>
+#include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/led.h>
 #include <bsp-interface/di/task.h>
+#include <bsp-interface/expanded_io/PCF8574.h>
 #include <bsp-interface/flash/RmaFlash.h>
 #include <bsp-interface/test/TestFlash.h>
 #include <bsp-interface/test/TestIndependentWatchDog.h>
@@ -200,6 +202,13 @@ int main(void)
                 bsp::IEEROM *eerom = DI_EEROMCollection().Get("at24c02");
                 eerom->WriteUInt64(0, 123456789);
 
+                bsp::PCF8574 io{
+                    "ex_io",
+                    DI_GpioPinCollection().Get("PB12"),
+                    DI_IicHostCollection().Get("gpio_iic_host"),
+                    0,
+                };
+
                 // TestLittleFs();
                 // TestFatFs();
                 while (true)
@@ -207,6 +216,7 @@ int main(void)
                     DI_GreenDigitalLed().Toggle();
                     std::cout << eerom->ReadUInt64(0) << std::endl;
                     DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
+                    // io.ToggleBit(0);
                     DI_Delayer().Delay(std::chrono::seconds{1});
                 }
 
