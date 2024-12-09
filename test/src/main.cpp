@@ -186,10 +186,6 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
-extern uint32_t lwip_localtime; // lwip本地时间计数器,单位:ms
-
-void PrintAddresses();
-
 int main(void)
 {
     DI_Initialize();
@@ -199,7 +195,7 @@ int main(void)
         {
             while (true)
             {
-                lwip_localtime += 10;
+                // lwip_localtime += 10;
                 DI_RedDigitalLed().Toggle();
                 DI_Delayer().Delay(std::chrono::milliseconds{10});
             }
