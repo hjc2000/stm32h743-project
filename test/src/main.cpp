@@ -219,17 +219,17 @@ int main(void)
                 eerom->WriteUInt64(0, 123456789);
 
                 // TestLittleFs();
-                // TestFatFs();
-                while (true)
-                {
-                    DI_GreenDigitalLed().Toggle();
-                    // std::cout << eerom->ReadUInt64(0) << std::endl;
-                    // std::cout << lwip_localtime << std::endl;
-                    // PrintAddresses();
-                    TestSDRAM();
-                    // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
-                    DI_Delayer().Delay(std::chrono::seconds{1});
-                }
+                TestFatFs();
+                // while (true)
+                // {
+                //     DI_GreenDigitalLed().Toggle();
+                //     // std::cout << eerom->ReadUInt64(0) << std::endl;
+                //     // std::cout << lwip_localtime << std::endl;
+                //     // PrintAddresses();
+                //     // TestSDRAM();
+                //     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
+                //     DI_Delayer().Delay(std::chrono::seconds{1});
+                // }
 
                 // TestUniversalTimer1();
                 // bsp::TestFlash();

@@ -8,7 +8,7 @@
 
 namespace
 {
-    int const _buffer_size = 200 * 1024;
+    int const _buffer_size = 1024 * 1024;
 
     /// @brief 每个扇区的大小（单位：字节）
     int const _sector_size = 512;
@@ -17,7 +17,7 @@ namespace
     int const _sector_count = _buffer_size / _sector_size;
 
     /// @brief 定义一个静态数组作为磁盘存储空间
-    uint8_t _buffer[_buffer_size];
+    uint8_t *_buffer = reinterpret_cast<uint8_t *>(0xC0000000);
 
 } // namespace
 
