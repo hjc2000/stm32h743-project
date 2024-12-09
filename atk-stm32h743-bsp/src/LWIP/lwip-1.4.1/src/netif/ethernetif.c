@@ -4,15 +4,15 @@
 #include "netif/etharp.h"
 #include "string.h"
 //////////////////////////////////////////////////////////////////////////////////
-// ±¾³ÌĞòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßĞí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
-// ALIENTEK STM32H7¿ª·¢°å
-// LWIP ethernetifÇı¶¯´úÂë
-// ÕıµãÔ­×Ó@ALIENTEK
-// ¼¼ÊõÂÛÌ³:www.openedv.com
-// ´´½¨ÈÕÆÚ:2018/7/6
-// °æ±¾£ºV1.0
-// °æÈ¨ËùÓĞ£¬µÁ°æ±Ø¾¿¡£
-// Copyright(C) ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾ 2014-2024
+// æœ¬ç¨‹åºåªä¾›å­¦ä¹ ä½¿ç”¨ï¼Œæœªç»ä½œè€…è®¸å¯ï¼Œä¸å¾—ç”¨äºå…¶å®ƒä»»ä½•ç”¨é€”
+// ALIENTEK STM32H7å¼€å‘æ¿
+// LWIP ethernetifé©±åŠ¨ä»£ç 
+// æ­£ç‚¹åŸå­@ALIENTEK
+// æŠ€æœ¯è®ºå›:www.openedv.com
+// åˆ›å»ºæ—¥æœŸ:2018/7/6
+// ç‰ˆæœ¬ï¼šV1.0
+// ç‰ˆæƒæ‰€æœ‰ï¼Œç›—ç‰ˆå¿…ç©¶ã€‚
+// Copyright(C) å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸ 2014-2024
 // All rights reserved
 //////////////////////////////////////////////////////////////////////////////////
 ETH_TxPacketConfig TxConfig;
@@ -20,10 +20,10 @@ uint32_t current_pbuf_idx = 0;
 struct pbuf_custom rx_pbuf[ETH_RX_DESC_CNT];
 void pbuf_free_custom(struct pbuf *p);
 
-// ÓÉethernetif_init()µ÷ÓÃÓÃÓÚ³õÊ¼»¯Ó²¼ş
-// netif:Íø¿¨½á¹¹ÌåÖ¸Õë
-// ·µ»ØÖµ:ERR_OK,Õı³£
-//        ÆäËû,Ê§°Ü
+// ç”±ethernetif_init()è°ƒç”¨ç”¨äºåˆå§‹åŒ–ç¡¬ä»¶
+// netif:ç½‘å¡ç»“æ„ä½“æŒ‡é’ˆ
+// è¿”å›å€¼:ERR_OK,æ­£å¸¸
+//        å…¶ä»–,å¤±è´¥
 static void low_level_init(struct netif *netif)
 {
     uint32_t idx = 0;
@@ -31,15 +31,15 @@ static void low_level_init(struct netif *netif)
     uint32_t PHYLinkState;
     uint32_t speed = 0, duplex = 0;
 
-    netif->hwaddr_len = ETHARP_HWADDR_LEN; // ÉèÖÃMACµØÖ·³¤¶È,Îª6¸ö×Ö½Ú
-    // ³õÊ¼»¯MACµØÖ·,ÉèÖÃÊ²Ã´µØÖ·ÓÉÓÃ»§×Ô¼ºÉèÖÃ,µ«ÊÇ²»ÄÜÓëÍøÂçÖĞÆäËûÉè±¸MACµØÖ·ÖØ¸´
+    netif->hwaddr_len = ETHARP_HWADDR_LEN; // è®¾ç½®MACåœ°å€é•¿åº¦,ä¸º6ä¸ªå­—èŠ‚
+    // åˆå§‹åŒ–MACåœ°å€,è®¾ç½®ä»€ä¹ˆåœ°å€ç”±ç”¨æˆ·è‡ªå·±è®¾ç½®,ä½†æ˜¯ä¸èƒ½ä¸ç½‘ç»œä¸­å…¶ä»–è®¾å¤‡MACåœ°å€é‡å¤
     netif->hwaddr[0] = lwipdev.mac[0];
     netif->hwaddr[1] = lwipdev.mac[1];
     netif->hwaddr[2] = lwipdev.mac[2];
     netif->hwaddr[3] = lwipdev.mac[3];
     netif->hwaddr[4] = lwipdev.mac[4];
     netif->hwaddr[5] = lwipdev.mac[5];
-    netif->mtu = ETH_MAX_PAYLOAD; // ×î´óÔÊĞí´«Êäµ¥Ôª,ÔÊĞí¸ÃÍø¿¨¹ã²¥ºÍARP¹¦ÄÜ
+    netif->mtu = ETH_MAX_PAYLOAD; // æœ€å¤§å…è®¸ä¼ è¾“å•å…ƒ,å…è®¸è¯¥ç½‘å¡å¹¿æ’­å’ŒARPåŠŸèƒ½
 
     netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
     for (idx = 0; idx < ETH_RX_DESC_CNT; idx++)
@@ -52,22 +52,22 @@ static void low_level_init(struct netif *netif)
     TxConfig.Attributes = ETH_TX_PACKETS_FEATURES_CSUM | ETH_TX_PACKETS_FEATURES_CRCPAD;
     TxConfig.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
     TxConfig.CRCPadCtrl = ETH_CRC_PAD_INSERT;
-    PHYLinkState = LAN8720_GetLinkState(); // »ñÈ¡Á¬½Ó×´Ì¬
+    PHYLinkState = LAN8720_GetLinkState(); // è·å–è¿æ¥çŠ¶æ€
     switch (PHYLinkState)
     {
-    case LAN8720_STATUS_100MBITS_FULLDUPLEX: // 100MÈ«Ë«¹¤
+    case LAN8720_STATUS_100MBITS_FULLDUPLEX: // 100Må…¨åŒå·¥
         duplex = ETH_FULLDUPLEX_MODE;
         speed = ETH_SPEED_100M;
         break;
-    case LAN8720_STATUS_100MBITS_HALFDUPLEX: // 100M°ëË«¹¤
+    case LAN8720_STATUS_100MBITS_HALFDUPLEX: // 100MåŠåŒå·¥
         duplex = ETH_HALFDUPLEX_MODE;
         speed = ETH_SPEED_100M;
         break;
-    case LAN8720_STATUS_10MBITS_FULLDUPLEX: // 10MÈ«Ë«¹¤
+    case LAN8720_STATUS_10MBITS_FULLDUPLEX: // 10Må…¨åŒå·¥
         duplex = ETH_FULLDUPLEX_MODE;
         speed = ETH_SPEED_10M;
         break;
-    case LAN8720_STATUS_10MBITS_HALFDUPLEX: // 10M°ëË«¹¤
+    case LAN8720_STATUS_10MBITS_HALFDUPLEX: // 10MåŠåŒå·¥
         duplex = ETH_HALFDUPLEX_MODE;
         speed = ETH_SPEED_10M;
         break;
@@ -78,19 +78,19 @@ static void low_level_init(struct netif *netif)
     HAL_ETH_GetMACConfig(&LAN8720_ETHHandle, &MACConf);
     MACConf.DuplexMode = duplex;
     MACConf.Speed = speed;
-    HAL_ETH_SetMACConfig(&LAN8720_ETHHandle, &MACConf); // ÉèÖÃMAC
+    HAL_ETH_SetMACConfig(&LAN8720_ETHHandle, &MACConf); // è®¾ç½®MAC
     HAL_ETH_Start_IT(&LAN8720_ETHHandle);
-    netif_set_up(netif);      // ´ò¿ªÍø¿¨
-    netif_set_link_up(netif); // ¿ªÆôÍø¿¨Á¬½Ó
+    netif_set_up(netif);      // æ‰“å¼€ç½‘å¡
+    netif_set_link_up(netif); // å¼€å¯ç½‘å¡è¿æ¥
 
     // ethernet_link_check_state(netif);
 }
 
-// ÓÃÓÚ·¢ËÍÊı¾İ°üµÄ×îµ×²ãº¯Êı(lwipÍ¨¹ınetif->linkoutputÖ¸Ïò¸Ãº¯Êı)
-// netif:Íø¿¨½á¹¹ÌåÖ¸Õë
-// p:pbufÊı¾İ½á¹¹ÌåÖ¸Õë
-// ·µ»ØÖµ:ERR_OK,·¢ËÍÕı³£
-//        ERR_MEM,·¢ËÍÊ§°Ü
+// ç”¨äºå‘é€æ•°æ®åŒ…çš„æœ€åº•å±‚å‡½æ•°(lwipé€šè¿‡netif->linkoutputæŒ‡å‘è¯¥å‡½æ•°)
+// netif:ç½‘å¡ç»“æ„ä½“æŒ‡é’ˆ
+// p:pbufæ•°æ®ç»“æ„ä½“æŒ‡é’ˆ
+// è¿”å›å€¼:ERR_OK,å‘é€æ­£å¸¸
+//        ERR_MEM,å‘é€å¤±è´¥
 static err_t low_level_output(struct netif *netif, struct pbuf *p)
 {
     uint32_t i = 0, framelen = 0;
@@ -122,15 +122,15 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
     TxConfig.Length = framelen;
     TxConfig.TxBuffer = Txbuffer;
 
-    SCB_CleanInvalidateDCache(); // ÎŞĞ§»¯²¢Çå³ıDcache
+    SCB_CleanInvalidateDCache(); // æ— æ•ˆåŒ–å¹¶æ¸…é™¤Dcache
     HAL_ETH_Transmit(&LAN8720_ETHHandle, &TxConfig, 0);
 
     return errval;
 }
 
-// ÓÃÓÚ½ÓÊÕÊı¾İ°üµÄ×îµ×²ãº¯Êı
-// neitif:Íø¿¨½á¹¹ÌåÖ¸Õë
-// ·µ»ØÖµ:pbufÊı¾İ½á¹¹ÌåÖ¸Õë
+// ç”¨äºæ¥æ”¶æ•°æ®åŒ…çš„æœ€åº•å±‚å‡½æ•°
+// neitif:ç½‘å¡ç»“æ„ä½“æŒ‡é’ˆ
+// è¿”å›å€¼:pbufæ•°æ®ç»“æ„ä½“æŒ‡é’ˆ
 static struct pbuf *low_level_input(struct netif *netif)
 {
     struct pbuf *p = NULL;
@@ -139,7 +139,7 @@ static struct pbuf *low_level_input(struct netif *netif)
 
     if (HAL_ETH_IsRxDataAvailable(&LAN8720_ETHHandle))
     {
-        SCB_CleanInvalidateDCache(); // ÎŞĞ§»¯²¢ÇÒÇå³ıDcache
+        SCB_CleanInvalidateDCache(); // æ— æ•ˆåŒ–å¹¶ä¸”æ¸…é™¤Dcache
         HAL_ETH_GetRxDataBuffer(&LAN8720_ETHHandle, &RxBuff);
         HAL_ETH_GetRxDataLength(&LAN8720_ETHHandle, &framelength);
         p = pbuf_alloced_custom(PBUF_RAW, framelength, PBUF_POOL, &rx_pbuf[current_pbuf_idx], RxBuff.buffer, framelength);
@@ -161,10 +161,10 @@ static struct pbuf *low_level_input(struct netif *netif)
     }
 }
 
-// Íø¿¨½ÓÊÕÊı¾İ(lwipÖ±½Óµ÷ÓÃ)
-// netif:Íø¿¨½á¹¹ÌåÖ¸Õë
-// ·µ»ØÖµ:ERR_OK,·¢ËÍÕı³£
-//        ERR_MEM,·¢ËÍÊ§°Ü
+// ç½‘å¡æ¥æ”¶æ•°æ®(lwipç›´æ¥è°ƒç”¨)
+// netif:ç½‘å¡ç»“æ„ä½“æŒ‡é’ˆ
+// è¿”å›å€¼:ERR_OK,å‘é€æ­£å¸¸
+//        ERR_MEM,å‘é€å¤±è´¥
 err_t ethernetif_input(struct netif *netif)
 {
     err_t err;
@@ -184,16 +184,16 @@ err_t ethernetif_input(struct netif *netif)
     return err;
 }
 
-// ´Ëº¯ÊıÊ¹ÓÃlow_level_init()º¯ÊıÀ´³õÊ¼»¯ÍøÂç
-// netif:Íø¿¨½á¹¹ÌåÖ¸Õë
-// ·µ»ØÖµ:ERR_OK,Õı³£
-//        ÆäËû,Ê§°Ü
+// æ­¤å‡½æ•°ä½¿ç”¨low_level_init()å‡½æ•°æ¥åˆå§‹åŒ–ç½‘ç»œ
+// netif:ç½‘å¡ç»“æ„ä½“æŒ‡é’ˆ
+// è¿”å›å€¼:ERR_OK,æ­£å¸¸
+//        å…¶ä»–,å¤±è´¥
 err_t ethernetif_init(struct netif *netif)
 {
     LWIP_ASSERT("netif != NULL", (netif != NULL));
 
 #if LWIP_NETIF_HOSTNAME
-    netif->hostname = "lwip"; // Ö÷»úÃû×Ö
+    netif->hostname = "lwip"; // ä¸»æœºåå­—
 #endif
 
     netif->name[0] = IFNAME0;
@@ -204,8 +204,8 @@ err_t ethernetif_init(struct netif *netif)
     return ERR_OK;
 }
 
-// ÓÃ»§×Ô¶¨ÒåµÄ½ÓÊÕpbufÊÍ·Åº¯Êı
-// p£ºÒªÊÍ·ÅµÄpbuf
+// ç”¨æˆ·è‡ªå®šä¹‰çš„æ¥æ”¶pbufé‡Šæ”¾å‡½æ•°
+// pï¼šè¦é‡Šæ”¾çš„pbuf
 void pbuf_free_custom(struct pbuf *p)
 {
     if (p != NULL)
@@ -218,42 +218,42 @@ void pbuf_free_custom(struct pbuf *p)
     }
 }
 
-// ÍøÂçÁ¬½Ó×´Ì¬¼ì²é
+// ç½‘ç»œè¿æ¥çŠ¶æ€æ£€æŸ¥
 void ethernet_link_check_state(struct netif *netif)
 {
     ETH_MACConfigTypeDef MACConf;
     uint32_t PHYLinkState;
     uint32_t linkchanged = 0, speed = 0, duplex = 0;
 
-    PHYLinkState = LAN8720_GetLinkState(); // »ñÈ¡Á¬½Ó×´Ì¬
-    // Èç¹û¼ì²âµ½Á¬½Ó¶Ï¿ª»òÕß²»Õı³£¾Í¹Ø±ÕÍø¿Ú
+    PHYLinkState = LAN8720_GetLinkState(); // è·å–è¿æ¥çŠ¶æ€
+    // å¦‚æœæ£€æµ‹åˆ°è¿æ¥æ–­å¼€æˆ–è€…ä¸æ­£å¸¸å°±å…³é—­ç½‘å£
     if (netif_is_link_up(netif) && (PHYLinkState <= LAN8720_STATUS_LINK_DOWN))
     {
         HAL_ETH_Stop_IT(&LAN8720_ETHHandle);
-        netif_set_down(netif);      // ¹Ø±ÕÍø¿Ú
-        netif_set_link_down(netif); // Á¬½Ó¹Ø±Õ
+        netif_set_down(netif);      // å…³é—­ç½‘å£
+        netif_set_link_down(netif); // è¿æ¥å…³é—­
     }
-    // LWIPÍø¿¨»¹Î´´ò¿ª£¬µ«ÊÇLAN8720ÒÑ¾­Ğ­ÉÌ³É¹¦
+    // LWIPç½‘å¡è¿˜æœªæ‰“å¼€ï¼Œä½†æ˜¯LAN8720å·²ç»åå•†æˆåŠŸ
     else if (!netif_is_link_up(netif) && (PHYLinkState > LAN8720_STATUS_LINK_DOWN))
     {
         switch (PHYLinkState)
         {
-        case LAN8720_STATUS_100MBITS_FULLDUPLEX: // 100MÈ«Ë«¹¤
+        case LAN8720_STATUS_100MBITS_FULLDUPLEX: // 100Må…¨åŒå·¥
             duplex = ETH_FULLDUPLEX_MODE;
             speed = ETH_SPEED_100M;
             linkchanged = 1;
             break;
-        case LAN8720_STATUS_100MBITS_HALFDUPLEX: // 100M°ëË«¹¤
+        case LAN8720_STATUS_100MBITS_HALFDUPLEX: // 100MåŠåŒå·¥
             duplex = ETH_HALFDUPLEX_MODE;
             speed = ETH_SPEED_100M;
             linkchanged = 1;
             break;
-        case LAN8720_STATUS_10MBITS_FULLDUPLEX: // 10MÈ«Ë«¹¤
+        case LAN8720_STATUS_10MBITS_FULLDUPLEX: // 10Må…¨åŒå·¥
             duplex = ETH_FULLDUPLEX_MODE;
             speed = ETH_SPEED_10M;
             linkchanged = 1;
             break;
-        case LAN8720_STATUS_10MBITS_HALFDUPLEX: // 10M°ëË«¹¤
+        case LAN8720_STATUS_10MBITS_HALFDUPLEX: // 10MåŠåŒå·¥
             duplex = ETH_HALFDUPLEX_MODE;
             speed = ETH_SPEED_10M;
             linkchanged = 1;
@@ -262,15 +262,15 @@ void ethernet_link_check_state(struct netif *netif)
             break;
         }
 
-        if (linkchanged) // Á¬½ÓÕı³£
+        if (linkchanged) // è¿æ¥æ­£å¸¸
         {
             HAL_ETH_GetMACConfig(&LAN8720_ETHHandle, &MACConf);
             MACConf.DuplexMode = duplex;
             MACConf.Speed = speed;
-            HAL_ETH_SetMACConfig(&LAN8720_ETHHandle, &MACConf); // ÉèÖÃMAC
+            HAL_ETH_SetMACConfig(&LAN8720_ETHHandle, &MACConf); // è®¾ç½®MAC
             HAL_ETH_Start_IT(&LAN8720_ETHHandle);
-            netif_set_up(netif);      // ´ò¿ªÍø¿¨
-            netif_set_link_up(netif); // ¿ªÆôÍø¿¨Á¬½Ó
+            netif_set_up(netif);      // æ‰“å¼€ç½‘å¡
+            netif_set_link_up(netif); // å¼€å¯ç½‘å¡è¿æ¥
         }
     }
 }

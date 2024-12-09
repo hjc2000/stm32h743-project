@@ -8,12 +8,12 @@
 
 ETH_HandleTypeDef LAN8720_ETHHandle;
 
-// ��̫���������ͻ�����
-ETH_DMADescTypeDef DMARxDscrTab[ETH_RX_DESC_CNT];      // ��̫��Rx DMA������
-ETH_DMADescTypeDef DMATxDscrTab[ETH_TX_DESC_CNT];      // ��̫��Tx DMA������
-uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE]; // ��̫�����ջ�����
+// 以太网描述符和缓冲区
+ETH_DMADescTypeDef DMARxDscrTab[ETH_RX_DESC_CNT];      // 以太网Rx DMA描述符
+ETH_DMADescTypeDef DMATxDscrTab[ETH_TX_DESC_CNT];      // 以太网Tx DMA描述符
+uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE]; // 以太网接收缓冲区
 
-// ����������ʹ�õ�0X30040000��ram�ڴ汣��
+// 设置网络所使用的0X30040000的ram内存保护
 void NETMPU_Config(void)
 {
     MPU_Region_InitTypeDef MPU_InitStruct;
@@ -34,7 +34,7 @@ void NETMPU_Config(void)
     HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 }
 
-// ��ʼ��LAN8720
+// 初始化LAN8720
 int32_t LAN8720_Init(void)
 {
     uint8_t macaddress[6];
@@ -45,15 +45,15 @@ int32_t LAN8720_Init(void)
 
     bsp::IExpandedIoPort *ex_io = DI_ExpandedIoPortCollection().Get("ex_io");
 
-    // Ӳ����λ
-    DI_DisableGlobalInterrupt(); // �ر������жϣ���λ���̲��ܱ���ϣ�
-    ex_io->WriteBit(7, 1);       // Ӳ����λ
+    // 硬件复位
+    DI_DisableGlobalInterrupt(); // 关闭所有中断，复位过程不能被打断！
+    ex_io->WriteBit(7, 1);       // 硬件复位
     DI_Delayer().Delay(std::chrono::milliseconds{100});
-    ex_io->WriteBit(7, 0); // ��λ����
+    ex_io->WriteBit(7, 0); // 复位结束
     DI_Delayer().Delay(std::chrono::milliseconds{100});
-    DI_EnableGlobalInterrupt(); // ���������ж�
+    DI_EnableGlobalInterrupt(); // 开启所有中断
 
-    NETMPU_Config(); // MPU��������
+    NETMPU_Config(); // MPU保护设置
     macaddress[0] = lwipdev.mac[0];
     macaddress[1] = lwipdev.mac[1];
     macaddress[2] = lwipdev.mac[2];
@@ -62,17 +62,17 @@ int32_t LAN8720_Init(void)
     macaddress[5] = lwipdev.mac[5];
 
     LAN8720_ETHHandle.Instance = ETH;                          // ETH
-    LAN8720_ETHHandle.Init.MACAddr = macaddress;               // mac��ַ
-    LAN8720_ETHHandle.Init.MediaInterface = HAL_ETH_RMII_MODE; // RMII�ӿ�
-    LAN8720_ETHHandle.Init.RxDesc = DMARxDscrTab;              // ����������
-    LAN8720_ETHHandle.Init.TxDesc = DMATxDscrTab;              // ����������
-    LAN8720_ETHHandle.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;    // ���ճ���
-    HAL_ETH_Init(&LAN8720_ETHHandle);                          // ��ʼ��ETH
+    LAN8720_ETHHandle.Init.MACAddr = macaddress;               // mac地址
+    LAN8720_ETHHandle.Init.MediaInterface = HAL_ETH_RMII_MODE; // RMII接口
+    LAN8720_ETHHandle.Init.RxDesc = DMARxDscrTab;              // 发送描述符
+    LAN8720_ETHHandle.Init.TxDesc = DMATxDscrTab;              // 接收描述如
+    LAN8720_ETHHandle.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;    // 接收长度
+    HAL_ETH_Init(&LAN8720_ETHHandle);                          // 初始化ETH
     HAL_ETH_SetMDIOClockRange(&LAN8720_ETHHandle);
 
-    if (LAN8720_WritePHY(LAN8720_BCR, LAN8720_BCR_SOFT_RESET) >= 0) // LAN8720������λ
+    if (LAN8720_WritePHY(LAN8720_BCR, LAN8720_BCR_SOFT_RESET) >= 0) // LAN8720软件复位
     {
-        // �ȴ�������λ���
+        // 等待软件复位完成
         if (LAN8720_ReadPHY(LAN8720_BCR, &regval) >= 0)
         {
             while (regval & LAN8720_BCR_SOFT_RESET)
@@ -86,7 +86,7 @@ int32_t LAN8720_Init(void)
                 DI_Delayer().Delay(std::chrono::milliseconds{10});
                 timeout++;
                 if (timeout >= LAN8720_TIMEOUT)
-                    break; // ��ʱ����,5S
+                    break; // 超时跳出,5S
             }
         }
         else
@@ -99,14 +99,14 @@ int32_t LAN8720_Init(void)
         status = LAN8720_STATUS_WRITE_ERROR;
     }
 
-    LAN8720_StartAutoNego(); // �����Զ�Э�̹���
+    LAN8720_StartAutoNego(); // 开启自动协商功能
 
-    if (status == LAN8720_STATUS_OK) // ���ǰ��������������ʱ1s
+    if (status == LAN8720_STATUS_OK) // 如果前面运行正常就延时1s
     {
         DI_Delayer().Delay(std::chrono::milliseconds{1000});
     }
 
-    // �ȴ��������ӳɹ�
+    // 等待网络连接成功
     timeout = 0;
     while (LAN8720_GetLinkState() <= LAN8720_STATUS_LINK_DOWN)
     {
@@ -115,7 +115,7 @@ int32_t LAN8720_Init(void)
         if (timeout >= LAN8720_TIMEOUT)
         {
             status = LAN8720_STATUS_LINK_DOWN;
-            break; // ��ʱ����,5S
+            break; // 超时跳出,5S
         }
     }
     phylink = LAN8720_GetLinkState();
@@ -132,57 +132,57 @@ int32_t LAN8720_Init(void)
 
 extern void lwip_pkt_handle(void);
 
-// �жϷ�����
+// 中断服务函数
 void ETH_IRQHandler(void)
 {
     lwip_pkt_handle();
-    // ����жϱ�־λ
-    __HAL_ETH_DMA_CLEAR_IT(&LAN8720_ETHHandle, ETH_DMA_NORMAL_IT); // ���DMA�жϱ�־λ
-    __HAL_ETH_DMA_CLEAR_IT(&LAN8720_ETHHandle, ETH_DMA_RX_IT);     // ���DMA�����жϱ�־λ
-    __HAL_ETH_DMA_CLEAR_IT(&LAN8720_ETHHandle, ETH_DMA_TX_IT);     // ���DMA�����жϱ�־λ
+    // 清除中断标志位
+    __HAL_ETH_DMA_CLEAR_IT(&LAN8720_ETHHandle, ETH_DMA_NORMAL_IT); // 清除DMA中断标志位
+    __HAL_ETH_DMA_CLEAR_IT(&LAN8720_ETHHandle, ETH_DMA_RX_IT);     // 清除DMA接收中断标志位
+    __HAL_ETH_DMA_CLEAR_IT(&LAN8720_ETHHandle, ETH_DMA_TX_IT);     // 清除DMA接收中断标志位
 }
 
-// ETH�ײ��������������ã�ʱ��ʹ��
-// �˺����ᱻHAL_ETH_Init()����
-// heth:ETH���
+// ETH底层驱动，引脚配置，时钟使能
+// 此函数会被HAL_ETH_Init()调用
+// heth:ETH句柄
 void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 {
     GPIO_InitTypeDef GPIO_Initure;
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();   // ����GPIOAʱ��
-    __HAL_RCC_GPIOB_CLK_ENABLE();   // ����GPIOBʱ��
-    __HAL_RCC_GPIOC_CLK_ENABLE();   // ����GPIOCʱ��
-    __HAL_RCC_GPIOG_CLK_ENABLE();   // ����GPIOGʱ��
-    __HAL_RCC_ETH1MAC_CLK_ENABLE(); // ʹ��ETH1 MACʱ��
-    __HAL_RCC_ETH1TX_CLK_ENABLE();  // ʹ��ETH1����ʱ��
-    __HAL_RCC_ETH1RX_CLK_ENABLE();  // ʹ��ETH1����ʱ��
+    __HAL_RCC_GPIOA_CLK_ENABLE();   // 开启GPIOA时钟
+    __HAL_RCC_GPIOB_CLK_ENABLE();   // 开启GPIOB时钟
+    __HAL_RCC_GPIOC_CLK_ENABLE();   // 开启GPIOC时钟
+    __HAL_RCC_GPIOG_CLK_ENABLE();   // 开启GPIOG时钟
+    __HAL_RCC_ETH1MAC_CLK_ENABLE(); // 使能ETH1 MAC时钟
+    __HAL_RCC_ETH1TX_CLK_ENABLE();  // 使能ETH1发送时钟
+    __HAL_RCC_ETH1RX_CLK_ENABLE();  // 使能ETH1接收时钟
 
     GPIO_Initure.Pin = GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_7;
-    GPIO_Initure.Mode = GPIO_MODE_AF_PP;       // ���츴��
-    GPIO_Initure.Pull = GPIO_NOPULL;           // ����������
-    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH; // ����
-    GPIO_Initure.Alternate = GPIO_AF11_ETH;    // ����ΪETH����
-    HAL_GPIO_Init(GPIOA, &GPIO_Initure);       // ��ʼ��
+    GPIO_Initure.Mode = GPIO_MODE_AF_PP;       // 推挽复用
+    GPIO_Initure.Pull = GPIO_NOPULL;           // 不带上下拉
+    GPIO_Initure.Speed = GPIO_SPEED_FREQ_HIGH; // 高速
+    GPIO_Initure.Alternate = GPIO_AF11_ETH;    // 复用为ETH功能
+    HAL_GPIO_Init(GPIOA, &GPIO_Initure);       // 初始化
 
     // PB11
     GPIO_Initure.Pin = GPIO_PIN_11;      // PB11
-    HAL_GPIO_Init(GPIOB, &GPIO_Initure); // ʼ��
+    HAL_GPIO_Init(GPIOB, &GPIO_Initure); // 始化
 
     // PC1,4,5
     GPIO_Initure.Pin = GPIO_PIN_1 | GPIO_PIN_4 | GPIO_PIN_5; // PC1,4,5
-    HAL_GPIO_Init(GPIOC, &GPIO_Initure);                     // ��ʼ��
+    HAL_GPIO_Init(GPIOC, &GPIO_Initure);                     // 初始化
 
     // PG13,14
     GPIO_Initure.Pin = GPIO_PIN_13 | GPIO_PIN_14; // PG13,14
-    HAL_GPIO_Init(GPIOG, &GPIO_Initure);          // ��ʼ��
+    HAL_GPIO_Init(GPIOG, &GPIO_Initure);          // 初始化
 
-    HAL_NVIC_SetPriority(ETH_IRQn, 1, 0); // �����ж����ȼ�Ӧ�ø�һ��
+    HAL_NVIC_SetPriority(ETH_IRQn, 1, 0); // 网络中断优先级应该高一点
     HAL_NVIC_EnableIRQ(ETH_IRQn);
 }
 
-// ��ȡPHY�Ĵ���ֵ
-// regҪ��ȡ�ļĴ�����ַ
-// ����ֵ:0 ��ȡ�ɹ���-1 ��ȡʧ��
+// 读取PHY寄存器值
+// reg要读取的寄存器地址
+// 返回值:0 读取成功，-1 读取失败
 int32_t LAN8720_ReadPHY(uint16_t reg, uint32_t *regval)
 {
     if (HAL_ETH_ReadPHYRegister(&LAN8720_ETHHandle, LAN8720_ADDR, reg, regval) != HAL_OK)
@@ -190,10 +190,10 @@ int32_t LAN8720_ReadPHY(uint16_t reg, uint32_t *regval)
     return 0;
 }
 
-// ��LAN8720ָ���Ĵ���д��ֵ
-// reg:Ҫд��ļĴ���
-// value:Ҫд���ֵ
-// ����ֵ:0 д��������-1 д��ʧ��
+// 向LAN8720指定寄存器写入值
+// reg:要写入的寄存器
+// value:要写入的值
+// 返回值:0 写入正常，-1 写入失败
 int32_t LAN8720_WritePHY(uint16_t reg, uint16_t value)
 {
     uint32_t temp = value;
@@ -202,7 +202,7 @@ int32_t LAN8720_WritePHY(uint16_t reg, uint16_t value)
     return 0;
 }
 
-// ��LAN8720 Power Downģʽ
+// 打开LAN8720 Power Down模式
 void LAN8720_EnablePowerDownMode(void)
 {
     uint32_t readval = 0;
@@ -211,7 +211,7 @@ void LAN8720_EnablePowerDownMode(void)
     LAN8720_WritePHY(LAN8720_BCR, readval);
 }
 
-// �ر�LAN8720 Power Downģʽ
+// 关闭LAN8720 Power Down模式
 void LAN8720_DisablePowerDownMode(void)
 {
     uint32_t readval = 0;
@@ -220,7 +220,7 @@ void LAN8720_DisablePowerDownMode(void)
     LAN8720_WritePHY(LAN8720_BCR, readval);
 }
 
-// ����LAN8720����Э�̹���
+// 开启LAN8720的自协商功能
 void LAN8720_StartAutoNego(void)
 {
     uint32_t readval = 0;
@@ -229,7 +229,7 @@ void LAN8720_StartAutoNego(void)
     LAN8720_WritePHY(LAN8720_BCR, readval);
 }
 
-// ʹ�ܻز�ģʽ
+// 使能回测模式
 void LAN8720_EnableLoopbackMode(void)
 {
     uint32_t readval = 0;
@@ -238,7 +238,7 @@ void LAN8720_EnableLoopbackMode(void)
     LAN8720_WritePHY(LAN8720_BCR, readval);
 }
 
-// �ر�LAN8720�Ļز�ģʽ
+// 关闭LAN8720的回测模式
 void LAN8720_DisableLoopbackMode(void)
 {
     uint32_t readval = 0;
@@ -247,7 +247,7 @@ void LAN8720_DisableLoopbackMode(void)
     LAN8720_WritePHY(LAN8720_BCR, readval);
 }
 
-// ʹ���жϣ��ж�Դ��ѡ:LAN8720_ENERGYON_IT
+// 使能中断，中断源可选:LAN8720_ENERGYON_IT
 //                      LAN8720_AUTONEGO_COMPLETE_IT
 //                      LAN8720_REMOTE_FAULT_IT
 //                      LAN8720_LINK_DOWN_IT
@@ -262,7 +262,7 @@ void LAN8720_EnableIT(uint32_t interrupt)
     LAN8720_WritePHY(LAN8720_IMR, readval);
 }
 
-// �ر��жϣ��ж�Դ��ѡ:LAN8720_ENERGYON_IT
+// 关闭中断，中断源可选:LAN8720_ENERGYON_IT
 //                      LAN8720_AUTONEGO_COMPLETE_IT
 //                      LAN8720_REMOTE_FAULT_IT
 //                      LAN8720_LINK_DOWN_IT
@@ -277,16 +277,16 @@ void LAN8720_DisableIT(uint32_t interrupt)
     LAN8720_WritePHY(LAN8720_IMR, readval);
 }
 
-// ����жϱ�־λ�����Ĵ���ISFR�Ϳ�����жϱ�־λ
+// 清除中断标志位，读寄存器ISFR就可清除中断标志位
 void LAN8720_ClearIT(uint32_t interrupt)
 {
     uint32_t readval = 0;
     LAN8720_ReadPHY(LAN8720_ISFR, &readval);
 }
 
-// ��ȡ�жϱ�־λ
-// ����ֵ��1 �жϱ�־λ��λ��
-//         0 �жϱ�־λ����
+// 获取中断标志位
+// 返回值，1 中断标志位置位，
+//         0 中断标志位清零
 uint8_t LAN8720_GetITStatus(uint32_t interrupt)
 {
     uint32_t readval = 0;
@@ -299,28 +299,28 @@ uint8_t LAN8720_GetITStatus(uint32_t interrupt)
     return status;
 }
 
-// ��ȡLAN8720������״̬
-// ����ֵ��LAN8720_STATUS_LINK_DOWN              ���ӶϿ�
-//         LAN8720_STATUS_AUTONEGO_NOTDONE       �Զ�Э�����
-//         LAN8720_STATUS_100MBITS_FULLDUPLEX    100Mȫ˫��
-//         LAN8720_STATUS_100MBITS_HALFDUPLEX    100M��˫��
-//         LAN8720_STATUS_10MBITS_FULLDUPLEX     10Mȫ˫��
-//         LAN8720_STATUS_10MBITS_HALFDUPLEX     10M��˫��
+// 获取LAN8720的连接状态
+// 返回值：LAN8720_STATUS_LINK_DOWN              连接断开
+//         LAN8720_STATUS_AUTONEGO_NOTDONE       自动协商完成
+//         LAN8720_STATUS_100MBITS_FULLDUPLEX    100M全双工
+//         LAN8720_STATUS_100MBITS_HALFDUPLEX    100M半双工
+//         LAN8720_STATUS_10MBITS_FULLDUPLEX     10M全双工
+//         LAN8720_STATUS_10MBITS_HALFDUPLEX     10M半双工
 uint32_t LAN8720_GetLinkState(void)
 {
     uint32_t readval = 0;
 
-    // ��ȡ���飬ȷ����ȡ��ȷ������
+    // 读取两遍，确保读取正确！！！
     LAN8720_ReadPHY(LAN8720_BSR, &readval);
     LAN8720_ReadPHY(LAN8720_BSR, &readval);
 
-    // ��ȡ����״̬(Ӳ�������ߵ����ӣ�����TCP��UDP���������ӣ�)
+    // 获取连接状态(硬件，网线的连接，不是TCP、UDP等软件连接！)
     if ((readval & LAN8720_BSR_LINK_STATUS) == 0)
         return LAN8720_STATUS_LINK_DOWN;
 
-    // ��ȡ�Զ�Э��״̬
+    // 获取自动协商状态
     LAN8720_ReadPHY(LAN8720_BCR, &readval);
-    if ((readval & LAN8720_BCR_AUTONEGO_EN) != LAN8720_BCR_AUTONEGO_EN) // δʹ���Զ�Э��
+    if ((readval & LAN8720_BCR_AUTONEGO_EN) != LAN8720_BCR_AUTONEGO_EN) // 未使能自动协商
     {
         if (((readval & LAN8720_BCR_SPEED_SELECT) == LAN8720_BCR_SPEED_SELECT) &&
             ((readval & LAN8720_BCR_DUPLEX_MODE) == LAN8720_BCR_DUPLEX_MODE))
@@ -332,7 +332,7 @@ uint32_t LAN8720_GetLinkState(void)
         else
             return LAN8720_STATUS_10MBITS_HALFDUPLEX;
     }
-    else // ʹ�����Զ�Э��
+    else // 使能了自动协商
     {
         LAN8720_ReadPHY(LAN8720_PHYSCSR, &readval);
         if ((readval & LAN8720_PHYSCSR_AUTONEGO_DONE) == 0)
@@ -348,23 +348,23 @@ uint32_t LAN8720_GetLinkState(void)
     }
 }
 
-// ����LAN8720������״̬
-// ����linkstate��LAN8720_STATUS_100MBITS_FULLDUPLEX 100Mȫ˫��
-//                LAN8720_STATUS_100MBITS_HALFDUPLEX 100M��˫��
-//                LAN8720_STATUS_10MBITS_FULLDUPLEX  10Mȫ˫��
-//                LAN8720_STATUS_10MBITS_HALFDUPLEX  10M��˫��
+// 设置LAN8720的连接状态
+// 参数linkstate：LAN8720_STATUS_100MBITS_FULLDUPLEX 100M全双工
+//                LAN8720_STATUS_100MBITS_HALFDUPLEX 100M半双工
+//                LAN8720_STATUS_10MBITS_FULLDUPLEX  10M全双工
+//                LAN8720_STATUS_10MBITS_HALFDUPLEX  10M半双工
 void LAN8720_SetLinkState(uint32_t linkstate)
 {
 
     uint32_t bcrvalue = 0;
     LAN8720_ReadPHY(LAN8720_BCR, &bcrvalue);
-    // �ر��������ã������Զ�Э�̣��ٶȺ�˫��
+    // 关闭连接配置，比如自动协商，速度和双工
     bcrvalue &= ~(LAN8720_BCR_AUTONEGO_EN | LAN8720_BCR_SPEED_SELECT | LAN8720_BCR_DUPLEX_MODE);
-    if (linkstate == LAN8720_STATUS_100MBITS_FULLDUPLEX) // 100Mȫ˫��
+    if (linkstate == LAN8720_STATUS_100MBITS_FULLDUPLEX) // 100M全双工
         bcrvalue |= (LAN8720_BCR_SPEED_SELECT | LAN8720_BCR_DUPLEX_MODE);
-    else if (linkstate == LAN8720_STATUS_100MBITS_HALFDUPLEX) // 100M��˫��
+    else if (linkstate == LAN8720_STATUS_100MBITS_HALFDUPLEX) // 100M半双工
         bcrvalue |= LAN8720_BCR_SPEED_SELECT;
-    else if (linkstate == LAN8720_STATUS_10MBITS_FULLDUPLEX) // 10Mȫ˫��
+    else if (linkstate == LAN8720_STATUS_10MBITS_FULLDUPLEX) // 10M全双工
         bcrvalue |= LAN8720_BCR_DUPLEX_MODE;
 
     LAN8720_WritePHY(LAN8720_BCR, bcrvalue);

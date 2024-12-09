@@ -3,25 +3,25 @@
 
 #include <stdint.h>
 
-#define LWIP_MAX_DHCP_TRIES 4 // DHCP·şÎñÆ÷×î´óÖØÊÔ´ÎÊı
+#define LWIP_MAX_DHCP_TRIES 4 // DHCPæœåŠ¡å™¨æœ€å¤§é‡è¯•æ¬¡æ•°
 
-// lwip¿ØÖÆ½á¹¹Ìå
+// lwipæ§åˆ¶ç»“æ„ä½“
 typedef struct
 {
-    uint8_t mac[6];      // MACµØÖ·
-    uint8_t remoteip[4]; // Ô¶¶ËÖ÷»úIPµØÖ·
-    uint8_t ip[4];       // ±¾»úIPµØÖ·
-    uint8_t netmask[4];  // ×ÓÍøÑÚÂë
-    uint8_t gateway[4];  // Ä¬ÈÏÍø¹ØµÄIPµØÖ·
+    uint8_t mac[6];      // MACåœ°å€
+    uint8_t remoteip[4]; // è¿œç«¯ä¸»æœºIPåœ°å€
+    uint8_t ip[4];       // æœ¬æœºIPåœ°å€
+    uint8_t netmask[4];  // å­ç½‘æ©ç 
+    uint8_t gateway[4];  // é»˜è®¤ç½‘å…³çš„IPåœ°å€
 
-    uint8_t volatile dhcpstatus; // dhcp×´Ì¬
-                                 // 0,Î´»ñÈ¡DHCPµØÖ·;
-                                 // 1,½øÈëDHCP»ñÈ¡×´Ì¬
-                                 // 2,³É¹¦»ñÈ¡DHCPµØÖ·
-                                 // 0XFF,»ñÈ¡Ê§°Ü.
+    uint8_t volatile dhcpstatus; // dhcpçŠ¶æ€
+                                 // 0,æœªè·å–DHCPåœ°å€;
+                                 // 1,è¿›å…¥DHCPè·å–çŠ¶æ€
+                                 // 2,æˆåŠŸè·å–DHCPåœ°å€
+                                 // 0XFF,è·å–å¤±è´¥.
 } __lwip_dev;
 
-extern __lwip_dev lwipdev; // lwip¿ØÖÆ½á¹¹Ìå
+extern __lwip_dev lwipdev; // lwipæ§åˆ¶ç»“æ„ä½“
 
 void lwip_pkt_handle(void);
 void lwip_periodic_handle(void);

@@ -107,10 +107,6 @@ typedef int sys_prot_t;
 #ifndef LWIP_PLATFORM_ASSERT
 #define LWIP_PLATFORM_ASSERT(x) // do { if(!(x)) while(1); } while(0)
 
-//#define LWIP_PLATFORM_ASSERT(x) \
-//    do \
-//    {   printf("Assertion \"%s\" failed at line %d in %s\r\n", x, __LINE__, __FILE__); \
-//    } while(0)
 #endif
 
 #ifndef LWIP_PLATFORM_DIAG
