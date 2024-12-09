@@ -217,7 +217,6 @@ int main(void)
 
                 bsp::IEEROM *eerom = DI_EEROMCollection().Get("at24c02");
                 eerom->WriteUInt64(0, 123456789);
-                TestSDRAM();
 
                 // TestLittleFs();
                 // TestFatFs();
@@ -226,7 +225,8 @@ int main(void)
                     DI_GreenDigitalLed().Toggle();
                     // std::cout << eerom->ReadUInt64(0) << std::endl;
                     // std::cout << lwip_localtime << std::endl;
-                    PrintAddresses();
+                    // PrintAddresses();
+                    TestSDRAM();
                     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
                     DI_Delayer().Delay(std::chrono::seconds{1});
                 }
