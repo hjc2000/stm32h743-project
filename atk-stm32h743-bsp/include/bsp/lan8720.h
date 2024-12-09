@@ -8,6 +8,8 @@ extern ETH_DMADescTypeDef DMARxDscrTab[ETH_RX_DESC_CNT] __attribute__((section("
 extern ETH_DMADescTypeDef DMATxDscrTab[ETH_TX_DESC_CNT] __attribute__((section(".ARM.__at_0x30040060")));
 extern uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".ARM.__at_0x30040200")));
 
+void PrintAddresses();
+
 #define LAN8720_ADDR 0
 #define LAN8720_TIMEOUT ((uint32_t)500)
 

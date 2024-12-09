@@ -1,10 +1,11 @@
 #include "lan8720.h"
 #include "lwip_comm.h"
+#include <base/string/ToHexString.h>
+#include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 #include <hal.h>
-#include <stdio.h>
 
 ETH_HandleTypeDef LAN8720_ETHHandle;
 
@@ -12,6 +13,13 @@ ETH_HandleTypeDef LAN8720_ETHHandle;
 ETH_DMADescTypeDef DMARxDscrTab[ETH_RX_DESC_CNT];      // 以太网Rx DMA描述符
 ETH_DMADescTypeDef DMATxDscrTab[ETH_TX_DESC_CNT];      // 以太网Tx DMA描述符
 uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE]; // 以太网接收缓冲区
+
+void PrintAddresses()
+{
+    DI_Console().WriteLine(std::string{"DMARxDscrTab: "} + base::ToHexString(reinterpret_cast<int32_t>(DMARxDscrTab)));
+    DI_Console().WriteLine(std::string{"DMATxDscrTab: "} + base::ToHexString(reinterpret_cast<int32_t>(DMATxDscrTab)));
+    DI_Console().WriteLine(std::string{"Rx_Buff: "} + base::ToHexString(reinterpret_cast<int32_t>(Rx_Buff)));
+}
 
 // 设置网络所使用的0X30040000的ram内存保护
 void NETMPU_Config(void)

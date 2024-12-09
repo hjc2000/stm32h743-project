@@ -188,6 +188,8 @@ inline void TestFatFs()
 
 extern uint32_t lwip_localtime; // lwip本地时间计数器,单位:ms
 
+void PrintAddresses();
+
 int main(void)
 {
     DI_Initialize();
@@ -222,7 +224,8 @@ int main(void)
                 {
                     DI_GreenDigitalLed().Toggle();
                     // std::cout << eerom->ReadUInt64(0) << std::endl;
-                    std::cout << lwip_localtime << std::endl;
+                    // std::cout << lwip_localtime << std::endl;
+                    PrintAddresses();
                     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
                     DI_Delayer().Delay(std::chrono::seconds{1});
                 }
