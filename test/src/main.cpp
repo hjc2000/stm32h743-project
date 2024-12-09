@@ -186,9 +186,23 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
+extern uint32_t lwip_localtime; // lwip本地时间计数器,单位:ms
+
 int main(void)
 {
     DI_Initialize();
+
+    DI_TaskManager().Create(
+        []()
+        {
+            while (true)
+            {
+                lwip_localtime += 10;
+                DI_RedDigitalLed().Toggle();
+                DI_Delayer().Delay(std::chrono::milliseconds{10});
+            }
+        },
+        512);
 
     DI_TaskManager().Create(
         []()
@@ -202,16 +216,14 @@ int main(void)
                 bsp::IEEROM *eerom = DI_EEROMCollection().Get("at24c02");
                 eerom->WriteUInt64(0, 123456789);
 
-                bsp::IExpandedIoPort *ex_io = DI_ExpandedIoPortCollection().Get("ex_io");
-
                 // TestLittleFs();
                 // TestFatFs();
                 while (true)
                 {
                     DI_GreenDigitalLed().Toggle();
-                    std::cout << eerom->ReadUInt64(0) << std::endl;
-                    DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
-                    // ex_io->ToggleBit(0);
+                    // std::cout << eerom->ReadUInt64(0) << std::endl;
+                    std::cout << lwip_localtime << std::endl;
+                    // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
                     DI_Delayer().Delay(std::chrono::seconds{1});
                 }
 
