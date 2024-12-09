@@ -47,7 +47,7 @@ void TestSDRAM()
 {
     using element_type = uint64_t;
     element_type *buffer = reinterpret_cast<element_type *>(0xC0000000);
-    uint64_t const element_count = 1024 / sizeof(element_type);
+    uint64_t const element_count = 32 * 1024 * 1024 / sizeof(element_type);
     for (uint64_t i = 0; i < element_count; i++)
     {
         buffer[i] = i;
@@ -57,10 +57,10 @@ void TestSDRAM()
     {
         if (buffer[i] != i)
         {
-            DI_Console().WriteLine("sdram error");
+            DI_Console().WriteLine("SDRAM error detected.");
             return;
         }
     }
 
-    DI_Console().WriteLine("sdram no error");
+    DI_Console().WriteLine("No SDRAM error detected.");
 }
