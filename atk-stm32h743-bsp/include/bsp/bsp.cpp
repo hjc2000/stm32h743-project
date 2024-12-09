@@ -2,6 +2,7 @@
 #include <atomic>
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/clock.h>
+#include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/flash.h>
 #include <bsp-interface/di/key.h>
@@ -38,5 +39,20 @@ void TestUniversalTimer1()
         value %= config.Period();
         compare_output_config.SetPulse(value);
         hal::PwmModeTimer3::Instance().ConfigPwmChannel(compare_output_config, hal::TimerChannelEnum::Channel4);
+    }
+}
+
+void TestSDRAM()
+{
+    using element_type = uint16_t;
+    element_type *buffer = reinterpret_cast<element_type *>(0xC0000000);
+    for (int i = 0; i < 10; i++)
+    {
+        buffer[i] = i;
+    }
+
+    for (int i = 0; i < 10; i++)
+    {
+        DI_Console().WriteLine(std::to_string(buffer[i]) + "  ");
     }
 }

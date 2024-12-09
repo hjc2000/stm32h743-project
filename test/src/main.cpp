@@ -217,6 +217,7 @@ int main(void)
 
                 bsp::IEEROM *eerom = DI_EEROMCollection().Get("at24c02");
                 eerom->WriteUInt64(0, 123456789);
+                TestSDRAM();
 
                 // TestLittleFs();
                 // TestFatFs();
