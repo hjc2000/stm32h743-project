@@ -16,9 +16,9 @@ uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE]; // 以太网接收缓冲�
 
 void PrintAddresses()
 {
-    DI_Console().WriteLine(std::string{"DMARxDscrTab: "} + base::ToHexString(reinterpret_cast<int32_t>(DMARxDscrTab)));
-    DI_Console().WriteLine(std::string{"DMATxDscrTab: "} + base::ToHexString(reinterpret_cast<int32_t>(DMATxDscrTab)));
-    DI_Console().WriteLine(std::string{"Rx_Buff: "} + base::ToHexString(reinterpret_cast<int32_t>(Rx_Buff)));
+    DI_Console().WriteLine(std::string{"DMARxDscrTab: "} + base::ToHexString(DMARxDscrTab));
+    DI_Console().WriteLine(std::string{"DMATxDscrTab: "} + base::ToHexString(DMATxDscrTab));
+    DI_Console().WriteLine(std::string{"Rx_Buff: "} + base::ToHexString(Rx_Buff));
 }
 
 // 设置网络所使用的0X30040000的ram内存保护
