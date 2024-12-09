@@ -1,6 +1,7 @@
 #include "bsp.h"
 #include <atomic>
 #include <base/container/Dictionary.h>
+#include <base/string/ToHexString.h>
 #include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
@@ -44,15 +45,22 @@ void TestUniversalTimer1()
 
 void TestSDRAM()
 {
-    using element_type = uint16_t;
+    using element_type = uint64_t;
     element_type *buffer = reinterpret_cast<element_type *>(0xC0000000);
-    for (int i = 0; i < 10; i++)
+    uint64_t const element_count = 1024 / sizeof(element_type);
+    for (uint64_t i = 0; i < element_count; i++)
     {
         buffer[i] = i;
     }
 
-    for (int i = 0; i < 10; i++)
+    for (uint64_t i = 0; i < element_count; i++)
     {
-        DI_Console().WriteLine(std::to_string(buffer[i]) + "  ");
+        if (buffer[i] != i)
+        {
+            DI_Console().WriteLine("sdram error");
+            return;
+        }
     }
+
+    DI_Console().WriteLine("sdram no error");
 }
