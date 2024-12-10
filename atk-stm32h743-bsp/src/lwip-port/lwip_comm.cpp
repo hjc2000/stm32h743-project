@@ -1,27 +1,3 @@
-/**
- ****************************************************************************************************
- * @file        lwip_comm.c
- * @author      正点原子团队(ALIENTEK)
- * @version     V1.0
- * @date        2022-08-01
- * @brief       lwIP配置驱动
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
- ****************************************************************************************************
- * @attention
- *
- * 实验平台:正点原子 阿波罗 H743开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
- *
- * 修改说明
- * V1.0 20211202
- * 第一次发布
- *
- ****************************************************************************************************
- */
-
 #include "lwip_comm.h"
 #include "ethernet_chip.h"
 #include "ethernetif.h"
@@ -33,8 +9,11 @@
 #include <bsp-interface/di/delayer.h>
 #include <stdio.h>
 
-__lwip_dev g_lwipdev;      /* lwip控制结构体 */
-struct netif g_lwip_netif; /* 定义一个全局的网络接口 */
+/* lwip控制结构体 */
+__lwip_dev g_lwipdev;
+
+/* 定义一个全局的网络接口 */
+netif g_lwip_netif;
 
 int DHCP_State()
 {
@@ -123,7 +102,14 @@ uint8_t lwip_comm_init(void)
     printf("默认网关..........................%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
     g_lwipdev.dhcpstatus = 0XFF;
 #endif /* 向网卡列表中添加一个网口 */
-    netif_init_flag = netif_add(&g_lwip_netif, (ip_addr_t const *)&ipaddr, (ip_addr_t const *)&netmask, (ip_addr_t const *)&gw, NULL, &ethernetif_init, &ethernet_input);
+
+    netif_init_flag = netif_add(&g_lwip_netif,
+                                (ip_addr_t const *)&ipaddr,
+                                (ip_addr_t const *)&netmask,
+                                (ip_addr_t const *)&gw,
+                                NULL,
+                                &ethernetif_init,
+                                &ethernet_input);
 
     if (netif_init_flag == NULL)
     {
@@ -204,6 +190,7 @@ void lwip_link_status_updated(struct netif *netif)
 void lwip_periodic_handle(void)
 {
     sys_check_timeouts();
+
 #if LWIP_DHCP /* 如果使用DHCP */
     /* Fine DHCP periodic process every 500ms */
     if (HAL_GetTick() - g_dhcp_fine_timer >= DHCP_FINE_TIMER_MSECS)
@@ -244,9 +231,8 @@ void lwip_dhcp_process(struct netif *netif)
             g_lwip_dhcp_state = LWIP_DHCP_WAIT_ADDRESS;
             /* 开启DHCP */
             dhcp_start(netif);
+            break;
         }
-        break;
-
     case LWIP_DHCP_WAIT_ADDRESS:
         {
             ip = g_lwip_netif.ip_addr.addr;      /* 读取新IP地址 */
@@ -307,17 +293,20 @@ void lwip_dhcp_process(struct netif *netif)
                     printf("Static IP address: %s\r\n", iptxt);
                 }
             }
+
+            break;
         }
-        break;
     case LWIP_DHCP_LINK_DOWN:
         {
             /* 停止DHCP */
             dhcp_stop(netif);
             g_lwip_dhcp_state = LWIP_DHCP_OFF;
+            break;
         }
-        break;
     default:
-        break;
+        {
+            break;
+        }
     }
 }
 #endif

@@ -200,8 +200,6 @@ int main(void)
             while (true)
             {
                 DI_RedDigitalLed().Toggle();
-                DI_Console().WriteLine("DHCP State: " + std::to_string(DHCP_State()));
-                DI_Console().WriteLine("speed: " + std::to_string(ethernet_chip_get_speed()));
                 DI_Delayer().Delay(std::chrono::milliseconds{1000});
             }
         },
