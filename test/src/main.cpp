@@ -184,6 +184,19 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
+extern "C"
+{
+    void MX_LWIP_Init();
+    void MX_LWIP_Process();
+
+    void Error_Handler()
+    {
+        while (true)
+        {
+        }
+    }
+}
+
 int main(void)
 {
     DI_Initialize();
@@ -212,8 +225,22 @@ int main(void)
                 bsp::IEEROM *eerom = DI_EEROMCollection().Get("at24c02");
                 eerom->WriteUInt64(0, 123456789);
 
+                MX_LWIP_Init();
+                /* USER CODE BEGIN 2 */
+
+                /* USER CODE END 2 */
+
+                /* Infinite loop */
+                /* USER CODE BEGIN WHILE */
+                while (1)
+                {
+                    /* USER CODE END WHILE */
+                    MX_LWIP_Process();
+                    /* USER CODE BEGIN 3 */
+                }
+
                 // TestLittleFs();
-                TestFatFs();
+                // TestFatFs();
                 // while (true)
                 // {
                 //     DI_GreenDigitalLed().Toggle();
