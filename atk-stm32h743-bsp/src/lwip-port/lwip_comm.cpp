@@ -9,10 +9,10 @@
 #include <bsp-interface/di/delayer.h>
 #include <stdio.h>
 
-/* lwip¿ØÖÆ½á¹¹Ìå */
+/* lwipæ§åˆ¶ç»“æ„ä½“ */
 __lwip_dev g_lwipdev;
 
-/* ¶¨ÒåÒ»¸öÈ«¾ÖµÄÍøÂç½Ó¿Ú */
+/* å®šä¹‰ä¸€ä¸ªå…¨å±€çš„ç½‘ç»œæ¥å£ */
 netif g_lwip_netif;
 
 int DHCP_State()
@@ -21,27 +21,27 @@ int DHCP_State()
 }
 
 #if LWIP_DHCP
-uint32_t g_dhcp_fine_timer = 0;                 /* DHCP¾«Ï¸´¦Àí¼ÆÊ±Æ÷ */
-__IO uint8_t g_lwip_dhcp_state = LWIP_DHCP_OFF; /* DHCP×´Ì¬³õÊ¼»¯ */
+uint32_t g_dhcp_fine_timer = 0;                 /* DHCPç²¾ç»†å¤„ç†è®¡æ—¶å™¨ */
+__IO uint8_t g_lwip_dhcp_state = LWIP_DHCP_OFF; /* DHCPçŠ¶æ€åˆå§‹åŒ– */
 #endif
 
 void lwip_link_status_updated(struct netif *netif);
 void lwip_dhcp_process(struct netif *netif);
 
 /**
- * @breif       lwip Ä¬ÈÏIPÉèÖÃ
- * @param       lwipx: lwip¿ØÖÆ½á¹¹ÌåÖ¸Õë
- * @retval      ÎŞ
+ * @breif       lwip é»˜è®¤IPè®¾ç½®
+ * @param       lwipx: lwipæ§åˆ¶ç»“æ„ä½“æŒ‡é’ˆ
+ * @retval      æ— 
  */
 void lwip_comm_default_ip_set(__lwip_dev *lwipx)
 {
-    /* Ä¬ÈÏÔ¶¶ËIPÎª:192.168.1.134 */
+    /* é»˜è®¤è¿œç«¯IPä¸º:192.168.1.134 */
     lwipx->remoteip[0] = 192;
     lwipx->remoteip[1] = 168;
     lwipx->remoteip[2] = 1;
     lwipx->remoteip[3] = 134;
 
-    /* MACµØÖ·ÉèÖÃ */
+    /* MACåœ°å€è®¾ç½® */
     lwipx->mac[0] = 0xB8;
     lwipx->mac[1] = 0xAE;
     lwipx->mac[2] = 0x1D;
@@ -49,60 +49,60 @@ void lwip_comm_default_ip_set(__lwip_dev *lwipx)
     lwipx->mac[4] = 0x04;
     lwipx->mac[5] = 0x00;
 
-    /* Ä¬ÈÏ±¾µØIPÎª:192.168.1.30 */
+    /* é»˜è®¤æœ¬åœ°IPä¸º:192.168.1.30 */
     lwipx->ip[0] = 192;
     lwipx->ip[1] = 168;
     lwipx->ip[2] = 1;
     lwipx->ip[3] = 30;
-    /* Ä¬ÈÏ×ÓÍøÑÚÂë:255.255.255.0 */
+    /* é»˜è®¤å­ç½‘æ©ç :255.255.255.0 */
     lwipx->netmask[0] = 255;
     lwipx->netmask[1] = 255;
     lwipx->netmask[2] = 255;
     lwipx->netmask[3] = 0;
 
-    /* Ä¬ÈÏÍø¹Ø:192.168.1.1 */
+    /* é»˜è®¤ç½‘å…³:192.168.1.1 */
     lwipx->gateway[0] = 192;
     lwipx->gateway[1] = 168;
     lwipx->gateway[2] = 1;
     lwipx->gateway[3] = 1;
 
-    lwipx->dhcpstatus = 0; /* Ã»ÓĞDHCP */
+    lwipx->dhcpstatus = 0; /* æ²¡æœ‰DHCP */
 }
 
 /**
- * @breif       lwIP³õÊ¼»¯(lwIPÆô¶¯µÄÊ±ºòÊ¹ÓÃ)
- * @param       ÎŞ
- * @retval      0,³É¹¦
- *              1,Íø¿¨Ìí¼ÓÊ§°Ü.
+ * @breif       lwIPåˆå§‹åŒ–(lwIPå¯åŠ¨çš„æ—¶å€™ä½¿ç”¨)
+ * @param       æ— 
+ * @retval      0,æˆåŠŸ
+ *              1,ç½‘å¡æ·»åŠ å¤±è´¥.
  */
 uint8_t lwip_comm_init(void)
 {
-    struct netif *netif_init_flag; /* µ÷ÓÃnetif_add()º¯ÊıÊ±µÄ·µ»ØÖµ,ÓÃÓÚÅĞ¶ÏÍøÂç³õÊ¼»¯ÊÇ·ñ³É¹¦ */
-    ip_addr_t ipaddr;              /* ipµØÖ· */
-    ip_addr_t netmask;             /* ×ÓÍøÑÚÂë */
-    ip_addr_t gw;                  /* Ä¬ÈÏÍø¹Ø */
-    uint8_t eth_linkstate;         /* ÍøÏßÁ¬½Ó×´Ì¬±êÖ¾Î» */
+    struct netif *netif_init_flag; /* è°ƒç”¨netif_add()å‡½æ•°æ—¶çš„è¿”å›å€¼,ç”¨äºåˆ¤æ–­ç½‘ç»œåˆå§‹åŒ–æ˜¯å¦æˆåŠŸ */
+    ip_addr_t ipaddr;              /* ipåœ°å€ */
+    ip_addr_t netmask;             /* å­ç½‘æ©ç  */
+    ip_addr_t gw;                  /* é»˜è®¤ç½‘å…³ */
+    uint8_t eth_linkstate;         /* ç½‘çº¿è¿æ¥çŠ¶æ€æ ‡å¿—ä½ */
 
-    lwip_comm_default_ip_set(&g_lwipdev); /* ÉèÖÃÄ¬ÈÏIPµÈĞÅÏ¢ */
+    lwip_comm_default_ip_set(&g_lwipdev); /* è®¾ç½®é»˜è®¤IPç­‰ä¿¡æ¯ */
 
-    ethernet_init(); /* ³õÊ¼»¯ÒÔÌ«ÍøIO */
+    ethernet_init(); /* åˆå§‹åŒ–ä»¥å¤ªç½‘IO */
 
-    lwip_init(); /* ³õÊ¼»¯LWIPÄÚºË */
+    lwip_init(); /* åˆå§‹åŒ–LWIPå†…æ ¸ */
 
-#if LWIP_DHCP                      /* Ê¹ÓÃ¶¯Ì¬IP */
-    ip_addr_set_zero_ip4(&ipaddr); /* ¶ÔIPµØÖ·¡¢×ÓÍøÑÚÂë¼°Íø¹ØÇåÁã */
+#if LWIP_DHCP                      /* ä½¿ç”¨åŠ¨æ€IP */
+    ip_addr_set_zero_ip4(&ipaddr); /* å¯¹IPåœ°å€ã€å­ç½‘æ©ç åŠç½‘å…³æ¸…é›¶ */
     ip_addr_set_zero_ip4(&netmask);
     ip_addr_set_zero_ip4(&gw);
-#else  /* Ê¹ÓÃ¾²Ì¬IP */
+#else  /* ä½¿ç”¨é™æ€IP */
     IP4_ADDR(&ipaddr, g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
     IP4_ADDR(&netmask, g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
     IP4_ADDR(&gw, g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
-    printf("Íø¿¨enµÄMACµØÖ·Îª:................%d.%d.%d.%d.%d.%d\r\n", g_lwipdev.mac[0], g_lwipdev.mac[1], g_lwipdev.mac[2], g_lwipdev.mac[3], g_lwipdev.mac[4], g_lwipdev.mac[5]);
-    printf("¾²Ì¬IPµØÖ·........................%d.%d.%d.%d\r\n", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
-    printf("×ÓÍøÑÚÂë..........................%d.%d.%d.%d\r\n", g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
-    printf("Ä¬ÈÏÍø¹Ø..........................%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
+    printf("ç½‘å¡ençš„MACåœ°å€ä¸º:................%d.%d.%d.%d.%d.%d\r\n", g_lwipdev.mac[0], g_lwipdev.mac[1], g_lwipdev.mac[2], g_lwipdev.mac[3], g_lwipdev.mac[4], g_lwipdev.mac[5]);
+    printf("é™æ€IPåœ°å€........................%d.%d.%d.%d\r\n", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
+    printf("å­ç½‘æ©ç ..........................%d.%d.%d.%d\r\n", g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
+    printf("é»˜è®¤ç½‘å…³..........................%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
     g_lwipdev.dhcpstatus = 0XFF;
-#endif /* ÏòÍø¿¨ÁĞ±íÖĞÌí¼ÓÒ»¸öÍø¿Ú */
+#endif /* å‘ç½‘å¡åˆ—è¡¨ä¸­æ·»åŠ ä¸€ä¸ªç½‘å£ */
 
     netif_init_flag = netif_add(&g_lwip_netif,
                                 (ip_addr_t const *)&ipaddr,
@@ -114,20 +114,20 @@ uint8_t lwip_comm_init(void)
 
     if (netif_init_flag == NULL)
     {
-        return 1; /* Íø¿¨Ìí¼ÓÊ§°Ü */
+        return 1; /* ç½‘å¡æ·»åŠ å¤±è´¥ */
     }
-    else /* Íø¿ÚÌí¼Ó³É¹¦ºó,ÉèÖÃnetifÎªÄ¬ÈÏÖµ,²¢ÇÒ´ò¿ªnetifÍø¿Ú */
+    else /* ç½‘å£æ·»åŠ æˆåŠŸå,è®¾ç½®netifä¸ºé»˜è®¤å€¼,å¹¶ä¸”æ‰“å¼€netifç½‘å£ */
     {
-        netif_set_default(&g_lwip_netif);        /* ÉèÖÃnetifÎªÄ¬ÈÏÍø¿Ú */
-        lwip_link_status_updated(&g_lwip_netif); /* DHCPÁ´½Ó×´Ì¬¸üĞÂº¯Êı */
+        netif_set_default(&g_lwip_netif);        /* è®¾ç½®netifä¸ºé»˜è®¤ç½‘å£ */
+        lwip_link_status_updated(&g_lwip_netif); /* DHCPé“¾æ¥çŠ¶æ€æ›´æ–°å‡½æ•° */
         netif_set_link_callback(&g_lwip_netif, lwip_link_status_updated);
     }
 
-#if LWIP_DHCP                 /* Èç¹ûÊ¹ÓÃDHCPµÄ»° */
-    g_lwipdev.dhcpstatus = 0; /* DHCP±ê¼ÇÎª0 */
+#if LWIP_DHCP                 /* å¦‚æœä½¿ç”¨DHCPçš„è¯ */
+    g_lwipdev.dhcpstatus = 0; /* DHCPæ ‡è®°ä¸º0 */
 #endif
 
-    /* ¼ì²âÍøÏßÊÇ·ñ²åÈë */
+    /* æ£€æµ‹ç½‘çº¿æ˜¯å¦æ’å…¥ */
     do
     {
         eth_linkstate = ethernet_read_phy(ETH_CHIP_BSR);
@@ -135,33 +135,33 @@ uint8_t lwip_comm_init(void)
 
         if ((eth_linkstate & ETH_CHIP_BSR_LINK_STATUS) == 4)
         {
-            printf("¼ì²âµ½ÍøÏßÒÑ¾­²åÈë\r\n");
+            printf("æ£€æµ‹åˆ°ç½‘çº¿å·²ç»æ’å…¥\r\n");
         }
         else
         {
-            printf("¼ì²âµ½ÍøÏßÃ»ÓĞ²åÈë\r\n");
+            printf("æ£€æµ‹åˆ°ç½‘çº¿æ²¡æœ‰æ’å…¥\r\n");
         }
 
     } while ((eth_linkstate & ETH_CHIP_BSR_LINK_STATUS) == 0);
 
-    return 0; /* ²Ù×÷OK. */
+    return 0; /* æ“ä½œOK. */
 }
 
 /**
- * @breif       µ±½ÓÊÕµ½Êı¾İºóµ÷ÓÃ
- * @param       ÎŞ
- * @retval      ÎŞ
+ * @breif       å½“æ¥æ”¶åˆ°æ•°æ®åè°ƒç”¨
+ * @param       æ— 
+ * @retval      æ— 
  */
 void lwip_pkt_handle(void)
 {
-    /* ´ÓÍøÂç»º³åÇøÖĞ¶ÁÈ¡½ÓÊÕµ½µÄÊı¾İ°ü²¢½«Æä·¢ËÍ¸øLWIP´¦Àí */
+    /* ä»ç½‘ç»œç¼“å†²åŒºä¸­è¯»å–æ¥æ”¶åˆ°çš„æ•°æ®åŒ…å¹¶å°†å…¶å‘é€ç»™LWIPå¤„ç† */
     ethernetif_input(&g_lwip_netif);
 }
 
 /**
- * @brief       Í¨ÖªÓÃ»§ÍøÂç½Ó¿ÚÅäÖÃ×´Ì¬
- * @param       netif£ºÍø¿¨¿ØÖÆ¿é
- * @retval      ÎŞ
+ * @brief       é€šçŸ¥ç”¨æˆ·ç½‘ç»œæ¥å£é…ç½®çŠ¶æ€
+ * @param       netifï¼šç½‘å¡æ§åˆ¶å—
+ * @retval      æ— 
  */
 void lwip_link_status_updated(struct netif *netif)
 {
@@ -184,15 +184,15 @@ void lwip_link_status_updated(struct netif *netif)
 }
 
 /**
- * @breif       LWIPÂÖÑ¯´¦Àí
- * @param       ÎŞ
- * @retval      ÎŞ
+ * @breif       LWIPè½®è¯¢å¤„ç†
+ * @param       æ— 
+ * @retval      æ— 
  */
 void lwip_periodic_handle(void)
 {
     sys_check_timeouts();
 
-#if LWIP_DHCP /* Èç¹ûÊ¹ÓÃDHCP */
+#if LWIP_DHCP /* å¦‚æœä½¿ç”¨DHCP */
     /* Fine DHCP periodic process every 500ms */
     if (HAL_GetTick() - g_dhcp_fine_timer >= DHCP_FINE_TIMER_MSECS)
     {
@@ -203,12 +203,12 @@ void lwip_periodic_handle(void)
 #endif
 }
 
-#if LWIP_DHCP /* Èç¹ûÊ¹ÓÃDHCP */
+#if LWIP_DHCP /* å¦‚æœä½¿ç”¨DHCP */
 
 /**
- * @brief       lwIPµÄDHCP·ÖÅä½ø³Ì
- * @param       netif£ºÍø¿¨¿ØÖÆ¿é
- * @retval      ÎŞ
+ * @brief       lwIPçš„DHCPåˆ†é…è¿›ç¨‹
+ * @param       netifï¼šç½‘å¡æ§åˆ¶å—
+ * @retval      æ— 
  */
 void lwip_dhcp_process(struct netif *netif)
 {
@@ -216,76 +216,76 @@ void lwip_dhcp_process(struct netif *netif)
     uint32_t netmask = 0;
     uint32_t gw = 0;
     struct dhcp *dhcp;
-    uint8_t iptxt[20];        /* ´æ´¢ÒÑ·ÖÅäµÄIPµØÖ· */
-    g_lwipdev.dhcpstatus = 1; /* DHCP±ê¼ÇÎª1 */
+    uint8_t iptxt[20];        /* å­˜å‚¨å·²åˆ†é…çš„IPåœ°å€ */
+    g_lwipdev.dhcpstatus = 1; /* DHCPæ ‡è®°ä¸º1 */
 
-    /* ¸ù¾İDHCP×´Ì¬½øÈëÖ´ĞĞÏàÓ¦µÄ¶¯×÷ */
+    /* æ ¹æ®DHCPçŠ¶æ€è¿›å…¥æ‰§è¡Œç›¸åº”çš„åŠ¨ä½œ */
     switch (g_lwip_dhcp_state)
     {
     case LWIP_DHCP_START:
         {
-            /* ¶ÔIPµØÖ·¡¢Íø¹ØµØÖ·¼°×ÓÍøÒ³ÂëÇåÁã²Ù×÷ */
+            /* å¯¹IPåœ°å€ã€ç½‘å…³åœ°å€åŠå­ç½‘é¡µç æ¸…é›¶æ“ä½œ */
             ip_addr_set_zero_ip4(&netif->ip_addr);
             ip_addr_set_zero_ip4(&netif->netmask);
             ip_addr_set_zero_ip4(&netif->gw);
-            /* ÉèÖÃDHCPµÄ×´Ì¬ÎªµÈ´ı·ÖÅäIPµØÖ· */
+            /* è®¾ç½®DHCPçš„çŠ¶æ€ä¸ºç­‰å¾…åˆ†é…IPåœ°å€ */
             g_lwip_dhcp_state = LWIP_DHCP_WAIT_ADDRESS;
-            /* ¿ªÆôDHCP */
+            /* å¼€å¯DHCP */
             dhcp_start(netif);
             break;
         }
     case LWIP_DHCP_WAIT_ADDRESS:
         {
-            ip = g_lwip_netif.ip_addr.addr;      /* ¶ÁÈ¡ĞÂIPµØÖ· */
-            netmask = g_lwip_netif.netmask.addr; /* ¶ÁÈ¡×ÓÍøÑÚÂë */
-            gw = g_lwip_netif.gw.addr;           /* ¶ÁÈ¡Ä¬ÈÏÍø¹Ø */
-            printf("µÈ´ıDHCP·ÖÅäÍøÂç²ÎÊı......\r\n");
+            ip = g_lwip_netif.ip_addr.addr;      /* è¯»å–æ–°IPåœ°å€ */
+            netmask = g_lwip_netif.netmask.addr; /* è¯»å–å­ç½‘æ©ç  */
+            gw = g_lwip_netif.gw.addr;           /* è¯»å–é»˜è®¤ç½‘å…³ */
+            printf("ç­‰å¾…DHCPåˆ†é…ç½‘ç»œå‚æ•°......\r\n");
 
             if (dhcp_supplied_address(netif))
             {
-                printf("DHCP·ÖÅä³É¹¦......\r\n");
+                printf("DHCPåˆ†é…æˆåŠŸ......\r\n");
                 g_lwip_dhcp_state = LWIP_DHCP_ADDRESS_ASSIGNED;
                 sprintf((char *)iptxt, "%s", ip4addr_ntoa((ip4_addr_t const *)&netif->ip_addr));
                 printf("IP address assigned by a DHCP server: %s\r\n", iptxt);
 
                 if (ip != 0)
                 {
-                    g_lwipdev.dhcpstatus = 2; /* DHCP³É¹¦ */
-                    printf("Íø¿¨enµÄMACµØÖ·Îª:................%d.%d.%d.%d.%d.%d\r\n", g_lwipdev.mac[0], g_lwipdev.mac[1], g_lwipdev.mac[2], g_lwipdev.mac[3], g_lwipdev.mac[4], g_lwipdev.mac[5]);
-                    /* ½âÎö³öÍ¨¹ıDHCP»ñÈ¡µ½µÄIPµØÖ· */
+                    g_lwipdev.dhcpstatus = 2; /* DHCPæˆåŠŸ */
+                    printf("ç½‘å¡ençš„MACåœ°å€ä¸º:................%d.%d.%d.%d.%d.%d\r\n", g_lwipdev.mac[0], g_lwipdev.mac[1], g_lwipdev.mac[2], g_lwipdev.mac[3], g_lwipdev.mac[4], g_lwipdev.mac[5]);
+                    /* è§£æå‡ºé€šè¿‡DHCPè·å–åˆ°çš„IPåœ°å€ */
                     g_lwipdev.ip[3] = (uint8_t)(ip >> 24);
                     g_lwipdev.ip[2] = (uint8_t)(ip >> 16);
                     g_lwipdev.ip[1] = (uint8_t)(ip >> 8);
                     g_lwipdev.ip[0] = (uint8_t)(ip);
-                    printf("Í¨¹ıDHCP»ñÈ¡µ½IPµØÖ·..............%d.%d.%d.%d\r\n", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
-                    /* ½âÎöÍ¨¹ıDHCP»ñÈ¡µ½µÄ×ÓÍøÑÚÂëµØÖ· */
+                    printf("é€šè¿‡DHCPè·å–åˆ°IPåœ°å€..............%d.%d.%d.%d\r\n", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
+                    /* è§£æé€šè¿‡DHCPè·å–åˆ°çš„å­ç½‘æ©ç åœ°å€ */
                     g_lwipdev.netmask[3] = (uint8_t)(netmask >> 24);
                     g_lwipdev.netmask[2] = (uint8_t)(netmask >> 16);
                     g_lwipdev.netmask[1] = (uint8_t)(netmask >> 8);
                     g_lwipdev.netmask[0] = (uint8_t)(netmask);
-                    printf("Í¨¹ıDHCP»ñÈ¡µ½×ÓÍøÑÚÂë............%d.%d.%d.%d\r\n", g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
-                    /* ½âÎö³öÍ¨¹ıDHCP»ñÈ¡µ½µÄÄ¬ÈÏÍø¹Ø */
+                    printf("é€šè¿‡DHCPè·å–åˆ°å­ç½‘æ©ç ............%d.%d.%d.%d\r\n", g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
+                    /* è§£æå‡ºé€šè¿‡DHCPè·å–åˆ°çš„é»˜è®¤ç½‘å…³ */
                     g_lwipdev.gateway[3] = (uint8_t)(gw >> 24);
                     g_lwipdev.gateway[2] = (uint8_t)(gw >> 16);
                     g_lwipdev.gateway[1] = (uint8_t)(gw >> 8);
                     g_lwipdev.gateway[0] = (uint8_t)(gw);
-                    printf("Í¨¹ıDHCP»ñÈ¡µ½µÄÄ¬ÈÏÍø¹Ø..........%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
+                    printf("é€šè¿‡DHCPè·å–åˆ°çš„é»˜è®¤ç½‘å…³..........%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
                 }
             }
             else
             {
                 dhcp = (struct dhcp *)netif_get_client_data(netif, LWIP_NETIF_CLIENT_DATA_INDEX_DHCP);
 
-                /* DHCP³¬Ê± */
+                /* DHCPè¶…æ—¶ */
                 if (dhcp->tries > LWIP_MAX_DHCP_TRIES)
                 {
-                    printf("DHCP·ÖÅäÊ§°Ü£¬½øÈë¾²Ì¬·ÖÅä......\r\n");
+                    printf("DHCPåˆ†é…å¤±è´¥ï¼Œè¿›å…¥é™æ€åˆ†é…......\r\n");
                     g_lwip_dhcp_state = LWIP_DHCP_TIMEOUT;
 
-                    /* Í£Ö¹DHCP */
+                    /* åœæ­¢DHCP */
                     dhcp_stop(netif);
                     g_lwipdev.dhcpstatus = 0XFF;
-                    /* Ê¹ÓÃ¾²Ì¬IPµØÖ· */
+                    /* ä½¿ç”¨é™æ€IPåœ°å€ */
                     IP4_ADDR(&(g_lwip_netif.ip_addr), g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
                     IP4_ADDR(&(g_lwip_netif.netmask), g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
                     IP4_ADDR(&(g_lwip_netif.gw), g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
@@ -299,7 +299,7 @@ void lwip_dhcp_process(struct netif *netif)
         }
     case LWIP_DHCP_LINK_DOWN:
         {
-            /* Í£Ö¹DHCP */
+            /* åœæ­¢DHCP */
             dhcp_stop(netif);
             g_lwip_dhcp_state = LWIP_DHCP_OFF;
             break;

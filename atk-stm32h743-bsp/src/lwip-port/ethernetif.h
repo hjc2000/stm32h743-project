@@ -2,13 +2,13 @@
 #include "lwip/err.h"
 #include "lwip/netif.h"
 
-/* Íø¿¨³õÊ¼»¯º¯Êı */
+/* ç½‘å¡åˆå§‹åŒ–å‡½æ•° */
 err_t ethernetif_init(netif *netif);
 
-/* Êı¾İ°üÊäÈëº¯Êı */
+/* æ•°æ®åŒ…è¾“å…¥å‡½æ•° */
 void ethernetif_input(netif *netif);
 
 extern "C"
 {
-    u32_t sys_now(void); /* Ìá¹©lwIPÊ±»ù */
+    u32_t sys_now(void); /* æä¾›lwIPæ—¶åŸº */
 }
