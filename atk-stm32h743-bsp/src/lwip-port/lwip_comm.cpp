@@ -65,6 +65,7 @@ void lwip_comm_default_ip_set(__lwip_dev *lwipx)
     lwipx->gateway[1] = 168;
     lwipx->gateway[2] = 1;
     lwipx->gateway[3] = 1;
+
     lwipx->dhcpstatus = 0; /* Ã»ÓÐDHCP */
 }
 

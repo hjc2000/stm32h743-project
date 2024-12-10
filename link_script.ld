@@ -186,15 +186,6 @@ SECTIONS
 
 	.ARM.attributes 0 : { *(.ARM.attributes) }
 
-	/* 将以太网描述符放到指定地址 */
-	.eth_rx_desc 0x30040000 (NOLOAD): {
-		*(.ARM.__at_0x30040000)
-	} >RAM_D2
-
-	.eth_tx_desc 0x30040060 (NOLOAD): {
-		*(.ARM.__at_0x30040060)
-	} >RAM_D2
-
 	.eth_rx_buff 0x30040200 (NOLOAD): {
 		*(.ARM.__at_0x30040200)
 	} >RAM_D2

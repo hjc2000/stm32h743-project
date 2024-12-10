@@ -21,8 +21,11 @@
 #include "lwip/err.h"
 #include "lwip/netif.h"
 
-err_t ethernetif_init(struct netif *netif); /* 网卡初始化函数 */
-void ethernetif_input(struct netif *netif); /* 数据包输入函数 */
+/* 网卡初始化函数 */
+err_t ethernetif_init(netif *netif);
+
+/* 数据包输入函数 */
+void ethernetif_input(netif *netif);
 
 extern "C"
 {

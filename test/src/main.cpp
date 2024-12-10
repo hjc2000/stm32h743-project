@@ -154,7 +154,8 @@ inline void TestFatFs()
     res = f_open(&file, filename, FA_READ);
     if (res == FR_OK)
     {
-        char buffer[128] = {0}; // 假设文件内容不会超过127个字符
+        // 假设文件内容不会超过127个字符
+        char buffer[128]{};
         UINT bytesRead;
 
         // 从文件读取内容

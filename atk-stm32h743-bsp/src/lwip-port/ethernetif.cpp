@@ -58,6 +58,8 @@
 
 ETH_TxPacketConfig TxConfig;
 
+extern ETH_HandleTypeDef g_eth_handler; /* ÒÔÌ«Íø¾ä±ú */
+
 eth_chip_object_t ETHCHIP;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -79,7 +81,8 @@ eth_chip_ioc_tx_t ETH_CHIP_IOCtx = {ETH_PHY_IO_Init,
 
 LWIP_MEMPOOL_DECLARE(RX_POOL, 10, sizeof(struct pbuf_custom), "Zero-copy RX PBUF pool");
 
-uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".ARM.__at_0x30040200"))); /* Ethernet Receive Buffers */
+/* Ethernet Receive Buffers */
+uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".ARM.__at_0x30040200")));
 
 /* Private functions ---------------------------------------------------------*/
 /*******************************************************************************
@@ -92,7 +95,7 @@ uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".A
  * @param netif the already initialized lwip network interface structure
  *        for this ethernetif
  */
-static void low_level_init(struct netif *netif)
+static void low_level_init(netif *netif)
 {
     uint32_t idx = 0;
     int32_t phy_link_state = 0;
@@ -119,8 +122,12 @@ static void low_level_init(struct netif *netif)
 
     for (idx = 0; idx < ETH_RX_DESC_CNT; idx++)
     {
-        HAL_ETH_DescAssignMemory(&g_eth_handler, idx, Rx_Buff[idx], NULL);
+        HAL_ETH_DescAssignMemory(&g_eth_handler,
+                                 idx,
+                                 Rx_Buff[idx],
+                                 NULL);
     }
+
     /* Initialize the RX POOL */
     LWIP_MEMPOOL_INIT(RX_POOL);
 
@@ -181,6 +188,7 @@ static void low_level_init(struct netif *netif)
     g_eth_macconfig_handler.Speed = speed;
     HAL_ETH_SetMACConfig(&g_eth_handler, &g_eth_macconfig_handler);
     HAL_ETH_Start(&g_eth_handler);
+
     /* ¿ªÆôÐéÄâÍø¿¨ */
     netif_set_up(netif);
     netif_set_link_up(netif);
@@ -240,9 +248,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 
     TxConfig.Length = p->tot_len;
     TxConfig.TxBuffer = Txbuffer;
-
     HAL_ETH_Transmit(&g_eth_handler, &TxConfig, ETH_DMA_TRANSMIT_TIMEOUT);
-
     return errval;
 }
 
@@ -263,7 +269,6 @@ static struct pbuf *low_level_input(struct netif *netif)
     struct pbuf_custom *custom_pbuf;
 
     memset(RxBuff, 0, ETH_RX_DESC_CNT * sizeof(ETH_BufferTypeDef));
-
     for (i = 0; i < ETH_RX_DESC_CNT - 1; i++)
     {
         RxBuff[i].next = &RxBuff[i + 1];
@@ -305,10 +310,10 @@ static struct pbuf *low_level_input(struct netif *netif)
  *
  * @param netif the lwip network interface structure for this ethernetif
  */
-void ethernetif_input(struct netif *netif)
+void ethernetif_input(netif *netif)
 {
     err_t err;
-    struct pbuf *p;
+    pbuf *p;
 
     /* move received packet into a new pbuf */
     p = low_level_input(netif);
@@ -340,7 +345,7 @@ void ethernetif_input(struct netif *netif)
  *         ERR_MEM if private data couldn't be allocated
  *         any other err_t on error
  */
-err_t ethernetif_init(struct netif *netif)
+err_t ethernetif_init(netif *netif)
 {
     LWIP_ASSERT("netif != NULL", (netif != NULL));
 

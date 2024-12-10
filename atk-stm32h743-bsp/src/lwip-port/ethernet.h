@@ -104,10 +104,6 @@
 
 /******************************************************************************************/
 
-extern ETH_HandleTypeDef g_eth_handler;                                                                            /* 以太网句柄 */
-extern ETH_DMADescTypeDef g_eth_dma_rx_dscr_tab[ETH_RX_DESC_CNT] __attribute__((section(".ARM.__at_0x30040000"))); /* Ethernet Rx DMA Descriptors */
-extern ETH_DMADescTypeDef g_eth_dma_tx_dscr_tab[ETH_TX_DESC_CNT] __attribute__((section(".ARM.__at_0x30040060"))); /* Ethernet Tx DMA Descriptors */
-
 uint8_t ethernet_init(void);                           /* 以太网芯片初始化 */
 uint32_t ethernet_read_phy(uint16_t reg);              /* 读取以太网芯片寄存器值 */
 void ethernet_write_phy(uint16_t reg, uint16_t value); /* 向以太网芯片指定地址写入寄存器值 */
