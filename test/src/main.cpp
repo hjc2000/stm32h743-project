@@ -95,7 +95,7 @@ inline void TestFatFs()
     res = f_mount(&fatfs, "", 0); // 卸载任何已挂载的卷
     if (res != FR_OK)
     {
-        std::cout << "f_mount error: " << res << std::endl;
+        DI_Console().WriteLine("f_mount error: " + std::to_string(res));
     }
 
     // 创建格式化参数结构体
@@ -110,14 +110,14 @@ inline void TestFatFs()
     res = f_mkfs("", &mkfs_parm, work, sizeof(work));
     if (res != FR_OK)
     {
-        std::cout << "f_mkfs error: " << res << std::endl;
+        DI_Console().WriteLine("f_mkfs error: " + std::to_string(res));
     }
 
     // 重新挂载文件系统
     res = f_mount(&fatfs, "", 1); // 挂载文件系统
     if (res != FR_OK)
     {
-        std::cout << "f_mount error: " << res << std::endl;
+        DI_Console().WriteLine("f_mount error: " + std::to_string(res));
     }
 
     FIL file{};
@@ -133,14 +133,13 @@ inline void TestFatFs()
         res = f_write(&file, str, strlen(str), &bytesWritten);
         if (res != FR_OK || bytesWritten != strlen(str))
         {
-            std::cout << "write failed: " << res << std::endl;
+            DI_Console().WriteLine("write failed: " + std::to_string(res));
         }
         else
         {
-            std::cout << "write "
-                      << bytesWritten
-                      << " bytes to the file successfully"
-                      << std::endl;
+            DI_Console().WriteLine("write " +
+                                   std::to_string(bytesWritten) +
+                                   " bytes to the file successfully");
         }
 
         // 关闭文件
@@ -148,7 +147,7 @@ inline void TestFatFs()
     }
     else
     {
-        std::cout << "open file failed: " << res << std::endl;
+        DI_Console().WriteLine("open file failed: " + std::to_string(res));
     }
 
     // 重新打开文件以读取
@@ -162,14 +161,13 @@ inline void TestFatFs()
         res = f_read(&file, buffer, sizeof(buffer) - 1, &bytesRead);
         if (res != FR_OK)
         {
-            std::cout << "read file failed: " << res << std::endl;
+            DI_Console().WriteLine("read file failed: " + std::to_string(res));
         }
         else
         {
-            std::cout << "read file successfully, have read "
-                      << bytesRead
-                      << " bytes"
-                      << std::endl;
+            DI_Console().WriteLine("read file successfully, have read " +
+                                   std::to_string(bytesRead) +
+                                   " bytes");
 
             DI_Console().WriteLine(buffer);
         }
@@ -179,7 +177,7 @@ inline void TestFatFs()
     }
     else
     {
-        std::cout << "open file failed: " << res << std::endl;
+        DI_Console().WriteLine("open file failed: " + std::to_string(res));
     }
 
     // 卸载文件系统
