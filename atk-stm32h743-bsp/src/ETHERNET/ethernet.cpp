@@ -208,7 +208,6 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 uint32_t ethernet_read_phy(uint16_t reg)
 {
     uint32_t regval;
-
     HAL_ETH_ReadPHYRegister(&g_eth_handler, ETH_CHIP_ADDR, reg, &regval);
     return regval;
 }
@@ -222,7 +221,6 @@ uint32_t ethernet_read_phy(uint16_t reg)
 void ethernet_write_phy(uint16_t reg, uint16_t value)
 {
     uint32_t temp = value;
-
     HAL_ETH_WritePHYRegister(&g_eth_handler, ETH_CHIP_ADDR, reg, temp);
 }
 
@@ -234,14 +232,27 @@ void ethernet_write_phy(uint16_t reg, uint16_t value)
  */
 uint8_t ethernet_chip_get_speed(void)
 {
-    uint8_t speed;
+    uint8_t speed = 0;
     if (PHY_TYPE == LAN8720)
-        speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS)); /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
+    {
+        /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
+        speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS));
+    }
     else if (PHY_TYPE == SR8201F)
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13); /* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
+    {
+        /* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
+        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13);
+    }
     else if (PHY_TYPE == YT8512C)
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14); /* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
+    {
+        /* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
+        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14);
+    }
     else if (PHY_TYPE == RTL8201)
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1); /* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
+    {
+        /* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
+        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1);
+    }
+
     return speed;
 }

@@ -61,7 +61,7 @@ ETH_TxPacketConfig TxConfig;
 eth_chip_object_t ETHCHIP;
 
 /* Private function prototypes -----------------------------------------------*/
-u32_t sys_now(void);
+
 struct pbuf_custom rx_pbuf[ETH_RX_DESC_CNT];
 void pbuf_free_custom(struct pbuf *p);
 
@@ -92,8 +92,7 @@ uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".A
  * @param netif the already initialized lwip network interface structure
  *        for this ethernetif
  */
-static void
-low_level_init(struct netif *netif)
+static void low_level_init(struct netif *netif)
 {
     uint32_t idx = 0;
     int32_t phy_link_state = 0;
@@ -376,15 +375,18 @@ void pbuf_free_custom(struct pbuf *p)
     LWIP_MEMPOOL_FREE(RX_POOL, custom_pbuf);
 }
 
-/**
- * @brief  Returns the current time in milliseconds
- *         when LWIP_TIMERS == 1 and NO_SYS == 1
- * @param  None
- * @retval Current Time value
- */
-u32_t sys_now(void)
+extern "C"
 {
-    return HAL_GetTick();
+    /**
+     * @brief  Returns the current time in milliseconds
+     *         when LWIP_TIMERS == 1 and NO_SYS == 1
+     * @param  None
+     * @retval Current Time value
+     */
+    u32_t sys_now(void)
+    {
+        return HAL_GetTick();
+    }
 }
 
 /*******************************************************************************

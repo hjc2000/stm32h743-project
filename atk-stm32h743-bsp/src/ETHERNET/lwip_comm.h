@@ -39,7 +39,7 @@
 #define LWIP_MAX_DHCP_TRIES (uint8_t)4
 
 /*lwip控制结构体*/
-typedef struct
+struct __lwip_dev
 {
     uint8_t mac[6];      /* MAC地址 */
     uint8_t remoteip[4]; /* 远端主机IP地址 */
@@ -51,7 +51,7 @@ typedef struct
                          1, 进入DHCP获取状态
                          2, 成功获取DHCP地址
                          0XFF,获取失败 */
-} __lwip_dev;
+};
 
 extern __lwip_dev g_lwipdev; /* lwip控制结构体 */
 

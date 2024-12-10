@@ -30,6 +30,7 @@
 #include "lwip/tcpip.h"
 #include "lwip/timeouts.h"
 #include "netif/etharp.h"
+#include <bsp-interface/di/delayer.h>
 #include <stdio.h>
 
 __lwip_dev g_lwipdev;      /* lwip控制结构体 */
@@ -138,7 +139,7 @@ uint8_t lwip_comm_init(void)
     do
     {
         eth_linkstate = ethernet_read_phy(ETH_CHIP_BSR);
-        delay_ms(1000);
+        DI_Delayer().Delay(std::chrono::milliseconds{1000});
 
         if ((eth_linkstate & ETH_CHIP_BSR_LINK_STATUS) == 4)
         {

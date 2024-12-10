@@ -184,6 +184,10 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
+uint8_t lwip_comm_init();
+void lwip_periodic_handle();
+void lwip_pkt_handle();
+
 int main(void)
 {
     DI_Initialize();
@@ -209,7 +213,19 @@ int main(void)
                 SDRAM_Init();
 
                 // TestLittleFs();
-                TestFatFs();
+                // TestFatFs();
+                while (lwip_comm_init())
+                {
+                    DI_Console().WriteLine("lwip_comm_init failed");
+                    DI_Delayer().Delay(std::chrono::milliseconds{1000});
+                }
+
+                while (1)
+                {
+                    lwip_periodic_handle(); /* LWIP轮询任务 */
+                    lwip_pkt_handle();
+                }
+
                 // while (true)
                 // {
                 //     DI_GreenDigitalLed().Toggle();
