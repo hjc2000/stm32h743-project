@@ -64,3 +64,7 @@ void TestSDRAM()
 
     DI_Console().WriteLine("No SDRAM error detected.");
 }
+
+void TestEthernet()
+{
+}

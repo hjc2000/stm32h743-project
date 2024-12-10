@@ -184,19 +184,6 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
-extern "C"
-{
-    void MX_LWIP_Init();
-    void MX_LWIP_Process();
-
-    void Error_Handler()
-    {
-        while (true)
-        {
-        }
-    }
-}
-
 int main(void)
 {
     DI_Initialize();
@@ -222,7 +209,7 @@ int main(void)
                 SDRAM_Init();
 
                 // TestLittleFs();
-                // TestFatFs();
+                TestFatFs();
                 // while (true)
                 // {
                 //     DI_GreenDigitalLed().Toggle();
