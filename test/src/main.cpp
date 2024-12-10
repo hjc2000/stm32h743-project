@@ -224,7 +224,7 @@ int main(void)
                     DI_Delayer().Delay(std::chrono::milliseconds{1000});
                 }
 
-                while (1)
+                while (true)
                 {
                     lwip_periodic_handle(); /* LWIP轮询任务 */
                     lwip_pkt_handle();
