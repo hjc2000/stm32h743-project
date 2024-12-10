@@ -31,12 +31,6 @@
 
 ETH_HandleTypeDef g_eth_handler; /* 以太网句柄 */
 
-/* Ethernet Rx DMA Descriptors */
-ETH_DMADescTypeDef *g_eth_dma_rx_dscr_tab = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
-
-/* Ethernet Tx DMA Descriptors */
-ETH_DMADescTypeDef *g_eth_dma_tx_dscr_tab = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040060);
-
 /**
  * @brief  Configure the MPU attributes
  * @param  None
@@ -83,8 +77,8 @@ uint8_t ethernet_init(void)
     g_eth_handler.Instance = ETH;
     g_eth_handler.Init.MACAddr = macaddress;
     g_eth_handler.Init.MediaInterface = HAL_ETH_RMII_MODE;
-    g_eth_handler.Init.RxDesc = g_eth_dma_rx_dscr_tab;
-    g_eth_handler.Init.TxDesc = g_eth_dma_tx_dscr_tab;
+    g_eth_handler.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
+    g_eth_handler.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + sizeof(ETH_DMADescTypeDef) * 4);
     g_eth_handler.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
 
     if (HAL_ETH_Init(&g_eth_handler) == HAL_OK)
@@ -107,15 +101,15 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 {
     GPIO_InitTypeDef gpio_init_struct;
 
-    ETH_CLK_GPIO_CLK_ENABLE();   /* 开启ETH_CLK时钟 */
-    ETH_MDIO_GPIO_CLK_ENABLE();  /* 开启ETH_MDIO时钟 */
-    ETH_CRS_GPIO_CLK_ENABLE();   /* 开启ETH_CRS时钟 */
-    ETH_MDC_GPIO_CLK_ENABLE();   /* 开启ETH_MDC时钟 */
-    ETH_RXD0_GPIO_CLK_ENABLE();  /* 开启ETH_RXD0时钟 */
-    ETH_RXD1_GPIO_CLK_ENABLE();  /* 开启ETH_RXD1时钟 */
-    ETH_TX_EN_GPIO_CLK_ENABLE(); /* 开启ETH_TX_EN时钟 */
-    ETH_TXD0_GPIO_CLK_ENABLE();  /* 开启ETH_TXD0时钟 */
-    ETH_TXD1_GPIO_CLK_ENABLE();  /* 开启ETH_TXD1时钟 */
+    __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_CLK时钟 */
+    __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_MDIO时钟 */
+    __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_CRS时钟 */
+    __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_MDC时钟 */
+    __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_RXD0时钟 */
+    __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_RXD1时钟 */
+    __HAL_RCC_GPIOB_CLK_ENABLE(); /* 开启ETH_TX_EN时钟 */
+    __HAL_RCC_GPIOG_CLK_ENABLE(); /* 开启ETH_TXD0时钟 */
+    __HAL_RCC_GPIOG_CLK_ENABLE(); /* 开启ETH_TXD1时钟 */
 
     /* Enable Ethernet clocks */
     __HAL_RCC_ETH1MAC_CLK_ENABLE();
