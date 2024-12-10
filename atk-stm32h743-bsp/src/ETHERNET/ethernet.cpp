@@ -25,10 +25,13 @@
 #include "ethernet.h"
 #include "ethernet_chip.h"
 #include "lwip_comm.h"
+#include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/expanded_io.h>
+#include <bsp-interface/di/interrupt.h>
 
-ETH_HandleTypeDef g_eth_handler;                                                           /* 以太网句柄 */
-__attribute__((at(0x30040000))) ETH_DMADescTypeDef g_eth_dma_rx_dscr_tab[ETH_RX_DESC_CNT]; /* Ethernet Rx DMA Descriptors */
-__attribute__((at(0x30040060))) ETH_DMADescTypeDef g_eth_dma_tx_dscr_tab[ETH_TX_DESC_CNT]; /* Ethernet Tx DMA Descriptors */
+ETH_HandleTypeDef g_eth_handler;                           /* 以太网句柄 */
+ETH_DMADescTypeDef g_eth_dma_rx_dscr_tab[ETH_RX_DESC_CNT]; /* Ethernet Rx DMA Descriptors */
+ETH_DMADescTypeDef g_eth_dma_tx_dscr_tab[ETH_TX_DESC_CNT]; /* Ethernet Tx DMA Descriptors */
 
 /**
  * @brief  Configure the MPU attributes
@@ -166,26 +169,35 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 
     uint32_t regval;
 
-    sys_intx_disable(); /* 关闭所有中断，复位过程不能被打断！ */
+    /* 关闭所有中断，复位过程不能被打断！ */
+    DI_DisableGlobalInterrupt();
+
     /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
     regval = ethernet_read_phy(2);
 
     if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
     {
-        pcf8574_write_bit(ETH_RESET_IO, 1); /* 硬件复位 */
-        delay_ms(100);
-        pcf8574_write_bit(ETH_RESET_IO, 0); /* 复位结束 */
-        delay_ms(100);
+        /* 硬件复位 */
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
+
+        /* 复位结束 */
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0);
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
     }
     else /* 新板卡（YT8512C）引脚复位 */
     {
-        pcf8574_write_bit(ETH_RESET_IO, 0); /* 硬件复位 */
-        delay_ms(100);
-        pcf8574_write_bit(ETH_RESET_IO, 1); /* 复位结束 */
-        delay_ms(100);
+        /* 硬件复位 */
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0);
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
+
+        /* 复位结束 */
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
     }
 
-    sys_intx_enable(); /* 开启所有中断 */
+    /* 开启所有中断 */
+    DI_EnableGlobalInterrupt();
 }
 
 /**

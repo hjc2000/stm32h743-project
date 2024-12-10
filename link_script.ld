@@ -194,4 +194,8 @@ SECTIONS
 	.eth_tx_desc 0x30040060 (NOLOAD): {
 		*(.ARM.__at_0x30040060)
 	} >RAM_D2
+
+	.eth_rx_buff 0x30040200 (NOLOAD): {
+		*(.ARM.__at_0x30040200)
+	} >RAM_D2
 }

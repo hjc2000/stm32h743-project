@@ -104,9 +104,9 @@
 
 /******************************************************************************************/
 
-extern ETH_HandleTypeDef g_eth_handler;                           /* ÒÔÌ«Íø¾ä±ú */
-extern ETH_DMADescTypeDef g_eth_dma_rx_dscr_tab[ETH_RX_DESC_CNT]; /* Ethernet Rx DMA Descriptors */
-extern ETH_DMADescTypeDef g_eth_dma_tx_dscr_tab[ETH_TX_DESC_CNT]; /* Ethernet Tx DMA Descriptors */
+extern ETH_HandleTypeDef g_eth_handler;                                                                            /* ÒÔÌ«Íø¾ä±ú */
+extern ETH_DMADescTypeDef g_eth_dma_rx_dscr_tab[ETH_RX_DESC_CNT] __attribute__((section(".ARM.__at_0x30040000"))); /* Ethernet Rx DMA Descriptors */
+extern ETH_DMADescTypeDef g_eth_dma_tx_dscr_tab[ETH_TX_DESC_CNT] __attribute__((section(".ARM.__at_0x30040060"))); /* Ethernet Tx DMA Descriptors */
 
 uint8_t ethernet_init(void);                           /* ÒÔÌ«ÍøÐ¾Æ¬³õÊ¼»¯ */
 uint32_t ethernet_read_phy(uint16_t reg);              /* ¶ÁÈ¡ÒÔÌ«ÍøÐ¾Æ¬¼Ä´æÆ÷Öµ */
