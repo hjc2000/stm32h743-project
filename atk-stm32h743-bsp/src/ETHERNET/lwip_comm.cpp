@@ -36,6 +36,11 @@
 __lwip_dev g_lwipdev;      /* lwip控制结构体 */
 struct netif g_lwip_netif; /* 定义一个全局的网络接口 */
 
+int DHCP_State()
+{
+    return g_lwipdev.dhcpstatus;
+}
+
 #if LWIP_DHCP
 uint32_t g_dhcp_fine_timer = 0;                 /* DHCP精细处理计时器 */
 __IO uint8_t g_lwip_dhcp_state = LWIP_DHCP_OFF; /* DHCP状态初始化 */

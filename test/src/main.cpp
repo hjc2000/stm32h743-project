@@ -187,6 +187,8 @@ inline void TestFatFs()
 uint8_t lwip_comm_init();
 void lwip_periodic_handle();
 void lwip_pkt_handle();
+int DHCP_State();
+uint8_t ethernet_chip_get_speed();
 
 int main(void)
 {
@@ -198,6 +200,8 @@ int main(void)
             while (true)
             {
                 DI_RedDigitalLed().Toggle();
+                DI_Console().WriteLine("DHCP State: " + std::to_string(DHCP_State()));
+                DI_Console().WriteLine("speed: " + std::to_string(ethernet_chip_get_speed()));
                 DI_Delayer().Delay(std::chrono::milliseconds{1000});
             }
         },
