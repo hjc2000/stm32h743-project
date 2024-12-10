@@ -206,9 +206,8 @@ int main(void)
         {
             while (true)
             {
-                // lwip_localtime += 10;
                 DI_RedDigitalLed().Toggle();
-                DI_Delayer().Delay(std::chrono::milliseconds{10});
+                DI_Delayer().Delay(std::chrono::milliseconds{1000});
             }
         },
         512);
@@ -221,23 +220,6 @@ int main(void)
                 DI_Serial().Open(*DICreate_ISerialOptions());
                 DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                 SDRAM_Init();
-
-                bsp::IEEROM *eerom = DI_EEROMCollection().Get("at24c02");
-                eerom->WriteUInt64(0, 123456789);
-
-                MX_LWIP_Init();
-                /* USER CODE BEGIN 2 */
-
-                /* USER CODE END 2 */
-
-                /* Infinite loop */
-                /* USER CODE BEGIN WHILE */
-                while (1)
-                {
-                    /* USER CODE END WHILE */
-                    MX_LWIP_Process();
-                    /* USER CODE BEGIN 3 */
-                }
 
                 // TestLittleFs();
                 // TestFatFs();
