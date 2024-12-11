@@ -30,14 +30,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
-/* 设置远程IP地址 */
-// #define DEST_IP_ADDR0               192
-// #define DEST_IP_ADDR1               168
-// #define DEST_IP_ADDR2                 1
-// #define DEST_IP_ADDR3               167
-
 /* 需要自己设置远程IP地址 */
-#define IP_ADDR "192.168.1.111"
+#define IP_ADDR "192.168.1.203"
 
 #define LWIP_DEMO_RX_BUFSIZE 200                     /* 最大接收数据长度 */
 #define LWIP_DEMO_PORT 8080                          /* 连接的本地端口号 */
@@ -62,7 +56,11 @@ extern QueueHandle_t g_display_queue; /* 显示消息队列句柄 */
  */
 void lwip_data_send(void)
 {
-    sys_thread_new("lwip_send_thread", lwip_send_thread, NULL, 512, LWIP_SEND_THREAD_PRIO);
+    sys_thread_new("lwip_send_thread",
+                   lwip_send_thread,
+                   NULL,
+                   512,
+                   LWIP_SEND_THREAD_PRIO);
 }
 
 /**
@@ -107,10 +105,8 @@ void lwip_demo(void)
 void lwip_send_thread(void *pvParameters)
 {
     pvParameters = pvParameters;
-
     local_info.sin_addr.s_addr = inet_addr(IP_ADDR); /* 需要发送的远程IP地址 */
-
-    while (1)
+    while (true)
     {
         if ((g_lwip_send_flag & LWIP_SEND_DATA) == LWIP_SEND_DATA) /* 有数据要发送 */
         {
