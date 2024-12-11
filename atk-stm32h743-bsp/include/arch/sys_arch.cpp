@@ -39,6 +39,7 @@
 #include "lwip/sys.h"
 #include "semphr.h"
 #include "task.h"
+#include <bsp-interface/di/delayer.h>
 
 int errno;
 
@@ -184,8 +185,7 @@ void sys_arch_unprotect(sys_prot_t pval)
 
 void sys_arch_msleep(u32_t delay_ms)
 {
-    TickType_t delay_ticks = delay_ms / portTICK_PERIOD_MS;
-    vTaskDelay(delay_ticks);
+    DI_Delayer().Delay(std::chrono::milliseconds{delay_ms});
 }
 
 #if !LWIP_COMPAT_MUTEX
@@ -201,34 +201,60 @@ err_t sys_mutex_new(sys_mutex_t *mutex)
         SYS_STATS_INC(mutex.err);
         return ERR_MEM;
     }
+
     SYS_STATS_INC_USED(mutex);
     return ERR_OK;
 }
 
 void sys_mutex_lock(sys_mutex_t *mutex)
 {
-    BaseType_t ret;
-    LWIP_ASSERT("mutex != NULL", mutex != NULL);
-    LWIP_ASSERT("mutex->mut != NULL", mutex->mut != NULL);
+    if (mutex == nullptr)
+    {
+        throw std::invalid_argument{"mutex 不能是空指针"};
+    }
 
-    ret = xSemaphoreTakeRecursive(reinterpret_cast<QueueHandle_t>(mutex->mut), portMAX_DELAY);
-    LWIP_ASSERT("failed to take the mutex", ret == pdTRUE);
+    if (mutex->mut == nullptr)
+    {
+        throw std::invalid_argument{"mutex->mut 不能是空指针"};
+    }
+
+    BaseType_t ret = xSemaphoreTakeRecursive(reinterpret_cast<QueueHandle_t>(mutex->mut), portMAX_DELAY);
+    if (!ret)
+    {
+        throw std::runtime_error{"锁定互斥锁失败"};
+    }
 }
 
 void sys_mutex_unlock(sys_mutex_t *mutex)
 {
-    BaseType_t ret;
-    LWIP_ASSERT("mutex != NULL", mutex != NULL);
-    LWIP_ASSERT("mutex->mut != NULL", mutex->mut != NULL);
+    if (mutex == nullptr)
+    {
+        throw std::invalid_argument{"mutex 不能是空指针"};
+    }
 
-    ret = xSemaphoreGiveRecursive(reinterpret_cast<QueueHandle_t>(mutex->mut));
-    LWIP_ASSERT("failed to give the mutex", ret == pdTRUE);
+    if (mutex->mut == nullptr)
+    {
+        throw std::invalid_argument{"mutex->mut 不能是空指针"};
+    }
+
+    BaseType_t ret = xSemaphoreGiveRecursive(reinterpret_cast<QueueHandle_t>(mutex->mut));
+    if (!ret)
+    {
+        throw std::runtime_error{"解锁互斥锁失败"};
+    }
 }
 
 void sys_mutex_free(sys_mutex_t *mutex)
 {
-    LWIP_ASSERT("mutex != NULL", mutex != NULL);
-    LWIP_ASSERT("mutex->mut != NULL", mutex->mut != NULL);
+    if (mutex == nullptr)
+    {
+        return;
+    }
+
+    if (mutex->mut == nullptr)
+    {
+        return;
+    }
 
     SYS_STATS_DEC(mutex.used);
     vSemaphoreDelete(mutex->mut);
@@ -249,13 +275,17 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t initial_count)
         SYS_STATS_INC(sem.err);
         return ERR_MEM;
     }
-    SYS_STATS_INC_USED(sem);
 
+    SYS_STATS_INC_USED(sem);
     if (initial_count == 1)
     {
         BaseType_t ret = xSemaphoreGive(sem->sem);
-        LWIP_ASSERT("sys_sem_new: initial give failed", ret == pdTRUE);
+        if (!ret)
+        {
+            throw std::runtime_error{"信号量初始计数要为 1，所以构造后获取一次信号量。此时获取失败。"};
+        }
     }
+
     return ERR_OK;
 }
 
@@ -273,10 +303,17 @@ void sys_sem_signal(sys_sem_t *sem)
 
 u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout_ms)
 {
-    BaseType_t ret;
-    LWIP_ASSERT("sem != NULL", sem != NULL);
-    LWIP_ASSERT("sem->sem != NULL", sem->sem != NULL);
+    if (sem == nullptr)
+    {
+        throw std::invalid_argument{"sem 不能是空指针"};
+    }
 
+    if (sem->sem == nullptr)
+    {
+        throw std::invalid_argument{"sem->sem 不能是空指针"};
+    }
+
+    BaseType_t ret;
     if (!timeout_ms)
     {
         /* wait infinite */
@@ -292,6 +329,7 @@ u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout_ms)
             /* timed out */
             return SYS_ARCH_TIMEOUT;
         }
+
         LWIP_ASSERT("taking semaphore failed", ret == pdTRUE);
     }
 
@@ -303,8 +341,15 @@ u32_t sys_arch_sem_wait(sys_sem_t *sem, u32_t timeout_ms)
 
 void sys_sem_free(sys_sem_t *sem)
 {
-    LWIP_ASSERT("sem != NULL", sem != NULL);
-    LWIP_ASSERT("sem->sem != NULL", sem->sem != NULL);
+    if (sem == nullptr)
+    {
+        return;
+    }
+
+    if (sem->sem == nullptr)
+    {
+        return;
+    }
 
     SYS_STATS_DEC(sem.used);
     vSemaphoreDelete(sem->sem);
@@ -437,6 +482,7 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
         *msg = NULL;
         return SYS_MBOX_EMPTY;
     }
+
     LWIP_ASSERT("mbox fetch failed", ret == pdTRUE);
 
     /* Old versions of lwIP required us to return the time waited.

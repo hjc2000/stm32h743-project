@@ -68,6 +68,7 @@ struct _sys_sem
 {
     void *sem;
 };
+
 typedef struct _sys_sem sys_sem_t;
 #define sys_sem_valid_val(sema) ((sema).sem != NULL)
 #define sys_sem_valid(sema) (((sema) != NULL) && sys_sem_valid_val(*(sema)))
@@ -77,6 +78,7 @@ struct _sys_mbox
 {
     void *mbx;
 };
+
 typedef struct _sys_mbox sys_mbox_t;
 #define sys_mbox_valid_val(mbox) ((mbox).mbx != NULL)
 #define sys_mbox_valid(mbox) (((mbox) != NULL) && sys_mbox_valid_val(*(mbox)))
@@ -86,6 +88,7 @@ struct _sys_thread
 {
     void *thread_handle;
 };
+
 typedef struct _sys_thread sys_thread_t;
 
 #if LWIP_NETCONN_SEM_PER_THREAD

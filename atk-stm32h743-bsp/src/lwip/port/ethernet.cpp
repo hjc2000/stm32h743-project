@@ -191,19 +191,12 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
     /* Enable the Ethernet global Interrupt */
     HAL_NVIC_SetPriority(ETH_IRQn, 0x07, 0);
     HAL_NVIC_EnableIRQ(ETH_IRQn);
-}
 
-extern "C"
-{
-    /**
-     * @breif       中断服务函数
-     * @param       无
-     * @retval      无
-     */
-    void ETH_IRQHandler(void)
-    {
-        HAL_ETH_IRQHandler(&g_eth_handler);
-    }
+    DI_IsrManager().AddIsr(static_cast<uint32_t>(ETH_IRQn),
+                           []()
+                           {
+                               HAL_ETH_IRQHandler(&g_eth_handler);
+                           });
 }
 
 /**

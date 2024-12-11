@@ -1,4 +1,5 @@
 #pragma once
+#include <base/define.h>
 #include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/interrupt.h>
 #include <functional>

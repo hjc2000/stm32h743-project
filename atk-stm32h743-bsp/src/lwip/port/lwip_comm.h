@@ -45,8 +45,6 @@
 /* DHCP服务器最大重试次数 */
 #define LWIP_MAX_DHCP_TRIES (uint8_t)4
 
-typedef void (*display_fn)(uint8_t index);
-
 /*lwip控制结构体*/
 typedef struct
 {
