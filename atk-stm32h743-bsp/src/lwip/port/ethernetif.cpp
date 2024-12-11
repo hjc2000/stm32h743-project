@@ -27,6 +27,7 @@
 #include "semphr.h"
 #include "string.h"
 #include "task.h"
+#include <bsp-interface/di/delayer.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -91,7 +92,7 @@ eth_chip_ioc_tx_t ETH_CHIP_IOCtx = {ETH_PHY_IO_Init,
 
 LWIP_MEMPOOL_DECLARE(RX_POOL, 10, sizeof(struct pbuf_custom), "Zero-copy RX PBUF pool");
 
-__attribute__((at(0x30040200))) uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE]; /* Ethernet Receive Buffers */
+uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".ARM.__at_0x30040200"))); /* Ethernet Receive Buffers */
 
 /* Private functions ---------------------------------------------------------*/
 /*******************************************************************************
@@ -111,7 +112,7 @@ low_level_init(struct netif *netif)
     int32_t phy_link_state = 0;
     uint32_t duplex = 0;
     uint32_t speed = 0;
-    ETH_MACConfigTypeDef g_eth_macconfig_handler = {0};
+    ETH_MACConfigTypeDef g_eth_macconfig_handler{};
 
     ethernet_init(); /* 初始化以太网IO */
 
@@ -162,7 +163,8 @@ low_level_init(struct netif *netif)
     /* 必须开启自动协商功能 */
     eth_chip_start_auto_nego(&ETHCHIP);
 
-    delay_ms(2000); /* 必须等待初始化 */
+    /* 必须等待初始化 */
+    DI_Delayer().Delay(std::chrono::milliseconds{2000});
     phy_link_state = eth_chip_get_link_state(&ETHCHIP);
 
     if (phy_link_state == ETH_CHIP_STATUS_READ_ERROR)
@@ -244,7 +246,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
             return ERR_IF;
         }
 
-        Txbuffer[i].buffer = q->payload;
+        Txbuffer[i].buffer = reinterpret_cast<uint8_t *>(q->payload);
         Txbuffer[i].len = q->len;
 
         if (i > 0)

@@ -27,6 +27,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "task.h"
+#include <bsp-interface/di/delayer.h>
 
 /******************************************************************************************************/
 /*FreeRTOS配置*/
@@ -159,12 +160,7 @@ void start_task(void *pvParameters)
 
     while (lwip_comm_init() != 0)
     {
-        // lcd_show_string(30, 110, 200, 16, 16, "lwIP Init failed!!", RED);
-        delay_ms(500);
-        // lcd_fill(30, 50, 200 + 30, 50 + 16, WHITE);
-        // lcd_show_string(30, 110, 200, 16, 16, "Retrying...       ", RED);
-        delay_ms(500);
-        // LED1_TOGGLE();
+        DI_Delayer().Delay(std::chrono::milliseconds{1000});
     }
 
     while (g_lwipdev.dhcpstatus != 2 && g_lwipdev.dhcpstatus != 0xff) /* 等待静态和动态分配完成  */

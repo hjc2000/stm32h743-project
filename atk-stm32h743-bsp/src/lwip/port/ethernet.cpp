@@ -25,6 +25,9 @@
 #include "ethernet.h"
 #include "ethernet_chip.h"
 #include "lwip_comm.h"
+#include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/expanded_io.h>
+#include <bsp-interface/di/interrupt.h>
 
 ETH_HandleTypeDef g_eth_handler; /* 以太网句柄 */
 
@@ -164,26 +167,26 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 
     uint32_t regval;
 
-    sys_intx_disable(); /* 关闭所有中断，复位过程不能被打断！ */
+    DI_DisableGlobalInterrupt(); /* 关闭所有中断，复位过程不能被打断！ */
     /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
     regval = ethernet_read_phy(2);
 
     if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
     {
-        pcf8574_write_bit(7, 1); /* 硬件复位 */
-        delay_ms(100);
-        pcf8574_write_bit(7, 0); /* 复位结束 */
-        delay_ms(100);
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
     }
     else /* 新板卡（YT8512C）引脚复位 */
     {
-        pcf8574_write_bit(7, 0); /* 硬件复位 */
-        delay_ms(100);
-        pcf8574_write_bit(7, 1); /* 复位结束 */
-        delay_ms(100);
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
     }
 
-    sys_intx_enable(); /* 开启所有中断 */
+    DI_EnableGlobalInterrupt(); /* 开启所有中断 */
 
     /* Enable the Ethernet global Interrupt */
     HAL_NVIC_SetPriority(ETH_IRQn, 0x07, 0);
@@ -234,7 +237,7 @@ void ethernet_write_phy(uint16_t reg, uint16_t value)
  */
 uint8_t ethernet_chip_get_speed(void)
 {
-    uint8_t speed;
+    uint8_t speed = 0;
     if (PHY_TYPE == LAN8720)
         speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS)); /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
     else if (PHY_TYPE == SR8201F)
