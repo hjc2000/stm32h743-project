@@ -40,6 +40,8 @@
 #include "semphr.h"
 #include "task.h"
 #include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/interrupt.h>
+#include <bsp-interface/di/task.h>
 
 int errno;
 

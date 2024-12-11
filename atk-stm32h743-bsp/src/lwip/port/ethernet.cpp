@@ -189,7 +189,9 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 
     DI_EnableGlobalInterrupt(); /* 开启所有中断 */
 
-    // 这里的中断优先级必须设置在 freertos 能够屏蔽的优先级范围内
+    /* 这里的中断优先级必须设置在 freertos 能够屏蔽的优先级范围内，不然不知道什么原因，
+     * 会导致 freertos 的 queue.c 中报错。
+     */
     DI_EnableInterrupt(static_cast<uint32_t>(ETH_IRQn), 7);
     DI_IsrManager().AddIsr(static_cast<uint32_t>(ETH_IRQn),
                            []()
