@@ -34,6 +34,10 @@
 #include "lwip/timeouts.h"
 #include "netif/etharp.h"
 #include "task.h"
+#include <bsp-interface/di/console.h>
+#include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/expanded_io.h>
+#include <bsp-interface/di/interrupt.h>
 #include <stdio.h>
 
 __lwip_dev g_lwipdev;      /* lwip控制结构体 */
@@ -81,6 +85,7 @@ void lwip_comm_default_ip_set(__lwip_dev *lwipx)
     lwipx->ip[1] = 168;
     lwipx->ip[2] = 1;
     lwipx->ip[3] = 30;
+
     /* 默认子网掩码:255.255.255.0 */
     lwipx->netmask[0] = 255;
     lwipx->netmask[1] = 255;
@@ -105,20 +110,23 @@ void lwip_comm_default_ip_set(__lwip_dev *lwipx)
  */
 uint8_t lwip_comm_init(void)
 {
-    struct netif *netif_init_flag; /* 调用netif_add()函数时的返回值,用于判断网络初始化是否成功 */
-    ip_addr_t ipaddr;              /* ip地址 */
-    ip_addr_t netmask;             /* 子网掩码 */
-    ip_addr_t gw;                  /* 默认网关 */
+    struct netif *netif_init_flag = nullptr; /* 调用netif_add()函数时的返回值,用于判断网络初始化是否成功 */
+    ip_addr_t ipaddr{};                      /* ip地址 */
+    ip_addr_t netmask{};                     /* 子网掩码 */
+    ip_addr_t gw{};                          /* 默认网关 */
 
     tcpip_init(NULL, NULL);
+    DI_Console().WriteLine("tcpip_init successfully");
 
     lwip_comm_default_ip_set(&g_lwipdev); /* 设置默认IP等信息 */
+    DI_Console().WriteLine("lwip_comm_default_ip_set successfully");
 
 #if LWIP_DHCP /* 使用动态IP */
     ip_addr_set_zero_ip4(&ipaddr);
     ip_addr_set_zero_ip4(&netmask);
     ip_addr_set_zero_ip4(&gw);
-#else  /* 使用静态IP */
+#else
+    /* 使用静态IP */
     IP4_ADDR(&ipaddr, g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
     IP4_ADDR(&netmask, g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
     IP4_ADDR(&gw, g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
@@ -127,37 +135,64 @@ uint8_t lwip_comm_init(void)
     printf("子网掩码..........................%d.%d.%d.%d\r\n", g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
     printf("默认网关..........................%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
     g_lwipdev.dhcpstatus = 0XFF;
-#endif /* 向网卡列表中添加一个网口 */
-    netif_init_flag = netif_add(&g_lwip_netif, (ip_addr_t const *)&ipaddr, (ip_addr_t const *)&netmask, (ip_addr_t const *)&gw, NULL, &ethernetif_init, &tcpip_input);
+#endif
+    /* 向网卡列表中添加一个网口 */
+    netif_init_flag = netif_add(&g_lwip_netif,
+                                (ip_addr_t const *)&ipaddr,
+                                (ip_addr_t const *)&netmask,
+                                (ip_addr_t const *)&gw,
+                                NULL,
+                                &ethernetif_init,
+                                &tcpip_input);
 
     if (netif_init_flag == NULL)
     {
-        return 1; /* 网卡添加失败 */
+        DI_Console().WriteLine("netif_add failed");
+
+        /* 网卡添加失败 */
+        return 1;
     }
-    else /* 网口添加成功后,设置netif为默认值,并且打开netif网口 */
+    else
     {
+        DI_Console().WriteLine("netif_add successfully");
+
+        /* 网口添加成功后,设置netif为默认值,并且打开netif网口 */
         netif_set_default(&g_lwip_netif); /* 设置netif为默认网口 */
+        DI_Console().WriteLine("netif_set_default successfully");
 
 #if LWIP_NETIF_LINK_CALLBACK
-        lwip_link_status_updated(&g_lwip_netif); /* DHCP链接状态更新函数 */
+        /* DHCP链接状态更新函数 */
+        lwip_link_status_updated(&g_lwip_netif);
+        DI_Console().WriteLine("lwip_link_status_updated successfully");
+
         netif_set_link_callback(&g_lwip_netif, lwip_link_status_updated);
+        DI_Console().WriteLine("netif_set_link_callback successfully");
+
         /* 查询PHY连接状态任务 */
         sys_thread_new("eth_link",
                        lwip_link_thread,     /* 任务入口函数 */
                        &g_lwip_netif,        /* 任务入口函数参数 */
                        LWIP_LINK_STK_SIZE,   /* 任务栈大小 */
                        LWIP_LINK_TASK_PRIO); /* 任务的优先级 */
+
+        DI_Console().WriteLine("sys_thread_new eth_link thread successfully");
+
 #endif
     }
+
     g_lwipdev.link_status = LWIP_LINK_OFF; /* 链接标记为0 */
 #if LWIP_DHCP                              /* 如果使用DHCP的话 */
     g_lwipdev.dhcpstatus = 0;              /* DHCP标记为0 */
+
     /* DHCP轮询任务 */
     sys_thread_new("eth_dhcp",
                    lwip_periodic_handle, /* 任务入口函数 */
                    &g_lwip_netif,        /* 任务入口函数参数 */
                    LWIP_DHCP_STK_SIZE,   /* 任务栈大小 */
                    LWIP_DHCP_TASK_PRIO); /* 任务的优先级 */
+
+    DI_Console().WriteLine("sys_thread_new eth_dhcp thread successfully");
+
 #endif
     return 0; /* 操作OK. */
 }
@@ -196,6 +231,8 @@ void lwip_link_status_updated(struct netif *netif)
  */
 void lwip_periodic_handle(void *argument)
 {
+    DI_Console().WriteLine("enter lwip_periodic_handle");
+
     struct netif *netif = (struct netif *)argument;
     uint32_t ip = 0;
     uint32_t netmask = 0;
@@ -203,7 +240,7 @@ void lwip_periodic_handle(void *argument)
     struct dhcp *dhcp;
     uint8_t iptxt[20];
 
-    while (1)
+    while (true)
     {
         switch (g_lwip_dhcp_state)
         {
@@ -291,8 +328,9 @@ void lwip_periodic_handle(void *argument)
             break;
         }
 
-        /* wait 1000 ms */
+        DI_Delayer().Delay(std::chrono::milliseconds{1000});
         vTaskDelay(1000);
+        DI_Console().WriteLine("lwip_periodic_handle loop end");
     }
 }
 #endif
@@ -304,6 +342,8 @@ void lwip_periodic_handle(void *argument)
  */
 void lwip_link_thread(void *argument)
 {
+    DI_Console().WriteLine("enter lwip_link_thread");
+
     uint32_t regval = 0;
     struct netif *netif = (struct netif *)argument;
     int link_again_num = 0;
@@ -317,15 +357,18 @@ void lwip_link_thread(void *argument)
         if ((regval & ETH_CHIP_BSR_LINK_STATUS) == 0)
         {
             g_lwipdev.link_status = LWIP_LINK_OFF;
-
             link_again_num++;
 
-            if (link_again_num >= 2) /* 网线一段时间没有插入 */
+            if (link_again_num >= 2)
             {
+                /* 网线一段时间没有插入 */
                 continue;
             }
-            else /* 关闭虚拟网卡及以太网中断 */
+            else
             {
+                /* 关闭虚拟网卡及以太网中断 */
+                DI_Console().WriteLine("close ethernet");
+
 #if LWIP_DHCP
                 g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
                 dhcp_stop(netif);
@@ -335,12 +378,13 @@ void lwip_link_thread(void *argument)
                 netif_set_link_down(netif);
             }
         }
-        else /* 网线插入检测 */
+        else
         {
+            /* 网线插入检测 */
             link_again_num = 0;
-
-            if (g_lwipdev.link_status == LWIP_LINK_OFF) /* 开启以太网及虚拟网卡 */
+            if (g_lwipdev.link_status == LWIP_LINK_OFF)
             {
+                /* 开启以太网及虚拟网卡 */
                 g_lwipdev.link_status = LWIP_LINK_ON;
                 HAL_ETH_Start_IT(&g_eth_handler);
                 netif_set_up(netif);
@@ -349,5 +393,6 @@ void lwip_link_thread(void *argument)
         }
 
         vTaskDelay(100);
+        DI_Console().WriteLine("lwip_link_thread loop end");
     }
 }

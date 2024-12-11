@@ -25,18 +25,13 @@
 #include "stdio.h"
 #include "string.h"
 #include "task.h"
+#include <bsp-interface/di/console.h>
+#include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/interrupt.h>
 #include <lwip_demo.h>
 
 /******************************************************************************************************/
 /*FreeRTOS配置*/
-
-/* START_TASK 任务 配置
- * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
- */
-#define START_TASK_PRIO 5            /* 任务优先级 */
-#define START_STK_SIZE 1024          /* 任务堆栈大小 */
-TaskHandle_t StartTask_Handler;      /* 任务句柄 */
-void start_task(void *pvParameters); /* 任务函数 */
 
 /* LWIP_DEMO 任务 配置
  * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
@@ -45,14 +40,6 @@ void start_task(void *pvParameters); /* 任务函数 */
 #define LWIP_DMEO_STK_SIZE 1024          /* 任务堆栈大小 */
 TaskHandle_t LWIP_Task_Handler;          /* 任务句柄 */
 void lwip_demo_task(void *pvParameters); /* 任务函数 */
-
-/* LED_TASK 任务 配置
- * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
- */
-#define LED_TASK_PRIO 10           /* 任务优先级 */
-#define LED_STK_SIZE 1024          /* 任务堆栈大小 */
-TaskHandle_t LEDTask_Handler;      /* 任务句柄 */
-void led_task(void *pvParameters); /* 任务函数 */
 
 /* KEY_TASK 任务 配置
  * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
@@ -83,32 +70,16 @@ QueueHandle_t g_display_queue; /* 显示消息队列句柄 */
  */
 void freertos_demo()
 {
-    /* start_task任务 */
-    xTaskCreate((TaskFunction_t)start_task,
-                (char const *)"start_task",
-                (uint16_t)START_STK_SIZE,
-                (void *)NULL,
-                (UBaseType_t)START_TASK_PRIO,
-                (TaskHandle_t *)&StartTask_Handler);
-}
-
-/**
- * @brief       start_task
- * @param       pvParameters : 传入参数(未用到)
- * @retval      无
- */
-void start_task(void *pvParameters)
-{
-    pvParameters = pvParameters;
-
     while (lwip_comm_init() != 0)
     {
-        vTaskDelay(500);
+        DI_Delayer().Delay(std::chrono::milliseconds{500});
     }
+
+    DI_Console().WriteLine("lwip_comm_init successfully");
 
     while (g_lwipdev.dhcpstatus != 2 && g_lwipdev.dhcpstatus != 0xff) /* 等待静态和动态分配完成  */
     {
-        vTaskDelay(500);
+        DI_Delayer().Delay(std::chrono::milliseconds{500});
     }
 
     taskENTER_CRITICAL(); /* 进入临界区 */
@@ -131,14 +102,6 @@ void start_task(void *pvParameters)
                 (UBaseType_t)KEY_TASK_PRIO,
                 (TaskHandle_t *)&KEYTask_Handler);
 
-    /* LED测试任务 */
-    xTaskCreate((TaskFunction_t)led_task,
-                (char const *)"led_task",
-                (uint16_t)LED_STK_SIZE,
-                (void *)NULL,
-                (UBaseType_t)LED_TASK_PRIO,
-                (TaskHandle_t *)&LEDTask_Handler);
-
     /* 显示任务 */
     xTaskCreate((TaskFunction_t)display_task,
                 (char const *)"display_task",
@@ -147,8 +110,7 @@ void start_task(void *pvParameters)
                 (UBaseType_t)DISPLAY_TASK_PRIO,
                 (TaskHandle_t *)&DISPLAYTask_Handler);
 
-    vTaskDelete(StartTask_Handler); /* 删除开始任务 */
-    taskEXIT_CRITICAL();            /* 退出临界区 */
+    taskEXIT_CRITICAL(); /* 退出临界区 */
 }
 
 /**
@@ -180,21 +142,6 @@ void key_task(void *pvParameters)
     {
         g_lwip_send_flag |= LWIP_SEND_DATA; /* 标记LWIP有数据要发送 */
         vTaskDelay(10000);
-    }
-}
-
-/**
- * @brief       系统再运行
- * @param       pvParameters : 传入参数(未用到)
- * @retval      无
- */
-void led_task(void *pvParameters)
-{
-    pvParameters = pvParameters;
-
-    while (1)
-    {
-        vTaskDelay(100);
     }
 }
 

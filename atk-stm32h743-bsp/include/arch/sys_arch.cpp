@@ -134,8 +134,7 @@ u32_t sys_jiffies(void)
 
 #if SYS_LIGHTWEIGHT_PROT
 
-sys_prot_t
-sys_arch_protect(void)
+sys_prot_t sys_arch_protect(void)
 {
 #if LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX
     BaseType_t ret;
@@ -323,6 +322,7 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
         SYS_STATS_INC(mbox.err);
         return ERR_MEM;
     }
+
     SYS_STATS_INC_USED(mbox);
     return ERR_OK;
 }
@@ -370,6 +370,7 @@ err_t sys_mbox_trypost_fromisr(sys_mbox_t *mbox, void *msg)
         {
             return ERR_NEED_SCHED;
         }
+
         return ERR_OK;
     }
     else
@@ -408,6 +409,7 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout_ms)
             *msg = NULL;
             return SYS_ARCH_TIMEOUT;
         }
+
         LWIP_ASSERT("mbox fetch failed", ret == pdTRUE);
     }
 
@@ -461,12 +463,10 @@ void sys_mbox_free(sys_mbox_t *mbox)
 #endif
 
     vQueueDelete(reinterpret_cast<QueueHandle_t>(mbox->mbx));
-
     SYS_STATS_DEC(mbox.used);
 }
 
-sys_thread_t
-sys_thread_new(char const *name, lwip_thread_fn thread, void *arg, int stacksize, int prio)
+sys_thread_t sys_thread_new(char const *name, lwip_thread_fn thread, void *arg, int stacksize, int prio)
 {
     TaskHandle_t rtos_task;
     BaseType_t ret;
@@ -482,7 +482,13 @@ sys_thread_new(char const *name, lwip_thread_fn thread, void *arg, int stacksize
 
     /* lwIP's lwip_thread_fn matches FreeRTOS' TaskFunction_t, so we can pass the
        thread function without adaption here. */
-    ret = xTaskCreate(thread, name, (configSTACK_DEPTH_TYPE)rtos_stacksize, arg, prio, &rtos_task);
+    ret = xTaskCreate(thread,
+                      name,
+                      (configSTACK_DEPTH_TYPE)rtos_stacksize,
+                      arg,
+                      1,
+                      &rtos_task);
+
     LWIP_ASSERT("task creation failed", ret == pdTRUE);
 
     lwip_thread.thread_handle = rtos_task;

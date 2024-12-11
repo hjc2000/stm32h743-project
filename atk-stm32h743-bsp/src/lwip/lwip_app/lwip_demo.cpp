@@ -46,7 +46,7 @@
 /* 接收数据缓冲区 */
 uint8_t g_lwip_demo_recvbuf[LWIP_DEMO_RX_BUFSIZE];
 /* 发送数据内容 */
-char g_lwip_demo_sendbuf[] = "ALIENTEK DATA \r\n";
+char g_lwip_demo_sendbuf[] = "ALIENTEK UDP TEST\r\n";
 /* 数据发送标志位 */
 uint8_t g_lwip_send_flag;
 struct sockaddr_in local_info; /* 定义Socket地址信息结构体 */

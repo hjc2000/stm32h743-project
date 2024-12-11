@@ -75,7 +75,7 @@
 
 /* ---------- DHCP 选项 ---------- */
 /* 如果您希望DHCP配置为，请将LWIP_DHCP定义为1 */
-#define LWIP_DHCP 1
+#define LWIP_DHCP 0
 
 /* ---------- UDP 选项 ---------- */
 #define LWIP_UDP 1

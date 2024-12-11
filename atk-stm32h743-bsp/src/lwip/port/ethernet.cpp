@@ -193,14 +193,17 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
     HAL_NVIC_EnableIRQ(ETH_IRQn);
 }
 
-/**
- * @breif       中断服务函数
- * @param       无
- * @retval      无
- */
-void ETH_IRQHandler(void)
+extern "C"
 {
-    HAL_ETH_IRQHandler(&g_eth_handler);
+    /**
+     * @breif       中断服务函数
+     * @param       无
+     * @retval      无
+     */
+    void ETH_IRQHandler(void)
+    {
+        HAL_ETH_IRQHandler(&g_eth_handler);
+    }
 }
 
 /**
