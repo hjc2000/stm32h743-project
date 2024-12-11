@@ -1,23 +1,4 @@
-/**
- ******************************************************************************
- * @file    LwIP/LwIP_HTTP_Server_Netconn_RTOS/Inc/lwipopts.h
- * @author  MCD Application Team
- * @brief   lwIP Options Configuration.
- ******************************************************************************
- * @attention
- *
- * Copyright (c) 2017 STMicroelectronics.
- * All rights reserved.
- *
- * This software is licensed under terms that can be found in the LICENSE file
- * in the root directory of this software component.
- * If no LICENSE file comes with this software, it is provided AS-IS.
- *
- ******************************************************************************
- */
-#ifndef __LWIPOPTS_H__
-#define __LWIPOPTS_H__
-
+#pragma once
 #include <errno.h>
 
 /* NO_SYS 表示无操作系统模拟层，无操作系统为1，有操作系统设置为0
@@ -179,5 +160,3 @@ The STM32F4x7 allows computing and verifying the IP, UDP, TCP and ICMP checksums
 #define DEFAULT_THREAD_STACKSIZE 500
 #define TCPIP_THREAD_PRIO 5
 #define LWIP_SO_RCVTIMEO 1
-
-#endif /* __LWIPOPTS_H__ */

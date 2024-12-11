@@ -1,29 +1,4 @@
-/**
- ****************************************************************************************************
- * @file        lwip_comm.h
- * @author      正点原子团队(ALIENTEK)
- * @version     V1.0
- * @date        2022-08-01
- * @brief       lwIP配置驱动
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
- ****************************************************************************************************
- * @attention
- *
- * 实验平台:正点原子 阿波罗 H743开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
- *
- * 修改说明
- * V1.0 20211202
- * 第一次发布
- *
- ****************************************************************************************************
- */
-
-#ifndef _LWIP_COMM_H
-#define _LWIP_COMM_H
+#pragma once
 #include "ethernet.h"
 #include "lwip/snmp.h"
 #include "lwip/timeouts.h"
@@ -65,4 +40,3 @@ extern __lwip_dev g_lwipdev; /* lwip控制结构体 */
 
 void lwip_comm_default_ip_set(__lwip_dev *lwipx); /* lwip 默认IP设置 */
 uint8_t lwip_comm_init(void);                     /* LWIP初始化(LWIP启动的时候使用) */
-#endif

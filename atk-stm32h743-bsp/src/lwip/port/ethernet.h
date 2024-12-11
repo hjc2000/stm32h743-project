@@ -1,29 +1,4 @@
-/**
- ****************************************************************************************************
- * @file        ethernet.h
- * @author      正点原子团队(ALIENTEK)
- * @version     V1.0
- * @date        2022-08-01
- * @brief       ETHERNET 驱动代码
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
- ****************************************************************************************************
- * @attention
- *
- * 实验平台:正点原子 阿波罗 H743开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
- *
- * 修改说明
- * V1.0 20211202
- * 第一次发布
- *
- ****************************************************************************************************
- */
-
-#ifndef __ETHERNET_H
-#define __ETHERNET_H
+#pragma once
 #include <hal.h>
 
 /******************************************************************************************/
@@ -110,4 +85,3 @@ uint32_t ethernet_read_phy(uint16_t reg);              /* 读取以太网芯片寄存器值
 void ethernet_write_phy(uint16_t reg, uint16_t value); /* 向以太网芯片指定地址写入寄存器值 */
 uint8_t ethernet_chip_get_speed(void);                 /* 获得以太网芯片的速度模式 */
 void NETMPU_Config(void);
-#endif
