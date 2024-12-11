@@ -14,7 +14,9 @@ namespace
 
 extern "C"
 {
-    /* Create a new mutex*/
+    /// @brief 构造一个新的互斥量。
+    /// @param mutex
+    /// @return
     err_t sys_mutex_new(sys_mutex_t *mutex)
     {
         if (mutex == nullptr)
@@ -31,6 +33,8 @@ extern "C"
         return ERR_OK;
     }
 
+    /// @brief 锁定互斥量。
+    /// @param mutex
     void sys_mutex_lock(sys_mutex_t *mutex)
     {
         if (mutex == nullptr)
@@ -46,6 +50,8 @@ extern "C"
         reinterpret_cast<MutexHandle *>(mutex->mut)->_mutex->Lock();
     }
 
+    /// @brief 解锁互斥量。
+    /// @param mutex
     void sys_mutex_unlock(sys_mutex_t *mutex)
     {
         if (mutex == nullptr)
@@ -61,6 +67,8 @@ extern "C"
         reinterpret_cast<MutexHandle *>(mutex->mut)->_mutex->Unlock();
     }
 
+    /// @brief 释放互斥量。
+    /// @param mutex
     void sys_mutex_free(sys_mutex_t *mutex)
     {
         if (mutex == nullptr)
