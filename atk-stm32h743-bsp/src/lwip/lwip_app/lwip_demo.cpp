@@ -1,23 +1,3 @@
-/**
- ****************************************************************************************************
- * @file        lwip_demo
- * @author      正点原子团队(ALIENTEK)
- * @version     V1.0
- * @date        2022-08-01
- * @brief       lwIP SOCKET UDP 实验
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
- ****************************************************************************************************
- * @attention
- *
- * 实验平台:正点原子 阿波罗 H743开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
- *
- ****************************************************************************************************
- */
-
 #include "lwip_demo.h"
 #include "FreeRTOS.h"
 #include "lwip/api.h"
@@ -26,6 +6,7 @@
 #include "queue.h"
 #include "semphr.h"
 #include "task.h"
+#include <bsp-interface/di/delayer.h>
 #include <lwip/sockets.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -39,12 +20,15 @@
 
 /* 接收数据缓冲区 */
 uint8_t g_lwip_demo_recvbuf[LWIP_DEMO_RX_BUFSIZE];
+
 /* 发送数据内容 */
 char g_lwip_demo_sendbuf[] = "ALIENTEK UDP TEST\r\n";
+
 /* 数据发送标志位 */
 uint8_t g_lwip_send_flag;
 struct sockaddr_in local_info; /* 定义Socket地址信息结构体 */
 socklen_t sock_fd;             /* 定义一个Socket接口 */
+
 static void lwip_send_thread(void *arg);
 
 extern QueueHandle_t g_display_queue; /* 显示消息队列句柄 */
@@ -82,7 +66,6 @@ void lwip_demo(void)
 
     /* 建立绑定 */
     bind(sock_fd, (struct sockaddr *)&local_info, sizeof(struct sockaddr_in));
-
     while (1)
     {
         memset(g_lwip_demo_recvbuf, 0, sizeof(g_lwip_demo_recvbuf));
@@ -119,6 +102,6 @@ void lwip_send_thread(void *pvParameters)
             g_lwip_send_flag &= ~LWIP_SEND_DATA;
         }
 
-        vTaskDelay(100);
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
     }
 }
