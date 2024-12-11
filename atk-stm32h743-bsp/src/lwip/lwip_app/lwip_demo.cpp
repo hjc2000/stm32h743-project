@@ -11,32 +11,32 @@
 #include <stdint.h>
 #include <stdio.h>
 
-/* ĞèÒª×Ô¼ºÉèÖÃÔ¶³ÌIPµØÖ· */
+/* éœ€è¦è‡ªå·±è®¾ç½®è¿œç¨‹IPåœ°å€ */
 #define IP_ADDR "192.168.1.203"
 
-#define LWIP_DEMO_RX_BUFSIZE 200                     /* ×î´ó½ÓÊÕÊı¾İ³¤¶È */
-#define LWIP_DEMO_PORT 8080                          /* Á¬½ÓµÄ±¾µØ¶Ë¿ÚºÅ */
-#define LWIP_SEND_THREAD_PRIO (tskIDLE_PRIORITY + 3) /* ·¢ËÍÊı¾İÏß³ÌÓÅÏÈ¼¶ */
+#define LWIP_DEMO_RX_BUFSIZE 200                     /* æœ€å¤§æ¥æ”¶æ•°æ®é•¿åº¦ */
+#define LWIP_DEMO_PORT 8080                          /* è¿æ¥çš„æœ¬åœ°ç«¯å£å· */
+#define LWIP_SEND_THREAD_PRIO (tskIDLE_PRIORITY + 3) /* å‘é€æ•°æ®çº¿ç¨‹ä¼˜å…ˆçº§ */
 
-/* ½ÓÊÕÊı¾İ»º³åÇø */
+/* æ¥æ”¶æ•°æ®ç¼“å†²åŒº */
 uint8_t g_lwip_demo_recvbuf[LWIP_DEMO_RX_BUFSIZE];
 
-/* ·¢ËÍÊı¾İÄÚÈİ */
+/* å‘é€æ•°æ®å†…å®¹ */
 char g_lwip_demo_sendbuf[] = "ALIENTEK UDP TEST\r\n";
 
-/* Êı¾İ·¢ËÍ±êÖ¾Î» */
+/* æ•°æ®å‘é€æ ‡å¿—ä½ */
 uint8_t g_lwip_send_flag;
-struct sockaddr_in local_info; /* ¶¨ÒåSocketµØÖ·ĞÅÏ¢½á¹¹Ìå */
-socklen_t sock_fd;             /* ¶¨ÒåÒ»¸öSocket½Ó¿Ú */
+struct sockaddr_in local_info; /* å®šä¹‰Socketåœ°å€ä¿¡æ¯ç»“æ„ä½“ */
+socklen_t sock_fd;             /* å®šä¹‰ä¸€ä¸ªSocketæ¥å£ */
 
 static void lwip_send_thread(void *arg);
 
-extern QueueHandle_t g_display_queue; /* ÏÔÊ¾ÏûÏ¢¶ÓÁĞ¾ä±ú */
+extern QueueHandle_t g_display_queue; /* æ˜¾ç¤ºæ¶ˆæ¯é˜Ÿåˆ—å¥æŸ„ */
 
 /**
- * @brief       ·¢ËÍÊı¾İÏß³Ì
- * @param       ÎŞ
- * @retval      ÎŞ
+ * @brief       å‘é€æ•°æ®çº¿ç¨‹
+ * @param       æ— 
+ * @retval      æ— 
  */
 void lwip_data_send(void)
 {
@@ -48,23 +48,23 @@ void lwip_data_send(void)
 }
 
 /**
- * @brief       lwip_demoÊµÑéÈë¿Ú
- * @param       ÎŞ
- * @retval      ÎŞ
+ * @brief       lwip_demoå®éªŒå…¥å£
+ * @param       æ— 
+ * @retval      æ— 
  */
 void lwip_demo(void)
 {
     BaseType_t lwip_err;
-    lwip_data_send();                                   /* ´´½¨·¢ËÍÊı¾İÏß³Ì */
-    memset(&local_info, 0, sizeof(struct sockaddr_in)); /* ½«·şÎñÆ÷µØÖ·Çå¿Õ */
+    lwip_data_send();                                   /* åˆ›å»ºå‘é€æ•°æ®çº¿ç¨‹ */
+    memset(&local_info, 0, sizeof(struct sockaddr_in)); /* å°†æœåŠ¡å™¨åœ°å€æ¸…ç©º */
     local_info.sin_len = sizeof(local_info);
-    local_info.sin_family = AF_INET;                /* IPv4µØÖ· */
-    local_info.sin_port = htons(LWIP_DEMO_PORT);    /* ÉèÖÃ¶Ë¿ÚºÅ */
-    local_info.sin_addr.s_addr = htons(INADDR_ANY); /* ÉèÖÃ±¾µØIPµØÖ· */
+    local_info.sin_family = AF_INET;                /* IPv4åœ°å€ */
+    local_info.sin_port = htons(LWIP_DEMO_PORT);    /* è®¾ç½®ç«¯å£å· */
+    local_info.sin_addr.s_addr = htons(INADDR_ANY); /* è®¾ç½®æœ¬åœ°IPåœ°å€ */
 
-    sock_fd = socket(AF_INET, SOCK_DGRAM, 0); /* ½¨Á¢Ò»¸öĞÂµÄsocketÁ¬½Ó */
+    sock_fd = socket(AF_INET, SOCK_DGRAM, 0); /* å»ºç«‹ä¸€ä¸ªæ–°çš„socketè¿æ¥ */
 
-    /* ½¨Á¢°ó¶¨ */
+    /* å»ºç«‹ç»‘å®š */
     bind(sock_fd, (struct sockaddr *)&local_info, sizeof(struct sockaddr_in));
     while (1)
     {
@@ -75,29 +75,29 @@ void lwip_demo(void)
 
         if (lwip_err == errQUEUE_FULL)
         {
-            printf("¶ÓÁĞKey_QueueÒÑÂú£¬Êı¾İ·¢ËÍÊ§°Ü!\r\n");
+            printf("é˜Ÿåˆ—Key_Queueå·²æ»¡ï¼Œæ•°æ®å‘é€å¤±è´¥!\r\n");
         }
     }
 }
 
 /**
- * @brief       ·¢ËÍÊı¾İÏß³Ìº¯Êı
- * @param       pvParameters : ´«Èë²ÎÊı(Î´ÓÃµ½)
- * @retval      ÎŞ
+ * @brief       å‘é€æ•°æ®çº¿ç¨‹å‡½æ•°
+ * @param       pvParameters : ä¼ å…¥å‚æ•°(æœªç”¨åˆ°)
+ * @retval      æ— 
  */
 void lwip_send_thread(void *pvParameters)
 {
     pvParameters = pvParameters;
-    local_info.sin_addr.s_addr = inet_addr(IP_ADDR); /* ĞèÒª·¢ËÍµÄÔ¶³ÌIPµØÖ· */
+    local_info.sin_addr.s_addr = inet_addr(IP_ADDR); /* éœ€è¦å‘é€çš„è¿œç¨‹IPåœ°å€ */
     while (true)
     {
-        if ((g_lwip_send_flag & LWIP_SEND_DATA) == LWIP_SEND_DATA) /* ÓĞÊı¾İÒª·¢ËÍ */
+        if ((g_lwip_send_flag & LWIP_SEND_DATA) == LWIP_SEND_DATA) /* æœ‰æ•°æ®è¦å‘é€ */
         {
             sendto(sock_fd,                        /* scoket */
-                   (char *)g_lwip_demo_sendbuf,    /* ·¢ËÍµÄÊı¾İ */
-                   sizeof(g_lwip_demo_sendbuf), 0, /* ·¢ËÍµÄÊı¾İ´óĞ¡ */
-                   (struct sockaddr *)&local_info, /* ½ÓÊÕ¶ËµØÖ·ĞÅÏ¢ */
-                   sizeof(local_info));            /* ½ÓÊÕ¶ËµØÖ·ĞÅÏ¢´óĞ¡ */
+                   (char *)g_lwip_demo_sendbuf,    /* å‘é€çš„æ•°æ® */
+                   sizeof(g_lwip_demo_sendbuf), 0, /* å‘é€çš„æ•°æ®å¤§å° */
+                   (struct sockaddr *)&local_info, /* æ¥æ”¶ç«¯åœ°å€ä¿¡æ¯ */
+                   sizeof(local_info));            /* æ¥æ”¶ç«¯åœ°å€ä¿¡æ¯å¤§å° */
 
             g_lwip_send_flag &= ~LWIP_SEND_DATA;
         }

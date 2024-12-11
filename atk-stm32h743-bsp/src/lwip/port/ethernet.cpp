@@ -1,23 +1,23 @@
 /**
  ****************************************************************************************************
  * @file        ethernet.c
- * @author      ÕıµãÔ­×ÓÍÅ¶Ó(ALIENTEK)
+ * @author      æ­£ç‚¹åŸå­å›¢é˜Ÿ(ALIENTEK)
  * @version     V1.0
  * @date        2022-08-01
- * @brief       ETHERNET Çı¶¯´úÂë
- * @license     Copyright (c) 2020-2032, ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾
+ * @brief       ETHERNET é©±åŠ¨ä»£ç 
+ * @license     Copyright (c) 2020-2032, å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸
  ****************************************************************************************************
  * @attention
  *
- * ÊµÑéÆ½Ì¨:ÕıµãÔ­×Ó °¢²¨ÂŞ H743¿ª·¢°å
- * ÔÚÏßÊÓÆµ:www.yuanzige.com
- * ¼¼ÊõÂÛÌ³:www.openedv.com
- * ¹«Ë¾ÍøÖ·:www.alientek.com
- * ¹ºÂòµØÖ·:openedv.taobao.com
+ * å®éªŒå¹³å°:æ­£ç‚¹åŸå­ é˜¿æ³¢ç½— H743å¼€å‘æ¿
+ * åœ¨çº¿è§†é¢‘:www.yuanzige.com
+ * æŠ€æœ¯è®ºå›:www.openedv.com
+ * å…¬å¸ç½‘å€:www.alientek.com
+ * è´­ä¹°åœ°å€:openedv.taobao.com
  *
- * ĞŞ¸ÄËµÃ÷
+ * ä¿®æ”¹è¯´æ˜
  * V1.0 20211014
- * µÚÒ»´Î·¢²¼
+ * ç¬¬ä¸€æ¬¡å‘å¸ƒ
  *
  ****************************************************************************************************
  */
@@ -29,7 +29,7 @@
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 
-ETH_HandleTypeDef g_eth_handler; /* ÒÔÌ«Íø¾ä±ú */
+ETH_HandleTypeDef g_eth_handler; /* ä»¥å¤ªç½‘å¥æŸ„ */
 
 /**
  * @brief  Configure the MPU attributes
@@ -57,10 +57,10 @@ void NETMPU_Config(void)
 }
 
 /**
- * @brief       ÒÔÌ«ÍøĞ¾Æ¬³õÊ¼»¯
- * @param       ÎŞ
- * @retval      0,³É¹¦
- *              1,Ê§°Ü
+ * @brief       ä»¥å¤ªç½‘èŠ¯ç‰‡åˆå§‹åŒ–
+ * @param       æ— 
+ * @retval      0,æˆåŠŸ
+ *              1,å¤±è´¥
  */
 uint8_t ethernet_init(void)
 {
@@ -84,40 +84,40 @@ uint8_t ethernet_init(void)
 
     if (HAL_ETH_Init(&g_eth_handler) == HAL_OK)
     {
-        return 0; /* ³É¹¦ */
+        return 0; /* æˆåŠŸ */
     }
     else
     {
-        return 1; /* Ê§°Ü */
+        return 1; /* å¤±è´¥ */
     }
 }
 
 /**
- * @brief       ETHµ×²ãÇı¶¯£¬Ê±ÖÓÊ¹ÄÜ£¬Òı½ÅÅäÖÃ
- *    @note     ´Ëº¯Êı»á±»HAL_ETH_Init()µ÷ÓÃ
- * @param       heth:ÒÔÌ«Íø¾ä±ú
- * @retval      ÎŞ
+ * @brief       ETHåº•å±‚é©±åŠ¨ï¼Œæ—¶é’Ÿä½¿èƒ½ï¼Œå¼•è„šé…ç½®
+ *    @note     æ­¤å‡½æ•°ä¼šè¢«HAL_ETH_Init()è°ƒç”¨
+ * @param       heth:ä»¥å¤ªç½‘å¥æŸ„
+ * @retval      æ— 
  */
 void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 {
     GPIO_InitTypeDef gpio_init_struct;
 
-    ETH_CLK_GPIO_CLK_ENABLE();   /* ¿ªÆôETH_CLKÊ±ÖÓ */
-    ETH_MDIO_GPIO_CLK_ENABLE();  /* ¿ªÆôETH_MDIOÊ±ÖÓ */
-    ETH_CRS_GPIO_CLK_ENABLE();   /* ¿ªÆôETH_CRSÊ±ÖÓ */
-    ETH_MDC_GPIO_CLK_ENABLE();   /* ¿ªÆôETH_MDCÊ±ÖÓ */
-    ETH_RXD0_GPIO_CLK_ENABLE();  /* ¿ªÆôETH_RXD0Ê±ÖÓ */
-    ETH_RXD1_GPIO_CLK_ENABLE();  /* ¿ªÆôETH_RXD1Ê±ÖÓ */
-    ETH_TX_EN_GPIO_CLK_ENABLE(); /* ¿ªÆôETH_TX_ENÊ±ÖÓ */
-    ETH_TXD0_GPIO_CLK_ENABLE();  /* ¿ªÆôETH_TXD0Ê±ÖÓ */
-    ETH_TXD1_GPIO_CLK_ENABLE();  /* ¿ªÆôETH_TXD1Ê±ÖÓ */
+    ETH_CLK_GPIO_CLK_ENABLE();   /* å¼€å¯ETH_CLKæ—¶é’Ÿ */
+    ETH_MDIO_GPIO_CLK_ENABLE();  /* å¼€å¯ETH_MDIOæ—¶é’Ÿ */
+    ETH_CRS_GPIO_CLK_ENABLE();   /* å¼€å¯ETH_CRSæ—¶é’Ÿ */
+    ETH_MDC_GPIO_CLK_ENABLE();   /* å¼€å¯ETH_MDCæ—¶é’Ÿ */
+    ETH_RXD0_GPIO_CLK_ENABLE();  /* å¼€å¯ETH_RXD0æ—¶é’Ÿ */
+    ETH_RXD1_GPIO_CLK_ENABLE();  /* å¼€å¯ETH_RXD1æ—¶é’Ÿ */
+    ETH_TX_EN_GPIO_CLK_ENABLE(); /* å¼€å¯ETH_TX_ENæ—¶é’Ÿ */
+    ETH_TXD0_GPIO_CLK_ENABLE();  /* å¼€å¯ETH_TXD0æ—¶é’Ÿ */
+    ETH_TXD1_GPIO_CLK_ENABLE();  /* å¼€å¯ETH_TXD1æ—¶é’Ÿ */
 
     /* Enable Ethernet clocks */
     __HAL_RCC_ETH1MAC_CLK_ENABLE();
     __HAL_RCC_ETH1TX_CLK_ENABLE();
     __HAL_RCC_ETH1RX_CLK_ENABLE();
 
-    /* ÍøÂçÒı½ÅÉèÖÃ RMII½Ó¿Ú
+    /* ç½‘ç»œå¼•è„šè®¾ç½® RMIIæ¥å£
      * ETH_MDIO -------------------------> PA2
      * ETH_MDC --------------------------> PC1
      * ETH_RMII_REF_CLK------------------> PA1
@@ -131,66 +131,66 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 
     /* PA1,2,7 */
     gpio_init_struct.Pin = ETH_CLK_GPIO_PIN;
-    gpio_init_struct.Mode = GPIO_MODE_AF_PP;             /* ÍÆÍì¸´ÓÃ */
-    gpio_init_struct.Pull = GPIO_NOPULL;                 /* ²»´øÉÏÏÂÀ­ */
-    gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;       /* ¸ßËÙ */
-    gpio_init_struct.Alternate = GPIO_AF11_ETH;          /* ¸´ÓÃÎªETH¹¦ÄÜ */
-    HAL_GPIO_Init(ETH_CLK_GPIO_PORT, &gpio_init_struct); /* ETH_CLKÒı½ÅÄ£Ê½ÉèÖÃ */
+    gpio_init_struct.Mode = GPIO_MODE_AF_PP;             /* æ¨æŒ½å¤ç”¨ */
+    gpio_init_struct.Pull = GPIO_NOPULL;                 /* ä¸å¸¦ä¸Šä¸‹æ‹‰ */
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;       /* é«˜é€Ÿ */
+    gpio_init_struct.Alternate = GPIO_AF11_ETH;          /* å¤ç”¨ä¸ºETHåŠŸèƒ½ */
+    HAL_GPIO_Init(ETH_CLK_GPIO_PORT, &gpio_init_struct); /* ETH_CLKå¼•è„šæ¨¡å¼è®¾ç½® */
 
     gpio_init_struct.Pin = ETH_MDIO_GPIO_PIN;
-    HAL_GPIO_Init(ETH_MDIO_GPIO_PORT, &gpio_init_struct); /* ETH_MDIOÒı½ÅÄ£Ê½ÉèÖÃ */
+    HAL_GPIO_Init(ETH_MDIO_GPIO_PORT, &gpio_init_struct); /* ETH_MDIOå¼•è„šæ¨¡å¼è®¾ç½® */
 
     gpio_init_struct.Pin = ETH_CRS_GPIO_PIN;
-    HAL_GPIO_Init(ETH_CRS_GPIO_PORT, &gpio_init_struct); /* ETH_CRSÒı½ÅÄ£Ê½ÉèÖÃ */
+    HAL_GPIO_Init(ETH_CRS_GPIO_PORT, &gpio_init_struct); /* ETH_CRSå¼•è„šæ¨¡å¼è®¾ç½® */
 
     /* PC1 */
     gpio_init_struct.Pin = ETH_MDC_GPIO_PIN;
-    HAL_GPIO_Init(ETH_MDC_GPIO_PORT, &gpio_init_struct); /* ETH_MDC³õÊ¼»¯ */
+    HAL_GPIO_Init(ETH_MDC_GPIO_PORT, &gpio_init_struct); /* ETH_MDCåˆå§‹åŒ– */
 
     /* PC4 */
     gpio_init_struct.Pin = ETH_RXD0_GPIO_PIN;
-    HAL_GPIO_Init(ETH_RXD0_GPIO_PORT, &gpio_init_struct); /* ETH_RXD0³õÊ¼»¯ */
+    HAL_GPIO_Init(ETH_RXD0_GPIO_PORT, &gpio_init_struct); /* ETH_RXD0åˆå§‹åŒ– */
 
     /* PC5 */
     gpio_init_struct.Pin = ETH_RXD1_GPIO_PIN;
-    HAL_GPIO_Init(ETH_RXD1_GPIO_PORT, &gpio_init_struct); /* ETH_RXD1³õÊ¼»¯ */
+    HAL_GPIO_Init(ETH_RXD1_GPIO_PORT, &gpio_init_struct); /* ETH_RXD1åˆå§‹åŒ– */
 
     /* PB11,PG13,PG14 */
     gpio_init_struct.Pin = ETH_TX_EN_GPIO_PIN;
-    HAL_GPIO_Init(ETH_TX_EN_GPIO_PORT, &gpio_init_struct); /* ETH_TX_EN³õÊ¼»¯ */
+    HAL_GPIO_Init(ETH_TX_EN_GPIO_PORT, &gpio_init_struct); /* ETH_TX_ENåˆå§‹åŒ– */
 
     gpio_init_struct.Pin = ETH_TXD0_GPIO_PIN;
-    HAL_GPIO_Init(ETH_TXD0_GPIO_PORT, &gpio_init_struct); /* ETH_TXD0³õÊ¼»¯ */
+    HAL_GPIO_Init(ETH_TXD0_GPIO_PORT, &gpio_init_struct); /* ETH_TXD0åˆå§‹åŒ– */
 
     gpio_init_struct.Pin = ETH_TXD1_GPIO_PIN;
-    HAL_GPIO_Init(ETH_TXD1_GPIO_PORT, &gpio_init_struct); /* ETH_TXD1³õÊ¼»¯ */
+    HAL_GPIO_Init(ETH_TXD1_GPIO_PORT, &gpio_init_struct); /* ETH_TXD1åˆå§‹åŒ– */
 
     uint32_t regval;
 
-    /* ¹Ø±ÕËùÓĞÖĞ¶Ï£¬¸´Î»¹ı³Ì²»ÄÜ±»´ò¶Ï£¡ */
+    /* å…³é—­æ‰€æœ‰ä¸­æ–­ï¼Œå¤ä½è¿‡ç¨‹ä¸èƒ½è¢«æ‰“æ–­ï¼ */
     DI_DisableGlobalInterrupt();
 
-    /* ÅĞ¶Ï¿ª·¢°åÊÇ·ñÊÇ¾É°æ±¾(ÀÏ°å¿¨°åÔØµÄÊÇLAN8720A£¬¶øĞÂ°å¿¨°åÔØµÄÊÇYT8512C) */
+    /* åˆ¤æ–­å¼€å‘æ¿æ˜¯å¦æ˜¯æ—§ç‰ˆæœ¬(è€æ¿å¡æ¿è½½çš„æ˜¯LAN8720Aï¼Œè€Œæ–°æ¿å¡æ¿è½½çš„æ˜¯YT8512C) */
     regval = ethernet_read_phy(2);
-    if (regval && 0xFFF == 0xFFF) /* ¾É°å¿¨£¨LAN8720A£©Òı½Å¸´Î» */
+    if (regval && 0xFFF == 0xFFF) /* æ—§æ¿å¡ï¼ˆLAN8720Aï¼‰å¼•è„šå¤ä½ */
     {
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* Ó²¼ş¸´Î» */
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* ç¡¬ä»¶å¤ä½ */
         DI_Delayer().Delay(std::chrono::milliseconds{100});
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* ¸´Î»½áÊø */
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* å¤ä½ç»“æŸ */
         DI_Delayer().Delay(std::chrono::milliseconds{100});
     }
-    else /* ĞÂ°å¿¨£¨YT8512C£©Òı½Å¸´Î» */
+    else /* æ–°æ¿å¡ï¼ˆYT8512Cï¼‰å¼•è„šå¤ä½ */
     {
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* Ó²¼ş¸´Î» */
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* ç¡¬ä»¶å¤ä½ */
         DI_Delayer().Delay(std::chrono::milliseconds{100});
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* ¸´Î»½áÊø */
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* å¤ä½ç»“æŸ */
         DI_Delayer().Delay(std::chrono::milliseconds{100});
     }
 
-    DI_EnableGlobalInterrupt(); /* ¿ªÆôËùÓĞÖĞ¶Ï */
+    DI_EnableGlobalInterrupt(); /* å¼€å¯æ‰€æœ‰ä¸­æ–­ */
 
-    /* ÕâÀïµÄÖĞ¶ÏÓÅÏÈ¼¶±ØĞëÉèÖÃÔÚ freertos ÄÜ¹»ÆÁ±ÎµÄÓÅÏÈ¼¶·¶Î§ÄÚ£¬²»È»²»ÖªµÀÊ²Ã´Ô­Òò£¬
-     * »áµ¼ÖÂ freertos µÄ queue.c ÖĞ±¨´í¡£
+    /* è¿™é‡Œçš„ä¸­æ–­ä¼˜å…ˆçº§å¿…é¡»è®¾ç½®åœ¨ freertos èƒ½å¤Ÿå±è”½çš„ä¼˜å…ˆçº§èŒƒå›´å†…ï¼Œä¸ç„¶ä¸çŸ¥é“ä»€ä¹ˆåŸå› ï¼Œ
+     * ä¼šå¯¼è‡´ freertos çš„ queue.c ä¸­æŠ¥é”™ã€‚
      */
     DI_EnableInterrupt(static_cast<uint32_t>(ETH_IRQn), 7);
     DI_IsrManager().AddIsr(static_cast<uint32_t>(ETH_IRQn),
@@ -201,9 +201,9 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 }
 
 /**
- * @breif       ¶ÁÈ¡ÒÔÌ«ÍøĞ¾Æ¬¼Ä´æÆ÷Öµ
- * @param       reg£º¶ÁÈ¡µÄ¼Ä´æÆ÷µØÖ·
- * @retval      regval£º·µ»Ø¶ÁÈ¡µÄ¼Ä´æÆ÷Öµ
+ * @breif       è¯»å–ä»¥å¤ªç½‘èŠ¯ç‰‡å¯„å­˜å™¨å€¼
+ * @param       regï¼šè¯»å–çš„å¯„å­˜å™¨åœ°å€
+ * @retval      regvalï¼šè¿”å›è¯»å–çš„å¯„å­˜å™¨å€¼
  */
 uint32_t ethernet_read_phy(uint16_t reg)
 {
@@ -213,10 +213,10 @@ uint32_t ethernet_read_phy(uint16_t reg)
 }
 
 /**
- * @breif       ÏòÒÔÌ«ÍøĞ¾Æ¬Ö¸¶¨µØÖ·Ğ´Èë¼Ä´æÆ÷Öµ
- * @param       reg   : ÒªĞ´ÈëµÄ¼Ä´æÆ÷
- * @param       value : ÒªĞ´ÈëµÄ¼Ä´æÆ÷
- * @retval      ÎŞ
+ * @breif       å‘ä»¥å¤ªç½‘èŠ¯ç‰‡æŒ‡å®šåœ°å€å†™å…¥å¯„å­˜å™¨å€¼
+ * @param       reg   : è¦å†™å…¥çš„å¯„å­˜å™¨
+ * @param       value : è¦å†™å…¥çš„å¯„å­˜å™¨
+ * @retval      æ— 
  */
 void ethernet_write_phy(uint16_t reg, uint16_t value)
 {
@@ -225,8 +225,8 @@ void ethernet_write_phy(uint16_t reg, uint16_t value)
 }
 
 /**
- * @breif       »ñµÃÍøÂçĞ¾Æ¬µÄËÙ¶ÈÄ£Ê½
- * @param       ÎŞ
+ * @breif       è·å¾—ç½‘ç»œèŠ¯ç‰‡çš„é€Ÿåº¦æ¨¡å¼
+ * @param       æ— 
  * @retval      1:100M
                 0:10M
  */
@@ -235,22 +235,22 @@ uint8_t ethernet_chip_get_speed(void)
     uint8_t speed = 0;
     if (PHY_TYPE == LAN8720)
     {
-        /* ´ÓLAN8720µÄ31ºÅ¼Ä´æÆ÷ÖĞ¶ÁÈ¡ÍøÂçËÙ¶ÈºÍË«¹¤Ä£Ê½ */
+        /* ä»LAN8720çš„31å·å¯„å­˜å™¨ä¸­è¯»å–ç½‘ç»œé€Ÿåº¦å’ŒåŒå·¥æ¨¡å¼ */
         speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS));
     }
     else if (PHY_TYPE == SR8201F)
     {
-        /* ´ÓSR8201FµÄ0ºÅ¼Ä´æÆ÷ÖĞ¶ÁÈ¡ÍøÂçËÙ¶ÈºÍË«¹¤Ä£Ê½ */
+        /* ä»SR8201Fçš„0å·å¯„å­˜å™¨ä¸­è¯»å–ç½‘ç»œé€Ÿåº¦å’ŒåŒå·¥æ¨¡å¼ */
         speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13);
     }
     else if (PHY_TYPE == YT8512C)
     {
-        /* ´ÓYT8512CµÄ17ºÅ¼Ä´æÆ÷ÖĞ¶ÁÈ¡ÍøÂçËÙ¶ÈºÍË«¹¤Ä£Ê½ */
+        /* ä»YT8512Cçš„17å·å¯„å­˜å™¨ä¸­è¯»å–ç½‘ç»œé€Ÿåº¦å’ŒåŒå·¥æ¨¡å¼ */
         speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14);
     }
     else if (PHY_TYPE == RTL8201)
     {
-        /* ´ÓRTL8201µÄ16ºÅ¼Ä´æÆ÷ÖĞ¶ÁÈ¡ÍøÂçËÙ¶ÈºÍË«¹¤Ä£Ê½ */
+        /* ä»RTL8201çš„16å·å¯„å­˜å™¨ä¸­è¯»å–ç½‘ç»œé€Ÿåº¦å’ŒåŒå·¥æ¨¡å¼ */
         speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1);
     }
 

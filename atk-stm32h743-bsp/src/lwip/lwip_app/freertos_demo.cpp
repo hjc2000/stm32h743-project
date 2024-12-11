@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
  * @file        freertos_demo.c
- * @author      ÕıµãÔ­×ÓÍÅ¶Ó(ALIENTEK)
+ * @author      æ­£ç‚¹åŸå­å›¢é˜Ÿ(ALIENTEK)
  * @version     V1.0
  * @date        2022-08-01
- * @brief       lwIP SOCKET UDP ÊµÑé
- * @license     Copyright (c) 2020-2032, ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾
+ * @brief       lwIP SOCKET UDP å®éªŒ
+ * @license     Copyright (c) 2020-2032, å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸
  ****************************************************************************************************
  * @attention
  *
- * ÊµÑéÆ½Ì¨:ÕıµãÔ­×Ó °¢²¨ÂŞ H743¿ª·¢°å
- * ÔÚÏßÊÓÆµ:www.yuanzige.com
- * ¼¼ÊõÂÛÌ³:www.openedv.com
- * ¹«Ë¾ÍøÖ·:www.alientek.com
- * ¹ºÂòµØÖ·:openedv.taobao.com
+ * å®éªŒå¹³å°:æ­£ç‚¹åŸå­ é˜¿æ³¢ç½— H743å¼€å‘æ¿
+ * åœ¨çº¿è§†é¢‘:www.yuanzige.com
+ * æŠ€æœ¯è®ºå›:www.openedv.com
+ * å…¬å¸ç½‘å€:www.alientek.com
+ * è´­ä¹°åœ°å€:openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -31,42 +31,42 @@
 #include <lwip_demo.h>
 
 /******************************************************************************************************/
-/*FreeRTOSÅäÖÃ*/
+/*FreeRTOSé…ç½®*/
 
-/* LWIP_DEMO ÈÎÎñ ÅäÖÃ
- * °üÀ¨: ÈÎÎñ¾ä±ú ÈÎÎñÓÅÏÈ¼¶ ¶ÑÕ»´óĞ¡ ´´½¨ÈÎÎñ
+/* LWIP_DEMO ä»»åŠ¡ é…ç½®
+ * åŒ…æ‹¬: ä»»åŠ¡å¥æŸ„ ä»»åŠ¡ä¼˜å…ˆçº§ å †æ ˆå¤§å° åˆ›å»ºä»»åŠ¡
  */
-#define LWIP_DMEO_TASK_PRIO 11           /* ÈÎÎñÓÅÏÈ¼¶ */
-#define LWIP_DMEO_STK_SIZE 1024          /* ÈÎÎñ¶ÑÕ»´óĞ¡ */
-TaskHandle_t LWIP_Task_Handler;          /* ÈÎÎñ¾ä±ú */
-void lwip_demo_task(void *pvParameters); /* ÈÎÎñº¯Êı */
+#define LWIP_DMEO_TASK_PRIO 11           /* ä»»åŠ¡ä¼˜å…ˆçº§ */
+#define LWIP_DMEO_STK_SIZE 1024          /* ä»»åŠ¡å †æ ˆå¤§å° */
+TaskHandle_t LWIP_Task_Handler;          /* ä»»åŠ¡å¥æŸ„ */
+void lwip_demo_task(void *pvParameters); /* ä»»åŠ¡å‡½æ•° */
 
-/* KEY_TASK ÈÎÎñ ÅäÖÃ
- * °üÀ¨: ÈÎÎñ¾ä±ú ÈÎÎñÓÅÏÈ¼¶ ¶ÑÕ»´óĞ¡ ´´½¨ÈÎÎñ
+/* KEY_TASK ä»»åŠ¡ é…ç½®
+ * åŒ…æ‹¬: ä»»åŠ¡å¥æŸ„ ä»»åŠ¡ä¼˜å…ˆçº§ å †æ ˆå¤§å° åˆ›å»ºä»»åŠ¡
  */
-#define KEY_TASK_PRIO 13           /* ÈÎÎñÓÅÏÈ¼¶ */
-#define KEY_STK_SIZE 1024          /* ÈÎÎñ¶ÑÕ»´óĞ¡ */
-TaskHandle_t KEYTask_Handler;      /* ÈÎÎñ¾ä±ú */
-void key_task(void *pvParameters); /* ÈÎÎñº¯Êı */
+#define KEY_TASK_PRIO 13           /* ä»»åŠ¡ä¼˜å…ˆçº§ */
+#define KEY_STK_SIZE 1024          /* ä»»åŠ¡å †æ ˆå¤§å° */
+TaskHandle_t KEYTask_Handler;      /* ä»»åŠ¡å¥æŸ„ */
+void key_task(void *pvParameters); /* ä»»åŠ¡å‡½æ•° */
 
-/* DISPLAY_TASK ÈÎÎñ ÅäÖÃ
- * °üÀ¨: ÈÎÎñ¾ä±ú ÈÎÎñÓÅÏÈ¼¶ ¶ÑÕ»´óĞ¡ ´´½¨ÈÎÎñ
+/* DISPLAY_TASK ä»»åŠ¡ é…ç½®
+ * åŒ…æ‹¬: ä»»åŠ¡å¥æŸ„ ä»»åŠ¡ä¼˜å…ˆçº§ å †æ ˆå¤§å° åˆ›å»ºä»»åŠ¡
  */
-#define DISPLAY_TASK_PRIO 7            /* ÈÎÎñÓÅÏÈ¼¶ */
-#define DISPLAY_STK_SIZE 1024          /* ÈÎÎñ¶ÑÕ»´óĞ¡ */
-TaskHandle_t DISPLAYTask_Handler;      /* ÈÎÎñ¾ä±ú */
-void display_task(void *pvParameters); /* ÈÎÎñº¯Êı */
+#define DISPLAY_TASK_PRIO 7            /* ä»»åŠ¡ä¼˜å…ˆçº§ */
+#define DISPLAY_STK_SIZE 1024          /* ä»»åŠ¡å †æ ˆå¤§å° */
+TaskHandle_t DISPLAYTask_Handler;      /* ä»»åŠ¡å¥æŸ„ */
+void display_task(void *pvParameters); /* ä»»åŠ¡å‡½æ•° */
 
-/* ÏÔÊ¾ÏûÏ¢¶ÓÁĞµÄÊıÁ¿ */
-#define DISPLAYMSG_Q_NUM 20    /* ÏÔÊ¾ÏûÏ¢¶ÓÁĞµÄÊıÁ¿ */
-QueueHandle_t g_display_queue; /* ÏÔÊ¾ÏûÏ¢¶ÓÁĞ¾ä±ú */
+/* æ˜¾ç¤ºæ¶ˆæ¯é˜Ÿåˆ—çš„æ•°é‡ */
+#define DISPLAYMSG_Q_NUM 20    /* æ˜¾ç¤ºæ¶ˆæ¯é˜Ÿåˆ—çš„æ•°é‡ */
+QueueHandle_t g_display_queue; /* æ˜¾ç¤ºæ¶ˆæ¯é˜Ÿåˆ—å¥æŸ„ */
 
 /******************************************************************************************************/
 
 /**
  * @breif       freertos_demo
- * @param       ÎŞ
- * @retval      ÎŞ
+ * @param       æ— 
+ * @retval      æ— 
  */
 void freertos_demo()
 {
@@ -77,16 +77,16 @@ void freertos_demo()
 
     DI_Console().WriteLine("lwip_comm_init successfully");
 
-    while (g_lwipdev.dhcpstatus != 2 && g_lwipdev.dhcpstatus != 0xff) /* µÈ´ı¾²Ì¬ºÍ¶¯Ì¬·ÖÅäÍê³É  */
+    while (g_lwipdev.dhcpstatus != 2 && g_lwipdev.dhcpstatus != 0xff) /* ç­‰å¾…é™æ€å’ŒåŠ¨æ€åˆ†é…å®Œæˆ  */
     {
         DI_Delayer().Delay(std::chrono::milliseconds{500});
     }
 
     DI_DoGlobalCriticalWork([&]()
                             {
-                                g_display_queue = xQueueCreate(DISPLAYMSG_Q_NUM, 200); /* ´´½¨ÏûÏ¢Message_Queue,¶ÓÁĞÏî³¤¶ÈÊÇ200³¤¶È */
+                                g_display_queue = xQueueCreate(DISPLAYMSG_Q_NUM, 200); /* åˆ›å»ºæ¶ˆæ¯Message_Queue,é˜Ÿåˆ—é¡¹é•¿åº¦æ˜¯200é•¿åº¦ */
 
-                                /* ´´½¨lwIPÈÎÎñ */
+                                /* åˆ›å»ºlwIPä»»åŠ¡ */
                                 xTaskCreate((TaskFunction_t)lwip_demo_task,
                                             (char const *)"lwip_demo_task",
                                             (uint16_t)LWIP_DMEO_STK_SIZE,
@@ -94,7 +94,7 @@ void freertos_demo()
                                             (UBaseType_t)LWIP_DMEO_TASK_PRIO,
                                             (TaskHandle_t *)&LWIP_Task_Handler);
 
-                                /* keyÈÎÎñ */
+                                /* keyä»»åŠ¡ */
                                 xTaskCreate((TaskFunction_t)key_task,
                                             (char const *)"key_task",
                                             (uint16_t)KEY_STK_SIZE,
@@ -102,7 +102,7 @@ void freertos_demo()
                                             (UBaseType_t)KEY_TASK_PRIO,
                                             (TaskHandle_t *)&KEYTask_Handler);
 
-                                /* ÏÔÊ¾ÈÎÎñ */
+                                /* æ˜¾ç¤ºä»»åŠ¡ */
                                 xTaskCreate((TaskFunction_t)display_task,
                                             (char const *)"display_task",
                                             (uint16_t)DISPLAY_STK_SIZE,
@@ -113,15 +113,15 @@ void freertos_demo()
 }
 
 /**
- * @brief       lwIPÔËĞĞÀı³Ì
- * @param       pvParameters : ´«Èë²ÎÊı(Î´ÓÃµ½)
- * @retval      ÎŞ
+ * @brief       lwIPè¿è¡Œä¾‹ç¨‹
+ * @param       pvParameters : ä¼ å…¥å‚æ•°(æœªç”¨åˆ°)
+ * @retval      æ— 
  */
 void lwip_demo_task(void *pvParameters)
 {
     pvParameters = pvParameters;
 
-    lwip_demo(); /* lwip²âÊÔ´úÂë */
+    lwip_demo(); /* lwipæµ‹è¯•ä»£ç  */
 
     while (1)
     {
@@ -131,23 +131,23 @@ void lwip_demo_task(void *pvParameters)
 
 /**
  * @brief       key_task
- * @param       pvParameters : ´«Èë²ÎÊı(Î´ÓÃµ½)
- * @retval      ÎŞ
+ * @param       pvParameters : ä¼ å…¥å‚æ•°(æœªç”¨åˆ°)
+ * @retval      æ— 
  */
 void key_task(void *pvParameters)
 {
     pvParameters = pvParameters;
     while (1)
     {
-        g_lwip_send_flag |= LWIP_SEND_DATA; /* ±ê¼ÇLWIPÓĞÊı¾İÒª·¢ËÍ */
+        g_lwip_send_flag |= LWIP_SEND_DATA; /* æ ‡è®°LWIPæœ‰æ•°æ®è¦å‘é€ */
         vTaskDelay(10000);
     }
 }
 
 /**
- * @brief       ÏÔÊ¾ÈÎÎñ
- * @param       pvParameters : ´«Èë²ÎÊı(Î´ÓÃµ½)
- * @retval      ÎŞ
+ * @brief       æ˜¾ç¤ºä»»åŠ¡
+ * @param       pvParameters : ä¼ å…¥å‚æ•°(æœªç”¨åˆ°)
+ * @retval      æ— 
  */
 void display_task(void *pvParameters)
 {

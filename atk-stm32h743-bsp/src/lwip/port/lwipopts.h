@@ -1,80 +1,80 @@
 #pragma once
 #include <errno.h>
 
-/* NO_SYS ��ʾ�޲���ϵͳģ��㣬�޲���ϵͳΪ1���в���ϵͳ����Ϊ0
-   ע������������û���벻ͬ */
+/* NO_SYS 表示无操作系统模拟层，无操作系统为1，有操作系统设置为0
+   注意这个参数设置会编译不同 */
 #define NO_SYS 0
 
-/* ---------- �ڴ�ѡ�� ---------- */
-/* �ڴ���룬���� 4 �ֽڶ���  */
+/* ---------- 内存选项 ---------- */
+/* 内存对齐，按照 4 字节对齐  */
 #define MEM_ALIGNMENT 4
 
-/* ���ڴ�Ĵ�С�������Ҫ����Ķ��ڴ棬��ô���ø�һ�� */
+/* 堆内存的大小，如果需要更大的堆内存，那么设置高一点 */
 #define MEM_SIZE (20 * 1024)
 
-/* MEMP_NUM_PBUF: �����ڴ�ص�����  */
+/* MEMP_NUM_PBUF: 设置内存池的数量  */
 #define MEMP_NUM_PBUF 15
-/* MEMP_NUM_UDP_PCB: UDPЭ����ƿ������. */
+/* MEMP_NUM_UDP_PCB: UDP协议控制块的数量. */
 #define MEMP_NUM_UDP_PCB 4
-/* MEMP_NUM_TCP_PCB: TCP������. */
+/* MEMP_NUM_TCP_PCB: TCP的数量. */
 #define MEMP_NUM_TCP_PCB 4
-/* MEMP_NUM_TCP_PCB_LISTEN: ����TCP������. */
+/* MEMP_NUM_TCP_PCB_LISTEN: 监听TCP的数量. */
 #define MEMP_NUM_TCP_PCB_LISTEN 2
-/* MEMP_NUM_TCP_SEG: ͬʱ�Ŷӵ�TCP��������. */
+/* MEMP_NUM_TCP_SEG: 同时排队的TCP的数量段. */
 #define MEMP_NUM_TCP_SEG 120
-/* MEMP_NUM_SYS_TIMEOUT: ��ʱģ��������. */
+/* MEMP_NUM_SYS_TIMEOUT: 超时模拟活动的数量. */
 #define MEMP_NUM_SYS_TIMEOUT 6
 
-/* ---------- Pbufѡ�� ---------- */
-/* PBUF_POOL �ڴ����ÿ���ڴ���С */
+/* ---------- Pbuf选项 ---------- */
+/* PBUF_POOL 内存池中每个内存块大小 */
 #define PBUF_POOL_SIZE 20
-/* PBUF_POOL_BUFSIZE: pbuf����ÿ��pbuf�Ĵ�С. */
+/* PBUF_POOL_BUFSIZE: pbuf池中每个pbuf的大小. */
 #define PBUF_POOL_BUFSIZE LWIP_MEM_ALIGN_SIZE(TCP_MSS + 40 + PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN)
 
-/* ---------- TCPѡ�� ---------- */
+/* ---------- TCP选项 ---------- */
 #define LWIP_TCP 1
 #define TCP_TTL 255
 
-/* ����TCP�Ƿ�Ӧ�öԵ���Ķν����Ŷ�
-   �����������豸�ڴ治�㣬����Ϊ0. */
+/* 控制TCP是否应该对到达的段进行排队
+   秩序。如果你的设备内存不足，定义为0. */
 #define TCP_QUEUE_OOSEQ 0
 
-/* TCP���δ�С */
+/* TCP最大段大小 */
 #define TCP_MSS (1500 - 40) /* TCP_MSS = (Ethernet MTU - IP header size - TCP header size) */
 
-/* TCP�����߻������ռ�(�ֽ�). */
+/* TCP发送者缓冲区空间(字节). */
 #define TCP_SND_BUF (11 * TCP_MSS)
 
-/*  TCP_SND_QUEUELEN: TCP���ͻ������ռ䡣�����������
-    ��Ҫ(2 * TCP_SND_BUF/TCP_MSS)������������ */
+/*  TCP_SND_QUEUELEN: TCP发送缓冲区空间。这必须是至少
+    需要(2 * TCP_SND_BUF/TCP_MSS)才能正常工作 */
 
 #define TCP_SND_QUEUELEN (8 * TCP_SND_BUF / TCP_MSS)
 
-/* TCP���մ��� */
+/* TCP接收窗口 */
 #define TCP_WND (2 * TCP_MSS)
 
-/* ---------- ICMP ѡ�� ---------- */
+/* ---------- ICMP 选项 ---------- */
 #define LWIP_ICMP 1
 
-/* ---------- DHCP ѡ�� ---------- */
-/* �����ϣ��DHCP����Ϊ���뽫LWIP_DHCP����Ϊ1 */
+/* ---------- DHCP 选项 ---------- */
+/* 如果您希望DHCP配置为，请将LWIP_DHCP定义为1 */
 #define LWIP_DHCP 1
 
-/* ---------- UDP ѡ�� ---------- */
+/* ---------- UDP 选项 ---------- */
 #define LWIP_UDP 1
 #define UDP_TTL 255
 
-/* ---------- Statistics ѡ�� ---------- */
+/* ---------- Statistics 选项 ---------- */
 #define LWIP_STATS 0
 
-/* ---------- ���ӻص�ѡ�� ---------- */
-/* WIP_NETIF_LINK_CALLBACK==1:֧�����ԽӿڵĻص�����
-   ÿ�����Ӹı�(���磬��������)
+/* ---------- 链接回调选项 ---------- */
+/* WIP_NETIF_LINK_CALLBACK==1:支持来自接口的回调函数
+   每当链接改变(例如，向下链接)
  */
 #define LWIP_NETIF_LINK_CALLBACK 1
 /*
    --------------------------------------
-   ---------- ֡У���ѡ�� ----------
+   ---------- 帧校验和选项 ----------
    --------------------------------------
 */
 
@@ -119,21 +119,21 @@ The STM32F4x7 allows computing and verifying the IP, UDP, TCP and ICMP checksums
 
 /*
    ----------------------------------------------
-   ---------- �������ѡ�� ----------
+   ---------- 连续层的选择 ----------
    ----------------------------------------------
 */
 /**
- * LWIP_NETCONN==1:����Netconn API(��Ҫʹ��api_lib.c)
+ * LWIP_NETCONN==1:启用Netconn API(需要使用api_lib.c)
  */
 #define LWIP_NETCONN 1
 
 /*
    ------------------------------------
-   ---------- Socketѡ�� ----------
+   ---------- Socket选项 ----------
    ------------------------------------
 */
 /**
- * LWIP_SOCKET==1:����Socket API(Ҫ��ʹ��Socket .c)
+ * LWIP_SOCKET==1:启用Socket API(要求使用Socket .c)
  */
 #define LWIP_SOCKET 1
 
@@ -147,7 +147,7 @@ The STM32F4x7 allows computing and verifying the IP, UDP, TCP and ICMP checksums
 #define HTTPD_USE_CUSTOM_FSDATA 1
 /*
    ---------------------------------
-   ---------- ����ϵͳѡ�� ----------
+   ---------- 操作系统选项 ----------
    ---------------------------------
 */
 

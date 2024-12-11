@@ -1,23 +1,23 @@
 /**
  ****************************************************************************************************
  * @file        lwip_comm.c
- * @author      ÕıµãÔ­×ÓÍÅ¶Ó(ALIENTEK)
+ * @author      æ­£ç‚¹åŸå­å›¢é˜Ÿ(ALIENTEK)
  * @version     V1.0
  * @date        2022-08-01
- * @brief       lwIPÅäÖÃÇı¶¯
- * @license     Copyright (c) 2020-2032, ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾
+ * @brief       lwIPé…ç½®é©±åŠ¨
+ * @license     Copyright (c) 2020-2032, å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸
  ****************************************************************************************************
  * @attention
  *
- * ÊµÑéÆ½Ì¨:ÕıµãÔ­×Ó °¢²¨ÂŞ H743¿ª·¢°å
- * ÔÚÏßÊÓÆµ:www.yuanzige.com
- * ¼¼ÊõÂÛÌ³:www.openedv.com
- * ¹«Ë¾ÍøÖ·:www.alientek.com
- * ¹ºÂòµØÖ·:openedv.taobao.com
+ * å®éªŒå¹³å°:æ­£ç‚¹åŸå­ é˜¿æ³¢ç½— H743å¼€å‘æ¿
+ * åœ¨çº¿è§†é¢‘:www.yuanzige.com
+ * æŠ€æœ¯è®ºå›:www.openedv.com
+ * å…¬å¸ç½‘å€:www.alientek.com
+ * è´­ä¹°åœ°å€:openedv.taobao.com
  *
- * ĞŞ¸ÄËµÃ÷
+ * ä¿®æ”¹è¯´æ˜
  * V1.0 20211202
- * µÚÒ»´Î·¢²¼
+ * ç¬¬ä¸€æ¬¡å‘å¸ƒ
  *
  ****************************************************************************************************
  */
@@ -40,39 +40,39 @@
 #include <bsp-interface/di/interrupt.h>
 #include <stdio.h>
 
-__lwip_dev g_lwipdev;      /* lwip¿ØÖÆ½á¹¹Ìå */
-struct netif g_lwip_netif; /* ¶¨ÒåÒ»¸öÈ«¾ÖµÄÍøÂç½Ó¿Ú */
+__lwip_dev g_lwipdev;      /* lwipæ§åˆ¶ç»“æ„ä½“ */
+struct netif g_lwip_netif; /* å®šä¹‰ä¸€ä¸ªå…¨å±€çš„ç½‘ç»œæ¥å£ */
 
 #if LWIP_DHCP
-uint32_t g_dhcp_fine_timer = 0;                 /* DHCP¾«Ï¸´¦Àí¼ÆÊ±Æ÷ */
-__IO uint8_t g_lwip_dhcp_state = LWIP_DHCP_OFF; /* DHCP×´Ì¬³õÊ¼»¯ */
+uint32_t g_dhcp_fine_timer = 0;                 /* DHCPç²¾ç»†å¤„ç†è®¡æ—¶å™¨ */
+__IO uint8_t g_lwip_dhcp_state = LWIP_DHCP_OFF; /* DHCPçŠ¶æ€åˆå§‹åŒ– */
 #endif
 
-/* LINKÏß³ÌÅäÖÃ */
-#define LWIP_LINK_TASK_PRIO 3          /* ÈÎÎñÓÅÏÈ¼¶ */
-#define LWIP_LINK_STK_SIZE 128 * 2     /* ÈÎÎñ¶ÑÕ»´óĞ¡ */
-void lwip_link_thread(void *argument); /* Á´Â·Ïß³Ì */
+/* LINKçº¿ç¨‹é…ç½® */
+#define LWIP_LINK_TASK_PRIO 3          /* ä»»åŠ¡ä¼˜å…ˆçº§ */
+#define LWIP_LINK_STK_SIZE 128 * 2     /* ä»»åŠ¡å †æ ˆå¤§å° */
+void lwip_link_thread(void *argument); /* é“¾è·¯çº¿ç¨‹ */
 
-/* DHCPÏß³ÌÅäÖÃ */
-#define LWIP_DHCP_TASK_PRIO 4                       /* ÈÎÎñÓÅÏÈ¼¶ */
-#define LWIP_DHCP_STK_SIZE 128 * 2                  /* ÈÎÎñ¶ÑÕ»´óĞ¡ */
-void lwip_periodic_handle(void *argument);          /* DHCPÏß³Ì */
-void lwip_link_status_updated(struct netif *netif); /* DHCP×´Ì¬»Øµ÷º¯Êı */
+/* DHCPçº¿ç¨‹é…ç½® */
+#define LWIP_DHCP_TASK_PRIO 4                       /* ä»»åŠ¡ä¼˜å…ˆçº§ */
+#define LWIP_DHCP_STK_SIZE 128 * 2                  /* ä»»åŠ¡å †æ ˆå¤§å° */
+void lwip_periodic_handle(void *argument);          /* DHCPçº¿ç¨‹ */
+void lwip_link_status_updated(struct netif *netif); /* DHCPçŠ¶æ€å›è°ƒå‡½æ•° */
 
 /**
- * @breif       lwip Ä¬ÈÏIPÉèÖÃ
- * @param       lwipx: lwip¿ØÖÆ½á¹¹ÌåÖ¸Õë
- * @retval      ÎŞ
+ * @breif       lwip é»˜è®¤IPè®¾ç½®
+ * @param       lwipx: lwipæ§åˆ¶ç»“æ„ä½“æŒ‡é’ˆ
+ * @retval      æ— 
  */
 void lwip_comm_default_ip_set(__lwip_dev *lwipx)
 {
-    /* Ä¬ÈÏÔ¶¶ËIPÎª:192.168.1.134 */
+    /* é»˜è®¤è¿œç«¯IPä¸º:192.168.1.134 */
     lwipx->remoteip[0] = 192;
     lwipx->remoteip[1] = 168;
     lwipx->remoteip[2] = 1;
     lwipx->remoteip[3] = 134;
 
-    /* MACµØÖ·ÉèÖÃ */
+    /* MACåœ°å€è®¾ç½® */
     lwipx->mac[0] = 0xB8;
     lwipx->mac[1] = 0xAE;
     lwipx->mac[2] = 0x1D;
@@ -80,63 +80,63 @@ void lwip_comm_default_ip_set(__lwip_dev *lwipx)
     lwipx->mac[4] = 0x04;
     lwipx->mac[5] = 0x00;
 
-    /* Ä¬ÈÏ±¾µØIPÎª:192.168.1.30 */
+    /* é»˜è®¤æœ¬åœ°IPä¸º:192.168.1.30 */
     lwipx->ip[0] = 192;
     lwipx->ip[1] = 168;
     lwipx->ip[2] = 1;
     lwipx->ip[3] = 30;
 
-    /* Ä¬ÈÏ×ÓÍøÑÚÂë:255.255.255.0 */
+    /* é»˜è®¤å­ç½‘æ©ç :255.255.255.0 */
     lwipx->netmask[0] = 255;
     lwipx->netmask[1] = 255;
     lwipx->netmask[2] = 255;
     lwipx->netmask[3] = 0;
 
-    /* Ä¬ÈÏÍø¹Ø:192.168.1.1 */
+    /* é»˜è®¤ç½‘å…³:192.168.1.1 */
     lwipx->gateway[0] = 192;
     lwipx->gateway[1] = 168;
     lwipx->gateway[2] = 1;
     lwipx->gateway[3] = 1;
-    lwipx->dhcpstatus = 0; /* Ã»ÓĞDHCP */
+    lwipx->dhcpstatus = 0; /* æ²¡æœ‰DHCP */
 }
 
 /**
- * @breif       LWIP³õÊ¼»¯(LWIPÆô¶¯µÄÊ±ºòÊ¹ÓÃ)
- * @param       ÎŞ
- * @retval      0,³É¹¦
- *              1,ÄÚ´æ´íÎó
- *              2,ÒÔÌ«ÍøĞ¾Æ¬³õÊ¼»¯Ê§°Ü
- *              3,Íø¿¨Ìí¼ÓÊ§°Ü.
+ * @breif       LWIPåˆå§‹åŒ–(LWIPå¯åŠ¨çš„æ—¶å€™ä½¿ç”¨)
+ * @param       æ— 
+ * @retval      0,æˆåŠŸ
+ *              1,å†…å­˜é”™è¯¯
+ *              2,ä»¥å¤ªç½‘èŠ¯ç‰‡åˆå§‹åŒ–å¤±è´¥
+ *              3,ç½‘å¡æ·»åŠ å¤±è´¥.
  */
 uint8_t lwip_comm_init(void)
 {
-    struct netif *netif_init_flag = nullptr; /* µ÷ÓÃnetif_add()º¯ÊıÊ±µÄ·µ»ØÖµ,ÓÃÓÚÅĞ¶ÏÍøÂç³õÊ¼»¯ÊÇ·ñ³É¹¦ */
-    ip_addr_t ipaddr{};                      /* ipµØÖ· */
-    ip_addr_t netmask{};                     /* ×ÓÍøÑÚÂë */
-    ip_addr_t gw{};                          /* Ä¬ÈÏÍø¹Ø */
+    struct netif *netif_init_flag = nullptr; /* è°ƒç”¨netif_add()å‡½æ•°æ—¶çš„è¿”å›å€¼,ç”¨äºåˆ¤æ–­ç½‘ç»œåˆå§‹åŒ–æ˜¯å¦æˆåŠŸ */
+    ip_addr_t ipaddr{};                      /* ipåœ°å€ */
+    ip_addr_t netmask{};                     /* å­ç½‘æ©ç  */
+    ip_addr_t gw{};                          /* é»˜è®¤ç½‘å…³ */
 
     tcpip_init(NULL, NULL);
     DI_Console().WriteLine("tcpip_init successfully");
 
-    lwip_comm_default_ip_set(&g_lwipdev); /* ÉèÖÃÄ¬ÈÏIPµÈĞÅÏ¢ */
+    lwip_comm_default_ip_set(&g_lwipdev); /* è®¾ç½®é»˜è®¤IPç­‰ä¿¡æ¯ */
     DI_Console().WriteLine("lwip_comm_default_ip_set successfully");
 
-#if LWIP_DHCP /* Ê¹ÓÃ¶¯Ì¬IP */
+#if LWIP_DHCP /* ä½¿ç”¨åŠ¨æ€IP */
     ip_addr_set_zero_ip4(&ipaddr);
     ip_addr_set_zero_ip4(&netmask);
     ip_addr_set_zero_ip4(&gw);
 #else
-    /* Ê¹ÓÃ¾²Ì¬IP */
+    /* ä½¿ç”¨é™æ€IP */
     IP4_ADDR(&ipaddr, g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
     IP4_ADDR(&netmask, g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
     IP4_ADDR(&gw, g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
-    printf("Íø¿¨enµÄMACµØÖ·Îª:................%d.%d.%d.%d.%d.%d\r\n", g_lwipdev.mac[0], g_lwipdev.mac[1], g_lwipdev.mac[2], g_lwipdev.mac[3], g_lwipdev.mac[4], g_lwipdev.mac[5]);
-    printf("¾²Ì¬IPµØÖ·........................%d.%d.%d.%d\r\n", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
-    printf("×ÓÍøÑÚÂë..........................%d.%d.%d.%d\r\n", g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
-    printf("Ä¬ÈÏÍø¹Ø..........................%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
+    printf("ç½‘å¡ençš„MACåœ°å€ä¸º:................%d.%d.%d.%d.%d.%d\r\n", g_lwipdev.mac[0], g_lwipdev.mac[1], g_lwipdev.mac[2], g_lwipdev.mac[3], g_lwipdev.mac[4], g_lwipdev.mac[5]);
+    printf("é™æ€IPåœ°å€........................%d.%d.%d.%d\r\n", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
+    printf("å­ç½‘æ©ç ..........................%d.%d.%d.%d\r\n", g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
+    printf("é»˜è®¤ç½‘å…³..........................%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
     g_lwipdev.dhcpstatus = 0XFF;
 #endif
-    /* ÏòÍø¿¨ÁĞ±íÖĞÌí¼ÓÒ»¸öÍø¿Ú */
+    /* å‘ç½‘å¡åˆ—è¡¨ä¸­æ·»åŠ ä¸€ä¸ªç½‘å£ */
     netif_init_flag = netif_add(&g_lwip_netif,
                                 (ip_addr_t const *)&ipaddr,
                                 (ip_addr_t const *)&netmask,
@@ -149,58 +149,58 @@ uint8_t lwip_comm_init(void)
     {
         DI_Console().WriteLine("netif_add failed");
 
-        /* Íø¿¨Ìí¼ÓÊ§°Ü */
+        /* ç½‘å¡æ·»åŠ å¤±è´¥ */
         return 1;
     }
     else
     {
         DI_Console().WriteLine("netif_add successfully");
 
-        /* Íø¿ÚÌí¼Ó³É¹¦ºó,ÉèÖÃnetifÎªÄ¬ÈÏÖµ,²¢ÇÒ´ò¿ªnetifÍø¿Ú */
-        netif_set_default(&g_lwip_netif); /* ÉèÖÃnetifÎªÄ¬ÈÏÍø¿Ú */
+        /* ç½‘å£æ·»åŠ æˆåŠŸå,è®¾ç½®netifä¸ºé»˜è®¤å€¼,å¹¶ä¸”æ‰“å¼€netifç½‘å£ */
+        netif_set_default(&g_lwip_netif); /* è®¾ç½®netifä¸ºé»˜è®¤ç½‘å£ */
         DI_Console().WriteLine("netif_set_default successfully");
 
 #if LWIP_NETIF_LINK_CALLBACK
-        /* DHCPÁ´½Ó×´Ì¬¸üĞÂº¯Êı */
+        /* DHCPé“¾æ¥çŠ¶æ€æ›´æ–°å‡½æ•° */
         lwip_link_status_updated(&g_lwip_netif);
         DI_Console().WriteLine("lwip_link_status_updated successfully");
 
         netif_set_link_callback(&g_lwip_netif, lwip_link_status_updated);
         DI_Console().WriteLine("netif_set_link_callback successfully");
 
-        /* ²éÑ¯PHYÁ¬½Ó×´Ì¬ÈÎÎñ */
+        /* æŸ¥è¯¢PHYè¿æ¥çŠ¶æ€ä»»åŠ¡ */
         sys_thread_new("eth_link",
-                       lwip_link_thread,     /* ÈÎÎñÈë¿Úº¯Êı */
-                       &g_lwip_netif,        /* ÈÎÎñÈë¿Úº¯Êı²ÎÊı */
-                       LWIP_LINK_STK_SIZE,   /* ÈÎÎñÕ»´óĞ¡ */
-                       LWIP_LINK_TASK_PRIO); /* ÈÎÎñµÄÓÅÏÈ¼¶ */
+                       lwip_link_thread,     /* ä»»åŠ¡å…¥å£å‡½æ•° */
+                       &g_lwip_netif,        /* ä»»åŠ¡å…¥å£å‡½æ•°å‚æ•° */
+                       LWIP_LINK_STK_SIZE,   /* ä»»åŠ¡æ ˆå¤§å° */
+                       LWIP_LINK_TASK_PRIO); /* ä»»åŠ¡çš„ä¼˜å…ˆçº§ */
 
         DI_Console().WriteLine("sys_thread_new eth_link thread successfully");
 
 #endif
     }
 
-    g_lwipdev.link_status = LWIP_LINK_OFF; /* Á´½Ó±ê¼ÇÎª0 */
-#if LWIP_DHCP                              /* Èç¹ûÊ¹ÓÃDHCPµÄ»° */
-    g_lwipdev.dhcpstatus = 0;              /* DHCP±ê¼ÇÎª0 */
+    g_lwipdev.link_status = LWIP_LINK_OFF; /* é“¾æ¥æ ‡è®°ä¸º0 */
+#if LWIP_DHCP                              /* å¦‚æœä½¿ç”¨DHCPçš„è¯ */
+    g_lwipdev.dhcpstatus = 0;              /* DHCPæ ‡è®°ä¸º0 */
 
-    /* DHCPÂÖÑ¯ÈÎÎñ */
+    /* DHCPè½®è¯¢ä»»åŠ¡ */
     sys_thread_new("eth_dhcp",
-                   lwip_periodic_handle, /* ÈÎÎñÈë¿Úº¯Êı */
-                   &g_lwip_netif,        /* ÈÎÎñÈë¿Úº¯Êı²ÎÊı */
-                   LWIP_DHCP_STK_SIZE,   /* ÈÎÎñÕ»´óĞ¡ */
-                   LWIP_DHCP_TASK_PRIO); /* ÈÎÎñµÄÓÅÏÈ¼¶ */
+                   lwip_periodic_handle, /* ä»»åŠ¡å…¥å£å‡½æ•° */
+                   &g_lwip_netif,        /* ä»»åŠ¡å…¥å£å‡½æ•°å‚æ•° */
+                   LWIP_DHCP_STK_SIZE,   /* ä»»åŠ¡æ ˆå¤§å° */
+                   LWIP_DHCP_TASK_PRIO); /* ä»»åŠ¡çš„ä¼˜å…ˆçº§ */
 
     DI_Console().WriteLine("sys_thread_new eth_dhcp thread successfully");
 
 #endif
-    return 0; /* ²Ù×÷OK. */
+    return 0; /* æ“ä½œOK. */
 }
 
 /**
- * @brief       Í¨ÖªÓÃ»§DHCPÅäÖÃ×´Ì¬
- * @param       netif£ºÍø¿¨¿ØÖÆ¿é
- * @retval      ÎŞ
+ * @brief       é€šçŸ¥ç”¨æˆ·DHCPé…ç½®çŠ¶æ€
+ * @param       netifï¼šç½‘å¡æ§åˆ¶å—
+ * @retval      æ— 
  */
 void lwip_link_status_updated(struct netif *netif)
 {
@@ -222,12 +222,12 @@ void lwip_link_status_updated(struct netif *netif)
     }
 }
 
-#if LWIP_DHCP /* Èç¹ûÊ¹ÓÃDHCP */
+#if LWIP_DHCP /* å¦‚æœä½¿ç”¨DHCP */
 
 /**
- * @breif       DHCP½ø³Ì
- * @param       argument:´«ÈëµÄĞÎ²Î
- * @retval      ÎŞ
+ * @breif       DHCPè¿›ç¨‹
+ * @param       argument:ä¼ å…¥çš„å½¢å‚
+ * @retval      æ— 
  */
 void lwip_periodic_handle(void *argument)
 {
@@ -246,7 +246,7 @@ void lwip_periodic_handle(void *argument)
         {
         case LWIP_DHCP_START:
             {
-                /* ¶ÔIPµØÖ·¡¢Íø¹ØµØÖ·¼°×ÓÍøÒ³ÂëÇåÁã²Ù×÷ */
+                /* å¯¹IPåœ°å€ã€ç½‘å…³åœ°å€åŠå­ç½‘é¡µç æ¸…é›¶æ“ä½œ */
                 ip_addr_set_zero_ip4(&netif->ip_addr);
                 ip_addr_set_zero_ip4(&netif->netmask);
                 ip_addr_set_zero_ip4(&netif->gw);
@@ -266,35 +266,35 @@ void lwip_periodic_handle(void *argument)
                 {
                     g_lwip_dhcp_state = LWIP_DHCP_ADDRESS_ASSIGNED;
 
-                    ip = g_lwip_netif.ip_addr.addr;      /* ¶ÁÈ¡ĞÂIPµØÖ· */
-                    netmask = g_lwip_netif.netmask.addr; /* ¶ÁÈ¡×ÓÍøÑÚÂë */
-                    gw = g_lwip_netif.gw.addr;           /* ¶ÁÈ¡Ä¬ÈÏÍø¹Ø */
+                    ip = g_lwip_netif.ip_addr.addr;      /* è¯»å–æ–°IPåœ°å€ */
+                    netmask = g_lwip_netif.netmask.addr; /* è¯»å–å­ç½‘æ©ç  */
+                    gw = g_lwip_netif.gw.addr;           /* è¯»å–é»˜è®¤ç½‘å…³ */
 
                     sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(netif)));
                     printf("IP address assigned by a DHCP server: %s\r\n", iptxt);
 
                     if (ip != 0)
                     {
-                        g_lwipdev.dhcpstatus = 2; /* DHCP³É¹¦ */
-                        printf("Íø¿¨enµÄMACµØÖ·Îª:................%d.%d.%d.%d.%d.%d\r\n", g_lwipdev.mac[0], g_lwipdev.mac[1], g_lwipdev.mac[2], g_lwipdev.mac[3], g_lwipdev.mac[4], g_lwipdev.mac[5]);
-                        /* ½âÎö³öÍ¨¹ıDHCP»ñÈ¡µ½µÄIPµØÖ· */
+                        g_lwipdev.dhcpstatus = 2; /* DHCPæˆåŠŸ */
+                        printf("ç½‘å¡ençš„MACåœ°å€ä¸º:................%d.%d.%d.%d.%d.%d\r\n", g_lwipdev.mac[0], g_lwipdev.mac[1], g_lwipdev.mac[2], g_lwipdev.mac[3], g_lwipdev.mac[4], g_lwipdev.mac[5]);
+                        /* è§£æå‡ºé€šè¿‡DHCPè·å–åˆ°çš„IPåœ°å€ */
                         g_lwipdev.ip[3] = (uint8_t)(ip >> 24);
                         g_lwipdev.ip[2] = (uint8_t)(ip >> 16);
                         g_lwipdev.ip[1] = (uint8_t)(ip >> 8);
                         g_lwipdev.ip[0] = (uint8_t)(ip);
-                        printf("Í¨¹ıDHCP»ñÈ¡µ½IPµØÖ·..............%d.%d.%d.%d\r\n", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
-                        /* ½âÎöÍ¨¹ıDHCP»ñÈ¡µ½µÄ×ÓÍøÑÚÂëµØÖ· */
+                        printf("é€šè¿‡DHCPè·å–åˆ°IPåœ°å€..............%d.%d.%d.%d\r\n", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
+                        /* è§£æé€šè¿‡DHCPè·å–åˆ°çš„å­ç½‘æ©ç åœ°å€ */
                         g_lwipdev.netmask[3] = (uint8_t)(netmask >> 24);
                         g_lwipdev.netmask[2] = (uint8_t)(netmask >> 16);
                         g_lwipdev.netmask[1] = (uint8_t)(netmask >> 8);
                         g_lwipdev.netmask[0] = (uint8_t)(netmask);
-                        printf("Í¨¹ıDHCP»ñÈ¡µ½×ÓÍøÑÚÂë............%d.%d.%d.%d\r\n", g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
-                        /* ½âÎö³öÍ¨¹ıDHCP»ñÈ¡µ½µÄÄ¬ÈÏÍø¹Ø */
+                        printf("é€šè¿‡DHCPè·å–åˆ°å­ç½‘æ©ç ............%d.%d.%d.%d\r\n", g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
+                        /* è§£æå‡ºé€šè¿‡DHCPè·å–åˆ°çš„é»˜è®¤ç½‘å…³ */
                         g_lwipdev.gateway[3] = (uint8_t)(gw >> 24);
                         g_lwipdev.gateway[2] = (uint8_t)(gw >> 16);
                         g_lwipdev.gateway[1] = (uint8_t)(gw >> 8);
                         g_lwipdev.gateway[0] = (uint8_t)(gw);
-                        printf("Í¨¹ıDHCP»ñÈ¡µ½µÄÄ¬ÈÏÍø¹Ø..........%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
+                        printf("é€šè¿‡DHCPè·å–åˆ°çš„é»˜è®¤ç½‘å…³..........%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
                     }
                 }
                 else
@@ -306,7 +306,7 @@ void lwip_periodic_handle(void *argument)
                     {
                         g_lwip_dhcp_state = LWIP_DHCP_TIMEOUT;
                         g_lwipdev.dhcpstatus = 0XFF;
-                        /* Ê¹ÓÃ¾²Ì¬IPµØÖ· */
+                        /* ä½¿ç”¨é™æ€IPåœ°å€ */
                         IP4_ADDR(&(g_lwip_netif.ip_addr), g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]);
                         IP4_ADDR(&(g_lwip_netif.netmask), g_lwipdev.netmask[0], g_lwipdev.netmask[1], g_lwipdev.netmask[2], g_lwipdev.netmask[3]);
                         IP4_ADDR(&(g_lwip_netif.gw), g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
@@ -336,9 +336,9 @@ void lwip_periodic_handle(void *argument)
 #endif
 
 /**
- * @brief       ¼ì²éETHÁ´Â·×´Ì¬£¬¸üĞÂnetif
+ * @brief       æ£€æŸ¥ETHé“¾è·¯çŠ¶æ€ï¼Œæ›´æ–°netif
  * @param       argument: netif
- * @retval      ÎŞ
+ * @retval      æ— 
  */
 void lwip_link_thread(void *argument)
 {
@@ -350,10 +350,10 @@ void lwip_link_thread(void *argument)
 
     while (1)
     {
-        /* ¶ÁÈ¡PHY×´Ì¬¼Ä´æÆ÷£¬»ñÈ¡Á´½ÓĞÅÏ¢ */
+        /* è¯»å–PHYçŠ¶æ€å¯„å­˜å™¨ï¼Œè·å–é“¾æ¥ä¿¡æ¯ */
         HAL_ETH_ReadPHYRegister(&g_eth_handler, ETH_CHIP_ADDR, ETH_CHIP_BSR, &regval);
 
-        /* ÅĞ¶ÏÁ´½Ó×´Ì¬ */
+        /* åˆ¤æ–­é“¾æ¥çŠ¶æ€ */
         if ((regval & ETH_CHIP_BSR_LINK_STATUS) == 0)
         {
             g_lwipdev.link_status = LWIP_LINK_OFF;
@@ -361,12 +361,12 @@ void lwip_link_thread(void *argument)
 
             if (link_again_num >= 2)
             {
-                /* ÍøÏßÒ»¶ÎÊ±¼äÃ»ÓĞ²åÈë */
+                /* ç½‘çº¿ä¸€æ®µæ—¶é—´æ²¡æœ‰æ’å…¥ */
                 continue;
             }
             else
             {
-                /* ¹Ø±ÕĞéÄâÍø¿¨¼°ÒÔÌ«ÍøÖĞ¶Ï */
+                /* å…³é—­è™šæ‹Ÿç½‘å¡åŠä»¥å¤ªç½‘ä¸­æ–­ */
                 DI_Console().WriteLine("close ethernet");
 
 #if LWIP_DHCP
@@ -380,11 +380,11 @@ void lwip_link_thread(void *argument)
         }
         else
         {
-            /* ÍøÏß²åÈë¼ì²â */
+            /* ç½‘çº¿æ’å…¥æ£€æµ‹ */
             link_again_num = 0;
             if (g_lwipdev.link_status == LWIP_LINK_OFF)
             {
-                /* ¿ªÆôÒÔÌ«Íø¼°ĞéÄâÍø¿¨ */
+                /* å¼€å¯ä»¥å¤ªç½‘åŠè™šæ‹Ÿç½‘å¡ */
                 g_lwipdev.link_status = LWIP_LINK_ON;
                 HAL_ETH_Start_IT(&g_eth_handler);
                 netif_set_up(netif);

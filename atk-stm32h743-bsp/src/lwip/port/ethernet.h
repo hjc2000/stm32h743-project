@@ -2,7 +2,7 @@
 #include <hal.h>
 
 /******************************************************************************************/
-/* Òı½Å ¶¨Òå */
+/* å¼•è„š å®šä¹‰ */
 
 #define ETH_CLK_GPIO_PORT GPIOA
 #define ETH_CLK_GPIO_PIN GPIO_PIN_1
@@ -10,7 +10,7 @@
     do                                \
     {                                 \
         __HAL_RCC_GPIOA_CLK_ENABLE(); \
-    } while (0) /* ËùÔÚIO¿ÚÊ±ÖÓÊ¹ÄÜ */
+    } while (0) /* æ‰€åœ¨IOå£æ—¶é’Ÿä½¿èƒ½ */
 
 #define ETH_MDIO_GPIO_PORT GPIOA
 #define ETH_MDIO_GPIO_PIN GPIO_PIN_2
@@ -18,7 +18,7 @@
     do                                \
     {                                 \
         __HAL_RCC_GPIOA_CLK_ENABLE(); \
-    } while (0) /* ËùÔÚIO¿ÚÊ±ÖÓÊ¹ÄÜ */
+    } while (0) /* æ‰€åœ¨IOå£æ—¶é’Ÿä½¿èƒ½ */
 
 #define ETH_CRS_GPIO_PORT GPIOA
 #define ETH_CRS_GPIO_PIN GPIO_PIN_7
@@ -26,7 +26,7 @@
     do                                \
     {                                 \
         __HAL_RCC_GPIOA_CLK_ENABLE(); \
-    } while (0) /* ËùÔÚIO¿ÚÊ±ÖÓÊ¹ÄÜ */
+    } while (0) /* æ‰€åœ¨IOå£æ—¶é’Ÿä½¿èƒ½ */
 
 #define ETH_MDC_GPIO_PORT GPIOC
 #define ETH_MDC_GPIO_PIN GPIO_PIN_1
@@ -34,7 +34,7 @@
     do                                \
     {                                 \
         __HAL_RCC_GPIOC_CLK_ENABLE(); \
-    } while (0) /* ËùÔÚIO¿ÚÊ±ÖÓÊ¹ÄÜ */
+    } while (0) /* æ‰€åœ¨IOå£æ—¶é’Ÿä½¿èƒ½ */
 
 #define ETH_RXD0_GPIO_PORT GPIOC
 #define ETH_RXD0_GPIO_PIN GPIO_PIN_4
@@ -42,7 +42,7 @@
     do                                \
     {                                 \
         __HAL_RCC_GPIOC_CLK_ENABLE(); \
-    } while (0) /* ËùÔÚIO¿ÚÊ±ÖÓÊ¹ÄÜ */
+    } while (0) /* æ‰€åœ¨IOå£æ—¶é’Ÿä½¿èƒ½ */
 
 #define ETH_RXD1_GPIO_PORT GPIOC
 #define ETH_RXD1_GPIO_PIN GPIO_PIN_5
@@ -50,7 +50,7 @@
     do                                \
     {                                 \
         __HAL_RCC_GPIOC_CLK_ENABLE(); \
-    } while (0) /* ËùÔÚIO¿ÚÊ±ÖÓÊ¹ÄÜ */
+    } while (0) /* æ‰€åœ¨IOå£æ—¶é’Ÿä½¿èƒ½ */
 
 #define ETH_TX_EN_GPIO_PORT GPIOB
 #define ETH_TX_EN_GPIO_PIN GPIO_PIN_11
@@ -58,7 +58,7 @@
     do                                \
     {                                 \
         __HAL_RCC_GPIOB_CLK_ENABLE(); \
-    } while (0) /* ËùÔÚIO¿ÚÊ±ÖÓÊ¹ÄÜ */
+    } while (0) /* æ‰€åœ¨IOå£æ—¶é’Ÿä½¿èƒ½ */
 
 #define ETH_TXD0_GPIO_PORT GPIOG
 #define ETH_TXD0_GPIO_PIN GPIO_PIN_13
@@ -66,7 +66,7 @@
     do                                \
     {                                 \
         __HAL_RCC_GPIOG_CLK_ENABLE(); \
-    } while (0) /* ËùÔÚIO¿ÚÊ±ÖÓÊ¹ÄÜ */
+    } while (0) /* æ‰€åœ¨IOå£æ—¶é’Ÿä½¿èƒ½ */
 
 #define ETH_TXD1_GPIO_PORT GPIOG
 #define ETH_TXD1_GPIO_PIN GPIO_PIN_14
@@ -74,14 +74,14 @@
     do                                \
     {                                 \
         __HAL_RCC_GPIOG_CLK_ENABLE(); \
-    } while (0) /* ËùÔÚIO¿ÚÊ±ÖÓÊ¹ÄÜ */
+    } while (0) /* æ‰€åœ¨IOå£æ—¶é’Ÿä½¿èƒ½ */
 
 /******************************************************************************************/
 
-extern ETH_HandleTypeDef g_eth_handler; /* ÒÔÌ«Íø¾ä±ú */
+extern ETH_HandleTypeDef g_eth_handler; /* ä»¥å¤ªç½‘å¥æŸ„ */
 
-uint8_t ethernet_init(void);                           /* ÒÔÌ«ÍøĞ¾Æ¬³õÊ¼»¯ */
-uint32_t ethernet_read_phy(uint16_t reg);              /* ¶ÁÈ¡ÒÔÌ«ÍøĞ¾Æ¬¼Ä´æÆ÷Öµ */
-void ethernet_write_phy(uint16_t reg, uint16_t value); /* ÏòÒÔÌ«ÍøĞ¾Æ¬Ö¸¶¨µØÖ·Ğ´Èë¼Ä´æÆ÷Öµ */
-uint8_t ethernet_chip_get_speed(void);                 /* »ñµÃÒÔÌ«ÍøĞ¾Æ¬µÄËÙ¶ÈÄ£Ê½ */
+uint8_t ethernet_init(void);                           /* ä»¥å¤ªç½‘èŠ¯ç‰‡åˆå§‹åŒ– */
+uint32_t ethernet_read_phy(uint16_t reg);              /* è¯»å–ä»¥å¤ªç½‘èŠ¯ç‰‡å¯„å­˜å™¨å€¼ */
+void ethernet_write_phy(uint16_t reg, uint16_t value); /* å‘ä»¥å¤ªç½‘èŠ¯ç‰‡æŒ‡å®šåœ°å€å†™å…¥å¯„å­˜å™¨å€¼ */
+uint8_t ethernet_chip_get_speed(void);                 /* è·å¾—ä»¥å¤ªç½‘èŠ¯ç‰‡çš„é€Ÿåº¦æ¨¡å¼ */
 void NETMPU_Config(void);

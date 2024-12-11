@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
  * @file        lwip_demo.h
- * @author      ÕıµãÔ­×ÓÍÅ¶Ó(ALIENTEK)
+ * @author      æ­£ç‚¹åŸå­å›¢é˜Ÿ(ALIENTEK)
  * @version     V1.0
  * @date        2022-08-01
- * @brief       lwIP SOCKET UDP ÊµÑé
- * @license     Copyright (c) 2020-2032, ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾
+ * @brief       lwIP SOCKET UDP å®éªŒ
+ * @license     Copyright (c) 2020-2032, å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸
  ****************************************************************************************************
  * @attention
  *
- * ÊµÑéÆ½Ì¨:ÕıµãÔ­×Ó °¢²¨ÂŞ H743¿ª·¢°å
- * ÔÚÏßÊÓÆµ:www.yuanzige.com
- * ¼¼ÊõÂÛÌ³:www.openedv.com
- * ¹«Ë¾ÍøÖ·:www.alientek.com
- * ¹ºÂòµØÖ·:openedv.taobao.com
+ * å®éªŒå¹³å°:æ­£ç‚¹åŸå­ é˜¿æ³¢ç½— H743å¼€å‘æ¿
+ * åœ¨çº¿è§†é¢‘:www.yuanzige.com
+ * æŠ€æœ¯è®ºå›:www.openedv.com
+ * å…¬å¸ç½‘å€:www.alientek.com
+ * è´­ä¹°åœ°å€:openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -22,8 +22,8 @@
 #define _LWIP_DEMO_H
 #include <stdint.h>
 
-#define LWIP_SEND_DATA 0X80      /* ¶¨ÒåÓĞÊı¾İ·¢ËÍ */
-extern uint8_t g_lwip_send_flag; /* Êı¾İ·¢ËÍ±êÖ¾Î» */
+#define LWIP_SEND_DATA 0X80      /* å®šä¹‰æœ‰æ•°æ®å‘é€ */
+extern uint8_t g_lwip_send_flag; /* æ•°æ®å‘é€æ ‡å¿—ä½ */
 
 #ifdef __cplusplus
 extern "C"

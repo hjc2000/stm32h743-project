@@ -4,39 +4,39 @@
 #include "lwip/timeouts.h"
 #include "netif/etharp.h"
 
-/* DHCP½ø³Ì×´Ì¬ */
-#define LWIP_DHCP_OFF (uint8_t)0              /* DHCP·şÎñÆ÷¹Ø±Õ×´Ì¬ */
-#define LWIP_DHCP_START (uint8_t)1            /* DHCP·şÎñÆ÷Æô¶¯×´Ì¬ */
-#define LWIP_DHCP_WAIT_ADDRESS (uint8_t)2     /* DHCP·şÎñÆ÷µÈ´ı·ÖÅäIP×´Ì¬ */
-#define LWIP_DHCP_ADDRESS_ASSIGNED (uint8_t)3 /* DHCP·şÎñÆ÷µØÖ·ÒÑ·ÖÅä×´Ì¬ */
-#define LWIP_DHCP_TIMEOUT (uint8_t)4          /* DHCP·şÎñÆ÷³¬Ê±×´Ì¬ */
-#define LWIP_DHCP_LINK_DOWN (uint8_t)5        /* DHCP·şÎñÆ÷Á´½ÓÊ§°Ü×´Ì¬ */
+/* DHCPè¿›ç¨‹çŠ¶æ€ */
+#define LWIP_DHCP_OFF (uint8_t)0              /* DHCPæœåŠ¡å™¨å…³é—­çŠ¶æ€ */
+#define LWIP_DHCP_START (uint8_t)1            /* DHCPæœåŠ¡å™¨å¯åŠ¨çŠ¶æ€ */
+#define LWIP_DHCP_WAIT_ADDRESS (uint8_t)2     /* DHCPæœåŠ¡å™¨ç­‰å¾…åˆ†é…IPçŠ¶æ€ */
+#define LWIP_DHCP_ADDRESS_ASSIGNED (uint8_t)3 /* DHCPæœåŠ¡å™¨åœ°å€å·²åˆ†é…çŠ¶æ€ */
+#define LWIP_DHCP_TIMEOUT (uint8_t)4          /* DHCPæœåŠ¡å™¨è¶…æ—¶çŠ¶æ€ */
+#define LWIP_DHCP_LINK_DOWN (uint8_t)5        /* DHCPæœåŠ¡å™¨é“¾æ¥å¤±è´¥çŠ¶æ€ */
 
-/* Á´½Ó×´Ì¬ */
-#define LWIP_LINK_OFF (uint8_t)0   /* Á´½Ó¹Ø±Õ×´Ì¬ */
-#define LWIP_LINK_ON (uint8_t)1    /* Á´½Ó¿ªÆô×´Ì¬ */
-#define LWIP_LINK_AGAIN (uint8_t)2 /* ÖØ¸´¿ªÆô */
+/* é“¾æ¥çŠ¶æ€ */
+#define LWIP_LINK_OFF (uint8_t)0   /* é“¾æ¥å…³é—­çŠ¶æ€ */
+#define LWIP_LINK_ON (uint8_t)1    /* é“¾æ¥å¼€å¯çŠ¶æ€ */
+#define LWIP_LINK_AGAIN (uint8_t)2 /* é‡å¤å¼€å¯ */
 
-/* DHCP·şÎñÆ÷×î´óÖØÊÔ´ÎÊı */
+/* DHCPæœåŠ¡å™¨æœ€å¤§é‡è¯•æ¬¡æ•° */
 #define LWIP_MAX_DHCP_TRIES (uint8_t)4
 
-/*lwip¿ØÖÆ½á¹¹Ìå*/
+/*lwipæ§åˆ¶ç»“æ„ä½“*/
 typedef struct
 {
-    uint8_t mac[6];      /* MACµØÖ· */
-    uint8_t remoteip[4]; /* Ô¶¶ËÖ÷»úIPµØÖ· */
-    uint8_t ip[4];       /* ±¾»úIPµØÖ· */
-    uint8_t netmask[4];  /* ×ÓÍøÑÚÂë */
-    uint8_t gateway[4];  /* Ä¬ÈÏÍø¹ØµÄIPµØÖ· */
-    uint8_t dhcpstatus;  /* dhcp×´Ì¬
-                         0, Î´»ñÈ¡DHCPµØÖ·
-                         1, ½øÈëDHCP»ñÈ¡×´Ì¬
-                         2, ³É¹¦»ñÈ¡DHCPµØÖ·
-                         0XFF,»ñÈ¡Ê§°Ü */
-    uint8_t link_status; /* Á¬½Ó×´Ì¬ */
+    uint8_t mac[6];      /* MACåœ°å€ */
+    uint8_t remoteip[4]; /* è¿œç«¯ä¸»æœºIPåœ°å€ */
+    uint8_t ip[4];       /* æœ¬æœºIPåœ°å€ */
+    uint8_t netmask[4];  /* å­ç½‘æ©ç  */
+    uint8_t gateway[4];  /* é»˜è®¤ç½‘å…³çš„IPåœ°å€ */
+    uint8_t dhcpstatus;  /* dhcpçŠ¶æ€
+                         0, æœªè·å–DHCPåœ°å€
+                         1, è¿›å…¥DHCPè·å–çŠ¶æ€
+                         2, æˆåŠŸè·å–DHCPåœ°å€
+                         0XFF,è·å–å¤±è´¥ */
+    uint8_t link_status; /* è¿æ¥çŠ¶æ€ */
 } __lwip_dev;
 
-extern __lwip_dev g_lwipdev; /* lwip¿ØÖÆ½á¹¹Ìå */
+extern __lwip_dev g_lwipdev; /* lwipæ§åˆ¶ç»“æ„ä½“ */
 
-void lwip_comm_default_ip_set(__lwip_dev *lwipx); /* lwip Ä¬ÈÏIPÉèÖÃ */
-uint8_t lwip_comm_init(void);                     /* LWIP³õÊ¼»¯(LWIPÆô¶¯µÄÊ±ºòÊ¹ÓÃ) */
+void lwip_comm_default_ip_set(__lwip_dev *lwipx); /* lwip é»˜è®¤IPè®¾ç½® */
+uint8_t lwip_comm_init(void);                     /* LWIPåˆå§‹åŒ–(LWIPå¯åŠ¨çš„æ—¶å€™ä½¿ç”¨) */
