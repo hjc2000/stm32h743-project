@@ -39,154 +39,47 @@
 #include "lwip/sys.h"
 #include "semphr.h"
 #include "task.h"
+#include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/task.h>
 #include <errno.h>
 
-/** Set this to 1 if you want the stack size passed to sys_thread_new() to be
- * interpreted as number of stack words (FreeRTOS-like).
- * Default is that they are interpreted as byte count (lwIP-like).
- */
-#ifndef LWIP_FREERTOS_THREAD_STACKSIZE_IS_STACKWORDS
-#define LWIP_FREERTOS_THREAD_STACKSIZE_IS_STACKWORDS 1
-#endif
-
-/** Set this to 1 to use a mutex for SYS_ARCH_PROTECT() critical regions.
- * Default is 0 and locks interrupts/scheduler for SYS_ARCH_PROTECT().
- */
-#ifndef LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX
-#define LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX 0
-#endif
-
-/** Set this to 1 to include a sanity check that SYS_ARCH_PROTECT() and
- * SYS_ARCH_UNPROTECT() are called matching.
- */
-#ifndef LWIP_FREERTOS_SYS_ARCH_PROTECT_SANITY_CHECK
-#define LWIP_FREERTOS_SYS_ARCH_PROTECT_SANITY_CHECK 0
-#endif
-
-/** Set this to 1 to let sys_mbox_free check that queues are empty when freed */
-#ifndef LWIP_FREERTOS_CHECK_QUEUE_EMPTY_ON_FREE
-#define LWIP_FREERTOS_CHECK_QUEUE_EMPTY_ON_FREE 0
-#endif
-
-/** Set this to 1 to enable core locking check functions in this port.
- * For this to work, you'll have to define LWIP_ASSERT_CORE_LOCKED()
- * and LWIP_MARK_TCPIP_THREAD() correctly in your lwipopts.h! */
-#ifndef LWIP_FREERTOS_CHECK_CORE_LOCKING
-#define LWIP_FREERTOS_CHECK_CORE_LOCKING 0
-#endif
-
-/** Set this to 0 to implement sys_now() yourself, e.g. using a hw timer.
- * Default is 1, where FreeRTOS ticks are used to calculate back to ms.
- */
-#ifndef LWIP_FREERTOS_SYS_NOW_FROM_FREERTOS
-#define LWIP_FREERTOS_SYS_NOW_FROM_FREERTOS 1
-#endif
-
-#if !configSUPPORT_DYNAMIC_ALLOCATION
-#error "lwIP FreeRTOS port requires configSUPPORT_DYNAMIC_ALLOCATION"
-#endif
-#if !INCLUDE_vTaskDelay
-#error "lwIP FreeRTOS port requires INCLUDE_vTaskDelay"
-#endif
-#if !INCLUDE_vTaskSuspend
-#error "lwIP FreeRTOS port requires INCLUDE_vTaskSuspend"
-#endif
-#if LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX || !LWIP_COMPAT_MUTEX
-#if !configUSE_MUTEXES
-#error "lwIP FreeRTOS port requires configUSE_MUTEXES"
-#endif
-#endif
-
-#if SYS_LIGHTWEIGHT_PROT && LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX
-static SemaphoreHandle_t sys_arch_protect_mutex;
-#endif
-#if SYS_LIGHTWEIGHT_PROT && LWIP_FREERTOS_SYS_ARCH_PROTECT_SANITY_CHECK
-static sys_prot_t sys_arch_protect_nesting;
-#endif
-
-/* Initialize this module (see description in sys.h) */
-void sys_init(void)
+namespace
 {
-#if SYS_LIGHTWEIGHT_PROT && LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX
-    /* initialize sys_arch_protect global mutex */
-    sys_arch_protect_mutex = xSemaphoreCreateRecursiveMutex();
-    LWIP_ASSERT("failed to create sys_arch_protect mutex",
-                sys_arch_protect_mutex != NULL);
-#endif /* SYS_LIGHTWEIGHT_PROT && LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX */
-}
-
-#if configUSE_16_BIT_TICKS == 1
-#error This port requires 32 bit ticks or timer overflow will fail
-#endif
-
-#if LWIP_FREERTOS_SYS_NOW_FROM_FREERTOS
-u32_t sys_now(void)
-{
-    return xTaskGetTickCount() * portTICK_PERIOD_MS;
-}
-#endif
-
-u32_t sys_jiffies(void)
-{
-    return xTaskGetTickCount();
-}
-
-#if SYS_LIGHTWEIGHT_PROT
-
-sys_prot_t sys_arch_protect(void)
-{
-#if LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX
-    BaseType_t ret;
-    LWIP_ASSERT("sys_arch_protect_mutex != NULL", sys_arch_protect_mutex != NULL);
-
-    ret = xSemaphoreTakeRecursive(sys_arch_protect_mutex, portMAX_DELAY);
-    LWIP_ASSERT("sys_arch_protect failed to take the mutex", ret == pdTRUE);
-#else  /* LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX */
-    taskENTER_CRITICAL();
-#endif /* LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX */
-#if LWIP_FREERTOS_SYS_ARCH_PROTECT_SANITY_CHECK
+    class MutexHandle
     {
-        /* every nested call to sys_arch_protect() returns an increased number */
-        sys_prot_t ret = sys_arch_protect_nesting;
-        sys_arch_protect_nesting++;
-        LWIP_ASSERT("sys_arch_protect overflow", sys_arch_protect_nesting > ret);
-        return ret;
+    public:
+        MutexHandle(std::shared_ptr<bsp::IMutex> mutex)
+        {
+            _mutex = mutex;
+        }
+
+        std::shared_ptr<bsp::IMutex> _mutex = nullptr;
+    };
+
+} // namespace
+
+extern "C"
+{
+    void sys_init(void)
+    {
     }
-#else
-    return 1;
-#endif
-}
 
-void sys_arch_unprotect(sys_prot_t pval)
-{
-#if LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX
-    BaseType_t ret;
-#endif
-#if LWIP_FREERTOS_SYS_ARCH_PROTECT_SANITY_CHECK
-    LWIP_ASSERT("unexpected sys_arch_protect_nesting", sys_arch_protect_nesting > 0);
-    sys_arch_protect_nesting--;
-    LWIP_ASSERT("unexpected sys_arch_protect_nesting", sys_arch_protect_nesting == pval);
-#endif
+    u32_t sys_now(void)
+    {
+        return xTaskGetTickCount() * portTICK_PERIOD_MS;
+    }
 
-#if LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX
-    LWIP_ASSERT("sys_arch_protect_mutex != NULL", sys_arch_protect_mutex != NULL);
+    u32_t sys_jiffies(void)
+    {
+        return xTaskGetTickCount();
+    }
 
-    ret = xSemaphoreGiveRecursive(sys_arch_protect_mutex);
-    LWIP_ASSERT("sys_arch_unprotect failed to give the mutex", ret == pdTRUE);
-#else  /* LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX */
-    taskEXIT_CRITICAL();
-#endif /* LWIP_FREERTOS_SYS_ARCH_PROTECT_USES_MUTEX */
-    LWIP_UNUSED_ARG(pval);
-}
-
-#endif /* SYS_LIGHTWEIGHT_PROT */
-
-void sys_arch_msleep(u32_t delay_ms)
-{
-    DI_Delayer().Delay(std::chrono::milliseconds{delay_ms});
+    void sys_arch_msleep(u32_t delay_ms)
+    {
+        DI_Delayer().Delay(std::chrono::milliseconds{delay_ms});
+    }
 }
 
 #if !LWIP_COMPAT_MUTEX
@@ -194,16 +87,17 @@ void sys_arch_msleep(u32_t delay_ms)
 /* Create a new mutex*/
 err_t sys_mutex_new(sys_mutex_t *mutex)
 {
-    LWIP_ASSERT("mutex != NULL", mutex != NULL);
-
-    mutex->mut = xSemaphoreCreateRecursiveMutex();
-    if (mutex->mut == NULL)
+    if (mutex == nullptr)
     {
-        SYS_STATS_INC(mutex.err);
-        return ERR_MEM;
+        throw std::invalid_argument{"mutex 不能是空指针"};
     }
 
-    SYS_STATS_INC_USED(mutex);
+    if (mutex->mut != nullptr)
+    {
+        delete reinterpret_cast<MutexHandle *>(mutex->mut);
+    }
+
+    mutex->mut = new MutexHandle{DICreate_Mutex()};
     return ERR_OK;
 }
 
@@ -219,11 +113,7 @@ void sys_mutex_lock(sys_mutex_t *mutex)
         throw std::invalid_argument{"mutex->mut 不能是空指针"};
     }
 
-    BaseType_t ret = xSemaphoreTakeRecursive(reinterpret_cast<QueueHandle_t>(mutex->mut), portMAX_DELAY);
-    if (!ret)
-    {
-        throw std::runtime_error{"锁定互斥锁失败"};
-    }
+    reinterpret_cast<MutexHandle *>(mutex->mut)->_mutex->Lock();
 }
 
 void sys_mutex_unlock(sys_mutex_t *mutex)
@@ -238,11 +128,7 @@ void sys_mutex_unlock(sys_mutex_t *mutex)
         throw std::invalid_argument{"mutex->mut 不能是空指针"};
     }
 
-    BaseType_t ret = xSemaphoreGiveRecursive(reinterpret_cast<QueueHandle_t>(mutex->mut));
-    if (!ret)
-    {
-        throw std::runtime_error{"解锁互斥锁失败"};
-    }
+    reinterpret_cast<MutexHandle *>(mutex->mut)->_mutex->Unlock();
 }
 
 void sys_mutex_free(sys_mutex_t *mutex)
@@ -257,9 +143,8 @@ void sys_mutex_free(sys_mutex_t *mutex)
         return;
     }
 
-    SYS_STATS_DEC(mutex.used);
-    vSemaphoreDelete(mutex->mut);
-    mutex->mut = NULL;
+    delete reinterpret_cast<MutexHandle *>(mutex->mut);
+    mutex->mut = nullptr;
 }
 
 #endif /* !LWIP_COMPAT_MUTEX */
@@ -572,20 +457,12 @@ sys_thread_t sys_thread_new(char const *name, lwip_thread_fn thread, void *arg, 
     TaskHandle_t rtos_task;
     BaseType_t ret;
     sys_thread_t lwip_thread;
-    size_t rtos_stacksize;
-
-    LWIP_ASSERT("invalid stacksize", stacksize > 0);
-#if LWIP_FREERTOS_THREAD_STACKSIZE_IS_STACKWORDS
-    rtos_stacksize = (size_t)stacksize;
-#else
-    rtos_stacksize = (size_t)stacksize / sizeof(StackType_t);
-#endif
 
     /* lwIP's lwip_thread_fn matches FreeRTOS' TaskFunction_t, so we can pass the
        thread function without adaption here. */
     ret = xTaskCreate(thread,
                       name,
-                      (configSTACK_DEPTH_TYPE)rtos_stacksize,
+                      (configSTACK_DEPTH_TYPE)stacksize,
                       arg,
                       1,
                       &rtos_task);
