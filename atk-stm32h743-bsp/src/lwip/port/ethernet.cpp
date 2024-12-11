@@ -1,27 +1,3 @@
-/**
- ****************************************************************************************************
- * @file        ethernet.c
- * @author      正点原子团队(ALIENTEK)
- * @version     V1.0
- * @date        2022-08-01
- * @brief       ETHERNET 驱动代码
- * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
- ****************************************************************************************************
- * @attention
- *
- * 实验平台:正点原子 阿波罗 H743开发板
- * 在线视频:www.yuanzige.com
- * 技术论坛:www.openedv.com
- * 公司网址:www.alientek.com
- * 购买地址:openedv.taobao.com
- *
- * 修改说明
- * V1.0 20211014
- * 第一次发布
- *
- ****************************************************************************************************
- */
-
 #include "ethernet.h"
 #include "ethernet_chip.h"
 #include "lwip_comm.h"
@@ -29,7 +5,8 @@
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 
-ETH_HandleTypeDef g_eth_handler; /* 以太网句柄 */
+/* 以太网句柄 */
+ETH_HandleTypeDef g_eth_handler;
 
 /**
  * @brief  Configure the MPU attributes
