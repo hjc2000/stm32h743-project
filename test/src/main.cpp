@@ -185,6 +185,8 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
+void freertos_demo();
+
 int main(void)
 {
     DI_Initialize();
@@ -220,6 +222,7 @@ int main(void)
                 DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
                 SDRAM_Init();
 
+                freertos_demo();
                 // TestLittleFs();
                 // TestFatFs();
 

@@ -258,8 +258,6 @@ void lwip_periodic_handle(void *argument)
                         g_lwipdev.gateway[1] = (uint8_t)(gw >> 8);
                         g_lwipdev.gateway[0] = (uint8_t)(gw);
                         printf("通过DHCP获取到的默认网关..........%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
-
-                        g_lwipdev.lwip_display_fn(2);
                     }
                 }
                 else
@@ -280,8 +278,6 @@ void lwip_periodic_handle(void *argument)
                         sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(netif)));
                         printf("DHCP Timeout !! \r\n");
                         printf("Static IP address: %s\r\n", iptxt);
-
-                        g_lwipdev.lwip_display_fn(2);
                     }
                 }
             }

@@ -3,8 +3,8 @@
  * @file        lwip_demo.h
  * @author      正点原子团队(ALIENTEK)
  * @version     V1.0
- * @date        2020-08-01
- * @brief       lwIP SOCKET TCPClient 实验
+ * @date        2022-08-01
+ * @brief       lwIP SOCKET UDP 实验
  * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
  ****************************************************************************************************
  * @attention
@@ -20,12 +20,18 @@
 
 #ifndef _LWIP_DEMO_H
 #define _LWIP_DEMO_H
-
 #include <stdint.h>
 
 #define LWIP_SEND_DATA 0X80      /* 定义有数据发送 */
 extern uint8_t g_lwip_send_flag; /* 数据发送标志位 */
 
-void lwip_demo(void);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+    void lwip_demo(void);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _CLIENT_H */

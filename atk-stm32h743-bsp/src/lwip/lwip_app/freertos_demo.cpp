@@ -4,7 +4,7 @@
  * @author      正点原子团队(ALIENTEK)
  * @version     V1.0
  * @date        2022-08-01
- * @brief       lwIP SOCKET TCPClient 实验
+ * @brief       lwIP SOCKET UDP 实验
  * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
  ****************************************************************************************************
  * @attention
@@ -18,16 +18,14 @@
  ****************************************************************************************************
  */
 
-#include "freertos_demo.h"
 #include "FreeRTOS.h"
 #include "lwip_comm.h"
-#include "lwip_demo.h"
 #include "lwipopts.h"
 #include "queue.h"
 #include "stdio.h"
 #include "string.h"
 #include "task.h"
-#include <bsp-interface/di/delayer.h>
+#include <lwip_demo.h>
 
 /******************************************************************************************************/
 /*FreeRTOS配置*/
@@ -36,7 +34,7 @@
  * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define START_TASK_PRIO 5            /* 任务优先级 */
-#define START_STK_SIZE 512           /* 任务堆栈大小 */
+#define START_STK_SIZE 1024          /* 任务堆栈大小 */
 TaskHandle_t StartTask_Handler;      /* 任务句柄 */
 void start_task(void *pvParameters); /* 任务函数 */
 
@@ -52,7 +50,7 @@ void lwip_demo_task(void *pvParameters); /* 任务函数 */
  * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define LED_TASK_PRIO 10           /* 任务优先级 */
-#define LED_STK_SIZE 128           /* 任务堆栈大小 */
+#define LED_STK_SIZE 1024          /* 任务堆栈大小 */
 TaskHandle_t LEDTask_Handler;      /* 任务句柄 */
 void led_task(void *pvParameters); /* 任务函数 */
 
@@ -60,7 +58,7 @@ void led_task(void *pvParameters); /* 任务函数 */
  * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define KEY_TASK_PRIO 13           /* 任务优先级 */
-#define KEY_STK_SIZE 128           /* 任务堆栈大小 */
+#define KEY_STK_SIZE 1024          /* 任务堆栈大小 */
 TaskHandle_t KEYTask_Handler;      /* 任务句柄 */
 void key_task(void *pvParameters); /* 任务函数 */
 
@@ -68,7 +66,7 @@ void key_task(void *pvParameters); /* 任务函数 */
  * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define DISPLAY_TASK_PRIO 7            /* 任务优先级 */
-#define DISPLAY_STK_SIZE 512           /* 任务堆栈大小 */
+#define DISPLAY_STK_SIZE 1024          /* 任务堆栈大小 */
 TaskHandle_t DISPLAYTask_Handler;      /* 任务句柄 */
 void display_task(void *pvParameters); /* 任务函数 */
 
@@ -79,60 +77,11 @@ QueueHandle_t g_display_queue; /* 显示消息队列句柄 */
 /******************************************************************************************************/
 
 /**
- * @breif       加载UI
- * @param       mode :  bit0:0,不加载;1,加载前半部分UI
- *                      bit1:0,不加载;1,加载后半部分UI
- * @retval      无
- */
-void lwip_test_ui(uint8_t mode)
-{
-    uint8_t speed;
-    uint8_t buf[30];
-
-    if (mode & 1 << 0)
-    {
-        // lcd_show_string(6, 10, 200, 32, 32, "STM32", DARKBLUE);
-        // lcd_show_string(6, 40, lcddev.width, 24, 24, "lwIP TCPClient Test", DARKBLUE);
-        // lcd_show_string(6, 70, 200, 16, 16, "ATOM@ALIENTEK", DARKBLUE);
-    }
-
-    if (mode & 1 << 1)
-    {
-        // lcd_show_string(5, 110, 200, 16, 16, "lwIP Init Successed", MAGENTA);
-
-        if (g_lwipdev.dhcpstatus == 2)
-        {
-            sprintf((char *)buf, "DHCP IP:%d.%d.%d.%d", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]); /* 显示动态IP地址 */
-        }
-        else
-        {
-            sprintf((char *)buf, "Static IP:%d.%d.%d.%d", g_lwipdev.ip[0], g_lwipdev.ip[1], g_lwipdev.ip[2], g_lwipdev.ip[3]); /* 打印静态IP地址 */
-        }
-
-        // lcd_show_string(5, 130, 200, 16, 16, (char *)buf, MAGENTA);
-
-        speed = ethernet_chip_get_speed(); /* 得到网速 */
-
-        if (speed)
-        {
-            // lcd_show_string(5, 150, 200, 16, 16, "Ethernet Speed:100M", MAGENTA);
-        }
-        else
-        {
-            // lcd_show_string(5, 150, 200, 16, 16, "Ethernet Speed:10M", MAGENTA);
-        }
-
-        // lcd_show_string(5, 170, 200, 16, 16, "KEY0:Send data", MAGENTA);
-        // lcd_show_string(5, 190, lcddev.width - 30, lcddev.height - 190, 16, "Receive Data:", BLUE); /* 提示消息 */
-    }
-}
-
-/**
  * @breif       freertos_demo
  * @param       无
  * @retval      无
  */
-void freertos_demo(void)
+void freertos_demo()
 {
     /* start_task任务 */
     xTaskCreate((TaskFunction_t)start_task,
@@ -141,8 +90,6 @@ void freertos_demo(void)
                 (void *)NULL,
                 (UBaseType_t)START_TASK_PRIO,
                 (TaskHandle_t *)&StartTask_Handler);
-
-    vTaskStartScheduler(); /* 开启任务调度 */
 }
 
 /**
@@ -154,13 +101,9 @@ void start_task(void *pvParameters)
 {
     pvParameters = pvParameters;
 
-    g_lwipdev.lwip_display_fn = lwip_test_ui;
-
-    lwip_test_ui(1); /* 加载后前部分UI */
-
     while (lwip_comm_init() != 0)
     {
-        DI_Delayer().Delay(std::chrono::milliseconds{1000});
+        vTaskDelay(500);
     }
 
     while (g_lwipdev.dhcpstatus != 2 && g_lwipdev.dhcpstatus != 0xff) /* 等待静态和动态分配完成  */
@@ -232,21 +175,12 @@ void lwip_demo_task(void *pvParameters)
  */
 void key_task(void *pvParameters)
 {
-    // pvParameters = pvParameters;
-
-    // uint8_t key;
-
-    // while (1)
-    // {
-    //     key = key_scan(0);
-
-    //     if (KEY0_PRES == key)
-    //     {
-    //         g_lwip_send_flag |= LWIP_SEND_DATA; /* 标记LWIP有数据要发送 */
-    //     }
-
-    //     vTaskDelay(10);
-    // }
+    pvParameters = pvParameters;
+    while (1)
+    {
+        g_lwip_send_flag |= LWIP_SEND_DATA; /* 标记LWIP有数据要发送 */
+        vTaskDelay(10000);
+    }
 }
 
 /**
@@ -256,13 +190,12 @@ void key_task(void *pvParameters)
  */
 void led_task(void *pvParameters)
 {
-    // pvParameters = pvParameters;
+    pvParameters = pvParameters;
 
-    // while (1)
-    // {
-    //     LED1_TOGGLE();
-    //     vTaskDelay(100);
-    // }
+    while (1)
+    {
+        vTaskDelay(100);
+    }
 }
 
 /**
@@ -272,27 +205,18 @@ void led_task(void *pvParameters)
  */
 void display_task(void *pvParameters)
 {
-    // pvParameters = pvParameters;
-    // uint8_t *buffer;
+    pvParameters = pvParameters;
+    uint8_t buffer[200];
 
-    // while (1)
-    // {
-    //     buffer = mymalloc(SRAMIN, 200);
+    while (1)
+    {
+        if (g_display_queue != NULL)
+        {
+            if (xQueueReceive(g_display_queue, buffer, portMAX_DELAY))
+            {
+            }
+        }
 
-    //     if (g_display_queue != NULL)
-    //     {
-    //         memset(buffer, 0, 200); /* 清除缓冲区 */
-
-    //         if (xQueueReceive(g_display_queue, buffer, portMAX_DELAY))
-    //         {
-    //             lcd_fill(30, 230, lcddev.width - 1, lcddev.height - 1, WHITE); /* 清上一次数据 */
-    //             /* 显示接收到的数据 */
-    //             lcd_show_string(30, 230, lcddev.width - 30, lcddev.height - 230, 16, (char *)buffer, RED);
-    //         }
-    //     }
-
-    //     myfree(SRAMIN, buffer); /*释放内存 */
-
-    //     vTaskDelay(5);
-    // }
+        vTaskDelay(5);
+    }
 }
