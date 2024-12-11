@@ -7,12 +7,7 @@ namespace
     class MutexHandle
     {
     public:
-        MutexHandle(std::shared_ptr<bsp::IMutex> mutex)
-        {
-            _mutex = mutex;
-        }
-
-        std::shared_ptr<bsp::IMutex> _mutex = nullptr;
+        std::shared_ptr<bsp::IMutex> _mutex = DICreate_Mutex();
     };
 
 } // namespace
@@ -32,7 +27,7 @@ extern "C"
             delete reinterpret_cast<MutexHandle *>(mutex->mut);
         }
 
-        mutex->mut = new MutexHandle{DICreate_Mutex()};
+        mutex->mut = new MutexHandle{};
         return ERR_OK;
     }
 
