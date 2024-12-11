@@ -265,7 +265,11 @@ void sys_mutex_free(sys_mutex_t *mutex)
 
 err_t sys_sem_new(sys_sem_t *sem, u8_t initial_count)
 {
-    LWIP_ASSERT("sem != NULL", sem != NULL);
+    if (sem == nullptr)
+    {
+        throw std::invalid_argument{"sem 不能是空指针"};
+    }
+
     LWIP_ASSERT("initial_count invalid (not 0 or 1)",
                 (initial_count == 0) || (initial_count == 1));
 
@@ -292,7 +296,11 @@ err_t sys_sem_new(sys_sem_t *sem, u8_t initial_count)
 void sys_sem_signal(sys_sem_t *sem)
 {
     BaseType_t ret;
-    LWIP_ASSERT("sem != NULL", sem != NULL);
+    if (sem == nullptr)
+    {
+        throw std::invalid_argument{"sem 不能是空指针"};
+    }
+
     LWIP_ASSERT("sem->sem != NULL", sem->sem != NULL);
 
     ret = xSemaphoreGive(sem->sem);
@@ -358,7 +366,11 @@ void sys_sem_free(sys_sem_t *sem)
 
 err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 {
-    LWIP_ASSERT("mbox != NULL", mbox != NULL);
+    if (mbox == nullptr)
+    {
+        throw std::invalid_argument{"mbox 不能是空指针"};
+    }
+
     LWIP_ASSERT("size > 0", size > 0);
 
     mbox->mbx = xQueueCreate((UBaseType_t)size, sizeof(void *));
@@ -375,8 +387,15 @@ err_t sys_mbox_new(sys_mbox_t *mbox, int size)
 void sys_mbox_post(sys_mbox_t *mbox, void *msg)
 {
     BaseType_t ret;
-    LWIP_ASSERT("mbox != NULL", mbox != NULL);
-    LWIP_ASSERT("mbox->mbx != NULL", mbox->mbx != NULL);
+    if (mbox == nullptr)
+    {
+        throw std::invalid_argument{"mbox 不能是空指针"};
+    }
+
+    if (mbox->mbx == nullptr)
+    {
+        throw std::invalid_argument{"mbox->mbx 不能是空指针"};
+    }
 
     ret = xQueueSendToBack(reinterpret_cast<QueueHandle_t>(mbox->mbx), &msg, portMAX_DELAY);
     LWIP_ASSERT("mbox post failed", ret == pdTRUE);
@@ -385,8 +404,15 @@ void sys_mbox_post(sys_mbox_t *mbox, void *msg)
 err_t sys_mbox_trypost(sys_mbox_t *mbox, void *msg)
 {
     BaseType_t ret;
-    LWIP_ASSERT("mbox != NULL", mbox != NULL);
-    LWIP_ASSERT("mbox->mbx != NULL", mbox->mbx != NULL);
+    if (mbox == nullptr)
+    {
+        throw std::invalid_argument{"mbox 不能是空指针"};
+    }
+
+    if (mbox->mbx == nullptr)
+    {
+        throw std::invalid_argument{"mbox->mbx 不能是空指针"};
+    }
 
     ret = xQueueSendToBack(reinterpret_cast<QueueHandle_t>(mbox->mbx), &msg, 0);
     if (ret == pdTRUE)
@@ -405,8 +431,15 @@ err_t sys_mbox_trypost_fromisr(sys_mbox_t *mbox, void *msg)
 {
     BaseType_t ret;
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    LWIP_ASSERT("mbox != NULL", mbox != NULL);
-    LWIP_ASSERT("mbox->mbx != NULL", mbox->mbx != NULL);
+    if (mbox == nullptr)
+    {
+        throw std::invalid_argument{"mbox 不能是空指针"};
+    }
+
+    if (mbox->mbx == nullptr)
+    {
+        throw std::invalid_argument{"mbox->mbx 不能是空指针"};
+    }
 
     ret = xQueueSendToBackFromISR(reinterpret_cast<QueueHandle_t>(mbox->mbx), &msg, &xHigherPriorityTaskWoken);
     if (ret == pdTRUE)
@@ -430,8 +463,15 @@ u32_t sys_arch_mbox_fetch(sys_mbox_t *mbox, void **msg, u32_t timeout_ms)
 {
     BaseType_t ret;
     void *msg_dummy;
-    LWIP_ASSERT("mbox != NULL", mbox != NULL);
-    LWIP_ASSERT("mbox->mbx != NULL", mbox->mbx != NULL);
+    if (mbox == nullptr)
+    {
+        throw std::invalid_argument{"mbox 不能是空指针"};
+    }
+
+    if (mbox->mbx == nullptr)
+    {
+        throw std::invalid_argument{"mbox->mbx 不能是空指针"};
+    }
 
     if (!msg)
     {
@@ -468,8 +508,15 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
 {
     BaseType_t ret;
     void *msg_dummy;
-    LWIP_ASSERT("mbox != NULL", mbox != NULL);
-    LWIP_ASSERT("mbox->mbx != NULL", mbox->mbx != NULL);
+    if (mbox == nullptr)
+    {
+        throw std::invalid_argument{"mbox 不能是空指针"};
+    }
+
+    if (mbox->mbx == nullptr)
+    {
+        throw std::invalid_argument{"mbox->mbx 不能是空指针"};
+    }
 
     if (!msg)
     {
@@ -493,8 +540,15 @@ u32_t sys_arch_mbox_tryfetch(sys_mbox_t *mbox, void **msg)
 
 void sys_mbox_free(sys_mbox_t *mbox)
 {
-    LWIP_ASSERT("mbox != NULL", mbox != NULL);
-    LWIP_ASSERT("mbox->mbx != NULL", mbox->mbx != NULL);
+    if (mbox == nullptr)
+    {
+        throw std::invalid_argument{"mbox 不能是空指针"};
+    }
+
+    if (mbox->mbx == nullptr)
+    {
+        throw std::invalid_argument{"mbox->mbx 不能是空指针"};
+    }
 
 #if LWIP_FREERTOS_CHECK_QUEUE_EMPTY_ON_FREE
     {

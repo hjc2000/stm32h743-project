@@ -167,10 +167,11 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 
     uint32_t regval;
 
-    DI_DisableGlobalInterrupt(); /* 关闭所有中断，复位过程不能被打断！ */
+    /* 关闭所有中断，复位过程不能被打断！ */
+    DI_DisableGlobalInterrupt();
+
     /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
     regval = ethernet_read_phy(2);
-
     if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
     {
         DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
@@ -188,10 +189,11 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 
     DI_EnableGlobalInterrupt(); /* 开启所有中断 */
 
-    /* Enable the Ethernet global Interrupt */
-    HAL_NVIC_SetPriority(ETH_IRQn, 0x07, 0);
-    HAL_NVIC_EnableIRQ(ETH_IRQn);
-
+    /* 这里的中断优先级似乎必须设置在 freertos 能够屏蔽的优先级范围内。
+     * 可能是因为如果 freertos 无法屏蔽，互斥量、信号量的操作就必须使用带有 FromISR 后缀的版本了。
+     * 但是 sys_arch 给 lwip 实现的接口中并没有使用带有 FromISR 后缀的版本。
+     */
+    DI_EnableInterrupt(static_cast<uint32_t>(ETH_IRQn), 7);
     DI_IsrManager().AddIsr(static_cast<uint32_t>(ETH_IRQn),
                            []()
                            {
@@ -207,7 +209,6 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 uint32_t ethernet_read_phy(uint16_t reg)
 {
     uint32_t regval;
-
     HAL_ETH_ReadPHYRegister(&g_eth_handler, ETH_CHIP_ADDR, reg, &regval);
     return regval;
 }
@@ -221,7 +222,6 @@ uint32_t ethernet_read_phy(uint16_t reg)
 void ethernet_write_phy(uint16_t reg, uint16_t value)
 {
     uint32_t temp = value;
-
     HAL_ETH_WritePHYRegister(&g_eth_handler, ETH_CHIP_ADDR, reg, temp);
 }
 
@@ -235,12 +235,25 @@ uint8_t ethernet_chip_get_speed(void)
 {
     uint8_t speed = 0;
     if (PHY_TYPE == LAN8720)
-        speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS)); /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
+    {
+        /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
+        speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS));
+    }
     else if (PHY_TYPE == SR8201F)
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13); /* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
+    {
+        /* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
+        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13);
+    }
     else if (PHY_TYPE == YT8512C)
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14); /* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
+    {
+        /* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
+        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14);
+    }
     else if (PHY_TYPE == RTL8201)
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1); /* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
+    {
+        /* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
+        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1);
+    }
+
     return speed;
 }
