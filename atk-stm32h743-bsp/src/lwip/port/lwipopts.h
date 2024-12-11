@@ -18,6 +18,8 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
+#include <errno.h>
+
 /* NO_SYS 表示无操作系统模拟层，无操作系统为1，有操作系统设置为0
    注意这个参数设置会编译不同 */
 #define NO_SYS 0
@@ -83,7 +85,6 @@
 
 /* ---------- Statistics 选项 ---------- */
 #define LWIP_STATS 0
-#define LWIP_PROVIDE_ERRNO 1
 
 /* ---------- 链接回调选项 ---------- */
 /* WIP_NETIF_LINK_CALLBACK==1:支持来自接口的回调函数

@@ -42,8 +42,7 @@
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/task.h>
-
-int errno;
+#include <errno.h>
 
 /** Set this to 1 if you want the stack size passed to sys_thread_new() to be
  * interpreted as number of stack words (FreeRTOS-like).
@@ -600,8 +599,7 @@ sys_thread_t sys_thread_new(char const *name, lwip_thread_fn thread, void *arg, 
 #if LWIP_NETCONN_SEM_PER_THREAD
 #if configNUM_THREAD_LOCAL_STORAGE_POINTERS > 0
 
-sys_sem_t *
-sys_arch_netconn_sem_get(void)
+sys_sem_t *sys_arch_netconn_sem_get(void)
 {
     void *ret;
     TaskHandle_t task = xTaskGetCurrentTaskHandle();
