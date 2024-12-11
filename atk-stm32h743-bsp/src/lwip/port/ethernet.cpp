@@ -189,10 +189,7 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 
     DI_EnableGlobalInterrupt(); /* 开启所有中断 */
 
-    /* 这里的中断优先级似乎必须设置在 freertos 能够屏蔽的优先级范围内。
-     * 可能是因为如果 freertos 无法屏蔽，互斥量、信号量的操作就必须使用带有 FromISR 后缀的版本了。
-     * 但是 sys_arch 给 lwip 实现的接口中并没有使用带有 FromISR 后缀的版本。
-     */
+    // 这里的中断优先级必须设置在 freertos 能够屏蔽的优先级范围内
     DI_EnableInterrupt(static_cast<uint32_t>(ETH_IRQn), 7);
     DI_IsrManager().AddIsr(static_cast<uint32_t>(ETH_IRQn),
                            []()

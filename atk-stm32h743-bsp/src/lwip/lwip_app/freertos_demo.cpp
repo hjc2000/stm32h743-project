@@ -82,35 +82,34 @@ void freertos_demo()
         DI_Delayer().Delay(std::chrono::milliseconds{500});
     }
 
-    taskENTER_CRITICAL(); /* 进入临界区 */
+    DI_DoGlobalCriticalWork([&]()
+                            {
+                                g_display_queue = xQueueCreate(DISPLAYMSG_Q_NUM, 200); /* 创建消息Message_Queue,队列项长度是200长度 */
 
-    g_display_queue = xQueueCreate(DISPLAYMSG_Q_NUM, 200); /* 创建消息Message_Queue,队列项长度是200长度 */
+                                /* 创建lwIP任务 */
+                                xTaskCreate((TaskFunction_t)lwip_demo_task,
+                                            (char const *)"lwip_demo_task",
+                                            (uint16_t)LWIP_DMEO_STK_SIZE,
+                                            (void *)NULL,
+                                            (UBaseType_t)LWIP_DMEO_TASK_PRIO,
+                                            (TaskHandle_t *)&LWIP_Task_Handler);
 
-    /* 创建lwIP任务 */
-    xTaskCreate((TaskFunction_t)lwip_demo_task,
-                (char const *)"lwip_demo_task",
-                (uint16_t)LWIP_DMEO_STK_SIZE,
-                (void *)NULL,
-                (UBaseType_t)LWIP_DMEO_TASK_PRIO,
-                (TaskHandle_t *)&LWIP_Task_Handler);
+                                /* key任务 */
+                                xTaskCreate((TaskFunction_t)key_task,
+                                            (char const *)"key_task",
+                                            (uint16_t)KEY_STK_SIZE,
+                                            (void *)NULL,
+                                            (UBaseType_t)KEY_TASK_PRIO,
+                                            (TaskHandle_t *)&KEYTask_Handler);
 
-    /* key任务 */
-    xTaskCreate((TaskFunction_t)key_task,
-                (char const *)"key_task",
-                (uint16_t)KEY_STK_SIZE,
-                (void *)NULL,
-                (UBaseType_t)KEY_TASK_PRIO,
-                (TaskHandle_t *)&KEYTask_Handler);
-
-    /* 显示任务 */
-    xTaskCreate((TaskFunction_t)display_task,
-                (char const *)"display_task",
-                (uint16_t)DISPLAY_STK_SIZE,
-                (void *)NULL,
-                (UBaseType_t)DISPLAY_TASK_PRIO,
-                (TaskHandle_t *)&DISPLAYTask_Handler);
-
-    taskEXIT_CRITICAL(); /* 退出临界区 */
+                                /* 显示任务 */
+                                xTaskCreate((TaskFunction_t)display_task,
+                                            (char const *)"display_task",
+                                            (uint16_t)DISPLAY_STK_SIZE,
+                                            (void *)NULL,
+                                            (UBaseType_t)DISPLAY_TASK_PRIO,
+                                            (TaskHandle_t *)&DISPLAYTask_Handler);
+                            });
 }
 
 /**
