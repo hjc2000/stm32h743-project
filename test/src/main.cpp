@@ -209,6 +209,17 @@ int main(void)
     DI_TaskManager().Create(
         []()
         {
+            while (true)
+            {
+                DI_GreenDigitalLed().Toggle();
+                DI_Delayer().Delay(std::chrono::milliseconds{1000});
+            }
+        },
+        512);
+
+    DI_TaskManager().Create(
+        []()
+        {
             try
             {
                 DI_Serial().Open(*DICreate_ISerialOptions());
