@@ -32,18 +32,15 @@
 #ifndef __CC_H__
 #define __CC_H__
 
-//#include "cpu.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef int sys_prot_t;
-
-//#define LWIP_PROVIDE_ERRNO
+//typedef int sys_prot_t;
 
 #if defined (__GNUC__) & !defined (__CC_ARM)
 
 #define LWIP_TIMEVAL_PRIVATE 0
-//#include <sys/time.h>
+#include <sys/time.h>
 
 #endif
 
@@ -64,6 +61,8 @@ typedef int sys_prot_t;
 #define PACK_STRUCT_FIELD(x) x
 
 #elif defined (__CC_ARM)
+
+
 
 #define PACK_STRUCT_BEGIN __packed
 #define PACK_STRUCT_STRUCT

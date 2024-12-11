@@ -185,12 +185,6 @@ inline void TestFatFs()
     f_mount(NULL, "", 0);
 }
 
-uint8_t lwip_comm_init();
-void lwip_periodic_handle();
-void lwip_pkt_handle();
-int DHCP_State();
-uint8_t ethernet_chip_get_speed();
-
 int main(void)
 {
     DI_Initialize();
@@ -228,17 +222,6 @@ int main(void)
 
                 // TestLittleFs();
                 // TestFatFs();
-                while (lwip_comm_init())
-                {
-                    DI_Console().WriteLine("lwip_comm_init failed");
-                    DI_Delayer().Delay(std::chrono::milliseconds{1000});
-                }
-
-                while (true)
-                {
-                    lwip_periodic_handle(); /* LWIP轮询任务 */
-                    lwip_pkt_handle();
-                }
 
                 // while (true)
                 // {

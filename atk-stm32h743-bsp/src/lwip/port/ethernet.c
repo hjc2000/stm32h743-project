@@ -1,9 +1,30 @@
+/**
+ ****************************************************************************************************
+ * @file        ethernet.c
+ * @author      正点原子团队(ALIENTEK)
+ * @version     V1.0
+ * @date        2022-08-01
+ * @brief       ETHERNET 驱动代码
+ * @license     Copyright (c) 2020-2032, 广州市星翼电子科技有限公司
+ ****************************************************************************************************
+ * @attention
+ *
+ * 实验平台:正点原子 阿波罗 H743开发板
+ * 在线视频:www.yuanzige.com
+ * 技术论坛:www.openedv.com
+ * 公司网址:www.alientek.com
+ * 购买地址:openedv.taobao.com
+ *
+ * 修改说明
+ * V1.0 20211014
+ * 第一次发布
+ *
+ ****************************************************************************************************
+ */
+
 #include "ethernet.h"
 #include "ethernet_chip.h"
 #include "lwip_comm.h"
-#include <bsp-interface/di/delayer.h>
-#include <bsp-interface/di/expanded_io.h>
-#include <bsp-interface/di/interrupt.h>
 
 ETH_HandleTypeDef g_eth_handler; /* 以太网句柄 */
 
@@ -40,9 +61,10 @@ void NETMPU_Config(void)
  */
 uint8_t ethernet_init(void)
 {
+    uint8_t macaddress[6];
+
     NETMPU_Config();
 
-    uint8_t macaddress[6];
     macaddress[0] = g_lwipdev.mac[0];
     macaddress[1] = g_lwipdev.mac[1];
     macaddress[2] = g_lwipdev.mac[2];
@@ -53,8 +75,8 @@ uint8_t ethernet_init(void)
     g_eth_handler.Instance = ETH;
     g_eth_handler.Init.MACAddr = macaddress;
     g_eth_handler.Init.MediaInterface = HAL_ETH_RMII_MODE;
-    g_eth_handler.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
-    g_eth_handler.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + sizeof(ETH_DMADescTypeDef) * 4);
+    g_eth_handler.Init.RxDesc = (ETH_DMADescTypeDef *)(0x30040000);
+    g_eth_handler.Init.TxDesc = (ETH_DMADescTypeDef *)(0x30040060);
     g_eth_handler.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
 
     if (HAL_ETH_Init(&g_eth_handler) == HAL_OK)
@@ -77,15 +99,15 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 {
     GPIO_InitTypeDef gpio_init_struct;
 
-    __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_CLK时钟 */
-    __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_MDIO时钟 */
-    __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_CRS时钟 */
-    __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_MDC时钟 */
-    __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_RXD0时钟 */
-    __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_RXD1时钟 */
-    __HAL_RCC_GPIOB_CLK_ENABLE(); /* 开启ETH_TX_EN时钟 */
-    __HAL_RCC_GPIOG_CLK_ENABLE(); /* 开启ETH_TXD0时钟 */
-    __HAL_RCC_GPIOG_CLK_ENABLE(); /* 开启ETH_TXD1时钟 */
+    ETH_CLK_GPIO_CLK_ENABLE();   /* 开启ETH_CLK时钟 */
+    ETH_MDIO_GPIO_CLK_ENABLE();  /* 开启ETH_MDIO时钟 */
+    ETH_CRS_GPIO_CLK_ENABLE();   /* 开启ETH_CRS时钟 */
+    ETH_MDC_GPIO_CLK_ENABLE();   /* 开启ETH_MDC时钟 */
+    ETH_RXD0_GPIO_CLK_ENABLE();  /* 开启ETH_RXD0时钟 */
+    ETH_RXD1_GPIO_CLK_ENABLE();  /* 开启ETH_RXD1时钟 */
+    ETH_TX_EN_GPIO_CLK_ENABLE(); /* 开启ETH_TX_EN时钟 */
+    ETH_TXD0_GPIO_CLK_ENABLE();  /* 开启ETH_TXD0时钟 */
+    ETH_TXD1_GPIO_CLK_ENABLE();  /* 开启ETH_TXD1时钟 */
 
     /* Enable Ethernet clocks */
     __HAL_RCC_ETH1MAC_CLK_ENABLE();
@@ -142,37 +164,40 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 
     uint32_t regval;
 
-    /* 关闭所有中断，复位过程不能被打断！ */
-    DI_DisableGlobalInterrupt();
-
+    sys_intx_disable(); /* 关闭所有中断，复位过程不能被打断！ */
     /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
     regval = ethernet_read_phy(2);
 
-    if (regval && 0xFFF == 0xFFF)
+    if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
     {
-        /* 旧板卡（LAN8720A）引脚复位 */
-        /* 硬件复位 */
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-
-        /* 复位结束 */
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0);
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
+        pcf8574_write_bit(7, 1); /* 硬件复位 */
+        delay_ms(100);
+        pcf8574_write_bit(7, 0); /* 复位结束 */
+        delay_ms(100);
     }
-    else
+    else /* 新板卡（YT8512C）引脚复位 */
     {
-        /* 新板卡（YT8512C）引脚复位 */
-        /* 硬件复位 */
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0);
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-
-        /* 复位结束 */
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
+        pcf8574_write_bit(7, 0); /* 硬件复位 */
+        delay_ms(100);
+        pcf8574_write_bit(7, 1); /* 复位结束 */
+        delay_ms(100);
     }
 
-    /* 开启所有中断 */
-    DI_EnableGlobalInterrupt();
+    sys_intx_enable(); /* 开启所有中断 */
+
+    /* Enable the Ethernet global Interrupt */
+    HAL_NVIC_SetPriority(ETH_IRQn, 0x07, 0);
+    HAL_NVIC_EnableIRQ(ETH_IRQn);
+}
+
+/**
+ * @breif       中断服务函数
+ * @param       无
+ * @retval      无
+ */
+void ETH_IRQHandler(void)
+{
+    HAL_ETH_IRQHandler(&g_eth_handler);
 }
 
 /**
@@ -183,11 +208,8 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 uint32_t ethernet_read_phy(uint16_t reg)
 {
     uint32_t regval;
-    HAL_ETH_ReadPHYRegister(&g_eth_handler,
-                            ETH_CHIP_ADDR,
-                            reg,
-                            &regval);
 
+    HAL_ETH_ReadPHYRegister(&g_eth_handler, ETH_CHIP_ADDR, reg, &regval);
     return regval;
 }
 
@@ -200,6 +222,7 @@ uint32_t ethernet_read_phy(uint16_t reg)
 void ethernet_write_phy(uint16_t reg, uint16_t value)
 {
     uint32_t temp = value;
+
     HAL_ETH_WritePHYRegister(&g_eth_handler, ETH_CHIP_ADDR, reg, temp);
 }
 
@@ -211,27 +234,14 @@ void ethernet_write_phy(uint16_t reg, uint16_t value)
  */
 uint8_t ethernet_chip_get_speed(void)
 {
-    uint8_t speed = 0;
+    uint8_t speed;
     if (PHY_TYPE == LAN8720)
-    {
-        /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
-        speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS));
-    }
+        speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS)); /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
     else if (PHY_TYPE == SR8201F)
-    {
-        /* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13);
-    }
+        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13); /* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
     else if (PHY_TYPE == YT8512C)
-    {
-        /* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14);
-    }
+        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14); /* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
     else if (PHY_TYPE == RTL8201)
-    {
-        /* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1);
-    }
-
+        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1); /* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
     return speed;
 }

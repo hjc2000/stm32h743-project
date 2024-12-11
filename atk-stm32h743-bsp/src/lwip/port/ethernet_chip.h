@@ -1,23 +1,23 @@
 /**
  ****************************************************************************************************
  * @file        ethernet_chip.h
- * @author      æ­£ç‚¹åŸå­å›¢é˜Ÿ(ALIENTEK)
+ * @author      ÕıµãÔ­×ÓÍÅ¶Ó(ALIENTEK)
  * @version     V1.0
  * @date        2022-08-01
- * @brief       PHYèŠ¯ç‰‡é…ç½®é©±åŠ¨
- * @license     Copyright (c) 2020-2032, å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸
+ * @brief       PHYĞ¾Æ¬ÅäÖÃÇı¶¯
+ * @license     Copyright (c) 2020-2032, ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾
  ****************************************************************************************************
  * @attention
  *
- * å®éªŒå¹³å°:æ­£ç‚¹åŸå­ é˜¿æ³¢ç½— H743å¼€å‘æ¿
- * åœ¨çº¿è§†é¢‘:www.yuanzige.com
- * æŠ€æœ¯è®ºå›:www.openedv.com
- * å…¬å¸ç½‘å€:www.alientek.com
- * è´­ä¹°åœ°å€:openedv.taobao.com
+ * ÊµÑéÆ½Ì¨:ÕıµãÔ­×Ó °¢²¨ÂŞ H743¿ª·¢°å
+ * ÔÚÏßÊÓÆµ:www.yuanzige.com
+ * ¼¼ÊõÂÛÌ³:www.openedv.com
+ * ¹«Ë¾ÍøÖ·:www.alientek.com
+ * ¹ºÂòµØÖ·:openedv.taobao.com
  *
- * ä¿®æ”¹è¯´æ˜
+ * ĞŞ¸ÄËµÃ÷
  * V1.0 20220420
- * ç¬¬ä¸€æ¬¡å‘å¸ƒ
+ * µÚÒ»´Î·¢²¼
  *
  ****************************************************************************************************
  */
@@ -30,13 +30,13 @@ extern "C"
 {
 #endif
 
-/* PHYèŠ¯ç‰‡å¯„å­˜å™¨æ˜ å°„è¡¨ */
+/* PHYĞ¾Æ¬¼Ä´æÆ÷Ó³Éä±í */
 #define ETH_CHIP_BCR ((uint16_t)0x0000U)
 #define ETH_CHIP_BSR ((uint16_t)0x0001U)
 #define PHY_REGISTER2 ((uint16_t)0x0002U)
 #define PHY_REGISTER3 ((uint16_t)0x0003U)
 
-/* æ“ä½œSCRå¯„å­˜å™¨çš„å€¼ï¼ˆä¸€èˆ¬ä¸éœ€è¦ä¿®æ”¹ï¼‰ */
+/* ²Ù×÷SCR¼Ä´æÆ÷µÄÖµ£¨Ò»°ã²»ĞèÒªĞŞ¸Ä£© */
 #define ETH_CHIP_BCR_SOFT_RESET ((uint16_t)0x8000U)
 #define ETH_CHIP_BCR_LOOPBACK ((uint16_t)0x4000U)
 #define ETH_CHIP_BCR_SPEED_SELECT ((uint16_t)0x2000U)
@@ -46,7 +46,7 @@ extern "C"
 #define ETH_CHIP_BCR_RESTART_AUTONEGO ((uint16_t)0x0200U)
 #define ETH_CHIP_BCR_DUPLEX_MODE ((uint16_t)0x0100U)
 
-/* æ“ä½œBSRå¯„å­˜å™¨çš„å€¼ï¼ˆä¸€èˆ¬ä¸éœ€è¦ä¿®æ”¹ï¼‰ */
+/* ²Ù×÷BSR¼Ä´æÆ÷µÄÖµ£¨Ò»°ã²»ĞèÒªĞŞ¸Ä£© */
 #define ETH_CHIP_BSR_100BASE_T4 ((uint16_t)0x8000U)
 #define ETH_CHIP_BSR_100BASE_TX_FD ((uint16_t)0x4000U)
 #define ETH_CHIP_BSR_100BASE_TX_HD ((uint16_t)0x2000U)
@@ -62,7 +62,7 @@ extern "C"
 #define ETH_CHIP_BSR_JABBER_DETECT ((uint16_t)0x0002U)
 #define ETH_CHIP_BSR_EXTENDED_CAP ((uint16_t)0x0001U)
 
-/* PHYèŠ¯ç‰‡è¿›ç¨‹çŠ¶æ€ */
+/* PHYĞ¾Æ¬½ø³Ì×´Ì¬ */
 #define ETH_CHIP_STATUS_READ_ERROR ((int32_t) - 5)
 #define ETH_CHIP_STATUS_WRITE_ERROR ((int32_t) - 4)
 #define ETH_CHIP_STATUS_ADDRESS_ERROR ((int32_t) - 3)
@@ -76,19 +76,19 @@ extern "C"
 #define ETH_CHIP_STATUS_10MBITS_HALFDUPLEX ((int32_t)5)
 #define ETH_CHIP_STATUS_AUTONEGO_NOTDONE ((int32_t)6)
 
-/* PHYåœ°å€ ---- ç”±ç”¨æˆ·è®¾ç½® */
+/* PHYµØÖ· ---- ÓÉÓÃ»§ÉèÖÃ */
 #define ETH_CHIP_ADDR ((uint16_t)0x0000U)
-/* PHYå¯„å­˜å™¨çš„æ•°é‡ */
+/* PHY¼Ä´æÆ÷µÄÊıÁ¿ */
 #define ETH_CHIP_PHY_COUNT ((uint16_t)0x001FU)
 
-    /* PHYè‡ªåŠ¨è¯†åˆ«çŠ¶æ€ */
+    /* PHY×Ô¶¯Ê¶±ğ×´Ì¬ */
     enum PHY_AUTO
     {
         PHY_AUTO_SELECT_NABLE = 0,
         PHY_AUTO_SELECT_DISABLE
     };
 
-/* ä½¿èƒ½/ç¦ç”¨PHYè‡ªåŠ¨é€‰æ‹©åŠŸèƒ½ */
+/* Ê¹ÄÜ/½ûÓÃPHY×Ô¶¯Ñ¡Ôñ¹¦ÄÜ */
 #define PHY_AUTO_SELECT PHY_AUTO_SELECT_NABLE
 #define LAN8720 0
 #define SR8201F 1
@@ -97,7 +97,7 @@ extern "C"
 
 #if PHY_AUTO_SELECT
 
-    /* é€‰æ‹©PHYèŠ¯ç‰‡ ---- ç”±ç”¨æˆ·è®¾ç½® */
+    /* Ñ¡ÔñPHYĞ¾Æ¬ ---- ÓÉÓÃ»§ÉèÖÃ */
 
 #define PHY_TYPE YT8512C
 
@@ -125,42 +125,42 @@ extern uint16_t ETH_CHIP_SPEED_STATUS;
 extern uint16_t ETH_CHIP_DUPLEX_STATUS;
 #endif
 
-    /* å®šä¹‰å‡½æ•°æŒ‡é’ˆ */
+    /* ¶¨Òåº¯ÊıÖ¸Õë */
     typedef int32_t (*eth_chip_init_func)(void);
     typedef int32_t (*eth_chip_deinit_func)(void);
     typedef int32_t (*eth_chip_readreg_func)(uint32_t, uint32_t, uint32_t *);
     typedef int32_t (*eth_chip_writereg_func)(uint32_t, uint32_t, uint32_t);
     typedef int32_t (*eth_chip_gettick_func)(void);
 
-    /* PHYå…±ç”¨å‡½æ•°ç»“æ„ä½“ */
+    /* PHY¹²ÓÃº¯Êı½á¹¹Ìå */
     typedef struct
     {
-        eth_chip_init_func init;         /* æŒ‡å‘PHYåˆå§‹åŒ–å‡½æ•° */
-        eth_chip_deinit_func deinit;     /* æŒ‡å‘PHYååˆå§‹åŒ–å‡½æ•° */
-        eth_chip_writereg_func writereg; /* æŒ‡å‘PHYå†™å¯„å­˜å™¨å‡½æ•° */
-        eth_chip_readreg_func readreg;   /* æŒ‡å‘PHYè¯»å¯„å­˜å™¨å‡½æ•° */
-        eth_chip_gettick_func gettick;   /* æŒ‡å‘èŠ‚æ‹å‡½æ•° */
+        eth_chip_init_func init;         /* Ö¸ÏòPHY³õÊ¼»¯º¯Êı */
+        eth_chip_deinit_func deinit;     /* Ö¸ÏòPHY·´³õÊ¼»¯º¯Êı */
+        eth_chip_writereg_func writereg; /* Ö¸ÏòPHYĞ´¼Ä´æÆ÷º¯Êı */
+        eth_chip_readreg_func readreg;   /* Ö¸ÏòPHY¶Á¼Ä´æÆ÷º¯Êı */
+        eth_chip_gettick_func gettick;   /* Ö¸Ïò½ÚÅÄº¯Êı */
     } eth_chip_ioc_tx_t;
 
-    /* æ³¨å†Œåˆ°ç»„ä»¶å¯¹è±¡ç»“æ„ä½“ */
+    /* ×¢²áµ½×é¼ş¶ÔÏó½á¹¹Ìå */
     typedef struct
     {
-        uint32_t devaddr;        /* PHYåœ°å€ */
-        uint32_t is_initialized; /* æè¿°è¯¥è®¾å¤‡æ˜¯å¦åˆå§‹åŒ– */
-        eth_chip_ioc_tx_t io;    /* è®¾å¤‡è°ƒç”¨çš„å‡½æ•°å…¥å£ */
-        void *pdata;             /* ä¼ å…¥çš„å½¢å‚ */
+        uint32_t devaddr;        /* PHYµØÖ· */
+        uint32_t is_initialized; /* ÃèÊö¸ÃÉè±¸ÊÇ·ñ³õÊ¼»¯ */
+        eth_chip_ioc_tx_t io;    /* Éè±¸µ÷ÓÃµÄº¯ÊıÈë¿Ú */
+        void *pdata;             /* ´«ÈëµÄĞÎ²Î */
     } eth_chip_object_t;
 
-    int32_t eth_chip_regster_bus_io(eth_chip_object_t *pobj, eth_chip_ioc_tx_t *ioctx); /* å°†IOå‡½æ•°æ³¨å†Œåˆ°ç»„ä»¶å¯¹è±¡ */
-    int32_t eth_chip_init(eth_chip_object_t *pobj);                                     /* åˆå§‹åŒ–ETH_CHIPå¹¶é…ç½®æ‰€éœ€çš„ç¡¬ä»¶èµ„æº */
-    int32_t eth_chip_deinit(eth_chip_object_t *pobj);                                   /* ååˆå§‹åŒ–ETH_CHIPåŠå…¶ç¡¬ä»¶èµ„æº */
-    int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj);                  /* å…³é—­ETH_CHIPçš„ä¸‹ç”µæ¨¡å¼ */
-    int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj);                   /* ä½¿èƒ½ETH_CHIPçš„ä¸‹ç”µæ¨¡å¼ */
-    int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj);                          /* å¯åŠ¨è‡ªåŠ¨åå•†è¿‡ç¨‹ */
-    int32_t eth_chip_get_link_state(eth_chip_object_t *pobj);                           /* è·å–ETH_CHIPè®¾å¤‡çš„é“¾è·¯çŠ¶æ€ */
-    int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate);       /* è®¾ç½®ETH_CHIPè®¾å¤‡çš„é“¾è·¯çŠ¶æ€ */
-    int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj);                    /* å¯ç”¨ç¯å›æ¨¡å¼ */
-    int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj);                   /* ç¦ç”¨ç¯å›æ¨¡å¼ */
+    int32_t eth_chip_regster_bus_io(eth_chip_object_t *pobj, eth_chip_ioc_tx_t *ioctx); /* ½«IOº¯Êı×¢²áµ½×é¼ş¶ÔÏó */
+    int32_t eth_chip_init(eth_chip_object_t *pobj);                                     /* ³õÊ¼»¯ETH_CHIP²¢ÅäÖÃËùĞèµÄÓ²¼ş×ÊÔ´ */
+    int32_t eth_chip_deinit(eth_chip_object_t *pobj);                                   /* ·´³õÊ¼»¯ETH_CHIP¼°ÆäÓ²¼ş×ÊÔ´ */
+    int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj);                  /* ¹Ø±ÕETH_CHIPµÄÏÂµçÄ£Ê½ */
+    int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj);                   /* Ê¹ÄÜETH_CHIPµÄÏÂµçÄ£Ê½ */
+    int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj);                          /* Æô¶¯×Ô¶¯Ğ­ÉÌ¹ı³Ì */
+    int32_t eth_chip_get_link_state(eth_chip_object_t *pobj);                           /* »ñÈ¡ETH_CHIPÉè±¸µÄÁ´Â·×´Ì¬ */
+    int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate);       /* ÉèÖÃETH_CHIPÉè±¸µÄÁ´Â·×´Ì¬ */
+    int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj);                    /* ÆôÓÃ»·»ØÄ£Ê½ */
+    int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj);                   /* ½ûÓÃ»·»ØÄ£Ê½ */
 
 #ifdef __cplusplus
 }

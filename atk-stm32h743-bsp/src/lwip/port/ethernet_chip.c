@@ -1,31 +1,31 @@
 /**
  ****************************************************************************************************
  * @file        ethernet_chip.c
- * @author      æ­£ç‚¹åŸå­å›¢é˜Ÿ(ALIENTEK)
+ * @author      ÕıµãÔ­×ÓÍÅ¶Ó(ALIENTEK)
  * @version     V1.0
  * @date        2022-08-01
- * @brief       PHYèŠ¯ç‰‡é…ç½®é©±åŠ¨
- * @license     Copyright (c) 2020-2032, å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸
+ * @brief       PHYĞ¾Æ¬ÅäÖÃÇı¶¯
+ * @license     Copyright (c) 2020-2032, ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾
  ****************************************************************************************************
  * @attention
  *
- * å®éªŒå¹³å°:æ­£ç‚¹åŸå­ é˜¿æ³¢ç½— H743å¼€å‘æ¿
- * åœ¨çº¿è§†é¢‘:www.yuanzige.com
- * æŠ€æœ¯è®ºå›:www.openedv.com
- * å…¬å¸ç½‘å€:www.alientek.com
- * è´­ä¹°åœ°å€:openedv.taobao.com
+ * ÊµÑéÆ½Ì¨:ÕıµãÔ­×Ó °¢²¨ÂŞ H743¿ª·¢°å
+ * ÔÚÏßÊÓÆµ:www.yuanzige.com
+ * ¼¼ÊõÂÛÌ³:www.openedv.com
+ * ¹«Ë¾ÍøÖ·:www.alientek.com
+ * ¹ºÂòµØÖ·:openedv.taobao.com
  *
- * ä¿®æ”¹è¯´æ˜
+ * ĞŞ¸ÄËµÃ÷
  * V1.0 20220420
- * ç¬¬ä¸€æ¬¡å‘å¸ƒ
+ * µÚÒ»´Î·¢²¼
  *
  ****************************************************************************************************
  */
 #include "ethernet_chip.h"
 
-#define ETH_CHIP_SW_RESET_TO ((uint32_t)500U) /* è½¯ä»¶å¤ä½ç­‰å¾…æ—¶é—´ */
-#define ETH_CHIP_INIT_TO ((uint32_t)2000U)    /* åˆå§‹åŒ–ç­‰å¾…æ—¶é—´ */
-#define ETH_CHIP_MAX_DEV_ADDR ((uint32_t)31U) /* PHYåœ°å€çš„æœ€å¤§å€¼ */
+#define ETH_CHIP_SW_RESET_TO ((uint32_t)500U) /* Èí¼ş¸´Î»µÈ´ıÊ±¼ä */
+#define ETH_CHIP_INIT_TO ((uint32_t)2000U)    /* ³õÊ¼»¯µÈ´ıÊ±¼ä */
+#define ETH_CHIP_MAX_DEV_ADDR ((uint32_t)31U) /* PHYµØÖ·µÄ×î´óÖµ */
 
 #if PHY_AUTO_SELECT
 
@@ -40,11 +40,11 @@ uint16_t ETH_CHIP_DUPLEX_STATUS;
 #endif
 
 /**
- * @brief       å°†IOå‡½æ•°æ³¨å†Œåˆ°ç»„ä»¶å¯¹è±¡
- * @param       pobjï¼šè®¾å¤‡å¯¹è±¡
- * @param       ioctxï¼šä¿å­˜è®¾å¤‡IOåŠŸèƒ½
- * @retval      ETH_CHIP_STATUS_OKï¼šOK
- *              ETH_CHIP_STATUS_ERRORï¼šç¼ºå°‘åŠŸèƒ½
+ * @brief       ½«IOº¯Êı×¢²áµ½×é¼ş¶ÔÏó
+ * @param       pobj£ºÉè±¸¶ÔÏó
+ * @param       ioctx£º±£´æÉè±¸IO¹¦ÄÜ
+ * @retval      ETH_CHIP_STATUS_OK£ºOK
+ *              ETH_CHIP_STATUS_ERROR£ºÈ±ÉÙ¹¦ÄÜ
  */
 int32_t eth_chip_regster_bus_io(eth_chip_object_t *pobj, eth_chip_ioc_tx_t *ioctx)
 {
@@ -63,13 +63,13 @@ int32_t eth_chip_regster_bus_io(eth_chip_object_t *pobj, eth_chip_ioc_tx_t *ioct
 }
 
 /**
-  * @brief       åˆå§‹åŒ–ETH_CHIPå¹¶é…ç½®æ‰€éœ€çš„ç¡¬ä»¶èµ„æº
-  * @param       pobj: è®¾å¤‡å¯¹è±¡
-  * @retval      ETH_CHIP_STATUS_OKï¼šåˆå§‹åŒ–ETH_CHIPå¹¶é…ç½®æ‰€éœ€çš„ç¡¬ä»¶èµ„æºæˆåŠŸ
-                 ETH_CHIP_STATUS_ADDRESS_ERRORï¼šæ‰¾ä¸åˆ°è®¾å¤‡åœ°å€
-                 ETH_CHIP_STATUS_READ_ERRORï¼šä¸èƒ½è¯»å–å¯„å­˜å™¨
-                 ETH_CHIP_STATUS_WRITE_ERRORï¼šä¸èƒ½å†™å…¥å¯„å­˜å™¨
-                 ETH_CHIP_STATUS_RESET_TIMEOUTï¼šæ— æ³•æ‰§è¡Œè½¯ä»¶å¤ä½
+  * @brief       ³õÊ¼»¯ETH_CHIP²¢ÅäÖÃËùĞèµÄÓ²¼ş×ÊÔ´
+  * @param       pobj: Éè±¸¶ÔÏó
+  * @retval      ETH_CHIP_STATUS_OK£º³õÊ¼»¯ETH_CHIP²¢ÅäÖÃËùĞèµÄÓ²¼ş×ÊÔ´³É¹¦
+                 ETH_CHIP_STATUS_ADDRESS_ERROR£ºÕÒ²»µ½Éè±¸µØÖ·
+                 ETH_CHIP_STATUS_READ_ERROR£º²»ÄÜ¶ÁÈ¡¼Ä´æÆ÷
+                 ETH_CHIP_STATUS_WRITE_ERROR£º²»ÄÜĞ´Èë¼Ä´æÆ÷
+                 ETH_CHIP_STATUS_RESET_TIMEOUT£ºÎŞ·¨Ö´ĞĞÈí¼ş¸´Î»
   */
 int32_t eth_chip_init(eth_chip_object_t *pobj)
 {
@@ -95,41 +95,35 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
     switch (regvalue)
     {
     case YT8512C_AND_RTL8201BL_PHYREGISTER2:
-        {
-            pobj->io.readreg(addr, PHY_REGISTER3, &regvalue);
-            if (regvalue == 0x128)
-            {
-                ETH_CHIP_PHYSCSR = ((uint16_t)0x11);
-                ETH_CHIP_SPEED_STATUS = ((uint16_t)0x4010);
-                ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x2000);
-                PHY_TYPE = YT8512C;
-            }
-            else
-            {
-                ETH_CHIP_PHYSCSR = ((uint16_t)0x10);
-                ETH_CHIP_SPEED_STATUS = ((uint16_t)0x0022);
-                ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x0004);
-                PHY_TYPE = RTL8201;
-            }
+        pobj->io.readreg(addr, PHY_REGISTER3, &regvalue);
 
-            break;
+        if (regvalue == 0x128)
+        {
+            ETH_CHIP_PHYSCSR = ((uint16_t)0x11);
+            ETH_CHIP_SPEED_STATUS = ((uint16_t)0x4010);
+            ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x2000);
+            PHY_TYPE = YT8512C;
         }
+        else
+        {
+            ETH_CHIP_PHYSCSR = ((uint16_t)0x10);
+            ETH_CHIP_SPEED_STATUS = ((uint16_t)0x0022);
+            ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x0004);
+            PHY_TYPE = RTL8201;
+        }
+        break;
     case SR8201F_PHYREGISTER2:
-        {
-            ETH_CHIP_PHYSCSR = ((uint16_t)0x00);
-            ETH_CHIP_SPEED_STATUS = ((uint16_t)0x2020);
-            ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x0100);
-            PHY_TYPE = SR8201F;
-            break;
-        }
+        ETH_CHIP_PHYSCSR = ((uint16_t)0x00);
+        ETH_CHIP_SPEED_STATUS = ((uint16_t)0x2020);
+        ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x0100);
+        PHY_TYPE = SR8201F;
+        break;
     case LAN8720A_PHYREGISTER2:
-        {
-            ETH_CHIP_PHYSCSR = ((uint16_t)0x1F);
-            ETH_CHIP_SPEED_STATUS = ((uint16_t)0x0004);
-            ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x0010);
-            PHY_TYPE = LAN8720;
-            break;
-        }
+        ETH_CHIP_PHYSCSR = ((uint16_t)0x1F);
+        ETH_CHIP_SPEED_STATUS = ((uint16_t)0x0004);
+        ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x0010);
+        PHY_TYPE = LAN8720;
+        break;
     }
 #endif
 
@@ -137,24 +131,23 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
     {
         if (pobj->io.init != 0)
         {
-            /* MDCæ—¶é’Ÿ */
+            /* MDCÊ±ÖÓ */
             pobj->io.init();
         }
 
-        /* è®¾ç½®PHYåœ°å€ä¸º32 */
+        /* ÉèÖÃPHYµØÖ·Îª32 */
         pobj->devaddr = ETH_CHIP_MAX_DEV_ADDR + 1;
 
-        /* ä¸»è¦ä¸ºäº†æŸ¥æ‰¾PHYåœ°å€ */
+        /* Ö÷ÒªÎªÁË²éÕÒPHYµØÖ· */
         for (addr = 0; addr <= ETH_CHIP_MAX_DEV_ADDR; addr++)
         {
             if (pobj->io.readreg(addr, ETH_CHIP_PHYSCSR, &regvalue) < 0)
             {
                 status = ETH_CHIP_STATUS_READ_ERROR;
-                /* æ— æ³•è¯»å–è¿™ä¸ªè®¾å¤‡åœ°å€ç»§ç»­ä¸‹ä¸€ä¸ªåœ°å€ */
+                /* ÎŞ·¨¶ÁÈ¡Õâ¸öÉè±¸µØÖ·¼ÌĞøÏÂÒ»¸öµØÖ· */
                 continue;
             }
-
-            /* å·²ç»æ‰¾åˆ°PHYåœ°å€äº† */
+            /* ÒÑ¾­ÕÒµ½PHYµØÖ·ÁË */
             if ((regvalue & ETH_CHIP_PHY_COUNT) == addr)
             {
                 pobj->devaddr = addr;
@@ -163,24 +156,24 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
             }
         }
 
-        /* åˆ¤æ–­è¿™ä¸ªPHYåœ°å€æ˜¯å¦å¤§äº32ï¼ˆ2^5ï¼‰*/
+        /* ÅĞ¶ÏÕâ¸öPHYµØÖ·ÊÇ·ñ´óÓÚ32£¨2^5£©*/
         if (pobj->devaddr > ETH_CHIP_MAX_DEV_ADDR)
         {
             status = ETH_CHIP_STATUS_ADDRESS_ERROR;
         }
 
-        /* å¦‚æœPHYåœ°å€æœ‰æ•ˆ */
+        /* Èç¹ûPHYµØÖ·ÓĞĞ§ */
         if (status == ETH_CHIP_STATUS_OK)
         {
-            /* è®¾ç½®è½¯ä»¶å¤ä½  */
+            /* ÉèÖÃÈí¼ş¸´Î»  */
             if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET) >= 0)
             {
-                /* è·å–è½¯ä»¶é‡ç½®çŠ¶æ€ */
+                /* »ñÈ¡Èí¼şÖØÖÃ×´Ì¬ */
                 if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &regvalue) >= 0)
                 {
                     tickstart = pobj->io.gettick();
 
-                    /* ç­‰å¾…è½¯ä»¶å¤ä½å®Œæˆæˆ–è¶…æ—¶  */
+                    /* µÈ´ıÈí¼ş¸´Î»Íê³É»ò³¬Ê±  */
                     while (regvalue & ETH_CHIP_BCR_SOFT_RESET)
                     {
                         if ((pobj->io.gettick() - tickstart) <= ETH_CHIP_SW_RESET_TO)
@@ -210,16 +203,15 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
         }
     }
 
-    /* åˆ°äº†è¿™é‡Œï¼Œåˆå§‹åŒ–å®Œæˆï¼ï¼ï¼ */
+    /* µ½ÁËÕâÀï£¬³õÊ¼»¯Íê³É£¡£¡£¡ */
     if (status == ETH_CHIP_STATUS_OK)
     {
         tickstart = pobj->io.gettick();
 
-        /* ç­‰å¾…2sè¿›è¡Œåˆå§‹åŒ– */
+        /* µÈ´ı2s½øĞĞ³õÊ¼»¯ */
         while ((pobj->io.gettick() - tickstart) <= ETH_CHIP_INIT_TO)
         {
         }
-
         pobj->is_initialized = 1;
     }
 
@@ -227,10 +219,10 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
 }
 
 /**
-  * @brief       ååˆå§‹åŒ–ETH_CHIPåŠå…¶ç¡¬ä»¶èµ„æº
-  * @param       pobj: è®¾å¤‡å¯¹è±¡
-  * @retval      ETH_CHIP_STATUS_OKï¼šååˆå§‹åŒ–å¤±è´¥æˆåŠŸ
-                 ETH_CHIP_STATUS_ERRORï¼šååˆå§‹åŒ–å¤±è´¥
+  * @brief       ·´³õÊ¼»¯ETH_CHIP¼°ÆäÓ²¼ş×ÊÔ´
+  * @param       pobj: Éè±¸¶ÔÏó
+  * @retval      ETH_CHIP_STATUS_OK£º·´³õÊ¼»¯Ê§°Ü³É¹¦
+                 ETH_CHIP_STATUS_ERROR£º·´³õÊ¼»¯Ê§°Ü
   */
 int32_t eth_chip_deinit(eth_chip_object_t *pobj)
 {
@@ -251,11 +243,11 @@ int32_t eth_chip_deinit(eth_chip_object_t *pobj)
 }
 
 /**
-  * @brief       å…³é—­ETH_CHIPçš„ä¸‹ç”µæ¨¡å¼
-  * @param       pobj: è®¾å¤‡å¯¹è±¡
-  * @retval      ETH_CHIP_STATUS_OKï¼šå…³é—­æˆåŠŸ
-                 ETH_CHIP_STATUS_READ_ERRORï¼šä¸èƒ½è¯»å–å¯„å­˜å™¨
-                 ETH_CHIP_STATUS_WRITE_ERRORï¼šä¸èƒ½å†™å¯„å­˜å™¨
+  * @brief       ¹Ø±ÕETH_CHIPµÄÏÂµçÄ£Ê½
+  * @param       pobj: Éè±¸¶ÔÏó
+  * @retval      ETH_CHIP_STATUS_OK£º¹Ø±Õ³É¹¦
+                 ETH_CHIP_STATUS_READ_ERROR£º²»ÄÜ¶ÁÈ¡¼Ä´æÆ÷
+                 ETH_CHIP_STATUS_WRITE_ERROR£º²»ÄÜĞ´¼Ä´æÆ÷
   */
 int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj)
 {
@@ -266,7 +258,7 @@ int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj)
     {
         readval &= ~ETH_CHIP_BCR_POWER_DOWN;
 
-        /* æ¸…é™¤ä¸‹ç”µæ¨¡å¼ */
+        /* Çå³ıÏÂµçÄ£Ê½ */
         if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
@@ -281,11 +273,11 @@ int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj)
 }
 
 /**
-  * @brief       ä½¿èƒ½ETH_CHIPçš„ä¸‹ç”µæ¨¡å¼
-  * @param       pobj: è®¾å¤‡å¯¹è±¡
-  * @retval      ETH_CHIP_STATUS_OKï¼šå…³é—­æˆåŠŸ
-                 ETH_CHIP_STATUS_READ_ERRORï¼šä¸èƒ½è¯»å–å¯„å­˜å™¨
-                 ETH_CHIP_STATUS_WRITE_ERRORï¼šä¸èƒ½å†™å¯„å­˜å™¨
+  * @brief       Ê¹ÄÜETH_CHIPµÄÏÂµçÄ£Ê½
+  * @param       pobj: Éè±¸¶ÔÏó
+  * @retval      ETH_CHIP_STATUS_OK£º¹Ø±Õ³É¹¦
+                 ETH_CHIP_STATUS_READ_ERROR£º²»ÄÜ¶ÁÈ¡¼Ä´æÆ÷
+                 ETH_CHIP_STATUS_WRITE_ERROR£º²»ÄÜĞ´¼Ä´æÆ÷
   */
 int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj)
 {
@@ -296,7 +288,7 @@ int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj)
     {
         readval |= ETH_CHIP_BCR_POWER_DOWN;
 
-        /* ä½¿èƒ½ä¸‹ç”µæ¨¡å¼ */
+        /* Ê¹ÄÜÏÂµçÄ£Ê½ */
         if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
@@ -311,11 +303,11 @@ int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj)
 }
 
 /**
-  * @brief       å¯åŠ¨è‡ªåŠ¨åå•†è¿‡ç¨‹
-  * @param       pobj: è®¾å¤‡å¯¹è±¡
-  * @retval      ETH_CHIP_STATUS_OKï¼šå…³é—­æˆåŠŸ
-                 ETH_CHIP_STATUS_READ_ERRORï¼šä¸èƒ½è¯»å–å¯„å­˜å™¨
-                 ETH_CHIP_STATUS_WRITE_ERRORï¼šä¸èƒ½å†™å¯„å­˜å™¨
+  * @brief       Æô¶¯×Ô¶¯Ğ­ÉÌ¹ı³Ì
+  * @param       pobj: Éè±¸¶ÔÏó
+  * @retval      ETH_CHIP_STATUS_OK£º¹Ø±Õ³É¹¦
+                 ETH_CHIP_STATUS_READ_ERROR£º²»ÄÜ¶ÁÈ¡¼Ä´æÆ÷
+                 ETH_CHIP_STATUS_WRITE_ERROR£º²»ÄÜĞ´¼Ä´æÆ÷
   */
 int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj)
 {
@@ -326,7 +318,7 @@ int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj)
     {
         readval |= ETH_CHIP_BCR_AUTONEGO_EN;
 
-        /* å¯åŠ¨è‡ªåŠ¨åå•† */
+        /* Æô¶¯×Ô¶¯Ğ­ÉÌ */
         if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
@@ -341,20 +333,20 @@ int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj)
 }
 
 /**
-  * @brief       è·å–ETH_CHIPè®¾å¤‡çš„é“¾è·¯çŠ¶æ€
-  * @param       pobj: è®¾å¤‡å¯¹è±¡
-  * @param       pLinkState: æŒ‡å‘é“¾è·¯çŠ¶æ€çš„æŒ‡é’ˆ
-  * @retval      ETH_CHIP_STATUS_100MBITS_FULLDUPLEXï¼š100Mï¼Œå…¨åŒå·¥
-                 ETH_CHIP_STATUS_100MBITS_HALFDUPLEX ï¼š100Mï¼ŒåŠåŒå·¥
-                 ETH_CHIP_STATUS_10MBITS_FULLDUPLEXï¼š10Mï¼Œå…¨åŒå·¥
-                 ETH_CHIP_STATUS_10MBITS_HALFDUPLEX ï¼š10Mï¼ŒåŠåŒå·¥
-                 ETH_CHIP_STATUS_READ_ERRORï¼šä¸èƒ½è¯»å–å¯„å­˜å™¨
+  * @brief       »ñÈ¡ETH_CHIPÉè±¸µÄÁ´Â·×´Ì¬
+  * @param       pobj: Éè±¸¶ÔÏó
+  * @param       pLinkState: Ö¸ÏòÁ´Â·×´Ì¬µÄÖ¸Õë
+  * @retval      ETH_CHIP_STATUS_100MBITS_FULLDUPLEX£º100M£¬È«Ë«¹¤
+                 ETH_CHIP_STATUS_100MBITS_HALFDUPLEX £º100M£¬°ëË«¹¤
+                 ETH_CHIP_STATUS_10MBITS_FULLDUPLEX£º10M£¬È«Ë«¹¤
+                 ETH_CHIP_STATUS_10MBITS_HALFDUPLEX £º10M£¬°ëË«¹¤
+                 ETH_CHIP_STATUS_READ_ERROR£º²»ÄÜ¶ÁÈ¡¼Ä´æÆ÷
   */
 int32_t eth_chip_get_link_state(eth_chip_object_t *pobj)
 {
     uint32_t readval = 0;
 
-    /* æ£€æµ‹ç‰¹æ®ŠåŠŸèƒ½å¯„å­˜å™¨é“¾æ¥å€¼ */
+    /* ¼ì²âÌØÊâ¹¦ÄÜ¼Ä´æÆ÷Á´½ÓÖµ */
     if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_PHYSCSR, &readval) < 0)
     {
         return ETH_CHIP_STATUS_READ_ERROR;
@@ -379,13 +371,13 @@ int32_t eth_chip_get_link_state(eth_chip_object_t *pobj)
 }
 
 /**
-  * @brief       è®¾ç½®ETH_CHIPè®¾å¤‡çš„é“¾è·¯çŠ¶æ€
-  * @param       pobj: è®¾å¤‡å¯¹è±¡
-  * @param       pLinkState: æŒ‡å‘é“¾è·¯çŠ¶æ€çš„æŒ‡é’ˆ
-  * @retval      ETH_CHIP_STATUS_OKï¼šè®¾ç½®æˆåŠŸ
-                 ETH_CHIP_STATUS_ERROR ï¼šè®¾ç½®å¤±è´¥
-                 ETH_CHIP_STATUS_READ_ERRORï¼šä¸èƒ½è¯»å–å¯„å­˜å™¨
-                 ETH_CHIP_STATUS_WRITE_ERROR ï¼šä¸èƒ½å†™å…¥å¯„å­˜å™¨
+  * @brief       ÉèÖÃETH_CHIPÉè±¸µÄÁ´Â·×´Ì¬
+  * @param       pobj: Éè±¸¶ÔÏó
+  * @param       pLinkState: Ö¸ÏòÁ´Â·×´Ì¬µÄÖ¸Õë
+  * @retval      ETH_CHIP_STATUS_OK£ºÉèÖÃ³É¹¦
+                 ETH_CHIP_STATUS_ERROR £ºÉèÖÃÊ§°Ü
+                 ETH_CHIP_STATUS_READ_ERROR£º²»ÄÜ¶ÁÈ¡¼Ä´æÆ÷
+                 ETH_CHIP_STATUS_WRITE_ERROR £º²»ÄÜĞ´Èë¼Ä´æÆ÷
   */
 int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate)
 {
@@ -394,7 +386,7 @@ int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate)
 
     if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &bcrvalue) >= 0)
     {
-        /* ç¦ç”¨é“¾è·¯é…ç½®(è‡ªåŠ¨åå•†ï¼Œé€Ÿåº¦å’ŒåŒå·¥) */
+        /* ½ûÓÃÁ´Â·ÅäÖÃ(×Ô¶¯Ğ­ÉÌ£¬ËÙ¶ÈºÍË«¹¤) */
         bcrvalue &= ~(ETH_CHIP_BCR_AUTONEGO_EN | ETH_CHIP_BCR_SPEED_SELECT | ETH_CHIP_BCR_DUPLEX_MODE);
 
         if (linkstate == ETH_CHIP_STATUS_100MBITS_FULLDUPLEX)
@@ -411,7 +403,7 @@ int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate)
         }
         else
         {
-            /* é”™è¯¯çš„é“¾è·¯çŠ¶æ€å‚æ•° */
+            /* ´íÎóµÄÁ´Â·×´Ì¬²ÎÊı */
             status = ETH_CHIP_STATUS_ERROR;
         }
     }
@@ -422,7 +414,7 @@ int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate)
 
     if (status == ETH_CHIP_STATUS_OK)
     {
-        /* å†™å…¥é“¾è·¯çŠ¶æ€ */
+        /* Ğ´ÈëÁ´Â·×´Ì¬ */
         if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, bcrvalue) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
@@ -433,12 +425,12 @@ int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate)
 }
 
 /**
-  * @brief       å¯ç”¨ç¯å›æ¨¡å¼
-  * @param       pobj: è®¾å¤‡å¯¹è±¡
-  * @param       pLinkState: æŒ‡å‘é“¾è·¯çŠ¶æ€çš„æŒ‡é’ˆ
-  * @retval      ETH_CHIP_STATUS_OKï¼šè®¾ç½®æˆåŠŸ
-                 ETH_CHIP_STATUS_READ_ERRORï¼šä¸èƒ½è¯»å–å¯„å­˜å™¨
-                 ETH_CHIP_STATUS_WRITE_ERROR ï¼šä¸èƒ½å†™å…¥å¯„å­˜å™¨
+  * @brief       ÆôÓÃ»·»ØÄ£Ê½
+  * @param       pobj: Éè±¸¶ÔÏó
+  * @param       pLinkState: Ö¸ÏòÁ´Â·×´Ì¬µÄÖ¸Õë
+  * @retval      ETH_CHIP_STATUS_OK£ºÉèÖÃ³É¹¦
+                 ETH_CHIP_STATUS_READ_ERROR£º²»ÄÜ¶ÁÈ¡¼Ä´æÆ÷
+                 ETH_CHIP_STATUS_WRITE_ERROR £º²»ÄÜĞ´Èë¼Ä´æÆ÷
   */
 int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj)
 {
@@ -449,7 +441,7 @@ int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj)
     {
         readval |= ETH_CHIP_BCR_LOOPBACK;
 
-        /* å¯ç”¨ç¯å›æ¨¡å¼ */
+        /* ÆôÓÃ»·»ØÄ£Ê½ */
         if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
@@ -464,12 +456,12 @@ int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj)
 }
 
 /**
-  * @brief       ç¦ç”¨ç¯å›æ¨¡å¼
-  * @param       pobj: è®¾å¤‡å¯¹è±¡
-  * @param       pLinkState: æŒ‡å‘é“¾è·¯çŠ¶æ€çš„æŒ‡é’ˆ
-  * @retval      ETH_CHIP_STATUS_OKï¼šè®¾ç½®æˆåŠŸ
-                 ETH_CHIP_STATUS_READ_ERRORï¼šä¸èƒ½è¯»å–å¯„å­˜å™¨
-                 ETH_CHIP_STATUS_WRITE_ERROR ï¼šä¸èƒ½å†™å…¥å¯„å­˜å™¨
+  * @brief       ½ûÓÃ»·»ØÄ£Ê½
+  * @param       pobj: Éè±¸¶ÔÏó
+  * @param       pLinkState: Ö¸ÏòÁ´Â·×´Ì¬µÄÖ¸Õë
+  * @retval      ETH_CHIP_STATUS_OK£ºÉèÖÃ³É¹¦
+                 ETH_CHIP_STATUS_READ_ERROR£º²»ÄÜ¶ÁÈ¡¼Ä´æÆ÷
+                 ETH_CHIP_STATUS_WRITE_ERROR £º²»ÄÜĞ´Èë¼Ä´æÆ÷
   */
 int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj)
 {
@@ -480,7 +472,7 @@ int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj)
     {
         readval &= ~ETH_CHIP_BCR_LOOPBACK;
 
-        /* ç¦ç”¨ç¯å›æ¨¡å¼ */
+        /* ½ûÓÃ»·»ØÄ£Ê½ */
         if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
