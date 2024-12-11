@@ -63,12 +63,16 @@ typedef struct _sys_mbox sys_mbox_t;
 
 #pragma endregion
 
+#pragma region 线程
+
 struct _sys_thread
 {
     void *thread_handle;
 };
 
 typedef struct _sys_thread sys_thread_t;
+
+#pragma endregion
 
 #if LWIP_NETCONN_SEM_PER_THREAD
 sys_sem_t *sys_arch_netconn_sem_get(void);
