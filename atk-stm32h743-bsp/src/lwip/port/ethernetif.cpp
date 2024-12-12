@@ -163,9 +163,7 @@ static void low_level_init(struct netif *netif)
 
     /* 初始化ETH PHY */
     eth_chip_init(&ETHCHIP);
-
-    /* 必须开启自动协商功能 */
-    eth_chip_start_auto_nego(&ETHCHIP);
+    DI_EthernetPort().EnableAutoNegotiation();
 
     /* 必须等待初始化 */
     DI_Delayer().Delay(std::chrono::milliseconds{2000});

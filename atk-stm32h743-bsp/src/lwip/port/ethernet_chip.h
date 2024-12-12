@@ -113,7 +113,6 @@ extern uint16_t ETH_CHIP_DUPLEX_STATUS;
     int32_t eth_chip_deinit(eth_chip_object_t *pobj);                             /* 反初始化ETH_CHIP及其硬件资源 */
     int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj);            /* 关闭ETH_CHIP的下电模式 */
     int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj);             /* 使能ETH_CHIP的下电模式 */
-    int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj);                    /* 启动自动协商过程 */
     int32_t eth_chip_get_link_state(eth_chip_object_t *pobj);                     /* 获取ETH_CHIP设备的链路状态 */
     int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate); /* 设置ETH_CHIP设备的链路状态 */
     int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj);              /* 启用环回模式 */

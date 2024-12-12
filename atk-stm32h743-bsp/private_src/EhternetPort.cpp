@@ -5,6 +5,7 @@
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
+#include <ethernet_chip.h>
 #include <EthernetController.h>
 #include <hal.h>
 
@@ -63,4 +64,11 @@ void bsp::EhternetPort::ResetPHY()
     DI_Delayer().Delay(std::chrono::milliseconds{100});
     DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
     DI_Delayer().Delay(std::chrono::milliseconds{100});
+}
+
+void bsp::EhternetPort::EnableAutoNegotiation()
+{
+    uint32_t bcr = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
+    bcr |= ETH_CHIP_BCR_AUTONEGO_EN;
+    WritePHYRegister(static_cast<uint32_t>(PhyRegister::BCR), bcr);
 }

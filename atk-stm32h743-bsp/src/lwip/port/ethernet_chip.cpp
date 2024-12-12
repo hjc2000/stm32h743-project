@@ -282,36 +282,6 @@ int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj)
 }
 
 /**
-  * @brief       启动自动协商过程
-  * @param       pobj: 设备对象
-  * @retval      ETH_CHIP_STATUS_OK：关闭成功
-                 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
-                 ETH_CHIP_STATUS_WRITE_ERROR：不能写寄存器
-  */
-int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj)
-{
-    uint32_t readval = 0;
-    int32_t status = ETH_CHIP_STATUS_OK;
-
-    if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
-    {
-        readval |= ETH_CHIP_BCR_AUTONEGO_EN;
-
-        /* 启动自动协商 */
-        if (ETH_PHY_IO_WriteReg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
-        {
-            status = ETH_CHIP_STATUS_WRITE_ERROR;
-        }
-    }
-    else
-    {
-        status = ETH_CHIP_STATUS_READ_ERROR;
-    }
-
-    return status;
-}
-
-/**
   * @brief       获取ETH_CHIP设备的链路状态
   * @param       pobj: 设备对象
   * @param       pLinkState: 指向链路状态的指针

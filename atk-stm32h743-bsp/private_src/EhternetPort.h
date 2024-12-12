@@ -5,6 +5,14 @@
 
 namespace bsp
 {
+    enum class PhyRegister : uint32_t
+    {
+        BCR = 0,
+        BSR = 1,
+        REGISTER2 = 2,
+        REGISTER3 = 3,
+    };
+
     /// @brief 以太网端口。
     class EhternetPort :
         public bsp::IEthernetPort
@@ -35,5 +43,8 @@ namespace bsp
 
         /// @brief 复位 PHY 芯片。
         void ResetPHY() override;
+
+        /// @brief 自动协商。
+        void EnableAutoNegotiation() override;
     };
 } // namespace bsp
