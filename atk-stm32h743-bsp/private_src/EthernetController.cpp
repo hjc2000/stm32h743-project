@@ -107,7 +107,7 @@ void bsp::EthernetController::MspInitCallback(ETH_HandleTypeDef *handle)
         []()
         {
             /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
-            uint32_t regval = ethernet_read_phy(2);
+            uint32_t regval = bsp::EthernetController::Instance().ReadPHYRegister(2);
             if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
             {
                 DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
@@ -151,8 +151,12 @@ bsp::EthernetController &bsp::EthernetController::Instance()
     return g.Instance();
 }
 
-void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interface_type, base::Mac const &mac)
+void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interface_type,
+                                   uint32_t phy_address,
+                                   base::Mac const &mac)
 {
+    _phy_address = phy_address;
+
     uint8_t big_endian_mac_buffer[6];
     base::Span big_endian_mac_buffer_span{big_endian_mac_buffer, sizeof(big_endian_mac_buffer)};
     big_endian_mac_buffer_span.CopyFrom(mac.AsReadOnlySpan());
@@ -182,12 +186,14 @@ void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interf
                            });
 }
 
-uint32_t bsp::EthernetController::ReadPHYRegister(uint32_t phy_address, uint32_t register_index)
+uint32_t bsp::EthernetController::ReadPHYRegister(uint32_t register_index)
 {
-    return 0;
+    uint32_t regval;
+    HAL_ETH_ReadPHYRegister(&_handle, _phy_address, register_index, &regval);
+    return regval;
 }
 
-void bsp::EthernetController::WritePHYRegister(uint32_t phy_address, uint32_t register_index, uint32_t value)
+void bsp::EthernetController::WritePHYRegister(uint32_t register_index, uint32_t value)
 {
 }
 

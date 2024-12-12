@@ -28,6 +28,7 @@
 #include "string.h"
 #include "task.h"
 #include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/ethernet.h>
 #include <EthernetController.h>
 
 /* Private typedef -----------------------------------------------------------*/
@@ -210,7 +211,7 @@ static void low_level_init(struct netif *netif)
     netif_set_up(netif);
     netif_set_link_up(netif);
 
-    while (!ethernet_read_phy(ETH_CHIP_PHYSCSR)) /* 检查MCU与PHY芯片是否通信成功 */
+    while (!DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR)) /* 检查MCU与PHY芯片是否通信成功 */
     {
         printf("MCU与PHY芯片通信失败，请检查电路或者源码！！！！\r\n");
     }

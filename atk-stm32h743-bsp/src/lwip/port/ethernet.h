@@ -34,6 +34,5 @@
 /******************************************************************************************/
 
 uint8_t ethernet_init(void);                           /* 以太网芯片初始化 */
-uint32_t ethernet_read_phy(uint16_t reg);              /* 读取以太网芯片寄存器值 */
 void ethernet_write_phy(uint16_t reg, uint16_t value); /* 向以太网芯片指定地址写入寄存器值 */
 uint8_t ethernet_chip_get_speed(void);                 /* 获得以太网芯片的速度模式 */

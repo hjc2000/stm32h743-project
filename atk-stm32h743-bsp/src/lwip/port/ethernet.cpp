@@ -28,20 +28,8 @@ uint8_t ethernet_init(void)
         },
     };
 
-    DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII, mac);
+    DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII, 0, mac);
     return 0;
-}
-
-/**
- * @breif       读取以太网芯片寄存器值
- * @param       reg：读取的寄存器地址
- * @retval      regval：返回读取的寄存器值
- */
-uint32_t ethernet_read_phy(uint16_t reg)
-{
-    uint32_t regval;
-    HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(), ETH_CHIP_ADDR, reg, &regval);
-    return regval;
 }
 
 /**
@@ -70,28 +58,28 @@ uint8_t ethernet_chip_get_speed(void)
         DI_Console().WriteLine("LAN8720");
 
         /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
-        speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS));
+        speed = ~((DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS));
     }
     else if (PHY_TYPE == SR8201F)
     {
         DI_Console().WriteLine("SR8201F");
 
         /* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13);
+        speed = ((DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13);
     }
     else if (PHY_TYPE == YT8512C)
     {
         DI_Console().WriteLine("YT8512C");
 
         /* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14);
+        speed = ((DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14);
     }
     else if (PHY_TYPE == RTL8201)
     {
         DI_Console().WriteLine("RTL8201");
 
         /* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
-        speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1);
+        speed = ((DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1);
     }
 
     return speed;
