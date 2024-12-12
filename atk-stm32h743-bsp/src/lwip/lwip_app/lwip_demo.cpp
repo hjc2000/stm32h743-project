@@ -31,8 +31,6 @@ socklen_t sock_fd;             /* 定义一个Socket接口 */
 
 static void lwip_send_thread(void *arg);
 
-extern QueueHandle_t g_display_queue; /* 显示消息队列句柄 */
-
 /**
  * @brief       发送数据线程
  * @param       无
@@ -54,7 +52,6 @@ void lwip_data_send(void)
  */
 void lwip_demo(void)
 {
-    BaseType_t lwip_err;
     lwip_data_send();                                   /* 创建发送数据线程 */
     memset(&local_info, 0, sizeof(struct sockaddr_in)); /* 将服务器地址清空 */
     local_info.sin_len = sizeof(local_info);
@@ -70,13 +67,6 @@ void lwip_demo(void)
     {
         memset(g_lwip_demo_recvbuf, 0, sizeof(g_lwip_demo_recvbuf));
         recv(sock_fd, (void *)g_lwip_demo_recvbuf, sizeof(g_lwip_demo_recvbuf), 0);
-
-        lwip_err = xQueueSend(g_display_queue, &g_lwip_demo_recvbuf, 0);
-
-        if (lwip_err == errQUEUE_FULL)
-        {
-            printf("队列Key_Queue已满，数据发送失败!\r\n");
-        }
     }
 }
 

@@ -49,18 +49,6 @@ void lwip_demo_task(void *pvParameters); /* 任务函数 */
 TaskHandle_t KEYTask_Handler;      /* 任务句柄 */
 void key_task(void *pvParameters); /* 任务函数 */
 
-/* DISPLAY_TASK 任务 配置
- * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
- */
-#define DISPLAY_TASK_PRIO 7            /* 任务优先级 */
-#define DISPLAY_STK_SIZE 1024          /* 任务堆栈大小 */
-TaskHandle_t DISPLAYTask_Handler;      /* 任务句柄 */
-void display_task(void *pvParameters); /* 任务函数 */
-
-/* 显示消息队列的数量 */
-#define DISPLAYMSG_Q_NUM 20    /* 显示消息队列的数量 */
-QueueHandle_t g_display_queue; /* 显示消息队列句柄 */
-
 /******************************************************************************************************/
 
 /**
@@ -84,8 +72,6 @@ void freertos_demo()
 
     DI_DoGlobalCriticalWork([&]()
                             {
-                                g_display_queue = xQueueCreate(DISPLAYMSG_Q_NUM, 200); /* 创建消息Message_Queue,队列项长度是200长度 */
-
                                 /* 创建lwIP任务 */
                                 xTaskCreate((TaskFunction_t)lwip_demo_task,
                                             (char const *)"lwip_demo_task",
@@ -101,14 +87,6 @@ void freertos_demo()
                                             (void *)NULL,
                                             (UBaseType_t)KEY_TASK_PRIO,
                                             (TaskHandle_t *)&KEYTask_Handler);
-
-                                /* 显示任务 */
-                                xTaskCreate((TaskFunction_t)display_task,
-                                            (char const *)"display_task",
-                                            (uint16_t)DISPLAY_STK_SIZE,
-                                            (void *)NULL,
-                                            (UBaseType_t)DISPLAY_TASK_PRIO,
-                                            (TaskHandle_t *)&DISPLAYTask_Handler);
                             });
 }
 
@@ -141,28 +119,5 @@ void key_task(void *pvParameters)
     {
         g_lwip_send_flag |= LWIP_SEND_DATA; /* 标记LWIP有数据要发送 */
         vTaskDelay(10000);
-    }
-}
-
-/**
- * @brief       显示任务
- * @param       pvParameters : 传入参数(未用到)
- * @retval      无
- */
-void display_task(void *pvParameters)
-{
-    pvParameters = pvParameters;
-    uint8_t buffer[200];
-
-    while (1)
-    {
-        if (g_display_queue != NULL)
-        {
-            if (xQueueReceive(g_display_queue, buffer, portMAX_DELAY))
-            {
-            }
-        }
-
-        vTaskDelay(5);
     }
 }
