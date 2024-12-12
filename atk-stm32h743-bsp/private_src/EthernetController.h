@@ -39,7 +39,9 @@ namespace bsp
         EthernetController();
 
         ETH_HandleTypeDef _handle{};
+        bsp::IEthernetController_InterfaceType _interface_type;
         uint32_t _phy_address = 0;
+        base::Mac _mac;
 
         void ResetPHY();
 
@@ -49,6 +51,32 @@ namespace bsp
         ETH_HandleTypeDef &Handle()
         {
             return _handle;
+        }
+
+        /// @brief 以太网控制器的名称。
+        /// @return
+        std::string Name() const override;
+
+        /// @brief 获取本控制器当前使用的接口类型。
+        /// @note 要打开本控制器后本属性才有效。
+        /// @return
+        bsp::IEthernetController_InterfaceType InterfaceType() const override
+        {
+            return _interface_type;
+        }
+
+        /// @brief 获取本控制器绑定的 PHY 地址。
+        /// @return
+        uint32_t PhyAddress() const override
+        {
+            return _phy_address;
+        }
+
+        /// @brief 获取本控制器绑定的 MAC 地址。
+        /// @return
+        base::Mac Mac() const override
+        {
+            return _mac;
         }
 
         /// @brief 打开以太网控制器。

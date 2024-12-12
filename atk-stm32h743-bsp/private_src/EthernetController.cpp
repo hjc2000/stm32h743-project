@@ -101,27 +101,23 @@ bsp::EthernetController::EthernetController()
 
 void bsp::EthernetController::ResetPHY()
 {
-    // 复位过程不能被打断，必须禁用全局中断。
-    DI_DoGlobalCriticalWork(
-        []()
-        {
-            /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
-            uint32_t regval = bsp::EthernetController::Instance().ReadPHYRegister(2);
-            if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
-            {
-                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
-                DI_Delayer().Delay(std::chrono::milliseconds{100});
-                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
-                DI_Delayer().Delay(std::chrono::milliseconds{100});
-            }
-            else /* 新板卡（YT8512C）引脚复位 */
-            {
-                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
-                DI_Delayer().Delay(std::chrono::milliseconds{100});
-                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
-                DI_Delayer().Delay(std::chrono::milliseconds{100});
-            }
-        });
+    /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
+    uint32_t regval = bsp::EthernetController::Instance().ReadPHYRegister(2);
+    if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
+    {
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
+    }
+    else
+    {
+        /* 新板卡（YT8512C）引脚复位 */
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
+        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
+    }
 }
 
 bsp::EthernetController &bsp::EthernetController::Instance()
@@ -150,11 +146,18 @@ bsp::EthernetController &bsp::EthernetController::Instance()
     return g.Instance();
 }
 
+std::string bsp::EthernetController::Name() const
+{
+    return "eth";
+}
+
 void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interface_type,
                                    uint32_t phy_address,
                                    base::Mac const &mac)
 {
+    _interface_type = interface_type;
     _phy_address = phy_address;
+    _mac = mac;
 
     uint8_t big_endian_mac_buffer[6];
     base::Span big_endian_mac_buffer_span{big_endian_mac_buffer, sizeof(big_endian_mac_buffer)};
@@ -189,54 +192,28 @@ void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interf
 uint32_t bsp::EthernetController::ReadPHYRegister(uint32_t register_index)
 {
     uint32_t regval = 0;
-    HAL_ETH_ReadPHYRegister(&_handle, _phy_address, register_index, &regval);
+    HAL_StatusTypeDef result = HAL_ETH_ReadPHYRegister(&_handle,
+                                                       _phy_address,
+                                                       register_index,
+                                                       &regval);
+
+    if (result != HAL_StatusTypeDef ::HAL_OK)
+    {
+        throw std::runtime_error{"读 PHY 寄存器失败"};
+    }
+
     return regval;
 }
 
 void bsp::EthernetController::WritePHYRegister(uint32_t register_index, uint32_t value)
 {
-    HAL_ETH_WritePHYRegister(&_handle, _phy_address, register_index, value);
-}
+    HAL_StatusTypeDef result = HAL_ETH_WritePHYRegister(&_handle,
+                                                        _phy_address,
+                                                        register_index,
+                                                        value);
 
-#include "ethernet_chip.h"
-
-/**
- * @breif       获得网络芯片的速度模式
- * @param       无
- * @retval      1:100M
-                0:10M
- */
-uint8_t ethernet_chip_get_speed(void)
-{
-    uint8_t speed = 0;
-    if (PHY_TYPE == LAN8720)
+    if (result != HAL_StatusTypeDef ::HAL_OK)
     {
-        DI_Console().WriteLine("LAN8720");
-
-        /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
-        speed = ~((DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS));
+        throw std::runtime_error{"写 PHY 寄存器失败"};
     }
-    else if (PHY_TYPE == SR8201F)
-    {
-        DI_Console().WriteLine("SR8201F");
-
-        /* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
-        speed = ((DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13);
-    }
-    else if (PHY_TYPE == YT8512C)
-    {
-        DI_Console().WriteLine("YT8512C");
-
-        /* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
-        speed = ((DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14);
-    }
-    else if (PHY_TYPE == RTL8201)
-    {
-        DI_Console().WriteLine("RTL8201");
-
-        /* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
-        speed = ((DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1);
-    }
-
-    return speed;
 }
