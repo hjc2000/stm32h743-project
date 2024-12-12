@@ -36,16 +36,12 @@ bsp::EhternetPort &bsp::EhternetPort::Instance()
 
 std::string bsp::EhternetPort::Name() const
 {
-    return std::string();
+    return "eth";
 }
 
 void bsp::EhternetPort::Open(base::Mac const &mac)
 {
-    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
-    DI_Delayer().Delay(std::chrono::milliseconds{100});
-    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
-    DI_Delayer().Delay(std::chrono::milliseconds{100});
-
+    ResetPHY();
     DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII,
                                  0,
                                  mac);
@@ -63,4 +59,8 @@ void bsp::EhternetPort::WritePHYRegister(uint32_t register_index, uint32_t value
 
 void bsp::EhternetPort::ResetPHY()
 {
+    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
+    DI_Delayer().Delay(std::chrono::milliseconds{100});
+    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
+    DI_Delayer().Delay(std::chrono::milliseconds{100});
 }
