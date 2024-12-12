@@ -116,7 +116,19 @@ static void low_level_init(struct netif *netif)
     uint32_t speed = 0;
     ETH_MACConfigTypeDef g_eth_macconfig_handler{};
 
-    ethernet_init(); /* 初始化以太网IO */
+    base::Mac mac{
+        std::endian::big,
+        base::Array<uint8_t, 6>{
+            0xB8,
+            0xAE,
+            0x1D,
+            0x00,
+            0x04,
+            0x00,
+        },
+    };
+
+    DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII, 0, mac);
 
     netif->hwaddr_len = ETHARP_HWADDR_LEN; /* 设置MAC地址长度,为6个字节 */
     /* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */

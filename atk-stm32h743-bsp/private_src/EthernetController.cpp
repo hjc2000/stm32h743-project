@@ -188,13 +188,14 @@ void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interf
 
 uint32_t bsp::EthernetController::ReadPHYRegister(uint32_t register_index)
 {
-    uint32_t regval;
+    uint32_t regval = 0;
     HAL_ETH_ReadPHYRegister(&_handle, _phy_address, register_index, &regval);
     return regval;
 }
 
 void bsp::EthernetController::WritePHYRegister(uint32_t register_index, uint32_t value)
 {
+    HAL_ETH_WritePHYRegister(&_handle, _phy_address, register_index, value);
 }
 
 base::Bps bsp::EthernetController::Bitrate()

@@ -9,42 +9,6 @@
 #include <EthernetController.h>
 
 /**
- * @brief       以太网芯片初始化
- * @param       无
- * @retval      0,成功
- *              1,失败
- */
-uint8_t ethernet_init(void)
-{
-    base::Mac mac{
-        std::endian::big,
-        base::Array<uint8_t, 6>{
-            0xB8,
-            0xAE,
-            0x1D,
-            0x00,
-            0x04,
-            0x00,
-        },
-    };
-
-    DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII, 0, mac);
-    return 0;
-}
-
-/**
- * @breif       向以太网芯片指定地址写入寄存器值
- * @param       reg   : 要写入的寄存器
- * @param       value : 要写入的寄存器
- * @retval      无
- */
-void ethernet_write_phy(uint16_t reg, uint16_t value)
-{
-    uint32_t temp = value;
-    HAL_ETH_WritePHYRegister(&bsp::EthernetController::Instance().Handle(), ETH_CHIP_ADDR, reg, temp);
-}
-
-/**
  * @breif       获得网络芯片的速度模式
  * @param       无
  * @retval      1:100M
