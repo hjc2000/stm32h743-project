@@ -161,10 +161,6 @@ static void low_level_init(struct netif *netif)
                    INTERFACE_THREAD_STACK_SIZE, /* 任务栈大小 */
                    NETIF_IN_TASK_PRIORITY);     /* 任务的优先级 */
 
-    /* 初始化ETH PHY */
-    eth_chip_init(&ETHCHIP);
-    DI_EthernetPort().EnableAutoNegotiation();
-
     /* 必须等待初始化 */
     DI_Delayer().Delay(std::chrono::milliseconds{2000});
     phy_link_state = eth_chip_get_link_state(&ETHCHIP);

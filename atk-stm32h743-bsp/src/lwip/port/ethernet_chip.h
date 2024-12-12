@@ -57,6 +57,14 @@ extern "C"
 /* PHY寄存器的数量 */
 #define ETH_CHIP_PHY_COUNT ((uint16_t)0x001FU)
 
+#define YT8512C_AND_RTL8201BL_PHYREGISTER2 0x0000
+#define SR8201F_PHYREGISTER2 0x001C
+#define LAN8720A_PHYREGISTER2 0x0007
+
+#define ETH_CHIP_SW_RESET_TO ((uint32_t)500U) /* 软件复位等待时间 */
+#define ETH_CHIP_INIT_TO ((uint32_t)2000U)    /* 初始化等待时间 */
+#define ETH_CHIP_MAX_DEV_ADDR ((uint32_t)31U) /* PHY地址的最大值 */
+
     /* PHY自动识别状态 */
     enum PHY_AUTO
     {
@@ -109,7 +117,6 @@ extern uint16_t ETH_CHIP_DUPLEX_STATUS;
         void *pdata;             /* 传入的形参 */
     } eth_chip_object_t;
 
-    int32_t eth_chip_init(eth_chip_object_t *pobj);                               /* 初始化ETH_CHIP并配置所需的硬件资源 */
     int32_t eth_chip_deinit(eth_chip_object_t *pobj);                             /* 反初始化ETH_CHIP及其硬件资源 */
     int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj);            /* 关闭ETH_CHIP的下电模式 */
     int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj);             /* 使能ETH_CHIP的下电模式 */

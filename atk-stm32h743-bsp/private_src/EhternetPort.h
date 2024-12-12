@@ -20,6 +20,8 @@ namespace bsp
     private:
         bsp::IEthernetController *_controller = &DI_EthernetController();
 
+        void ChipInitialize();
+
     public:
         static_function EhternetPort &Instance();
 
