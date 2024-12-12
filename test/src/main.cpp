@@ -209,7 +209,7 @@ int main(void)
             while (true)
             {
                 DI_GreenDigitalLed().Toggle();
-                DI_Console().WriteLine(DI_SystemTime());
+                DI_Console().WriteLine(std::to_string(static_cast<int64_t>(DI_SystemTime() * 1000)));
                 DI_Delayer().Delay(std::chrono::milliseconds{1000});
             }
         },
