@@ -99,7 +99,7 @@ bsp::EthernetController::EthernetController()
     }
 }
 
-void bsp::EthernetController::MspInitCallback(ETH_HandleTypeDef *handle)
+void bsp::EthernetController::ResetPHY()
 {
     // 复位过程不能被打断，必须禁用全局中断。
     DI_DoGlobalCriticalWork(
@@ -167,7 +167,8 @@ void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interf
     _handle.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
     _handle.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + 4 * sizeof(ETH_DMADescTypeDef));
     _handle.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
-    _handle.MspInitCallback = MspInitCallback;
+
+    ResetPHY();
     HAL_StatusTypeDef result = HAL_ETH_Init(&_handle);
     if (result != HAL_OK)
     {

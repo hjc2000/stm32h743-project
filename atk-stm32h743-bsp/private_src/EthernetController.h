@@ -41,7 +41,7 @@ namespace bsp
         ETH_HandleTypeDef _handle{};
         uint32_t _phy_address = 0;
 
-        static_function void MspInitCallback(ETH_HandleTypeDef *handle);
+        void ResetPHY();
 
     public:
         static_function EthernetController &Instance();
