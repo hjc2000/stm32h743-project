@@ -18,17 +18,96 @@
 #include <EthernetController.h>
 #include <stdio.h>
 
-__lwip_dev g_lwipdev;      /* lwip控制结构体 */
-struct netif g_lwip_netif; /* 定义一个全局的网络接口 */
+__lwip_dev g_lwipdev; /* lwip控制结构体 */
+netif g_lwip_netif;   /* 定义一个全局的网络接口 */
 
-#if LWIP_DHCP
 uint32_t g_dhcp_fine_timer = 0;                 /* DHCP精细处理计时器 */
 __IO uint8_t g_lwip_dhcp_state = LWIP_DHCP_OFF; /* DHCP状态初始化 */
+
+/**
+ * @brief       通知用户DHCP配置状态
+ * @param       netif：网卡控制块
+ * @retval      无
+ */
+void lwip_link_status_updated(netif *netif)
+{
+    if (netif_is_up(netif))
+    {
+#if LWIP_DHCP
+        /* Update DHCP state machine */
+        g_lwip_dhcp_state = LWIP_DHCP_START;
+#endif /* LWIP_DHCP */
+        printf("The network cable is connected \r\n");
+    }
+    else
+    {
+#if LWIP_DHCP
+        /* Update DHCP state machine */
+        g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
+#endif /* LWIP_DHCP */
+        printf("The network cable is not connected \r\n");
+    }
+}
+
+/**
+ * @brief       检查ETH链路状态，更新netif
+ * @param       argument: netif
+ * @retval      无
+ */
+void lwip_link_thread()
+{
+    DI_Console().WriteLine("enter lwip_link_thread");
+
+    uint32_t regval = 0;
+    int link_again_num = 0;
+
+    while (1)
+    {
+        /* 读取PHY状态寄存器，获取链接信息 */
+        HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(), ETH_CHIP_ADDR, ETH_CHIP_BSR, &regval);
+
+        /* 判断链接状态 */
+        if ((regval & ETH_CHIP_BSR_LINK_STATUS) == 0)
+        {
+            g_lwipdev.link_status = LWIP_LINK_OFF;
+            link_again_num++;
+
+            if (link_again_num >= 2)
+            {
+                /* 网线一段时间没有插入 */
+                continue;
+            }
+            else
+            {
+                /* 关闭虚拟网卡及以太网中断 */
+                DI_Console().WriteLine("close ethernet");
+
+#if LWIP_DHCP
+                g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
+                dhcp_stop(&g_lwip_netif);
 #endif
+                HAL_ETH_Stop_IT(&bsp::EthernetController::Instance().Handle());
+                netif_set_down(&g_lwip_netif);
+                netif_set_link_down(&g_lwip_netif);
+            }
+        }
+        else
+        {
+            /* 网线插入检测 */
+            link_again_num = 0;
+            if (g_lwipdev.link_status == LWIP_LINK_OFF)
+            {
+                /* 开启以太网及虚拟网卡 */
+                g_lwipdev.link_status = LWIP_LINK_ON;
+                HAL_ETH_Start_IT(&bsp::EthernetController::Instance().Handle());
+                netif_set_up(&g_lwip_netif);
+                netif_set_link_up(&g_lwip_netif);
+            }
+        }
 
-void lwip_link_thread(); /* 链路线程 */
-
-void lwip_link_status_updated(struct netif *netif); /* DHCP状态回调函数 */
+        vTaskDelay(100);
+    }
+}
 
 /**
  * @breif       DHCP进程
@@ -81,7 +160,6 @@ void lwip_periodic_handle()
                     if (ip != 0)
                     {
                         g_lwipdev.dhcpstatus = 2; /* DHCP成功 */
-                        printf("网卡en的MAC地址为:................%d.%d.%d.%d.%d.%d\r\n", g_lwipdev.mac[0], g_lwipdev.mac[1], g_lwipdev.mac[2], g_lwipdev.mac[3], g_lwipdev.mac[4], g_lwipdev.mac[5]);
                         /* 解析出通过DHCP获取到的IP地址 */
                         g_lwipdev.ip[3] = (uint8_t)(ip >> 24);
                         g_lwipdev.ip[2] = (uint8_t)(ip >> 16);
@@ -150,14 +228,6 @@ void lwip_comm_default_ip_set(__lwip_dev *lwipx)
     lwipx->remoteip[1] = 168;
     lwipx->remoteip[2] = 1;
     lwipx->remoteip[3] = 134;
-
-    /* MAC地址设置 */
-    lwipx->mac[0] = 0xB8;
-    lwipx->mac[1] = 0xAE;
-    lwipx->mac[2] = 0x1D;
-    lwipx->mac[3] = 0x00;
-    lwipx->mac[4] = 0x04;
-    lwipx->mac[5] = 0x00;
 
     /* 默认本地IP为:192.168.1.30 */
     lwipx->ip[0] = 192;
@@ -274,89 +344,4 @@ uint8_t lwip_comm_init(void)
 
 #endif
     return 0; /* 操作OK. */
-}
-
-/**
- * @brief       通知用户DHCP配置状态
- * @param       netif：网卡控制块
- * @retval      无
- */
-void lwip_link_status_updated(struct netif *netif)
-{
-    if (netif_is_up(netif))
-    {
-#if LWIP_DHCP
-        /* Update DHCP state machine */
-        g_lwip_dhcp_state = LWIP_DHCP_START;
-#endif /* LWIP_DHCP */
-        printf("The network cable is connected \r\n");
-    }
-    else
-    {
-#if LWIP_DHCP
-        /* Update DHCP state machine */
-        g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
-#endif /* LWIP_DHCP */
-        printf("The network cable is not connected \r\n");
-    }
-}
-
-/**
- * @brief       检查ETH链路状态，更新netif
- * @param       argument: netif
- * @retval      无
- */
-void lwip_link_thread()
-{
-    DI_Console().WriteLine("enter lwip_link_thread");
-
-    uint32_t regval = 0;
-    int link_again_num = 0;
-
-    while (1)
-    {
-        /* 读取PHY状态寄存器，获取链接信息 */
-        HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(), ETH_CHIP_ADDR, ETH_CHIP_BSR, &regval);
-
-        /* 判断链接状态 */
-        if ((regval & ETH_CHIP_BSR_LINK_STATUS) == 0)
-        {
-            g_lwipdev.link_status = LWIP_LINK_OFF;
-            link_again_num++;
-
-            if (link_again_num >= 2)
-            {
-                /* 网线一段时间没有插入 */
-                continue;
-            }
-            else
-            {
-                /* 关闭虚拟网卡及以太网中断 */
-                DI_Console().WriteLine("close ethernet");
-
-#if LWIP_DHCP
-                g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
-                dhcp_stop(&g_lwip_netif);
-#endif
-                HAL_ETH_Stop_IT(&bsp::EthernetController::Instance().Handle());
-                netif_set_down(&g_lwip_netif);
-                netif_set_link_down(&g_lwip_netif);
-            }
-        }
-        else
-        {
-            /* 网线插入检测 */
-            link_again_num = 0;
-            if (g_lwipdev.link_status == LWIP_LINK_OFF)
-            {
-                /* 开启以太网及虚拟网卡 */
-                g_lwipdev.link_status = LWIP_LINK_ON;
-                HAL_ETH_Start_IT(&bsp::EthernetController::Instance().Handle());
-                netif_set_up(&g_lwip_netif);
-                netif_set_link_up(&g_lwip_netif);
-            }
-        }
-
-        vTaskDelay(100);
-    }
 }

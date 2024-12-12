@@ -29,6 +29,7 @@
 #include "task.h"
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/ethernet.h>
+#include <bsp-interface/di/system_time.h>
 #include <EthernetController.h>
 
 /* Private typedef -----------------------------------------------------------*/
@@ -122,16 +123,16 @@ static void low_level_init(struct netif *netif)
         },
     };
 
-    DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII, 0, mac);
+    DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII,
+                                 0,
+                                 mac);
 
     netif->hwaddr_len = ETHARP_HWADDR_LEN; /* 设置MAC地址长度,为6个字节 */
+
     /* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
-    netif->hwaddr[0] = g_lwipdev.mac[0];
-    netif->hwaddr[1] = g_lwipdev.mac[1];
-    netif->hwaddr[2] = g_lwipdev.mac[2];
-    netif->hwaddr[3] = g_lwipdev.mac[3];
-    netif->hwaddr[4] = g_lwipdev.mac[4];
-    netif->hwaddr[5] = g_lwipdev.mac[5];
+    base::Span netif_mac_buff_span{netif->hwaddr, 6};
+    netif_mac_buff_span.CopyFrom(mac.AsReadOnlySpan());
+    netif_mac_buff_span.Reverse();
 
     netif->mtu = ETH_MAX_PAYLOAD; /* 最大允许传输单元,允许该网卡广播和ARP功能 */
 
@@ -410,17 +411,6 @@ void pbuf_free_custom(struct pbuf *p)
 }
 
 /**
- * @brief  Returns the current time in milliseconds
- *         when LWIP_TIMERS == 1 and NO_SYS == 1
- * @param  None
- * @retval Current Time value
- */
-// u32_t sys_now(void)
-//{
-//     return HAL_GetTick();
-// }
-
-/**
  * @brief  Ethernet Rx Transfer completed callback
  * @param  heth: ETH handle
  * @retval None
@@ -504,7 +494,8 @@ int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal)
  */
 int32_t ETH_PHY_IO_GetTick(void)
 {
-    return HAL_GetTick();
+    base::Seconds time = DI_SystemTime();
+    return static_cast<int64_t>(time * 1000);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

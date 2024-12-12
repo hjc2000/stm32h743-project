@@ -22,7 +22,6 @@
 /*lwip控制结构体*/
 typedef struct
 {
-    uint8_t mac[6];      /* MAC地址 */
     uint8_t remoteip[4]; /* 远端主机IP地址 */
     uint8_t ip[4];       /* 本机IP地址 */
     uint8_t netmask[4];  /* 子网掩码 */
