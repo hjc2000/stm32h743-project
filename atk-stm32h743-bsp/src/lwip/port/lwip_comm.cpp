@@ -306,7 +306,6 @@ void lwip_periodic_handle(void *argument)
 
         DI_Delayer().Delay(std::chrono::milliseconds{1000});
         vTaskDelay(1000);
-        DI_Console().WriteLine("lwip_periodic_handle loop end");
     }
 }
 #endif
@@ -369,6 +368,5 @@ void lwip_link_thread(void *argument)
         }
 
         vTaskDelay(100);
-        DI_Console().WriteLine("lwip_link_thread loop end");
     }
 }

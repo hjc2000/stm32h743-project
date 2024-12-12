@@ -10,6 +10,7 @@
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/led.h>
+#include <bsp-interface/di/system_time.h>
 #include <bsp-interface/di/task.h>
 #include <bsp-interface/flash/RmaFlash.h>
 #include <bsp-interface/test/TestFlash.h>
@@ -208,6 +209,7 @@ int main(void)
             while (true)
             {
                 DI_GreenDigitalLed().Toggle();
+                DI_Console().WriteLine(DI_SystemTime());
                 DI_Delayer().Delay(std::chrono::milliseconds{1000});
             }
         },
