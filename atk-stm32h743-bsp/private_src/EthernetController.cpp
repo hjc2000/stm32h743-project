@@ -135,11 +135,47 @@ void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interf
     _handle.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
     _handle.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + 4 * sizeof(ETH_DMADescTypeDef));
     _handle.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
+
+    _handle.MspInitCallback = [](ETH_HandleTypeDef *handle)
+    {
+        /* 关闭所有中断，复位过程不能被打断！ */
+        DI_DoGlobalCriticalWork(
+            []()
+            {
+                /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
+                uint32_t regval = ethernet_read_phy(2);
+                if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
+                {
+                    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
+                    DI_Delayer().Delay(std::chrono::milliseconds{100});
+                    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
+                    DI_Delayer().Delay(std::chrono::milliseconds{100});
+                }
+                else /* 新板卡（YT8512C）引脚复位 */
+                {
+                    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
+                    DI_Delayer().Delay(std::chrono::milliseconds{100});
+                    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
+                    DI_Delayer().Delay(std::chrono::milliseconds{100});
+                }
+            });
+    };
+
     HAL_StatusTypeDef result = HAL_ETH_Init(&_handle);
     if (result != HAL_OK)
     {
         throw std::runtime_error{"打开以太网口失败"};
     }
+
+    /* 这里的中断优先级必须设置在 freertos 能够屏蔽的优先级范围内，不然不知道什么原因，
+     * 会导致 freertos 的 queue.c 中报错。
+     */
+    DI_EnableInterrupt(static_cast<uint32_t>(ETH_IRQn), 7);
+    DI_IsrManager().AddIsr(static_cast<uint32_t>(ETH_IRQn),
+                           []()
+                           {
+                               HAL_ETH_IRQHandler(&bsp::EthernetController::Instance().Handle());
+                           });
 }
 
 uint32_t bsp::EthernetController::ReadPHYRegister(uint32_t phy_address, uint32_t register_index)

@@ -33,49 +33,6 @@ uint8_t ethernet_init(void)
 }
 
 /**
- * @brief       ETH底层驱动，时钟使能，引脚配置
- *    @note     此函数会被HAL_ETH_Init()调用
- * @param       heth:以太网句柄
- * @retval      无
- */
-void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
-{
-    uint32_t regval;
-
-    /* 关闭所有中断，复位过程不能被打断！ */
-    DI_DoGlobalCriticalWork(
-        [&]()
-        {
-            /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
-            regval = ethernet_read_phy(2);
-            if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
-            {
-                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
-                DI_Delayer().Delay(std::chrono::milliseconds{100});
-                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
-                DI_Delayer().Delay(std::chrono::milliseconds{100});
-            }
-            else /* 新板卡（YT8512C）引脚复位 */
-            {
-                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
-                DI_Delayer().Delay(std::chrono::milliseconds{100});
-                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
-                DI_Delayer().Delay(std::chrono::milliseconds{100});
-            }
-        });
-
-    /* 这里的中断优先级必须设置在 freertos 能够屏蔽的优先级范围内，不然不知道什么原因，
-     * 会导致 freertos 的 queue.c 中报错。
-     */
-    DI_EnableInterrupt(static_cast<uint32_t>(ETH_IRQn), 7);
-    DI_IsrManager().AddIsr(static_cast<uint32_t>(ETH_IRQn),
-                           []()
-                           {
-                               HAL_ETH_IRQHandler(&bsp::EthernetController::Instance().Handle());
-                           });
-}
-
-/**
  * @breif       读取以太网芯片寄存器值
  * @param       reg：读取的寄存器地址
  * @retval      regval：返回读取的寄存器值
