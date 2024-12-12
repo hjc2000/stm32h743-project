@@ -1,5 +1,4 @@
 #pragma once
-#include "ethernet.h"
 #include "lwip/snmp.h"
 #include "lwip/timeouts.h"
 #include "netif/etharp.h"

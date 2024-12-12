@@ -461,7 +461,6 @@ int32_t ETH_PHY_IO_Init(void)
 
     /* Configure the MDIO Clock */
     HAL_ETH_SetMDIOClockRange(&bsp::EthernetController::Instance().Handle());
-
     return 0;
 }
 

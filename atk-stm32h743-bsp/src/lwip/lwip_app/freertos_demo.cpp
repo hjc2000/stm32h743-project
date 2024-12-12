@@ -44,6 +44,5 @@ void freertos_demo()
         DI_Delayer().Delay(std::chrono::milliseconds{500});
     }
 
-    ethernet_chip_get_speed();
     lwip_demo(); /* lwip测试代码 */
 }
