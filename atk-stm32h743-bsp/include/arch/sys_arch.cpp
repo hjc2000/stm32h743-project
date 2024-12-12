@@ -9,6 +9,7 @@
 #include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/interrupt.h>
+#include <bsp-interface/di/system_time.h>
 #include <bsp-interface/di/task.h>
 #include <errno.h>
 
@@ -18,14 +19,21 @@ extern "C"
     {
     }
 
+    /// @brief 返回当前的系统时间。单位：ms.
+    /// @param
+    /// @return
     u32_t sys_now(void)
     {
-        return xTaskGetTickCount() * portTICK_PERIOD_MS;
+        return static_cast<int64_t>(DI_SystemTime() * 1000);
     }
 
+    /// @brief 返回系统计数器的值。这个值是要上电以来的计数。硬件 systick 时钟的频率太高了，
+    /// 不考虑使用它。
+    /// @param
+    /// @return
     u32_t sys_jiffies(void)
     {
-        return xTaskGetTickCount();
+        return static_cast<int64_t>(DI_SystemTime() * 1000);
     }
 
     void sys_arch_msleep(u32_t delay_ms)
