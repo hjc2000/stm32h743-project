@@ -41,14 +41,6 @@
 TaskHandle_t LWIP_Task_Handler;          /* 任务句柄 */
 void lwip_demo_task(void *pvParameters); /* 任务函数 */
 
-/* KEY_TASK 任务 配置
- * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
- */
-#define KEY_TASK_PRIO 13           /* 任务优先级 */
-#define KEY_STK_SIZE 1024          /* 任务堆栈大小 */
-TaskHandle_t KEYTask_Handler;      /* 任务句柄 */
-void key_task(void *pvParameters); /* 任务函数 */
-
 /******************************************************************************************************/
 
 /**
@@ -79,14 +71,6 @@ void freertos_demo()
                                             (void *)NULL,
                                             (UBaseType_t)LWIP_DMEO_TASK_PRIO,
                                             (TaskHandle_t *)&LWIP_Task_Handler);
-
-                                /* key任务 */
-                                xTaskCreate((TaskFunction_t)key_task,
-                                            (char const *)"key_task",
-                                            (uint16_t)KEY_STK_SIZE,
-                                            (void *)NULL,
-                                            (UBaseType_t)KEY_TASK_PRIO,
-                                            (TaskHandle_t *)&KEYTask_Handler);
                             });
 }
 
@@ -104,20 +88,5 @@ void lwip_demo_task(void *pvParameters)
     while (1)
     {
         vTaskDelay(5);
-    }
-}
-
-/**
- * @brief       key_task
- * @param       pvParameters : 传入参数(未用到)
- * @retval      无
- */
-void key_task(void *pvParameters)
-{
-    pvParameters = pvParameters;
-    while (1)
-    {
-        g_lwip_send_flag |= LWIP_SEND_DATA; /* 标记LWIP有数据要发送 */
-        vTaskDelay(10000);
     }
 }

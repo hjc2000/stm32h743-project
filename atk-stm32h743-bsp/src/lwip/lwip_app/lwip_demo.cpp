@@ -24,8 +24,6 @@ uint8_t g_lwip_demo_recvbuf[LWIP_DEMO_RX_BUFSIZE];
 /* 发送数据内容 */
 char g_lwip_demo_sendbuf[] = "ALIENTEK UDP TEST\r\n";
 
-/* 数据发送标志位 */
-uint8_t g_lwip_send_flag;
 struct sockaddr_in local_info; /* 定义Socket地址信息结构体 */
 socklen_t sock_fd;             /* 定义一个Socket接口 */
 
@@ -81,16 +79,11 @@ void lwip_send_thread(void *pvParameters)
     local_info.sin_addr.s_addr = inet_addr(IP_ADDR); /* 需要发送的远程IP地址 */
     while (true)
     {
-        if ((g_lwip_send_flag & LWIP_SEND_DATA) == LWIP_SEND_DATA) /* 有数据要发送 */
-        {
-            sendto(sock_fd,                        /* scoket */
-                   (char *)g_lwip_demo_sendbuf,    /* 发送的数据 */
-                   sizeof(g_lwip_demo_sendbuf), 0, /* 发送的数据大小 */
-                   (struct sockaddr *)&local_info, /* 接收端地址信息 */
-                   sizeof(local_info));            /* 接收端地址信息大小 */
-
-            g_lwip_send_flag &= ~LWIP_SEND_DATA;
-        }
+        sendto(sock_fd,                        /* scoket */
+               (char *)g_lwip_demo_sendbuf,    /* 发送的数据 */
+               sizeof(g_lwip_demo_sendbuf), 0, /* 发送的数据大小 */
+               (struct sockaddr *)&local_info, /* 接收端地址信息 */
+               sizeof(local_info));            /* 接收端地址信息大小 */
 
         DI_Delayer().Delay(std::chrono::milliseconds{100});
     }
