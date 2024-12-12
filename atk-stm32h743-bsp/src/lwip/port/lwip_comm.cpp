@@ -14,6 +14,7 @@
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
+#include <bsp-interface/di/task.h>
 #include <EthernetController.h>
 #include <stdio.h>
 
@@ -25,10 +26,7 @@ uint32_t g_dhcp_fine_timer = 0;                 /* DHCP精细处理计时器 */
 __IO uint8_t g_lwip_dhcp_state = LWIP_DHCP_OFF; /* DHCP状态初始化 */
 #endif
 
-/* LINK线程配置 */
-#define LWIP_LINK_TASK_PRIO 3          /* 任务优先级 */
-#define LWIP_LINK_STK_SIZE 128 * 2     /* 任务堆栈大小 */
-void lwip_link_thread(void *argument); /* 链路线程 */
+void lwip_link_thread(); /* 链路线程 */
 
 /* DHCP线程配置 */
 #define LWIP_DHCP_TASK_PRIO 4                       /* 任务优先级 */
@@ -145,12 +143,12 @@ uint8_t lwip_comm_init(void)
         netif_set_link_callback(&g_lwip_netif, lwip_link_status_updated);
         DI_Console().WriteLine("netif_set_link_callback successfully");
 
-        /* 查询PHY连接状态任务 */
-        sys_thread_new("eth_link",
-                       lwip_link_thread,     /* 任务入口函数 */
-                       &g_lwip_netif,        /* 任务入口函数参数 */
-                       LWIP_LINK_STK_SIZE,   /* 任务栈大小 */
-                       LWIP_LINK_TASK_PRIO); /* 任务的优先级 */
+        DI_TaskManager().Create(
+            []()
+            {
+                lwip_link_thread();
+            },
+            512);
 
         DI_Console().WriteLine("sys_thread_new eth_link thread successfully");
 
@@ -316,12 +314,11 @@ void lwip_periodic_handle(void *argument)
  * @param       argument: netif
  * @retval      无
  */
-void lwip_link_thread(void *argument)
+void lwip_link_thread()
 {
     DI_Console().WriteLine("enter lwip_link_thread");
 
     uint32_t regval = 0;
-    struct netif *netif = (struct netif *)argument;
     int link_again_num = 0;
 
     while (1)
@@ -347,11 +344,11 @@ void lwip_link_thread(void *argument)
 
 #if LWIP_DHCP
                 g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
-                dhcp_stop(netif);
+                dhcp_stop(&g_lwip_netif);
 #endif
                 HAL_ETH_Stop_IT(&bsp::EthernetController::Instance().Handle());
-                netif_set_down(netif);
-                netif_set_link_down(netif);
+                netif_set_down(&g_lwip_netif);
+                netif_set_link_down(&g_lwip_netif);
             }
         }
         else
@@ -363,8 +360,8 @@ void lwip_link_thread(void *argument)
                 /* 开启以太网及虚拟网卡 */
                 g_lwipdev.link_status = LWIP_LINK_ON;
                 HAL_ETH_Start_IT(&bsp::EthernetController::Instance().Handle());
-                netif_set_up(netif);
-                netif_set_link_up(netif);
+                netif_set_up(&g_lwip_netif);
+                netif_set_link_up(&g_lwip_netif);
             }
         }
 

@@ -7,6 +7,7 @@
 #include "semphr.h"
 #include "task.h"
 #include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/task.h>
 #include <lwip/sockets.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -27,20 +28,24 @@ char g_lwip_demo_sendbuf[] = "ALIENTEK UDP TEST\r\n";
 struct sockaddr_in local_info; /* 定义Socket地址信息结构体 */
 socklen_t sock_fd;             /* 定义一个Socket接口 */
 
-static void lwip_send_thread(void *arg);
-
 /**
- * @brief       发送数据线程
- * @param       无
+ * @brief       发送数据线程函数
+ * @param       pvParameters : 传入参数(未用到)
  * @retval      无
  */
-void lwip_data_send(void)
+void lwip_send_thread()
 {
-    sys_thread_new("lwip_send_thread",
-                   lwip_send_thread,
-                   NULL,
-                   512,
-                   LWIP_SEND_THREAD_PRIO);
+    local_info.sin_addr.s_addr = inet_addr(IP_ADDR); /* 需要发送的远程IP地址 */
+    while (true)
+    {
+        sendto(sock_fd,                        /* scoket */
+               (char *)g_lwip_demo_sendbuf,    /* 发送的数据 */
+               sizeof(g_lwip_demo_sendbuf), 0, /* 发送的数据大小 */
+               (struct sockaddr *)&local_info, /* 接收端地址信息 */
+               sizeof(local_info));            /* 接收端地址信息大小 */
+
+        DI_Delayer().Delay(std::chrono::milliseconds{100});
+    }
 }
 
 /**
@@ -50,7 +55,13 @@ void lwip_data_send(void)
  */
 void lwip_demo(void)
 {
-    lwip_data_send();                                   /* 创建发送数据线程 */
+    DI_TaskManager().Create(
+        []()
+        {
+            lwip_send_thread();
+        },
+        512);
+
     memset(&local_info, 0, sizeof(struct sockaddr_in)); /* 将服务器地址清空 */
     local_info.sin_len = sizeof(local_info);
     local_info.sin_family = AF_INET;                /* IPv4地址 */
@@ -65,26 +76,5 @@ void lwip_demo(void)
     {
         memset(g_lwip_demo_recvbuf, 0, sizeof(g_lwip_demo_recvbuf));
         recv(sock_fd, (void *)g_lwip_demo_recvbuf, sizeof(g_lwip_demo_recvbuf), 0);
-    }
-}
-
-/**
- * @brief       发送数据线程函数
- * @param       pvParameters : 传入参数(未用到)
- * @retval      无
- */
-void lwip_send_thread(void *pvParameters)
-{
-    pvParameters = pvParameters;
-    local_info.sin_addr.s_addr = inet_addr(IP_ADDR); /* 需要发送的远程IP地址 */
-    while (true)
-    {
-        sendto(sock_fd,                        /* scoket */
-               (char *)g_lwip_demo_sendbuf,    /* 发送的数据 */
-               sizeof(g_lwip_demo_sendbuf), 0, /* 发送的数据大小 */
-               (struct sockaddr *)&local_info, /* 接收端地址信息 */
-               sizeof(local_info));            /* 接收端地址信息大小 */
-
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
     }
 }
