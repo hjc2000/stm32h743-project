@@ -101,11 +101,7 @@ bsp::EthernetController::EthernetController()
 
 void bsp::EthernetController::MspInitCallback(ETH_HandleTypeDef *handle)
 {
-    /* 复位必须在回调函数中执行，否则时机不对。HAL_ETH_Init 函数在初始化到一个阶段的时候就会回调，
-     * 这个时候才是复位 PHY 的正确时机。
-     *
-     * 复位过程不能被打断，必须禁用全局中断。
-     */
+    // 复位过程不能被打断，必须禁用全局中断。
     DI_DoGlobalCriticalWork(
         []()
         {
