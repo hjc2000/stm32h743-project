@@ -6,9 +6,7 @@
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
-
-/* 以太网句柄 */
-ETH_HandleTypeDef g_eth_handler;
+#include <EthernetController.h>
 
 /**
  * @brief       以太网芯片初始化
@@ -31,27 +29,6 @@ uint8_t ethernet_init(void)
     };
 
     DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII, mac);
-
-    uint8_t macaddress[6];
-    macaddress[0] = g_lwipdev.mac[0];
-    macaddress[1] = g_lwipdev.mac[1];
-    macaddress[2] = g_lwipdev.mac[2];
-    macaddress[3] = g_lwipdev.mac[3];
-    macaddress[4] = g_lwipdev.mac[4];
-    macaddress[5] = g_lwipdev.mac[5];
-
-    g_eth_handler.Instance = ETH;
-    g_eth_handler.Init.MACAddr = macaddress;
-    g_eth_handler.Init.MediaInterface = HAL_ETH_RMII_MODE;
-    g_eth_handler.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
-    g_eth_handler.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + 4 * sizeof(ETH_DMADescTypeDef));
-    g_eth_handler.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
-    HAL_StatusTypeDef result = HAL_ETH_Init(&g_eth_handler);
-    if (result != HAL_OK)
-    {
-        throw std::runtime_error{"初始化网络接口失败"};
-    }
-
     return 0;
 }
 
@@ -94,7 +71,7 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
     DI_IsrManager().AddIsr(static_cast<uint32_t>(ETH_IRQn),
                            []()
                            {
-                               HAL_ETH_IRQHandler(&g_eth_handler);
+                               HAL_ETH_IRQHandler(&bsp::EthernetController::Instance().Handle());
                            });
 }
 
@@ -106,7 +83,7 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 uint32_t ethernet_read_phy(uint16_t reg)
 {
     uint32_t regval;
-    HAL_ETH_ReadPHYRegister(&g_eth_handler, ETH_CHIP_ADDR, reg, &regval);
+    HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(), ETH_CHIP_ADDR, reg, &regval);
     return regval;
 }
 
@@ -119,7 +96,7 @@ uint32_t ethernet_read_phy(uint16_t reg)
 void ethernet_write_phy(uint16_t reg, uint16_t value)
 {
     uint32_t temp = value;
-    HAL_ETH_WritePHYRegister(&g_eth_handler, ETH_CHIP_ADDR, reg, temp);
+    HAL_ETH_WritePHYRegister(&bsp::EthernetController::Instance().Handle(), ETH_CHIP_ADDR, reg, temp);
 }
 
 /**

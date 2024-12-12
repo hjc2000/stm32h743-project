@@ -124,22 +124,22 @@ bsp::EthernetController &bsp::EthernetController::Instance()
 
 void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interface_type, base::Mac const &mac)
 {
-    // uint8_t big_endian_mac_buffer[6];
-    // base::Span big_endian_mac_buffer_span{big_endian_mac_buffer, sizeof(big_endian_mac_buffer)};
-    // big_endian_mac_buffer_span.CopyFrom(mac.AsReadOnlySpan());
-    // big_endian_mac_buffer_span.Reverse();
+    uint8_t big_endian_mac_buffer[6];
+    base::Span big_endian_mac_buffer_span{big_endian_mac_buffer, sizeof(big_endian_mac_buffer)};
+    big_endian_mac_buffer_span.CopyFrom(mac.AsReadOnlySpan());
+    big_endian_mac_buffer_span.Reverse();
 
-    // _handle.Instance = ETH;
-    // _handle.Init.MACAddr = big_endian_mac_buffer;
-    // _handle.Init.MediaInterface = HAL_ETH_RMII_MODE;
-    // _handle.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
-    // _handle.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + 4 * sizeof(ETH_DMADescTypeDef));
-    // _handle.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
-    // HAL_StatusTypeDef result = HAL_ETH_Init(&_handle);
-    // if (result != HAL_OK)
-    // {
-    //     throw std::runtime_error{"打开以太网口失败"};
-    // }
+    _handle.Instance = ETH;
+    _handle.Init.MACAddr = big_endian_mac_buffer;
+    _handle.Init.MediaInterface = HAL_ETH_RMII_MODE;
+    _handle.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
+    _handle.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + 4 * sizeof(ETH_DMADescTypeDef));
+    _handle.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
+    HAL_StatusTypeDef result = HAL_ETH_Init(&_handle);
+    if (result != HAL_OK)
+    {
+        throw std::runtime_error{"打开以太网口失败"};
+    }
 }
 
 uint32_t bsp::EthernetController::ReadPHYRegister(uint32_t phy_address, uint32_t register_index)

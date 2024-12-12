@@ -28,6 +28,7 @@
 #include "string.h"
 #include "task.h"
 #include <bsp-interface/di/delayer.h>
+#include <EthernetController.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -62,7 +63,7 @@
 
   2.a. Rx Buffers number must be between ETH_RX_DESC_CNT and 2*ETH_RX_DESC_CNT
   2.b. Rx Buffers must have the same size: ETH_RX_BUFFER_SIZE, this value must
-       passed to ETH DMA in the init field (g_eth_handler.Init.RxBuffLen)
+       passed to ETH DMA in the init field (bsp::EthernetController::Instance().Handle().Init.RxBuffLen)
   2.c  The RX Ruffers addresses and sizes must be properly defined to be aligned
        to L1-CACHE line size (32 bytes).
 */
@@ -133,7 +134,7 @@ static void low_level_init(struct netif *netif)
 
     for (idx = 0; idx < ETH_RX_DESC_CNT; idx++)
     {
-        HAL_ETH_DescAssignMemory(&g_eth_handler, idx, Rx_Buff[idx], NULL);
+        HAL_ETH_DescAssignMemory(&bsp::EthernetController::Instance().Handle(), idx, Rx_Buff[idx], NULL);
     }
     /* Initialize the RX POOL */
     LWIP_MEMPOOL_INIT(RX_POOL);
@@ -200,11 +201,11 @@ static void low_level_init(struct netif *netif)
     }
 
     /* ÅäÖÃMAC */
-    HAL_ETH_GetMACConfig(&g_eth_handler, &g_eth_macconfig_handler);
+    HAL_ETH_GetMACConfig(&bsp::EthernetController::Instance().Handle(), &g_eth_macconfig_handler);
     g_eth_macconfig_handler.DuplexMode = duplex;
     g_eth_macconfig_handler.Speed = speed;
-    HAL_ETH_SetMACConfig(&g_eth_handler, &g_eth_macconfig_handler);
-    HAL_ETH_Start(&g_eth_handler);
+    HAL_ETH_SetMACConfig(&bsp::EthernetController::Instance().Handle(), &g_eth_macconfig_handler);
+    HAL_ETH_Start(&bsp::EthernetController::Instance().Handle());
     /* ¿ªÆôÐéÄâÍø¿¨ */
     netif_set_up(netif);
     netif_set_link_up(netif);
@@ -265,7 +266,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
     TxConfig.Length = p->tot_len;
     TxConfig.TxBuffer = Txbuffer;
 
-    HAL_ETH_Transmit(&g_eth_handler, &TxConfig, ETH_DMA_TRANSMIT_TIMEOUT);
+    HAL_ETH_Transmit(&bsp::EthernetController::Instance().Handle(), &TxConfig, ETH_DMA_TRANSMIT_TIMEOUT);
 
     return errval;
 }
@@ -293,12 +294,12 @@ static struct pbuf *low_level_input(struct netif *netif)
         RxBuff[i].next = &RxBuff[i + 1];
     }
 
-    if (HAL_ETH_GetRxDataBuffer(&g_eth_handler, RxBuff) == HAL_OK)
+    if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), RxBuff) == HAL_OK)
     {
-        HAL_ETH_GetRxDataLength(&g_eth_handler, &framelength);
+        HAL_ETH_GetRxDataLength(&bsp::EthernetController::Instance().Handle(), &framelength);
 
         /* Build Rx descriptor to be ready for next data reception */
-        HAL_ETH_BuildRxDescriptors(&g_eth_handler);
+        HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
 
         /* Invalidate data cache for ETH Rx Buffers */
         SCB_InvalidateDCache_by_Addr((uint32_t *)RxBuff->buffer, framelength);
@@ -446,7 +447,7 @@ int32_t ETH_PHY_IO_Init(void)
     */
 
     /* Configure the MDIO Clock */
-    HAL_ETH_SetMDIOClockRange(&g_eth_handler);
+    HAL_ETH_SetMDIOClockRange(&bsp::EthernetController::Instance().Handle());
 
     return 0;
 }
@@ -470,7 +471,7 @@ int32_t ETH_PHY_IO_DeInit(void)
  */
 int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal)
 {
-    if (HAL_ETH_ReadPHYRegister(&g_eth_handler, DevAddr, RegAddr, pRegVal) != HAL_OK)
+    if (HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(), DevAddr, RegAddr, pRegVal) != HAL_OK)
     {
         return -1;
     }
@@ -487,7 +488,7 @@ int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal
  */
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal)
 {
-    if (HAL_ETH_WritePHYRegister(&g_eth_handler, DevAddr, RegAddr, RegVal) != HAL_OK)
+    if (HAL_ETH_WritePHYRegister(&bsp::EthernetController::Instance().Handle(), DevAddr, RegAddr, RegVal) != HAL_OK)
     {
         return -1;
     }

@@ -14,6 +14,7 @@
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
+#include <EthernetController.h>
 #include <stdio.h>
 
 __lwip_dev g_lwipdev;      /* lwip控制结构体 */
@@ -326,7 +327,7 @@ void lwip_link_thread(void *argument)
     while (1)
     {
         /* 读取PHY状态寄存器，获取链接信息 */
-        HAL_ETH_ReadPHYRegister(&g_eth_handler, ETH_CHIP_ADDR, ETH_CHIP_BSR, &regval);
+        HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(), ETH_CHIP_ADDR, ETH_CHIP_BSR, &regval);
 
         /* 判断链接状态 */
         if ((regval & ETH_CHIP_BSR_LINK_STATUS) == 0)
@@ -348,7 +349,7 @@ void lwip_link_thread(void *argument)
                 g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
                 dhcp_stop(netif);
 #endif
-                HAL_ETH_Stop_IT(&g_eth_handler);
+                HAL_ETH_Stop_IT(&bsp::EthernetController::Instance().Handle());
                 netif_set_down(netif);
                 netif_set_link_down(netif);
             }
@@ -361,7 +362,7 @@ void lwip_link_thread(void *argument)
             {
                 /* 开启以太网及虚拟网卡 */
                 g_lwipdev.link_status = LWIP_LINK_ON;
-                HAL_ETH_Start_IT(&g_eth_handler);
+                HAL_ETH_Start_IT(&bsp::EthernetController::Instance().Handle());
                 netif_set_up(netif);
                 netif_set_link_up(netif);
             }
