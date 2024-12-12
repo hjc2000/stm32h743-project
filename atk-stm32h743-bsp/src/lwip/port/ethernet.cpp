@@ -1,37 +1,14 @@
 #include "ethernet.h"
 #include "ethernet_chip.h"
 #include "lwip_comm.h"
+#include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 
 /* 以太网句柄 */
 ETH_HandleTypeDef g_eth_handler;
-
-/**
- * @brief  Configure the MPU attributes
- * @param  None
- * @retval None
- */
-void NETMPU_Config(void)
-{
-    MPU_Region_InitTypeDef MPU_InitStruct;
-
-    HAL_MPU_Disable();
-    MPU_InitStruct.Enable = MPU_REGION_ENABLE;
-    MPU_InitStruct.BaseAddress = 0x30040000;
-    MPU_InitStruct.Size = MPU_REGION_SIZE_256B;
-    MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-    MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
-    MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
-    MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
-    MPU_InitStruct.Number = MPU_REGION_NUMBER5;
-    MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
-    MPU_InitStruct.SubRegionDisable = 0x00;
-    MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
-    HAL_MPU_ConfigRegion(&MPU_InitStruct);
-    HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
-}
 
 /**
  * @brief       以太网芯片初始化
@@ -43,7 +20,19 @@ uint8_t ethernet_init(void)
 {
     uint8_t macaddress[6];
 
-    NETMPU_Config();
+    base::Mac mac{
+        std::endian::big,
+        base::Array<uint8_t, 6>{
+            0xB8,
+            0xAE,
+            0x1D,
+            0x00,
+            0x04,
+            0x00,
+        },
+    };
+
+    DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII, mac);
 
     macaddress[0] = g_lwipdev.mac[0];
     macaddress[1] = g_lwipdev.mac[1];
@@ -79,15 +68,15 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 {
     GPIO_InitTypeDef gpio_init_struct;
 
-    ETH_CLK_GPIO_CLK_ENABLE();   /* 开启ETH_CLK时钟 */
-    ETH_MDIO_GPIO_CLK_ENABLE();  /* 开启ETH_MDIO时钟 */
-    ETH_CRS_GPIO_CLK_ENABLE();   /* 开启ETH_CRS时钟 */
-    ETH_MDC_GPIO_CLK_ENABLE();   /* 开启ETH_MDC时钟 */
-    ETH_RXD0_GPIO_CLK_ENABLE();  /* 开启ETH_RXD0时钟 */
-    ETH_RXD1_GPIO_CLK_ENABLE();  /* 开启ETH_RXD1时钟 */
-    ETH_TX_EN_GPIO_CLK_ENABLE(); /* 开启ETH_TX_EN时钟 */
-    ETH_TXD0_GPIO_CLK_ENABLE();  /* 开启ETH_TXD0时钟 */
-    ETH_TXD1_GPIO_CLK_ENABLE();  /* 开启ETH_TXD1时钟 */
+    __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_CLK时钟 */
+    __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_MDIO时钟 */
+    __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_CRS时钟 */
+    __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_MDC时钟 */
+    __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_RXD0时钟 */
+    __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_RXD1时钟 */
+    __HAL_RCC_GPIOB_CLK_ENABLE(); /* 开启ETH_TX_EN时钟 */
+    __HAL_RCC_GPIOG_CLK_ENABLE(); /* 开启ETH_TXD0时钟 */
+    __HAL_RCC_GPIOG_CLK_ENABLE(); /* 开启ETH_TXD1时钟 */
 
     /* Enable Ethernet clocks */
     __HAL_RCC_ETH1MAC_CLK_ENABLE();
@@ -212,21 +201,29 @@ uint8_t ethernet_chip_get_speed(void)
     uint8_t speed = 0;
     if (PHY_TYPE == LAN8720)
     {
+        DI_Console().WriteLine("LAN8720");
+
         /* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
         speed = ~((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS));
     }
     else if (PHY_TYPE == SR8201F)
     {
+        DI_Console().WriteLine("SR8201F");
+
         /* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
         speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 13);
     }
     else if (PHY_TYPE == YT8512C)
     {
+        DI_Console().WriteLine("YT8512C");
+
         /* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
         speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 14);
     }
     else if (PHY_TYPE == RTL8201)
     {
+        DI_Console().WriteLine("RTL8201");
+
         /* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
         speed = ((ethernet_read_phy(ETH_CHIP_PHYSCSR) & ETH_CHIP_SPEED_STATUS) >> 1);
     }
