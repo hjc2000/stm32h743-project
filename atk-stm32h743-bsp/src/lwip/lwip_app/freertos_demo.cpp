@@ -30,24 +30,6 @@
 #include <bsp-interface/di/interrupt.h>
 #include <lwip_demo.h>
 
-/******************************************************************************************************/
-/*FreeRTOS配置*/
-
-/* LWIP_DEMO 任务 配置
- * 包括: 任务句柄 任务优先级 堆栈大小 创建任务
- */
-#define LWIP_DMEO_TASK_PRIO 11           /* 任务优先级 */
-#define LWIP_DMEO_STK_SIZE 1024          /* 任务堆栈大小 */
-TaskHandle_t LWIP_Task_Handler;          /* 任务句柄 */
-void lwip_demo_task(void *pvParameters); /* 任务函数 */
-
-/******************************************************************************************************/
-
-/**
- * @breif       freertos_demo
- * @param       无
- * @retval      无
- */
 void freertos_demo()
 {
     while (lwip_comm_init() != 0)
@@ -62,31 +44,5 @@ void freertos_demo()
         DI_Delayer().Delay(std::chrono::milliseconds{500});
     }
 
-    DI_DoGlobalCriticalWork([&]()
-                            {
-                                /* 创建lwIP任务 */
-                                xTaskCreate((TaskFunction_t)lwip_demo_task,
-                                            (char const *)"lwip_demo_task",
-                                            (uint16_t)LWIP_DMEO_STK_SIZE,
-                                            (void *)NULL,
-                                            (UBaseType_t)LWIP_DMEO_TASK_PRIO,
-                                            (TaskHandle_t *)&LWIP_Task_Handler);
-                            });
-}
-
-/**
- * @brief       lwIP运行例程
- * @param       pvParameters : 传入参数(未用到)
- * @retval      无
- */
-void lwip_demo_task(void *pvParameters)
-{
-    pvParameters = pvParameters;
-
     lwip_demo(); /* lwip测试代码 */
-
-    while (1)
-    {
-        vTaskDelay(5);
-    }
 }

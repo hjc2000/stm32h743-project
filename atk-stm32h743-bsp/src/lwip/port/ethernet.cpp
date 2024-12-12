@@ -55,8 +55,8 @@ uint8_t ethernet_init(void)
     g_eth_handler.Instance = ETH;
     g_eth_handler.Init.MACAddr = macaddress;
     g_eth_handler.Init.MediaInterface = HAL_ETH_RMII_MODE;
-    g_eth_handler.Init.RxDesc = (ETH_DMADescTypeDef *)(0x30040000);
-    g_eth_handler.Init.TxDesc = (ETH_DMADescTypeDef *)(0x30040060);
+    g_eth_handler.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
+    g_eth_handler.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + 4 * sizeof(ETH_DMADescTypeDef));
     g_eth_handler.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
 
     if (HAL_ETH_Init(&g_eth_handler) == HAL_OK)
@@ -145,26 +145,26 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
     uint32_t regval;
 
     /* 关闭所有中断，复位过程不能被打断！ */
-    DI_DisableGlobalInterrupt();
-
-    /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
-    regval = ethernet_read_phy(2);
-    if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
-    {
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-    }
-    else /* 新板卡（YT8512C）引脚复位 */
-    {
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-    }
-
-    DI_EnableGlobalInterrupt(); /* 开启所有中断 */
+    DI_DoGlobalCriticalWork(
+        [&]()
+        {
+            /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
+            regval = ethernet_read_phy(2);
+            if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
+            {
+                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
+                DI_Delayer().Delay(std::chrono::milliseconds{100});
+                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
+                DI_Delayer().Delay(std::chrono::milliseconds{100});
+            }
+            else /* 新板卡（YT8512C）引脚复位 */
+            {
+                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
+                DI_Delayer().Delay(std::chrono::milliseconds{100});
+                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
+                DI_Delayer().Delay(std::chrono::milliseconds{100});
+            }
+        });
 
     /* 这里的中断优先级必须设置在 freertos 能够屏蔽的优先级范围内，不然不知道什么原因，
      * 会导致 freertos 的 queue.c 中报错。

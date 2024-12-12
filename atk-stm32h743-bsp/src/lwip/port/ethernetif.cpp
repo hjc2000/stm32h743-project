@@ -75,6 +75,7 @@ QueueHandle_t g_rx_semaphore = NULL; /* 定义一个TX信号量 */
 
 /* Private function prototypes -----------------------------------------------*/
 void ethernetif_input(void *argument);
+
 // u32_t  sys_now(void);
 void pbuf_free_custom(struct pbuf *p);
 
@@ -105,8 +106,7 @@ uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".A
  * @param netif the already initialized lwip network interface structure
  *        for this ethernetif
  */
-static void
-low_level_init(struct netif *netif)
+static void low_level_init(struct netif *netif)
 {
     uint32_t idx = 0;
     int32_t phy_link_state = 0;
