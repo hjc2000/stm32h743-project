@@ -96,6 +96,35 @@ bsp::EthernetController::EthernetController()
     }
 }
 
+void bsp::EthernetController::MspInitCallback(ETH_HandleTypeDef *handle)
+{
+    /* 复位必须在回调函数中执行，否则时机不对。HAL_ETH_Init 函数在初始化到一个阶段的时候就会回调，
+     * 这个时候才是复位 PHY 的正确时机。
+     *
+     * 复位过程不能被打断，必须禁用全局中断。
+     */
+    DI_DoGlobalCriticalWork(
+        []()
+        {
+            /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
+            uint32_t regval = ethernet_read_phy(2);
+            if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
+            {
+                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
+                DI_Delayer().Delay(std::chrono::milliseconds{100});
+                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
+                DI_Delayer().Delay(std::chrono::milliseconds{100});
+            }
+            else /* 新板卡（YT8512C）引脚复位 */
+            {
+                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
+                DI_Delayer().Delay(std::chrono::milliseconds{100});
+                DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
+                DI_Delayer().Delay(std::chrono::milliseconds{100});
+            }
+        });
+}
+
 bsp::EthernetController &bsp::EthernetController::Instance()
 {
     class Getter :
@@ -135,32 +164,7 @@ void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interf
     _handle.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
     _handle.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + 4 * sizeof(ETH_DMADescTypeDef));
     _handle.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
-
-    _handle.MspInitCallback = [](ETH_HandleTypeDef *handle)
-    {
-        /* 关闭所有中断，复位过程不能被打断！ */
-        DI_DoGlobalCriticalWork(
-            []()
-            {
-                /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
-                uint32_t regval = ethernet_read_phy(2);
-                if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
-                {
-                    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
-                    DI_Delayer().Delay(std::chrono::milliseconds{100});
-                    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
-                    DI_Delayer().Delay(std::chrono::milliseconds{100});
-                }
-                else /* 新板卡（YT8512C）引脚复位 */
-                {
-                    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
-                    DI_Delayer().Delay(std::chrono::milliseconds{100});
-                    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
-                    DI_Delayer().Delay(std::chrono::milliseconds{100});
-                }
-            });
-    };
-
+    _handle.MspInitCallback = MspInitCallback;
     HAL_StatusTypeDef result = HAL_ETH_Init(&_handle);
     if (result != HAL_OK)
     {

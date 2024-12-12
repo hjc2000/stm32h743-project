@@ -13,6 +13,8 @@ namespace bsp
 
         ETH_HandleTypeDef _handle{};
 
+        static_function void MspInitCallback(ETH_HandleTypeDef *handle);
+
     public:
         static_function EthernetController &Instance();
 
