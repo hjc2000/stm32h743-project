@@ -12,6 +12,7 @@
 #include "task.h"
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/task.h>
@@ -36,7 +37,8 @@ void lwip_link_status_updated(netif *netif)
 #if LWIP_DHCP
         /* Update DHCP state machine */
         g_lwip_dhcp_state = LWIP_DHCP_START;
-#endif /* LWIP_DHCP */
+#endif
+        /* LWIP_DHCP */
         printf("The network cable is connected \r\n");
     }
     else
@@ -44,7 +46,8 @@ void lwip_link_status_updated(netif *netif)
 #if LWIP_DHCP
         /* Update DHCP state machine */
         g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
-#endif /* LWIP_DHCP */
+#endif
+        /* LWIP_DHCP */
         printf("The network cable is not connected \r\n");
     }
 }
@@ -58,13 +61,12 @@ void lwip_link_thread()
 {
     DI_Console().WriteLine("enter lwip_link_thread");
 
-    uint32_t regval = 0;
     int link_again_num = 0;
 
-    while (1)
+    while (true)
     {
         /* 读取PHY状态寄存器，获取链接信息 */
-        HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(), ETH_CHIP_ADDR, ETH_CHIP_BSR, &regval);
+        uint32_t regval = DI_EthernetController().ReadPHYRegister(ETH_CHIP_BSR);
 
         /* 判断链接状态 */
         if ((regval & ETH_CHIP_BSR_LINK_STATUS) == 0)
@@ -285,6 +287,7 @@ uint8_t lwip_comm_init(void)
     printf("默认网关..........................%d.%d.%d.%d\r\n", g_lwipdev.gateway[0], g_lwipdev.gateway[1], g_lwipdev.gateway[2], g_lwipdev.gateway[3]);
     g_lwipdev.dhcpstatus = 0XFF;
 #endif
+
     /* 向网卡列表中添加一个网口 */
     netif_init_flag = netif_add(&g_lwip_netif,
                                 (ip_addr_t const *)&ipaddr,

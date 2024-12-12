@@ -22,6 +22,7 @@
  ****************************************************************************************************
  */
 #include "ethernet_chip.h"
+#include <bsp-interface/di/ethernet.h>
 
 #define ETH_CHIP_SW_RESET_TO ((uint32_t)500U) /* 软件复位等待时间 */
 #define ETH_CHIP_INIT_TO ((uint32_t)2000U)    /* 初始化等待时间 */
@@ -73,13 +74,12 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
 
         RTL8201BL   Register 2    0x0000
                     Register 3    0x8201 */
-    ETH_PHY_IO_ReadReg(addr, PHY_REGISTER2, &regvalue);
+    regvalue = DI_EthernetController().ReadPHYRegister(PHY_REGISTER2);
 
     switch (regvalue)
     {
     case YT8512C_AND_RTL8201BL_PHYREGISTER2:
-        ETH_PHY_IO_ReadReg(addr, PHY_REGISTER3, &regvalue);
-
+        regvalue = DI_EthernetController().ReadPHYRegister(PHY_REGISTER3);
         if (regvalue == 0x128)
         {
             ETH_CHIP_PHYSCSR = ((uint16_t)0x11);
@@ -127,6 +127,7 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
                 /* 无法读取这个设备地址继续下一个地址 */
                 continue;
             }
+
             /* 已经找到PHY地址了 */
             if ((regvalue & ETH_CHIP_PHY_COUNT) == addr)
             {

@@ -395,7 +395,6 @@ err_t ethernetif_init(struct netif *netif)
 
     /* initialize the hardware */
     low_level_init(netif);
-
     return ERR_OK;
 }
 
