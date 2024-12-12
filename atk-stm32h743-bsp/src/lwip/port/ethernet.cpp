@@ -18,8 +18,6 @@ ETH_HandleTypeDef g_eth_handler;
  */
 uint8_t ethernet_init(void)
 {
-    uint8_t macaddress[6];
-
     base::Mac mac{
         std::endian::big,
         base::Array<uint8_t, 6>{
@@ -34,6 +32,7 @@ uint8_t ethernet_init(void)
 
     DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII, mac);
 
+    uint8_t macaddress[6];
     macaddress[0] = g_lwipdev.mac[0];
     macaddress[1] = g_lwipdev.mac[1];
     macaddress[2] = g_lwipdev.mac[2];

@@ -16,6 +16,11 @@ namespace bsp
     public:
         static_function EthernetController &Instance();
 
+        ETH_HandleTypeDef &Handle()
+        {
+            return _handle;
+        }
+
         /// @brief 打开以太网控制器。
         /// @param interface_type 连接着 PHY 的接口类型。（使用的是 MII 还是 RMII）
         /// @param mac MAC 地址。
