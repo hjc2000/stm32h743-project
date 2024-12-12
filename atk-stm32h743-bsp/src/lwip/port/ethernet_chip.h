@@ -125,13 +125,6 @@ extern uint16_t ETH_CHIP_SPEED_STATUS;
 extern uint16_t ETH_CHIP_DUPLEX_STATUS;
 #endif
 
-    /* 定义函数指针 */
-    typedef int32_t (*eth_chip_init_func)(void);
-    typedef int32_t (*eth_chip_deinit_func)(void);
-    typedef int32_t (*eth_chip_readreg_func)(uint32_t, uint32_t, uint32_t *);
-    typedef int32_t (*eth_chip_writereg_func)(uint32_t, uint32_t, uint32_t);
-    typedef int32_t (*eth_chip_gettick_func)(void);
-
     /* 注册到组件对象结构体 */
     typedef struct
     {
