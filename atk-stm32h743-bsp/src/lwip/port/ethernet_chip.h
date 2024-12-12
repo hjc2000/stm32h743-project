@@ -132,35 +132,23 @@ extern uint16_t ETH_CHIP_DUPLEX_STATUS;
     typedef int32_t (*eth_chip_writereg_func)(uint32_t, uint32_t, uint32_t);
     typedef int32_t (*eth_chip_gettick_func)(void);
 
-    /* PHY共用函数结构体 */
-    typedef struct
-    {
-        eth_chip_init_func init;         /* 指向PHY初始化函数 */
-        eth_chip_deinit_func deinit;     /* 指向PHY反初始化函数 */
-        eth_chip_writereg_func writereg; /* 指向PHY写寄存器函数 */
-        eth_chip_readreg_func readreg;   /* 指向PHY读寄存器函数 */
-        eth_chip_gettick_func gettick;   /* 指向节拍函数 */
-    } eth_chip_ioc_tx_t;
-
     /* 注册到组件对象结构体 */
     typedef struct
     {
         uint32_t devaddr;        /* PHY地址 */
         uint32_t is_initialized; /* 描述该设备是否初始化 */
-        eth_chip_ioc_tx_t io;    /* 设备调用的函数入口 */
         void *pdata;             /* 传入的形参 */
     } eth_chip_object_t;
 
-    int32_t eth_chip_regster_bus_io(eth_chip_object_t *pobj, eth_chip_ioc_tx_t *ioctx); /* 将IO函数注册到组件对象 */
-    int32_t eth_chip_init(eth_chip_object_t *pobj);                                     /* 初始化ETH_CHIP并配置所需的硬件资源 */
-    int32_t eth_chip_deinit(eth_chip_object_t *pobj);                                   /* 反初始化ETH_CHIP及其硬件资源 */
-    int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj);                  /* 关闭ETH_CHIP的下电模式 */
-    int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj);                   /* 使能ETH_CHIP的下电模式 */
-    int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj);                          /* 启动自动协商过程 */
-    int32_t eth_chip_get_link_state(eth_chip_object_t *pobj);                           /* 获取ETH_CHIP设备的链路状态 */
-    int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate);       /* 设置ETH_CHIP设备的链路状态 */
-    int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj);                    /* 启用环回模式 */
-    int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj);                   /* 禁用环回模式 */
+    int32_t eth_chip_init(eth_chip_object_t *pobj);                               /* 初始化ETH_CHIP并配置所需的硬件资源 */
+    int32_t eth_chip_deinit(eth_chip_object_t *pobj);                             /* 反初始化ETH_CHIP及其硬件资源 */
+    int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj);            /* 关闭ETH_CHIP的下电模式 */
+    int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj);             /* 使能ETH_CHIP的下电模式 */
+    int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj);                    /* 启动自动协商过程 */
+    int32_t eth_chip_get_link_state(eth_chip_object_t *pobj);                     /* 获取ETH_CHIP设备的链路状态 */
+    int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate); /* 设置ETH_CHIP设备的链路状态 */
+    int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj);              /* 启用环回模式 */
+    int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj);             /* 禁用环回模式 */
 
 #ifdef __cplusplus
 }

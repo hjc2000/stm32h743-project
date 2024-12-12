@@ -201,11 +201,6 @@ void bsp::EthernetController::WritePHYRegister(uint32_t register_index, uint32_t
     HAL_ETH_WritePHYRegister(&_handle, _phy_address, register_index, value);
 }
 
-base::Bps bsp::EthernetController::Bitrate()
-{
-    return base::Bps();
-}
-
 #include "ethernet_chip.h"
 
 /**

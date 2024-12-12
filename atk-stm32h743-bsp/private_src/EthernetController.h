@@ -68,10 +68,6 @@ namespace bsp
         /// @param register_index 寄存器索引。
         /// @param value
         void WritePHYRegister(uint32_t register_index, uint32_t value) override;
-
-        /// @brief 获取此接口的连接速率。
-        /// @return
-        base::Bps Bitrate() override;
     };
 
 } // namespace bsp

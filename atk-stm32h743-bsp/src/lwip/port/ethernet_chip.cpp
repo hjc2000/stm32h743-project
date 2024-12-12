@@ -39,28 +39,11 @@ uint16_t ETH_CHIP_SPEED_STATUS;
 uint16_t ETH_CHIP_DUPLEX_STATUS;
 #endif
 
-/**
- * @brief       将IO函数注册到组件对象
- * @param       pobj：设备对象
- * @param       ioctx：保存设备IO功能
- * @retval      ETH_CHIP_STATUS_OK：OK
- *              ETH_CHIP_STATUS_ERROR：缺少功能
- */
-int32_t eth_chip_regster_bus_io(eth_chip_object_t *pobj, eth_chip_ioc_tx_t *ioctx)
-{
-    if (!pobj || !ioctx->readreg || !ioctx->writereg || !ioctx->gettick)
-    {
-        return ETH_CHIP_STATUS_ERROR;
-    }
-
-    pobj->io.init = ioctx->init;
-    pobj->io.deinit = ioctx->deinit;
-    pobj->io.readreg = ioctx->readreg;
-    pobj->io.writereg = ioctx->writereg;
-    pobj->io.gettick = ioctx->gettick;
-
-    return ETH_CHIP_STATUS_OK;
-}
+int32_t ETH_PHY_IO_Init(void);
+int32_t ETH_PHY_IO_DeInit(void);
+int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal);
+int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
+int32_t ETH_PHY_IO_GetTick(void);
 
 /**
   * @brief       初始化ETH_CHIP并配置所需的硬件资源
@@ -90,12 +73,12 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
 
         RTL8201BL   Register 2    0x0000
                     Register 3    0x8201 */
-    pobj->io.readreg(addr, PHY_REGISTER2, &regvalue);
+    ETH_PHY_IO_ReadReg(addr, PHY_REGISTER2, &regvalue);
 
     switch (regvalue)
     {
     case YT8512C_AND_RTL8201BL_PHYREGISTER2:
-        pobj->io.readreg(addr, PHY_REGISTER3, &regvalue);
+        ETH_PHY_IO_ReadReg(addr, PHY_REGISTER3, &regvalue);
 
         if (regvalue == 0x128)
         {
@@ -129,11 +112,8 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
 
     if (pobj->is_initialized == 0)
     {
-        if (pobj->io.init != 0)
-        {
-            /* MDC时钟 */
-            pobj->io.init();
-        }
+        /* MDC时钟 */
+        ETH_PHY_IO_Init();
 
         /* 设置PHY地址为32 */
         pobj->devaddr = ETH_CHIP_MAX_DEV_ADDR + 1;
@@ -141,7 +121,7 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
         /* 主要为了查找PHY地址 */
         for (addr = 0; addr <= ETH_CHIP_MAX_DEV_ADDR; addr++)
         {
-            if (pobj->io.readreg(addr, ETH_CHIP_PHYSCSR, &regvalue) < 0)
+            if (ETH_PHY_IO_ReadReg(addr, ETH_CHIP_PHYSCSR, &regvalue) < 0)
             {
                 status = ETH_CHIP_STATUS_READ_ERROR;
                 /* 无法读取这个设备地址继续下一个地址 */
@@ -166,19 +146,19 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
         if (status == ETH_CHIP_STATUS_OK)
         {
             /* 设置软件复位  */
-            if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET) >= 0)
+            if (ETH_PHY_IO_WriteReg(pobj->devaddr, ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET) >= 0)
             {
                 /* 获取软件重置状态 */
-                if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &regvalue) >= 0)
+                if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_BCR, &regvalue) >= 0)
                 {
-                    tickstart = pobj->io.gettick();
+                    tickstart = ETH_PHY_IO_GetTick();
 
                     /* 等待软件复位完成或超时  */
                     while (regvalue & ETH_CHIP_BCR_SOFT_RESET)
                     {
-                        if ((pobj->io.gettick() - tickstart) <= ETH_CHIP_SW_RESET_TO)
+                        if ((ETH_PHY_IO_GetTick() - tickstart) <= ETH_CHIP_SW_RESET_TO)
                         {
-                            if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &regvalue) < 0)
+                            if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_BCR, &regvalue) < 0)
                             {
                                 status = ETH_CHIP_STATUS_READ_ERROR;
                                 break;
@@ -206,10 +186,10 @@ int32_t eth_chip_init(eth_chip_object_t *pobj)
     /* 到了这里，初始化完成！！！ */
     if (status == ETH_CHIP_STATUS_OK)
     {
-        tickstart = pobj->io.gettick();
+        tickstart = ETH_PHY_IO_GetTick();
 
         /* 等待2s进行初始化 */
-        while ((pobj->io.gettick() - tickstart) <= ETH_CHIP_INIT_TO)
+        while ((ETH_PHY_IO_GetTick() - tickstart) <= ETH_CHIP_INIT_TO)
         {
         }
         pobj->is_initialized = 1;
@@ -228,12 +208,9 @@ int32_t eth_chip_deinit(eth_chip_object_t *pobj)
 {
     if (pobj->is_initialized)
     {
-        if (pobj->io.deinit != 0)
+        if (ETH_PHY_IO_DeInit() < 0)
         {
-            if (pobj->io.deinit() < 0)
-            {
-                return ETH_CHIP_STATUS_ERROR;
-            }
+            return ETH_CHIP_STATUS_ERROR;
         }
 
         pobj->is_initialized = 0;
@@ -254,12 +231,12 @@ int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj)
     uint32_t readval = 0;
     int32_t status = ETH_CHIP_STATUS_OK;
 
-    if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
+    if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
     {
         readval &= ~ETH_CHIP_BCR_POWER_DOWN;
 
         /* 清除下电模式 */
-        if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
+        if (ETH_PHY_IO_WriteReg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
         }
@@ -284,12 +261,12 @@ int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj)
     uint32_t readval = 0;
     int32_t status = ETH_CHIP_STATUS_OK;
 
-    if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
+    if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
     {
         readval |= ETH_CHIP_BCR_POWER_DOWN;
 
         /* 使能下电模式 */
-        if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
+        if (ETH_PHY_IO_WriteReg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
         }
@@ -314,12 +291,12 @@ int32_t eth_chip_start_auto_nego(eth_chip_object_t *pobj)
     uint32_t readval = 0;
     int32_t status = ETH_CHIP_STATUS_OK;
 
-    if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
+    if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
     {
         readval |= ETH_CHIP_BCR_AUTONEGO_EN;
 
         /* 启动自动协商 */
-        if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
+        if (ETH_PHY_IO_WriteReg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
         }
@@ -347,7 +324,7 @@ int32_t eth_chip_get_link_state(eth_chip_object_t *pobj)
     uint32_t readval = 0;
 
     /* 检测特殊功能寄存器链接值 */
-    if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_PHYSCSR, &readval) < 0)
+    if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_PHYSCSR, &readval) < 0)
     {
         return ETH_CHIP_STATUS_READ_ERROR;
     }
@@ -384,7 +361,7 @@ int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate)
     uint32_t bcrvalue = 0;
     int32_t status = ETH_CHIP_STATUS_OK;
 
-    if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &bcrvalue) >= 0)
+    if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_BCR, &bcrvalue) >= 0)
     {
         /* 禁用链路配置(自动协商，速度和双工) */
         bcrvalue &= ~(ETH_CHIP_BCR_AUTONEGO_EN | ETH_CHIP_BCR_SPEED_SELECT | ETH_CHIP_BCR_DUPLEX_MODE);
@@ -415,7 +392,7 @@ int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate)
     if (status == ETH_CHIP_STATUS_OK)
     {
         /* 写入链路状态 */
-        if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, bcrvalue) < 0)
+        if (ETH_PHY_IO_WriteReg(pobj->devaddr, ETH_CHIP_BCR, bcrvalue) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
         }
@@ -437,12 +414,12 @@ int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj)
     uint32_t readval = 0;
     int32_t status = ETH_CHIP_STATUS_OK;
 
-    if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
+    if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
     {
         readval |= ETH_CHIP_BCR_LOOPBACK;
 
         /* 启用环回模式 */
-        if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
+        if (ETH_PHY_IO_WriteReg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
         }
@@ -468,12 +445,12 @@ int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj)
     uint32_t readval = 0;
     int32_t status = ETH_CHIP_STATUS_OK;
 
-    if (pobj->io.readreg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
+    if (ETH_PHY_IO_ReadReg(pobj->devaddr, ETH_CHIP_BCR, &readval) >= 0)
     {
         readval &= ~ETH_CHIP_BCR_LOOPBACK;
 
         /* 禁用环回模式 */
-        if (pobj->io.writereg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
+        if (ETH_PHY_IO_WriteReg(pobj->devaddr, ETH_CHIP_BCR, readval) < 0)
         {
             status = ETH_CHIP_STATUS_WRITE_ERROR;
         }

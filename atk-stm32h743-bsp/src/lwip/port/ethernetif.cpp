@@ -87,12 +87,6 @@ int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 int32_t ETH_PHY_IO_GetTick(void);
 
-eth_chip_ioc_tx_t ETH_CHIP_IOCtx = {ETH_PHY_IO_Init,
-                                    ETH_PHY_IO_DeInit,
-                                    ETH_PHY_IO_WriteReg,
-                                    ETH_PHY_IO_ReadReg,
-                                    ETH_PHY_IO_GetTick};
-
 LWIP_MEMPOOL_DECLARE(RX_POOL, 10, sizeof(struct pbuf_custom), "Zero-copy RX PBUF pool");
 
 uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".ARM.__at_0x30040200"))); /* Ethernet Receive Buffers */
@@ -167,9 +161,6 @@ static void low_level_init(struct netif *netif)
                    netif,                       /* 任务入口函数参数 */
                    INTERFACE_THREAD_STACK_SIZE, /* 任务栈大小 */
                    NETIF_IN_TASK_PRIORITY);     /* 任务的优先级 */
-
-    /* 设置PHY IO功能 */
-    eth_chip_regster_bus_io(&ETHCHIP, &ETH_CHIP_IOCtx);
 
     /* 初始化ETH PHY */
     eth_chip_init(&ETHCHIP);
@@ -341,17 +332,16 @@ static struct pbuf *low_level_input(struct netif *netif)
  */
 void ethernetif_input(void *argument)
 {
-    struct pbuf *p = NULL;
-    struct netif *netif = (struct netif *)argument;
-
-    for (;;)
+    pbuf *p = nullptr;
+    netif *netif = reinterpret_cast<struct netif *>(argument);
+    while (true)
     {
         if (xSemaphoreTake(g_rx_semaphore, TIME_WAITING_FOR_INPUT) == pdTRUE)
         {
             do
             {
                 p = low_level_input(netif);
-                if (p != NULL)
+                if (p != nullptr)
                 {
                     if (netif->input(p, netif) != ERR_OK)
                     {
@@ -359,7 +349,7 @@ void ethernetif_input(void *argument)
                     }
                 }
 
-            } while (p != NULL);
+            } while (p != nullptr);
         }
     }
 }
