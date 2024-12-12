@@ -9,6 +9,33 @@
 #include <EthernetController.h>
 #include <hal.h>
 
+#define ETH_CLK_GPIO_PORT GPIOA
+#define ETH_CLK_GPIO_PIN GPIO_PIN_1
+
+#define ETH_MDIO_GPIO_PORT GPIOA
+#define ETH_MDIO_GPIO_PIN GPIO_PIN_2
+
+#define ETH_CRS_GPIO_PORT GPIOA
+#define ETH_CRS_GPIO_PIN GPIO_PIN_7
+
+#define ETH_MDC_GPIO_PORT GPIOC
+#define ETH_MDC_GPIO_PIN GPIO_PIN_1
+
+#define ETH_RXD0_GPIO_PORT GPIOC
+#define ETH_RXD0_GPIO_PIN GPIO_PIN_4
+
+#define ETH_RXD1_GPIO_PORT GPIOC
+#define ETH_RXD1_GPIO_PIN GPIO_PIN_5
+
+#define ETH_TX_EN_GPIO_PORT GPIOB
+#define ETH_TX_EN_GPIO_PIN GPIO_PIN_11
+
+#define ETH_TXD0_GPIO_PORT GPIOG
+#define ETH_TXD0_GPIO_PIN GPIO_PIN_13
+
+#define ETH_TXD1_GPIO_PORT GPIOG
+#define ETH_TXD1_GPIO_PIN GPIO_PIN_14
+
 bsp::EthernetController::EthernetController()
 {
     // MPU 设置
@@ -99,27 +126,6 @@ bsp::EthernetController::EthernetController()
     }
 }
 
-void bsp::EthernetController::ResetPHY()
-{
-    /* 判断开发板是否是旧版本(老板卡板载的是LAN8720A，而新板卡板载的是YT8512C) */
-    uint32_t regval = bsp::EthernetController::Instance().ReadPHYRegister(2);
-    if (regval && 0xFFF == 0xFFF) /* 旧板卡（LAN8720A）引脚复位 */
-    {
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 硬件复位 */
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 复位结束 */
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-    }
-    else
-    {
-        /* 新板卡（YT8512C）引脚复位 */
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-        DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
-        DI_Delayer().Delay(std::chrono::milliseconds{100});
-    }
-}
-
 bsp::EthernetController &bsp::EthernetController::Instance()
 {
     class Getter :
@@ -171,7 +177,6 @@ void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interf
     _handle.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + 4 * sizeof(ETH_DMADescTypeDef));
     _handle.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
 
-    ResetPHY();
     HAL_StatusTypeDef result = HAL_ETH_Init(&_handle);
     if (result != HAL_OK)
     {

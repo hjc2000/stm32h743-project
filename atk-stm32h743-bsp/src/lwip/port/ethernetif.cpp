@@ -123,9 +123,7 @@ static void low_level_init(struct netif *netif)
         },
     };
 
-    DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII,
-                                 0,
-                                 mac);
+    DI_EthernetPort().Open(mac);
 
     netif->hwaddr_len = ETHARP_HWADDR_LEN; /* 设置MAC地址长度,为6个字节 */
 

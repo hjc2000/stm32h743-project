@@ -8,10 +8,6 @@
 #include <EthernetController.h>
 #include <hal.h>
 
-bsp::EhternetPort::EhternetPort()
-{
-}
-
 bsp::EhternetPort &bsp::EhternetPort::Instance()
 {
     class Getter :
@@ -43,20 +39,28 @@ std::string bsp::EhternetPort::Name() const
     return std::string();
 }
 
+void bsp::EhternetPort::Open(base::Mac const &mac)
+{
+    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0); /* 硬件复位 */
+    DI_Delayer().Delay(std::chrono::milliseconds{100});
+    DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1); /* 复位结束 */
+    DI_Delayer().Delay(std::chrono::milliseconds{100});
+
+    DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII,
+                                 0,
+                                 mac);
+}
+
 uint32_t bsp::EhternetPort::ReadPHYRegister(uint32_t register_index)
 {
-    return 0;
+    return _controller->ReadPHYRegister(register_index);
 }
 
 void bsp::EhternetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
 {
+    _controller->WritePHYRegister(register_index, value);
 }
 
 void bsp::EhternetPort::ResetPHY()
 {
-    if (_controller == nullptr)
-    {
-        throw std::runtime_error{"本 EhternetPort 对象持有的以太网控制器是个空指针，"
-                                 "请先调用 Open 方法，传入一个以太网控制器"};
-    }
 }

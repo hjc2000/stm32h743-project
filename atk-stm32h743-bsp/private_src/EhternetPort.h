@@ -10,8 +10,6 @@ namespace bsp
         public bsp::IEthernetPort
     {
     private:
-        EhternetPort();
-
         bsp::IEthernetController *_controller = &DI_EthernetController();
 
     public:
@@ -20,6 +18,10 @@ namespace bsp
         /// @brief 以太网控制器的名称。
         /// @return
         std::string Name() const override;
+
+        /// @brief 打开以太网端口。
+        /// @param mac MAC 地址。
+        void Open(base::Mac const &mac) override;
 
         /// @brief 读 PHY 的寄存器
         /// @param register_index 寄存器索引。
