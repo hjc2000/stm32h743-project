@@ -8,6 +8,92 @@
 
 bsp::EthernetController::EthernetController()
 {
+    // MPU 设置
+    {
+        MPU_Region_InitTypeDef MPU_InitStruct{};
+        HAL_MPU_Disable();
+        MPU_InitStruct.Enable = MPU_REGION_ENABLE;
+        MPU_InitStruct.BaseAddress = 0x30040000;
+        MPU_InitStruct.Size = MPU_REGION_SIZE_256B;
+        MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
+        MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
+        MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
+        MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
+        MPU_InitStruct.Number = MPU_REGION_NUMBER5;
+        MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
+        MPU_InitStruct.SubRegionDisable = 0x00;
+        MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
+        HAL_MPU_ConfigRegion(&MPU_InitStruct);
+        HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
+    }
+
+    // GPIO 初始化
+    {
+        GPIO_InitTypeDef gpio_init_struct;
+
+        __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_CLK时钟 */
+        __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_MDIO时钟 */
+        __HAL_RCC_GPIOA_CLK_ENABLE(); /* 开启ETH_CRS时钟 */
+        __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_MDC时钟 */
+        __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_RXD0时钟 */
+        __HAL_RCC_GPIOC_CLK_ENABLE(); /* 开启ETH_RXD1时钟 */
+        __HAL_RCC_GPIOB_CLK_ENABLE(); /* 开启ETH_TX_EN时钟 */
+        __HAL_RCC_GPIOG_CLK_ENABLE(); /* 开启ETH_TXD0时钟 */
+        __HAL_RCC_GPIOG_CLK_ENABLE(); /* 开启ETH_TXD1时钟 */
+
+        /* Enable Ethernet clocks */
+        __HAL_RCC_ETH1MAC_CLK_ENABLE();
+        __HAL_RCC_ETH1TX_CLK_ENABLE();
+        __HAL_RCC_ETH1RX_CLK_ENABLE();
+
+        /* 网络引脚设置 RMII接口
+         * ETH_MDIO -------------------------> PA2
+         * ETH_MDC --------------------------> PC1
+         * ETH_RMII_REF_CLK------------------> PA1
+         * ETH_RMII_CRS_DV ------------------> PA7
+         * ETH_RMII_RXD0 --------------------> PC4
+         * ETH_RMII_RXD1 --------------------> PC5
+         * ETH_RMII_TX_EN -------------------> PB11
+         * ETH_RMII_TXD0 --------------------> PG13
+         * ETH_RMII_TXD1 --------------------> PG14
+         */
+
+        /* PA1,2,7 */
+        gpio_init_struct.Pin = ETH_CLK_GPIO_PIN;
+        gpio_init_struct.Mode = GPIO_MODE_AF_PP;             /* 推挽复用 */
+        gpio_init_struct.Pull = GPIO_NOPULL;                 /* 不带上下拉 */
+        gpio_init_struct.Speed = GPIO_SPEED_FREQ_HIGH;       /* 高速 */
+        gpio_init_struct.Alternate = GPIO_AF11_ETH;          /* 复用为ETH功能 */
+        HAL_GPIO_Init(ETH_CLK_GPIO_PORT, &gpio_init_struct); /* ETH_CLK引脚模式设置 */
+
+        gpio_init_struct.Pin = ETH_MDIO_GPIO_PIN;
+        HAL_GPIO_Init(ETH_MDIO_GPIO_PORT, &gpio_init_struct); /* ETH_MDIO引脚模式设置 */
+
+        gpio_init_struct.Pin = ETH_CRS_GPIO_PIN;
+        HAL_GPIO_Init(ETH_CRS_GPIO_PORT, &gpio_init_struct); /* ETH_CRS引脚模式设置 */
+
+        /* PC1 */
+        gpio_init_struct.Pin = ETH_MDC_GPIO_PIN;
+        HAL_GPIO_Init(ETH_MDC_GPIO_PORT, &gpio_init_struct); /* ETH_MDC初始化 */
+
+        /* PC4 */
+        gpio_init_struct.Pin = ETH_RXD0_GPIO_PIN;
+        HAL_GPIO_Init(ETH_RXD0_GPIO_PORT, &gpio_init_struct); /* ETH_RXD0初始化 */
+
+        /* PC5 */
+        gpio_init_struct.Pin = ETH_RXD1_GPIO_PIN;
+        HAL_GPIO_Init(ETH_RXD1_GPIO_PORT, &gpio_init_struct); /* ETH_RXD1初始化 */
+
+        /* PB11,PG13,PG14 */
+        gpio_init_struct.Pin = ETH_TX_EN_GPIO_PIN;
+        HAL_GPIO_Init(ETH_TX_EN_GPIO_PORT, &gpio_init_struct); /* ETH_TX_EN初始化 */
+
+        gpio_init_struct.Pin = ETH_TXD0_GPIO_PIN;
+        HAL_GPIO_Init(ETH_TXD0_GPIO_PORT, &gpio_init_struct); /* ETH_TXD0初始化 */
+
+        gpio_init_struct.Pin = ETH_TXD1_GPIO_PIN;
+        HAL_GPIO_Init(ETH_TXD1_GPIO_PORT, &gpio_init_struct); /* ETH_TXD1初始化 */
+    }
 }
 
 bsp::EthernetController &bsp::EthernetController::Instance()
@@ -38,29 +124,6 @@ bsp::EthernetController &bsp::EthernetController::Instance()
 
 void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interface_type, base::Mac const &mac)
 {
-    // MPU 设置
-    {
-        MPU_Region_InitTypeDef MPU_InitStruct{};
-        HAL_MPU_Disable();
-        MPU_InitStruct.Enable = MPU_REGION_ENABLE;
-        MPU_InitStruct.BaseAddress = 0x30040000;
-        MPU_InitStruct.Size = MPU_REGION_SIZE_256B;
-        MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-        MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
-        MPU_InitStruct.IsCacheable = MPU_ACCESS_NOT_CACHEABLE;
-        MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
-        MPU_InitStruct.Number = MPU_REGION_NUMBER5;
-        MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL0;
-        MPU_InitStruct.SubRegionDisable = 0x00;
-        MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_ENABLE;
-        HAL_MPU_ConfigRegion(&MPU_InitStruct);
-        HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
-    }
-
-    // GPIO 初始化
-    {
-    }
-
     // uint8_t big_endian_mac_buffer[6];
     // base::Span big_endian_mac_buffer_span{big_endian_mac_buffer, sizeof(big_endian_mac_buffer)};
     // big_endian_mac_buffer_span.CopyFrom(mac.AsReadOnlySpan());
