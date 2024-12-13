@@ -161,3 +161,31 @@ void bsp::EhternetPort::EnableAutoNegotiation()
 	bcr |= ETH_CHIP_BCR_AUTONEGO_EN;
 	WritePHYRegister(static_cast<uint32_t>(PhyRegister::BCR), bcr);
 }
+
+void bsp::EhternetPort::EnablePowerDownMode()
+{
+	uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
+	register_value |= ETH_CHIP_BCR_POWER_DOWN;
+	WritePHYRegister(ETH_CHIP_BCR, register_value);
+}
+
+void bsp::EhternetPort::DisablePowerDownMode()
+{
+	uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
+	register_value &= ~ETH_CHIP_BCR_POWER_DOWN;
+	WritePHYRegister(ETH_CHIP_BCR, register_value);
+}
+
+void bsp::EhternetPort::EnableLoopbackMode()
+{
+	uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
+	register_value |= ETH_CHIP_BCR_LOOPBACK;
+	WritePHYRegister(ETH_CHIP_BCR, register_value);
+}
+
+void bsp::EhternetPort::DisableLoopbackMode()
+{
+	uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
+	register_value &= ~ETH_CHIP_BCR_LOOPBACK;
+	WritePHYRegister(ETH_CHIP_BCR, register_value);
+}

@@ -15,66 +15,6 @@ int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 
 /**
-  * @brief       关闭ETH_CHIP的下电模式
-  * @param       pobj: 设备对象
-  * @retval      ETH_CHIP_STATUS_OK：关闭成功
-				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
-				 ETH_CHIP_STATUS_WRITE_ERROR：不能写寄存器
-  */
-int32_t eth_chip_disable_power_down_mode()
-{
-	uint32_t readval = 0;
-	int32_t status = ETH_CHIP_STATUS_OK;
-
-	if (ETH_PHY_IO_ReadReg(0, ETH_CHIP_BCR, &readval) >= 0)
-	{
-		readval &= ~ETH_CHIP_BCR_POWER_DOWN;
-
-		/* 清除下电模式 */
-		if (ETH_PHY_IO_WriteReg(0, ETH_CHIP_BCR, readval) < 0)
-		{
-			status = ETH_CHIP_STATUS_WRITE_ERROR;
-		}
-	}
-	else
-	{
-		status = ETH_CHIP_STATUS_READ_ERROR;
-	}
-
-	return status;
-}
-
-/**
-  * @brief       使能ETH_CHIP的下电模式
-  * @param       pobj: 设备对象
-  * @retval      ETH_CHIP_STATUS_OK：关闭成功
-				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
-				 ETH_CHIP_STATUS_WRITE_ERROR：不能写寄存器
-  */
-int32_t eth_chip_enable_power_down_mode()
-{
-	uint32_t readval = 0;
-	int32_t status = ETH_CHIP_STATUS_OK;
-
-	if (ETH_PHY_IO_ReadReg(0, ETH_CHIP_BCR, &readval) >= 0)
-	{
-		readval |= ETH_CHIP_BCR_POWER_DOWN;
-
-		/* 使能下电模式 */
-		if (ETH_PHY_IO_WriteReg(0, ETH_CHIP_BCR, readval) < 0)
-		{
-			status = ETH_CHIP_STATUS_WRITE_ERROR;
-		}
-	}
-	else
-	{
-		status = ETH_CHIP_STATUS_READ_ERROR;
-	}
-
-	return status;
-}
-
-/**
   * @brief       获取ETH_CHIP设备的链路状态
   * @param       pobj: 设备对象
   * @param       pLinkState: 指向链路状态的指针
@@ -161,68 +101,6 @@ int32_t eth_chip_set_link_state(uint32_t linkstate)
 		{
 			status = ETH_CHIP_STATUS_WRITE_ERROR;
 		}
-	}
-
-	return status;
-}
-
-/**
-  * @brief       启用环回模式
-  * @param       pobj: 设备对象
-  * @param       pLinkState: 指向链路状态的指针
-  * @retval      ETH_CHIP_STATUS_OK：设置成功
-				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
-				 ETH_CHIP_STATUS_WRITE_ERROR ：不能写入寄存器
-  */
-int32_t eth_chip_enable_loop_back_mode()
-{
-	uint32_t readval = 0;
-	int32_t status = ETH_CHIP_STATUS_OK;
-
-	if (ETH_PHY_IO_ReadReg(0, ETH_CHIP_BCR, &readval) >= 0)
-	{
-		readval |= ETH_CHIP_BCR_LOOPBACK;
-
-		/* 启用环回模式 */
-		if (ETH_PHY_IO_WriteReg(0, ETH_CHIP_BCR, readval) < 0)
-		{
-			status = ETH_CHIP_STATUS_WRITE_ERROR;
-		}
-	}
-	else
-	{
-		status = ETH_CHIP_STATUS_READ_ERROR;
-	}
-
-	return status;
-}
-
-/**
-  * @brief       禁用环回模式
-  * @param       pobj: 设备对象
-  * @param       pLinkState: 指向链路状态的指针
-  * @retval      ETH_CHIP_STATUS_OK：设置成功
-				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
-				 ETH_CHIP_STATUS_WRITE_ERROR ：不能写入寄存器
-  */
-int32_t eth_chip_disable_loop_back_mode()
-{
-	uint32_t readval = 0;
-	int32_t status = ETH_CHIP_STATUS_OK;
-
-	if (ETH_PHY_IO_ReadReg(0, ETH_CHIP_BCR, &readval) >= 0)
-	{
-		readval &= ~ETH_CHIP_BCR_LOOPBACK;
-
-		/* 禁用环回模式 */
-		if (ETH_PHY_IO_WriteReg(0, ETH_CHIP_BCR, readval) < 0)
-		{
-			status = ETH_CHIP_STATUS_WRITE_ERROR;
-		}
-	}
-	else
-	{
-		status = ETH_CHIP_STATUS_READ_ERROR;
 	}
 
 	return status;
