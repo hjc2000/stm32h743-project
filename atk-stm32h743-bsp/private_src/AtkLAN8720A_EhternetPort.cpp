@@ -70,23 +70,7 @@ void bsp::AtkLAN8720A_EhternetPort::Open(base::Mac const &mac)
 	DI_Console().WriteLine("register2:" + base::ToHexString(ReadPHYRegister(2)));
 	DI_Console().WriteLine("register3:" + base::ToHexString(ReadPHYRegister(3)));
 
-	// 软件复位
-	WritePHYRegister(0, 0x8000U);
-	base::Seconds now = DI_SystemTime();
-	while (true)
-	{
-		if (static_cast<int64_t>(DI_SystemTime() - now) > 2)
-		{
-			throw std::runtime_error{"软件复位 PHY 超时"};
-		}
-
-		uint32_t register_value = ReadPHYRegister(0);
-		if (!(register_value & 0x8000U))
-		{
-			break;
-		}
-	}
-
+	SoftwareResetPHY();
 	EnableAutoNegotiation();
 
 	// 启动以太网
