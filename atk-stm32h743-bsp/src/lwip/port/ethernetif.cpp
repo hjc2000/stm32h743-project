@@ -81,7 +81,6 @@ void pbuf_free_custom(struct pbuf *p);
 
 int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal);
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
-int32_t ETH_PHY_IO_GetTick(void);
 
 LWIP_MEMPOOL_DECLARE(RX_POOL, 10, sizeof(struct pbuf_custom), "Zero-copy RX PBUF pool");
 
@@ -443,16 +442,6 @@ int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal)
 	}
 
 	return 0;
-}
-
-/**
- * @brief  Get the time in millisecons used for internal PHY driver process.
- * @retval Time value
- */
-int32_t ETH_PHY_IO_GetTick(void)
-{
-	base::Seconds time = DI_SystemTime();
-	return static_cast<int64_t>(time * 1000);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
