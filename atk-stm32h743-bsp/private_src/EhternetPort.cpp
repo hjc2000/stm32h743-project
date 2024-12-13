@@ -1,6 +1,7 @@
 #include "EhternetPort.h"
 #include <base/container/Dictionary.h>
 #include <base/di/SingletonGetter.h>
+#include <base/string/ToHexString.h>
 #include <base/unit/Mbps.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
@@ -28,6 +29,8 @@ void bsp::EhternetPort::ChipInitialize()
 	// ETH_CHIP_SPEED_STATUS = ((uint16_t)0x4010);
 	// ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x2000);
 	// PHY_TYPE = YT8512C;
+	DI_Console().WriteLine("register2:" + base::ToHexString(ReadPHYRegister(2)));
+	DI_Console().WriteLine("register3:" + base::ToHexString(ReadPHYRegister(3)));
 
 	// 软件复位
 	WritePHYRegister(0, 0x8000U);
@@ -131,28 +134,28 @@ void bsp::EhternetPort::EnableAutoNegotiation()
 
 void bsp::EhternetPort::EnablePowerDownMode()
 {
-	uint32_t register_value = ReadPHYRegister(0);
+	uint32_t register_value = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
 	register_value |= 0x0800U;
 	WritePHYRegister(0, register_value);
 }
 
 void bsp::EhternetPort::DisablePowerDownMode()
 {
-	uint32_t register_value = ReadPHYRegister(0);
+	uint32_t register_value = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
 	register_value &= ~0x0800U;
 	WritePHYRegister(0, register_value);
 }
 
 void bsp::EhternetPort::EnableLoopbackMode()
 {
-	uint32_t register_value = ReadPHYRegister(0);
+	uint32_t register_value = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
 	register_value |= 0x4000U;
 	WritePHYRegister(0, register_value);
 }
 
 void bsp::EhternetPort::DisableLoopbackMode()
 {
-	uint32_t register_value = ReadPHYRegister(0);
+	uint32_t register_value = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
 	register_value &= ~0x4000U;
 	WritePHYRegister(0, register_value);
 }
