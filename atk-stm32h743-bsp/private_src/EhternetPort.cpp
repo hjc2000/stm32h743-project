@@ -38,7 +38,7 @@ void bsp::EhternetPort::ChipInitialize()
 	base::Seconds now = DI_SystemTime();
 	while (true)
 	{
-		if (static_cast<int64_t>(DI_SystemTime() - now) > ETH_CHIP_SW_RESET_TO)
+		if (static_cast<int64_t>(DI_SystemTime() - now) > 2)
 		{
 			throw std::runtime_error{"软件复位 PHY 超时"};
 		}

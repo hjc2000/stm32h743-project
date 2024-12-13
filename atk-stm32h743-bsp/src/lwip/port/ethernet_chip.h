@@ -38,49 +38,6 @@ extern "C"
 #define ETH_CHIP_BSR_JABBER_DETECT ((uint16_t)0x0002U)
 #define ETH_CHIP_BSR_EXTENDED_CAP ((uint16_t)0x0001U)
 
-/* PHY芯片进程状态 */
-#define ETH_CHIP_STATUS_READ_ERROR ((int32_t) - 5)
-#define ETH_CHIP_STATUS_WRITE_ERROR ((int32_t) - 4)
-#define ETH_CHIP_STATUS_ADDRESS_ERROR ((int32_t) - 3)
-#define ETH_CHIP_STATUS_RESET_TIMEOUT ((int32_t) - 2)
-#define ETH_CHIP_STATUS_ERROR ((int32_t) - 1)
-#define ETH_CHIP_STATUS_OK ((int32_t)0)
-#define ETH_CHIP_STATUS_LINK_DOWN ((int32_t)1)
-#define ETH_CHIP_STATUS_100MBITS_FULLDUPLEX ((int32_t)2)
-#define ETH_CHIP_STATUS_100MBITS_HALFDUPLEX ((int32_t)3)
-#define ETH_CHIP_STATUS_10MBITS_FULLDUPLEX ((int32_t)4)
-#define ETH_CHIP_STATUS_10MBITS_HALFDUPLEX ((int32_t)5)
-#define ETH_CHIP_STATUS_AUTONEGO_NOTDONE ((int32_t)6)
-
-/* PHY地址 ---- 由用户设置 */
-#define ETH_CHIP_ADDR ((uint16_t)0x0000U)
-/* PHY寄存器的数量 */
-#define ETH_CHIP_PHY_COUNT ((uint16_t)0x001FU)
-
-#define YT8512C_AND_RTL8201BL_PHYREGISTER2 0x0000
-#define SR8201F_PHYREGISTER2 0x001C
-#define LAN8720A_PHYREGISTER2 0x0007
-
-#define ETH_CHIP_SW_RESET_TO ((uint32_t)500U) /* 软件复位等待时间 */
-#define ETH_CHIP_INIT_TO ((uint32_t)2000U)    /* 初始化等待时间 */
-#define ETH_CHIP_MAX_DEV_ADDR ((uint32_t)31U) /* PHY地址的最大值 */
-
-	/* PHY自动识别状态 */
-	enum PHY_AUTO
-	{
-		PHY_AUTO_SELECT_NABLE = 0,
-		PHY_AUTO_SELECT_DISABLE
-	};
-
-/* 使能/禁用PHY自动选择功能 */
-#define PHY_AUTO_SELECT PHY_AUTO_SELECT_NABLE
-#define LAN8720 0
-#define SR8201F 1
-#define YT8512C 2
-#define RTL8201 3
-
-	int32_t eth_chip_set_link_state(uint32_t linkstate); /* 设置ETH_CHIP设备的链路状态 */
-
 #ifdef __cplusplus
 }
 #endif
