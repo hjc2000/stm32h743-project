@@ -67,9 +67,6 @@ void bsp::EhternetPort::ChipInitialize()
 		}
 	}
 
-	/* MDC时钟 */
-	HAL_ETH_SetMDIOClockRange(&bsp::EthernetController::Instance().Handle());
-
 	// 软件复位
 	WritePHYRegister(ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET);
 	base::Seconds now = DI_SystemTime();
