@@ -124,27 +124,3 @@ void bsp::AtkLAN8720A_EhternetPort::ResetPHY()
 	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
 	DI_Delayer().Delay(std::chrono::milliseconds{100});
 }
-
-bsp::Ethernet_DuplexMode bsp::AtkLAN8720A_EhternetPort::DuplexMode()
-{
-	uint32_t register_value = ReadPHYRegister(0x1F);
-	uint32_t const mask = 0b10000;
-	if (register_value & mask)
-	{
-		return bsp::Ethernet_DuplexMode::FullDuplex;
-	}
-
-	return bsp::Ethernet_DuplexMode::HalfDuplex;
-}
-
-base::Bps bsp::AtkLAN8720A_EhternetPort::Speed()
-{
-	uint32_t register_value = ReadPHYRegister(0x1F);
-	uint32_t const mask = 0b01000;
-	if (register_value & mask)
-	{
-		return base::Mbps{100};
-	}
-
-	return base::Mbps{10};
-}

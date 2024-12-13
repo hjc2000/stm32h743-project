@@ -37,13 +37,5 @@ namespace bsp
 
 		/// @brief 复位 PHY 芯片。
 		void ResetPHY() override;
-
-		/// @brief 获取此网口的双工模式。
-		/// @return
-		bsp::Ethernet_DuplexMode DuplexMode() override;
-
-		/// @brief 获取此网口的速度。
-		/// @return
-		base::Bps Speed() override;
 	};
 } // namespace bsp
