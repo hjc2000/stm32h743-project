@@ -184,7 +184,7 @@ static void low_level_init(struct netif *netif)
 	}
 	catch (...)
 	{
-		DI_Console().WriteLine("6666666666666666666666666666666666666666666");
+		DI_Console().WriteLine("获取连接双工和速度时发生异常。");
 		netif_set_link_down(netif);
 		netif_set_down(netif);
 	}
