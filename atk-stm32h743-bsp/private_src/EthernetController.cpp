@@ -203,6 +203,7 @@ void bsp::EthernetController::Open(bsp::Ethernet_InterfaceType interface_type,
 
 	using buffer_type = uint8_t(*)[ETH_MAX_PACKET_SIZE];
 	buffer_type buffer = reinterpret_cast<buffer_type>(0x30040200);
+
 	for (int idx = 0; idx < static_cast<int>(ETH_RX_DESC_CNT); idx++)
 	{
 		HAL_ETH_DescAssignMemory(&_handle,

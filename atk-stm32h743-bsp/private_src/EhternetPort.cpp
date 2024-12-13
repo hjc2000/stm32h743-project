@@ -125,41 +125,6 @@ void bsp::EhternetPort::ResetPHY()
 	DI_Delayer().Delay(std::chrono::milliseconds{100});
 }
 
-void bsp::EhternetPort::EnableAutoNegotiation()
-{
-	uint32_t bcr = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
-	bcr |= 0x1000U;
-	WritePHYRegister(static_cast<uint32_t>(PhyRegister::BCR), bcr);
-}
-
-void bsp::EhternetPort::EnablePowerDownMode()
-{
-	uint32_t register_value = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
-	register_value |= 0x0800U;
-	WritePHYRegister(0, register_value);
-}
-
-void bsp::EhternetPort::DisablePowerDownMode()
-{
-	uint32_t register_value = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
-	register_value &= ~0x0800U;
-	WritePHYRegister(0, register_value);
-}
-
-void bsp::EhternetPort::EnableLoopbackMode()
-{
-	uint32_t register_value = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
-	register_value |= 0x4000U;
-	WritePHYRegister(0, register_value);
-}
-
-void bsp::EhternetPort::DisableLoopbackMode()
-{
-	uint32_t register_value = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
-	register_value &= ~0x4000U;
-	WritePHYRegister(0, register_value);
-}
-
 bsp::Ethernet_DuplexMode bsp::EhternetPort::DuplexMode()
 {
 	uint32_t register_value = ReadPHYRegister(0x1F);

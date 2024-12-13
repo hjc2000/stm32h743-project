@@ -1,21 +1,13 @@
 #pragma once
 #include <base/define.h>
 #include <bsp-interface/di/ethernet.h>
-#include <bsp-interface/ethernet/IEthernetPort.h>
+#include <bsp-interface/ethernet/phy/LAN8720A_EthernetPort.h>
 
 namespace bsp
 {
-	enum class PhyRegister : uint32_t
-	{
-		BCR = 0,
-		BSR = 1,
-		REGISTER2 = 2,
-		REGISTER3 = 3,
-	};
-
 	/// @brief 以太网端口。
 	class EhternetPort :
-		public bsp::IEthernetPort
+		public bsp::LAN8720A_EthernetPort
 	{
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
@@ -45,15 +37,6 @@ namespace bsp
 
 		/// @brief 复位 PHY 芯片。
 		void ResetPHY() override;
-
-		/// @brief 自动协商。
-		void EnableAutoNegotiation() override;
-
-		void EnablePowerDownMode() override;
-		void DisablePowerDownMode() override;
-
-		void EnableLoopbackMode() override;
-		void DisableLoopbackMode() override;
 
 		/// @brief 获取此网口的双工模式。
 		/// @return
