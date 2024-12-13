@@ -79,7 +79,6 @@ void ethernetif_input(void *argument);
 // u32_t  sys_now(void);
 void pbuf_free_custom(struct pbuf *p);
 
-int32_t ETH_PHY_IO_Init(void);
 int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal);
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 int32_t ETH_PHY_IO_GetTick(void);
@@ -410,25 +409,6 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
 	{
 		portEND_SWITCHING_ISR(taskWoken);
 	}
-}
-
-/*******************************************************************************
-					   PHI IO Functions
-*******************************************************************************/
-/**
- * @brief  Initializes the MDIO interface GPIO and clocks.
- * @param  None
- * @retval 0 if OK, -1 if ERROR
- */
-int32_t ETH_PHY_IO_Init(void)
-{
-	/* We assume that MDIO GPIO configuration is already done
-	 in the ETH_MspInit() else it should be done here
-	*/
-
-	/* Configure the MDIO Clock */
-	HAL_ETH_SetMDIOClockRange(&bsp::EthernetController::Instance().Handle());
-	return 0;
 }
 
 /**

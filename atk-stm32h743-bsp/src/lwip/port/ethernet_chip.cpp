@@ -11,7 +11,6 @@ uint16_t ETH_CHIP_SPEED_STATUS;
 uint16_t ETH_CHIP_DUPLEX_STATUS;
 #endif
 
-int32_t ETH_PHY_IO_Init(void);
 int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal);
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 int32_t ETH_PHY_IO_GetTick(void);

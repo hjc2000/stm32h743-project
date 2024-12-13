@@ -10,7 +10,6 @@
 #include <EthernetController.h>
 #include <hal.h>
 
-int32_t ETH_PHY_IO_Init(void);
 int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal);
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 int32_t ETH_PHY_IO_GetTick(void);
@@ -70,7 +69,7 @@ void bsp::EhternetPort::ChipInitialize()
 	}
 
 	/* MDC时钟 */
-	ETH_PHY_IO_Init();
+	HAL_ETH_SetMDIOClockRange(&bsp::EthernetController::Instance().Handle());
 
 	// 软件复位
 	WritePHYRegister(ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET);
