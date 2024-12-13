@@ -119,6 +119,14 @@ static void low_level_init(struct netif *netif)
 	};
 
 	DI_EthernetPort().Open(mac);
+	for (idx = 0; idx < ETH_RX_DESC_CNT; idx++)
+	{
+		HAL_ETH_DescAssignMemory(&bsp::EthernetController::Instance().Handle(),
+								 idx,
+								 Rx_Buff[idx],
+								 NULL);
+	}
+
 	netif->hwaddr_len = ETHARP_HWADDR_LEN; /* 设置MAC地址长度,为6个字节 */
 
 	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
@@ -132,14 +140,6 @@ static void low_level_init(struct netif *netif)
 	/* 使能、 ARP 使能等等重要控制位 */
 	netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
 
-	for (idx = 0; idx < ETH_RX_DESC_CNT; idx++)
-	{
-		HAL_ETH_DescAssignMemory(&bsp::EthernetController::Instance().Handle(),
-								 idx,
-								 Rx_Buff[idx],
-								 NULL);
-	}
-
 	/* Initialize the RX POOL */
 	LWIP_MEMPOOL_INIT(RX_POOL);
 
@@ -151,14 +151,6 @@ static void low_level_init(struct netif *netif)
 
 	/* create a binary semaphore used for informing ethernetif of frame reception */
 	g_rx_semaphore = xSemaphoreCreateBinary();
-
-	/* create the task that handles the ETH_MAC */
-	DI_TaskManager().Create(
-		[netif]()
-		{
-			ethernetif_input(netif);
-		},
-		512);
 
 	/* 必须等待初始化 */
 	DI_Delayer().Delay(std::chrono::milliseconds{2000});
@@ -203,6 +195,14 @@ static void low_level_init(struct netif *netif)
 	{
 		printf("MCU与PHY芯片通信失败，请检查电路或者源码！！！！\r\n");
 	}
+
+	/* create the task that handles the ETH_MAC */
+	DI_TaskManager().Create(
+		[netif]()
+		{
+			ethernetif_input(netif);
+		},
+		512);
 }
 
 /**
