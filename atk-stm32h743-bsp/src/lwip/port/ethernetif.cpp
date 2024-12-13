@@ -80,7 +80,6 @@ void ethernetif_input(void *argument);
 void pbuf_free_custom(struct pbuf *p);
 
 int32_t ETH_PHY_IO_Init(void);
-int32_t ETH_PHY_IO_DeInit(void);
 int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal);
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 int32_t ETH_PHY_IO_GetTick(void);
@@ -429,16 +428,6 @@ int32_t ETH_PHY_IO_Init(void)
 
 	/* Configure the MDIO Clock */
 	HAL_ETH_SetMDIOClockRange(&bsp::EthernetController::Instance().Handle());
-	return 0;
-}
-
-/**
- * @brief  De-Initializes the MDIO interface .
- * @param  None
- * @retval 0 if OK, -1 if ERROR
- */
-int32_t ETH_PHY_IO_DeInit(void)
-{
 	return 0;
 }
 

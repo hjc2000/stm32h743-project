@@ -12,26 +12,9 @@ uint16_t ETH_CHIP_DUPLEX_STATUS;
 #endif
 
 int32_t ETH_PHY_IO_Init(void);
-int32_t ETH_PHY_IO_DeInit(void);
 int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal);
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 int32_t ETH_PHY_IO_GetTick(void);
-
-/**
-  * @brief       反初始化ETH_CHIP及其硬件资源
-  * @param       pobj: 设备对象
-  * @retval      ETH_CHIP_STATUS_OK：反初始化失败成功
-				 ETH_CHIP_STATUS_ERROR：反初始化失败
-  */
-int32_t eth_chip_deinit()
-{
-	if (ETH_PHY_IO_DeInit() < 0)
-	{
-		return ETH_CHIP_STATUS_ERROR;
-	}
-
-	return ETH_CHIP_STATUS_OK;
-}
 
 /**
   * @brief       关闭ETH_CHIP的下电模式
