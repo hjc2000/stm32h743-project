@@ -19,7 +19,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ethernetif.h"
-#include "ethernet_chip.h"
 #include "FreeRTOS.h"
 #include "lwip/opt.h"
 #include "lwip/pbuf.h"

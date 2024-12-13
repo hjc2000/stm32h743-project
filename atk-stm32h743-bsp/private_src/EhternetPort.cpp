@@ -7,7 +7,6 @@
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/system_time.h>
-#include <ethernet_chip.h>
 #include <EthernetController.h>
 #include <hal.h>
 
@@ -34,7 +33,7 @@ void bsp::EhternetPort::ChipInitialize()
 	// PHY_TYPE = YT8512C;
 
 	// 软件复位
-	WritePHYRegister(ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET);
+	WritePHYRegister(0, 0x8000U);
 	base::Seconds now = DI_SystemTime();
 	while (true)
 	{
@@ -43,8 +42,8 @@ void bsp::EhternetPort::ChipInitialize()
 			throw std::runtime_error{"软件复位 PHY 超时"};
 		}
 
-		uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
-		if (!(register_value & ETH_CHIP_BCR_SOFT_RESET))
+		uint32_t register_value = ReadPHYRegister(0);
+		if (!(register_value & 0x8000U))
 		{
 			break;
 		}
@@ -129,36 +128,36 @@ void bsp::EhternetPort::ResetPHY()
 void bsp::EhternetPort::EnableAutoNegotiation()
 {
 	uint32_t bcr = ReadPHYRegister(static_cast<uint32_t>(PhyRegister::BCR));
-	bcr |= ETH_CHIP_BCR_AUTONEGO_EN;
+	bcr |= 0x1000U;
 	WritePHYRegister(static_cast<uint32_t>(PhyRegister::BCR), bcr);
 }
 
 void bsp::EhternetPort::EnablePowerDownMode()
 {
-	uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
-	register_value |= ETH_CHIP_BCR_POWER_DOWN;
-	WritePHYRegister(ETH_CHIP_BCR, register_value);
+	uint32_t register_value = ReadPHYRegister(0);
+	register_value |= 0x0800U;
+	WritePHYRegister(0, register_value);
 }
 
 void bsp::EhternetPort::DisablePowerDownMode()
 {
-	uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
-	register_value &= ~ETH_CHIP_BCR_POWER_DOWN;
-	WritePHYRegister(ETH_CHIP_BCR, register_value);
+	uint32_t register_value = ReadPHYRegister(0);
+	register_value &= ~0x0800U;
+	WritePHYRegister(0, register_value);
 }
 
 void bsp::EhternetPort::EnableLoopbackMode()
 {
-	uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
-	register_value |= ETH_CHIP_BCR_LOOPBACK;
-	WritePHYRegister(ETH_CHIP_BCR, register_value);
+	uint32_t register_value = ReadPHYRegister(0);
+	register_value |= 0x4000U;
+	WritePHYRegister(0, register_value);
 }
 
 void bsp::EhternetPort::DisableLoopbackMode()
 {
-	uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
-	register_value &= ~ETH_CHIP_BCR_LOOPBACK;
-	WritePHYRegister(ETH_CHIP_BCR, register_value);
+	uint32_t register_value = ReadPHYRegister(0);
+	register_value &= ~0x4000U;
+	WritePHYRegister(0, register_value);
 }
 
 bsp::Ethernet_DuplexMode bsp::EhternetPort::DuplexMode()
