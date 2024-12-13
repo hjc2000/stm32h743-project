@@ -32,47 +32,6 @@ void bsp::EhternetPort::ChipInitialize()
 	// ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x2000);
 	// PHY_TYPE = YT8512C;
 
-	uint32_t regvalue = DI_EthernetController().ReadPHYRegister(PHY_REGISTER2);
-	switch (regvalue)
-	{
-	case YT8512C_AND_RTL8201BL_PHYREGISTER2:
-		{
-			regvalue = DI_EthernetController().ReadPHYRegister(PHY_REGISTER3);
-			if (regvalue == 0x128)
-			{
-				DI_Console().WriteLine("Chip: YT8512C");
-				ETH_CHIP_SPEED_STATUS = ((uint16_t)0x4010);
-				ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x2000);
-				PHY_TYPE = YT8512C;
-			}
-			else
-			{
-				DI_Console().WriteLine("Chip: RTL8201");
-				ETH_CHIP_SPEED_STATUS = ((uint16_t)0x0022);
-				ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x0004);
-				PHY_TYPE = RTL8201;
-			}
-
-			break;
-		}
-	case SR8201F_PHYREGISTER2:
-		{
-			DI_Console().WriteLine("Chip: SR8201F");
-			ETH_CHIP_SPEED_STATUS = ((uint16_t)0x2020);
-			ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x0100);
-			PHY_TYPE = SR8201F;
-			break;
-		}
-	case LAN8720A_PHYREGISTER2:
-		{
-			DI_Console().WriteLine("Chip: LAN8720");
-			ETH_CHIP_SPEED_STATUS = ((uint16_t)0x0004);
-			ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x0010);
-			PHY_TYPE = LAN8720;
-			break;
-		}
-	}
-
 	// 软件复位
 	WritePHYRegister(ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET);
 	base::Seconds now = DI_SystemTime();

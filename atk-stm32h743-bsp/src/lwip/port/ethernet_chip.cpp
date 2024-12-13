@@ -2,14 +2,6 @@
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/ethernet.h>
 
-#if PHY_AUTO_SELECT
-
-#else
-int PHY_TYPE;
-uint16_t ETH_CHIP_SPEED_STATUS;
-uint16_t ETH_CHIP_DUPLEX_STATUS;
-#endif
-
 int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal);
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 
@@ -33,11 +25,11 @@ int32_t eth_chip_get_link_state()
 		return ETH_CHIP_STATUS_READ_ERROR;
 	}
 
-	if (((readval & ETH_CHIP_SPEED_STATUS) != ETH_CHIP_SPEED_STATUS) && ((readval & ETH_CHIP_DUPLEX_STATUS) != 0))
+	if (((readval & 0x0004) != 0x0004) && ((readval & 0x0010) != 0))
 	{
 		return ETH_CHIP_STATUS_100MBITS_FULLDUPLEX;
 	}
-	else if (((readval & ETH_CHIP_SPEED_STATUS) != ETH_CHIP_SPEED_STATUS))
+	else if (((readval & 0x0004) != 0x0004))
 	{
 		return ETH_CHIP_STATUS_100MBITS_HALFDUPLEX;
 	}
@@ -114,34 +106,10 @@ int32_t eth_chip_set_link_state(uint32_t linkstate)
 uint8_t ethernet_chip_get_speed(void)
 {
 	uint8_t speed = 0;
-	if (PHY_TYPE == LAN8720)
-	{
-		DI_Console().WriteLine("LAN8720");
+	DI_Console().WriteLine("LAN8720");
 
-		/* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
-		speed = ~((DI_EthernetController().ReadPHYRegister(0x1F) & ETH_CHIP_SPEED_STATUS));
-	}
-	else if (PHY_TYPE == SR8201F)
-	{
-		DI_Console().WriteLine("SR8201F");
-
-		/* 从SR8201F的0号寄存器中读取网络速度和双工模式 */
-		speed = ((DI_EthernetController().ReadPHYRegister(0x1F) & ETH_CHIP_SPEED_STATUS) >> 13);
-	}
-	else if (PHY_TYPE == YT8512C)
-	{
-		DI_Console().WriteLine("YT8512C");
-
-		/* 从YT8512C的17号寄存器中读取网络速度和双工模式 */
-		speed = ((DI_EthernetController().ReadPHYRegister(0x1F) & ETH_CHIP_SPEED_STATUS) >> 14);
-	}
-	else if (PHY_TYPE == RTL8201)
-	{
-		DI_Console().WriteLine("RTL8201");
-
-		/* 从RTL8201的16号寄存器中读取网络速度和双工模式 */
-		speed = ((DI_EthernetController().ReadPHYRegister(0x1F) & ETH_CHIP_SPEED_STATUS) >> 1);
-	}
+	/* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
+	speed = ~((DI_EthernetController().ReadPHYRegister(0x1F) & 0x0004));
 
 	return speed;
 }

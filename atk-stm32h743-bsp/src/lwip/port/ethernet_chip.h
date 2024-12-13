@@ -79,32 +79,6 @@ extern "C"
 #define YT8512C 2
 #define RTL8201 3
 
-#if PHY_AUTO_SELECT
-
-	/* 选择PHY芯片 ---- 由用户设置 */
-
-#define PHY_TYPE YT8512C
-
-#if (PHY_TYPE == LAN8720)
-#define ETH_CHIP_SPEED_STATUS ((uint16_t)0x0004)  /*!< configured information of speed: 100Mbit/s */
-#define ETH_CHIP_DUPLEX_STATUS ((uint16_t)0x0010) /*!< configured information of duplex: full-duplex */
-#elif (PHY_TYPE == SR8201F)
-#define ETH_CHIP_SPEED_STATUS ((uint16_t)0x2020)  /*!< configured information of speed: 100Mbit/s */
-#define ETH_CHIP_DUPLEX_STATUS ((uint16_t)0x0100) /*!< configured information of duplex: full-duplex */
-#elif (PHY_TYPE == YT8512C)
-#define ETH_CHIP_SPEED_STATUS ((uint16_t)0x4010)  /*!< configured information of speed: 100Mbit/s */
-#define ETH_CHIP_DUPLEX_STATUS ((uint16_t)0x2000) /*!< configured information of duplex: full-duplex */
-#elif (PHY_TYPE == RTL8201)
-#define PHY_SR ((uint16_t)0x10)                   /*!< tranceiver status register */
-#define ETH_CHIP_SPEED_STATUS ((uint16_t)0x0022)  /*!< configured information of speed: 100Mbit/s */
-#define ETH_CHIP_DUPLEX_STATUS ((uint16_t)0x0004) /*!< configured information of duplex: full-duplex */
-#endif                                            /* PHY_TYPE */
-#else
-extern int PHY_TYPE;
-extern uint16_t ETH_CHIP_SPEED_STATUS;
-extern uint16_t ETH_CHIP_DUPLEX_STATUS;
-#endif
-
 	int32_t eth_chip_get_link_state();                   /* 获取ETH_CHIP设备的链路状态 */
 	int32_t eth_chip_set_link_state(uint32_t linkstate); /* 设置ETH_CHIP设备的链路状态 */
 
