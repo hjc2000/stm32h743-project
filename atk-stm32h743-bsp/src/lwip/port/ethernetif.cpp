@@ -30,6 +30,7 @@
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/system_time.h>
+#include <bsp-interface/di/task.h>
 #include <EthernetController.h>
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,7 +72,7 @@
 */
 
 ETH_TxPacketConfig TxConfig;
-QueueHandle_t g_rx_semaphore = NULL; /* ¶¨ÒåÒ»¸öTXÐÅºÅÁ¿ */
+QueueHandle_t g_rx_semaphore = NULL; /* å®šä¹‰ä¸€ä¸ªTXä¿¡å·é‡ */
 
 /* Private function prototypes -----------------------------------------------*/
 void ethernetif_input(void *argument);
@@ -118,24 +119,27 @@ static void low_level_init(struct netif *netif)
 	};
 
 	DI_EthernetPort().Open(mac);
+	netif->hwaddr_len = ETHARP_HWADDR_LEN; /* è®¾ç½®MACåœ°å€é•¿åº¦,ä¸º6ä¸ªå­—èŠ‚ */
 
-	netif->hwaddr_len = ETHARP_HWADDR_LEN; /* ÉèÖÃMACµØÖ·³¤¶È,Îª6¸ö×Ö½Ú */
-
-	/* ³õÊ¼»¯MACµØÖ·,ÉèÖÃÊ²Ã´µØÖ·ÓÉÓÃ»§×Ô¼ºÉèÖÃ,µ«ÊÇ²»ÄÜÓëÍøÂçÖÐÆäËûÉè±¸MACµØÖ·ÖØ¸´ */
+	/* åˆå§‹åŒ–MACåœ°å€,è®¾ç½®ä»€ä¹ˆåœ°å€ç”±ç”¨æˆ·è‡ªå·±è®¾ç½®,ä½†æ˜¯ä¸èƒ½ä¸Žç½‘ç»œä¸­å…¶ä»–è®¾å¤‡MACåœ°å€é‡å¤ */
 	base::Span netif_mac_buff_span{netif->hwaddr, 6};
 	netif_mac_buff_span.CopyFrom(mac.AsReadOnlySpan());
 	netif_mac_buff_span.Reverse();
 
-	netif->mtu = ETH_MAX_PAYLOAD; /* ×î´óÔÊÐí´«Êäµ¥Ôª,ÔÊÐí¸ÃÍø¿¨¹ã²¥ºÍARP¹¦ÄÜ */
+	netif->mtu = ETH_MAX_PAYLOAD; /* æœ€å¤§å…è®¸ä¼ è¾“å•å…ƒ,å…è®¸è¯¥ç½‘å¡å¹¿æ’­å’ŒARPåŠŸèƒ½ */
 
-	/* Íø¿¨×´Ì¬ÐÅÏ¢±êÖ¾Î»£¬ÊÇºÜÖØÒªµÄ¿ØÖÆ×Ö¶Î£¬Ëü°üÀ¨Íø¿¨¹¦ÄÜÊ¹ÄÜ¡¢¹ã²¥ */
-	/* Ê¹ÄÜ¡¢ ARP Ê¹ÄÜµÈµÈÖØÒª¿ØÖÆÎ» */
+	/* ç½‘å¡çŠ¶æ€ä¿¡æ¯æ ‡å¿—ä½ï¼Œæ˜¯å¾ˆé‡è¦çš„æŽ§åˆ¶å­—æ®µï¼Œå®ƒåŒ…æ‹¬ç½‘å¡åŠŸèƒ½ä½¿èƒ½ã€å¹¿æ’­ */
+	/* ä½¿èƒ½ã€ ARP ä½¿èƒ½ç­‰ç­‰é‡è¦æŽ§åˆ¶ä½ */
 	netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
 
 	for (idx = 0; idx < ETH_RX_DESC_CNT; idx++)
 	{
-		HAL_ETH_DescAssignMemory(&bsp::EthernetController::Instance().Handle(), idx, Rx_Buff[idx], NULL);
+		HAL_ETH_DescAssignMemory(&bsp::EthernetController::Instance().Handle(),
+								 idx,
+								 Rx_Buff[idx],
+								 NULL);
 	}
+
 	/* Initialize the RX POOL */
 	LWIP_MEMPOOL_INIT(RX_POOL);
 
@@ -149,16 +153,16 @@ static void low_level_init(struct netif *netif)
 	g_rx_semaphore = xSemaphoreCreateBinary();
 
 	/* create the task that handles the ETH_MAC */
-	sys_thread_new("eth_thread",
-				   ethernetif_input,            /* ÈÎÎñÈë¿Úº¯Êý */
-				   netif,                       /* ÈÎÎñÈë¿Úº¯Êý²ÎÊý */
-				   INTERFACE_THREAD_STACK_SIZE, /* ÈÎÎñÕ»´óÐ¡ */
-				   NETIF_IN_TASK_PRIORITY);     /* ÈÎÎñµÄÓÅÏÈ¼¶ */
+	DI_TaskManager().Create(
+		[netif]()
+		{
+			ethernetif_input(netif);
+		},
+		512);
 
-	/* ±ØÐëµÈ´ý³õÊ¼»¯ */
+	/* å¿…é¡»ç­‰å¾…åˆå§‹åŒ– */
 	DI_Delayer().Delay(std::chrono::milliseconds{2000});
 	phy_link_state = eth_chip_get_link_state();
-
 	if (phy_link_state == ETH_CHIP_STATUS_READ_ERROR)
 	{
 		netif_set_link_down(netif);
@@ -191,19 +195,19 @@ static void low_level_init(struct netif *netif)
 		}
 	}
 
-	/* ÅäÖÃMAC */
+	/* é…ç½®MAC */
 	HAL_ETH_GetMACConfig(&bsp::EthernetController::Instance().Handle(), &g_eth_macconfig_handler);
 	g_eth_macconfig_handler.DuplexMode = duplex;
 	g_eth_macconfig_handler.Speed = speed;
 	HAL_ETH_SetMACConfig(&bsp::EthernetController::Instance().Handle(), &g_eth_macconfig_handler);
 	HAL_ETH_Start(&bsp::EthernetController::Instance().Handle());
-	/* ¿ªÆôÐéÄâÍø¿¨ */
+	/* å¼€å¯è™šæ‹Ÿç½‘å¡ */
 	netif_set_up(netif);
 	netif_set_link_up(netif);
 
-	while (!DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR)) /* ¼ì²éMCUÓëPHYÐ¾Æ¬ÊÇ·ñÍ¨ÐÅ³É¹¦ */
+	while (!DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR)) /* æ£€æŸ¥MCUä¸ŽPHYèŠ¯ç‰‡æ˜¯å¦é€šä¿¡æˆåŠŸ */
 	{
-		printf("MCUÓëPHYÐ¾Æ¬Í¨ÐÅÊ§°Ü£¬Çë¼ì²éµçÂ·»òÕßÔ´Âë£¡£¡£¡£¡\r\n");
+		printf("MCUä¸ŽPHYèŠ¯ç‰‡é€šä¿¡å¤±è´¥ï¼Œè¯·æ£€æŸ¥ç”µè·¯æˆ–è€…æºç ï¼ï¼ï¼ï¼\r\n");
 	}
 }
 
