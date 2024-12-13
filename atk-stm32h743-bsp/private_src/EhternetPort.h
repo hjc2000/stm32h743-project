@@ -57,7 +57,7 @@ namespace bsp
 
 		/// @brief 获取此网口的双工模式。
 		/// @return
-		bsp::IEthernetPort_DuplexMode DuplexMode() override;
+		bsp::Ethernet_DuplexMode DuplexMode() override;
 
 		/// @brief 获取此网口的速度。
 		/// @return

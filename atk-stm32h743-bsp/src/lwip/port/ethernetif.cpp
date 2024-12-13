@@ -173,7 +173,7 @@ static void low_level_init(struct netif *netif)
 			speed = ETH_SPEED_10M;
 		}
 
-		if (DI_EthernetPort().DuplexMode() == bsp::IEthernetPort_DuplexMode::FullDuplex)
+		if (DI_EthernetPort().DuplexMode() == bsp::Ethernet_DuplexMode::FullDuplex)
 		{
 			duplex = ETH_FULLDUPLEX_MODE;
 		}

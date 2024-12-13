@@ -88,7 +88,7 @@ std::string bsp::EhternetPort::Name() const
 void bsp::EhternetPort::Open(base::Mac const &mac)
 {
 	ResetPHY();
-	DI_EthernetController().Open(bsp::IEthernetController_InterfaceType::RMII,
+	DI_EthernetController().Open(bsp::Ethernet_InterfaceType::RMII,
 								 0,
 								 mac);
 
@@ -156,16 +156,16 @@ void bsp::EhternetPort::DisableLoopbackMode()
 	WritePHYRegister(ETH_CHIP_BCR, register_value);
 }
 
-bsp::IEthernetPort_DuplexMode bsp::EhternetPort::DuplexMode()
+bsp::Ethernet_DuplexMode bsp::EhternetPort::DuplexMode()
 {
 	uint32_t register_value = ReadPHYRegister(0x1F);
 	uint32_t const mask = 0b10000;
 	if (register_value & mask)
 	{
-		return bsp::IEthernetPort_DuplexMode::FullDuplex;
+		return bsp::Ethernet_DuplexMode::FullDuplex;
 	}
 
-	return bsp::IEthernetPort_DuplexMode::HalfDuplex;
+	return bsp::Ethernet_DuplexMode::HalfDuplex;
 }
 
 base::Bps bsp::EhternetPort::Speed()

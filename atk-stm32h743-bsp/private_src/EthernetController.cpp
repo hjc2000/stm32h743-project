@@ -157,7 +157,7 @@ std::string bsp::EthernetController::Name() const
 	return "eth";
 }
 
-void bsp::EthernetController::Open(bsp::IEthernetController_InterfaceType interface_type,
+void bsp::EthernetController::Open(bsp::Ethernet_InterfaceType interface_type,
 								   uint32_t phy_address,
 								   base::Mac const &mac)
 {
@@ -224,4 +224,8 @@ void bsp::EthernetController::WritePHYRegister(uint32_t register_index, uint32_t
 	{
 		throw std::runtime_error{"写 PHY 寄存器失败"};
 	}
+}
+
+void bsp::EthernetController::Start(bsp::Ethernet_DuplexMode duplex_mode, base::Bps const &speed)
+{
 }
