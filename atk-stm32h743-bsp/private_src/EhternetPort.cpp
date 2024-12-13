@@ -16,8 +16,6 @@ int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 int32_t ETH_PHY_IO_GetTick(void);
 
-extern eth_chip_object_t ETHCHIP;
-
 void bsp::EhternetPort::ChipInitialize()
 {
 	/*  SR8201F     Register 2    0x001C
@@ -72,32 +70,28 @@ void bsp::EhternetPort::ChipInitialize()
 		}
 	}
 
-	if (ETHCHIP.is_initialized == 0)
+	/* MDC时钟 */
+	ETH_PHY_IO_Init();
+
+	// 软件复位
+	WritePHYRegister(ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET);
+	base::Seconds now = DI_SystemTime();
+	while (true)
 	{
-		/* MDC时钟 */
-		ETH_PHY_IO_Init();
-
-		// 软件复位
-		WritePHYRegister(ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET);
-		base::Seconds now = DI_SystemTime();
-		while (true)
+		if (static_cast<int64_t>(DI_SystemTime() - now) > ETH_CHIP_SW_RESET_TO)
 		{
-			if (static_cast<int64_t>(DI_SystemTime() - now) > ETH_CHIP_SW_RESET_TO)
-			{
-				throw std::runtime_error{"软件复位 PHY 超时"};
-			}
+			throw std::runtime_error{"软件复位 PHY 超时"};
+		}
 
-			uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
-			if (!(register_value & ETH_CHIP_BCR_SOFT_RESET))
-			{
-				break;
-			}
+		uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
+		if (!(register_value & ETH_CHIP_BCR_SOFT_RESET))
+		{
+			break;
 		}
 	}
 
 	/* 到了这里，初始化完成！！！ */
 	DI_Delayer().Delay(std::chrono::seconds{2});
-	ETHCHIP.is_initialized = 1;
 }
 
 bsp::EhternetPort &bsp::EhternetPort::Instance()

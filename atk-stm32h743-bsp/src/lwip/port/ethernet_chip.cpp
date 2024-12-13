@@ -23,16 +23,11 @@ int32_t ETH_PHY_IO_GetTick(void);
   * @retval      ETH_CHIP_STATUS_OK：反初始化失败成功
 				 ETH_CHIP_STATUS_ERROR：反初始化失败
   */
-int32_t eth_chip_deinit(eth_chip_object_t *pobj)
+int32_t eth_chip_deinit()
 {
-	if (pobj->is_initialized)
+	if (ETH_PHY_IO_DeInit() < 0)
 	{
-		if (ETH_PHY_IO_DeInit() < 0)
-		{
-			return ETH_CHIP_STATUS_ERROR;
-		}
-
-		pobj->is_initialized = 0;
+		return ETH_CHIP_STATUS_ERROR;
 	}
 
 	return ETH_CHIP_STATUS_OK;
@@ -45,7 +40,7 @@ int32_t eth_chip_deinit(eth_chip_object_t *pobj)
 				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
 				 ETH_CHIP_STATUS_WRITE_ERROR：不能写寄存器
   */
-int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj)
+int32_t eth_chip_disable_power_down_mode()
 {
 	uint32_t readval = 0;
 	int32_t status = ETH_CHIP_STATUS_OK;
@@ -75,7 +70,7 @@ int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj)
 				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
 				 ETH_CHIP_STATUS_WRITE_ERROR：不能写寄存器
   */
-int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj)
+int32_t eth_chip_enable_power_down_mode()
 {
 	uint32_t readval = 0;
 	int32_t status = ETH_CHIP_STATUS_OK;
@@ -108,7 +103,7 @@ int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj)
 				 ETH_CHIP_STATUS_10MBITS_HALFDUPLEX ：10M，半双工
 				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
   */
-int32_t eth_chip_get_link_state(eth_chip_object_t *pobj)
+int32_t eth_chip_get_link_state()
 {
 	uint32_t readval = 0;
 
@@ -145,7 +140,7 @@ int32_t eth_chip_get_link_state(eth_chip_object_t *pobj)
 				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
 				 ETH_CHIP_STATUS_WRITE_ERROR ：不能写入寄存器
   */
-int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate)
+int32_t eth_chip_set_link_state(uint32_t linkstate)
 {
 	uint32_t bcrvalue = 0;
 	int32_t status = ETH_CHIP_STATUS_OK;
@@ -198,7 +193,7 @@ int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate)
 				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
 				 ETH_CHIP_STATUS_WRITE_ERROR ：不能写入寄存器
   */
-int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj)
+int32_t eth_chip_enable_loop_back_mode()
 {
 	uint32_t readval = 0;
 	int32_t status = ETH_CHIP_STATUS_OK;
@@ -229,7 +224,7 @@ int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj)
 				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
 				 ETH_CHIP_STATUS_WRITE_ERROR ：不能写入寄存器
   */
-int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj)
+int32_t eth_chip_disable_loop_back_mode()
 {
 	uint32_t readval = 0;
 	int32_t status = ETH_CHIP_STATUS_OK;
