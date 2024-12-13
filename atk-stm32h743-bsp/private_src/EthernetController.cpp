@@ -36,6 +36,8 @@
 #define ETH_TXD1_GPIO_PORT GPIOG
 #define ETH_TXD1_GPIO_PIN GPIO_PIN_14
 
+uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".ARM.__at_0x30040200"))); /* Ethernet Receive Buffers */
+
 bsp::EthernetController::EthernetController()
 {
 	// MPU 设置
@@ -186,14 +188,22 @@ void bsp::EthernetController::Open(bsp::Ethernet_InterfaceType interface_type,
 	// MDC时钟
 	HAL_ETH_SetMDIOClockRange(&_handle);
 
+	for (int idx = 0; idx < static_cast<int>(ETH_RX_DESC_CNT); idx++)
+	{
+		HAL_ETH_DescAssignMemory(&_handle,
+								 idx,
+								 Rx_Buff[idx],
+								 NULL);
+	}
+
 	/* 这里的中断优先级必须设置在 freertos 能够屏蔽的优先级范围内，不然不知道什么原因，
 	 * 会导致 freertos 的 queue.c 中报错。
 	 */
 	DI_EnableInterrupt(static_cast<uint32_t>(ETH_IRQn), 7);
 	DI_IsrManager().AddIsr(static_cast<uint32_t>(ETH_IRQn),
-						   []()
+						   [&]()
 						   {
-							   HAL_ETH_IRQHandler(&bsp::EthernetController::Instance().Handle());
+							   HAL_ETH_IRQHandler(&_handle);
 						   });
 }
 
@@ -228,4 +238,31 @@ void bsp::EthernetController::WritePHYRegister(uint32_t register_index, uint32_t
 
 void bsp::EthernetController::Start(bsp::Ethernet_DuplexMode duplex_mode, base::Bps const &speed)
 {
+	ETH_MACConfigTypeDef def{};
+	HAL_ETH_GetMACConfig(&_handle, &def);
+
+	if (speed == static_cast<base::Bps>(base::Mbps{10}))
+	{
+		def.Speed = ETH_SPEED_10M;
+	}
+	else if (speed == static_cast<base::Bps>(base::Mbps{100}))
+	{
+		def.Speed = ETH_SPEED_100M;
+	}
+	else
+	{
+		throw std::invalid_argument{"不支持的速率"};
+	}
+
+	if (duplex_mode == bsp::Ethernet_DuplexMode::FullDuplex)
+	{
+		def.DuplexMode = ETH_FULLDUPLEX_MODE;
+	}
+	else
+	{
+		def.DuplexMode = ETH_HALFDUPLEX_MODE;
+	}
+
+	HAL_ETH_SetMACConfig(&_handle, &def);
+	HAL_ETH_Start(&_handle);
 }

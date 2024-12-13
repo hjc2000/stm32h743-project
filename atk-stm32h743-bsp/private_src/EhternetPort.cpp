@@ -88,12 +88,17 @@ std::string bsp::EhternetPort::Name() const
 void bsp::EhternetPort::Open(base::Mac const &mac)
 {
 	ResetPHY();
+
+	// 打开以太网控制器
 	DI_EthernetController().Open(bsp::Ethernet_InterfaceType::RMII,
 								 0,
 								 mac);
 
 	ChipInitialize();
 	EnableAutoNegotiation();
+
+	// 启动以太网
+	DI_EthernetController().Start(DuplexMode(), Speed());
 }
 
 uint32_t bsp::EhternetPort::ReadPHYRegister(uint32_t register_index)

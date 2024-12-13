@@ -34,6 +34,8 @@
 #include <bsp-interface/di/task.h>
 #include <EthernetController.h>
 
+ETH_TxPacketConfig TxConfig{};
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* The time to block waiting for input. */
@@ -72,7 +74,6 @@
 	   to L1-CACHE line size (32 bytes).
 */
 
-ETH_TxPacketConfig TxConfig;
 QueueHandle_t g_rx_semaphore = NULL; /* 定义一个TX信号量 */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -85,8 +86,6 @@ int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 
 LWIP_MEMPOOL_DECLARE(RX_POOL, 10, sizeof(struct pbuf_custom), "Zero-copy RX PBUF pool");
-
-uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".ARM.__at_0x30040200"))); /* Ethernet Receive Buffers */
 
 /* Private functions ---------------------------------------------------------*/
 /*******************************************************************************
@@ -101,11 +100,6 @@ uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".A
  */
 static void low_level_init(struct netif *netif)
 {
-	uint32_t idx = 0;
-	uint32_t duplex = 0;
-	uint32_t speed = 0;
-	ETH_MACConfigTypeDef g_eth_macconfig_handler{};
-
 	base::Mac mac{
 		std::endian::big,
 		base::Array<uint8_t, 6>{
@@ -118,16 +112,20 @@ static void low_level_init(struct netif *netif)
 		},
 	};
 
-	DI_EthernetPort().Open(mac);
-	for (idx = 0; idx < ETH_RX_DESC_CNT; idx++)
+	try
 	{
-		HAL_ETH_DescAssignMemory(&bsp::EthernetController::Instance().Handle(),
-								 idx,
-								 Rx_Buff[idx],
-								 NULL);
+		DI_EthernetPort().Open(mac);
+	}
+	catch (std::exception const &e)
+	{
+		DI_Console().WriteLine(e.what());
+		DI_Console().WriteLine("打开网口失败");
+		netif_set_link_down(netif);
+		netif_set_down(netif);
 	}
 
-	netif->hwaddr_len = ETHARP_HWADDR_LEN; /* 设置MAC地址长度,为6个字节 */
+	/* 设置MAC地址长度,为6个字节 */
+	netif->hwaddr_len = ETHARP_HWADDR_LEN;
 
 	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
 	base::Span netif_mac_buff_span{netif->hwaddr, 6};
@@ -144,7 +142,7 @@ static void low_level_init(struct netif *netif)
 	LWIP_MEMPOOL_INIT(RX_POOL);
 
 	/* Set Tx packet config common parameters */
-	memset(&TxConfig, 0, sizeof(ETH_TxPacketConfig));
+	TxConfig = ETH_TxPacketConfig{};
 	TxConfig.Attributes = ETH_TX_PACKETS_FEATURES_CSUM | ETH_TX_PACKETS_FEATURES_CRCPAD;
 	TxConfig.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
 	TxConfig.CRCPadCtrl = ETH_CRC_PAD_INSERT;
@@ -152,49 +150,9 @@ static void low_level_init(struct netif *netif)
 	/* create a binary semaphore used for informing ethernetif of frame reception */
 	g_rx_semaphore = xSemaphoreCreateBinary();
 
-	/* 必须等待初始化 */
-	DI_Delayer().Delay(std::chrono::milliseconds{2000});
-	try
-	{
-		if (DI_EthernetPort().Speed() == static_cast<base::Bps>(base::Mbps{100}))
-		{
-			speed = ETH_SPEED_100M;
-		}
-		else
-		{
-			speed = ETH_SPEED_10M;
-		}
-
-		if (DI_EthernetPort().DuplexMode() == bsp::Ethernet_DuplexMode::FullDuplex)
-		{
-			duplex = ETH_FULLDUPLEX_MODE;
-		}
-		else
-		{
-			duplex = ETH_HALFDUPLEX_MODE;
-		}
-	}
-	catch (...)
-	{
-		DI_Console().WriteLine("获取连接双工和速度时发生异常。");
-		netif_set_link_down(netif);
-		netif_set_down(netif);
-	}
-
-	/* 配置MAC */
-	HAL_ETH_GetMACConfig(&bsp::EthernetController::Instance().Handle(), &g_eth_macconfig_handler);
-	g_eth_macconfig_handler.DuplexMode = duplex;
-	g_eth_macconfig_handler.Speed = speed;
-	HAL_ETH_SetMACConfig(&bsp::EthernetController::Instance().Handle(), &g_eth_macconfig_handler);
-	HAL_ETH_Start(&bsp::EthernetController::Instance().Handle());
-
 	/* 开启虚拟网卡 */
 	netif_set_up(netif);
 	netif_set_link_up(netif);
-	while (!DI_EthernetController().ReadPHYRegister(0x1F)) /* 检查MCU与PHY芯片是否通信成功 */
-	{
-		printf("MCU与PHY芯片通信失败，请检查电路或者源码！！！！\r\n");
-	}
 
 	/* create the task that handles the ETH_MAC */
 	DI_TaskManager().Create(
@@ -225,9 +183,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 	uint32_t i = 0;
 	struct pbuf *q;
 	err_t errval = ERR_OK;
-	ETH_BufferTypeDef Txbuffer[ETH_TX_DESC_CNT];
-
-	memset(Txbuffer, 0, ETH_TX_DESC_CNT * sizeof(ETH_BufferTypeDef));
+	ETH_BufferTypeDef Txbuffer[ETH_TX_DESC_CNT]{};
 
 	for (q = p; q != NULL; q = q->next)
 	{
@@ -273,11 +229,9 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 static struct pbuf *low_level_input(struct netif *netif)
 {
 	struct pbuf *p = NULL;
-	ETH_BufferTypeDef RxBuff[ETH_RX_DESC_CNT];
+	ETH_BufferTypeDef RxBuff[ETH_RX_DESC_CNT]{};
 	uint32_t framelength = 0, i = 0;
 	struct pbuf_custom *custom_pbuf;
-
-	memset(RxBuff, 0, ETH_RX_DESC_CNT * sizeof(ETH_BufferTypeDef));
 
 	for (i = 0; i < ETH_RX_DESC_CNT - 1; i++)
 	{
@@ -423,7 +377,8 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
  */
 int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal)
 {
-	if (HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(), DevAddr, RegAddr, pRegVal) != HAL_OK)
+	if (HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(),
+								DevAddr, RegAddr, pRegVal) != HAL_OK)
 	{
 		return -1;
 	}
@@ -440,7 +395,8 @@ int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal
  */
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal)
 {
-	if (HAL_ETH_WritePHYRegister(&bsp::EthernetController::Instance().Handle(), DevAddr, RegAddr, RegVal) != HAL_OK)
+	if (HAL_ETH_WritePHYRegister(&bsp::EthernetController::Instance().Handle(),
+								 DevAddr, RegAddr, RegVal) != HAL_OK)
 	{
 		return -1;
 	}
