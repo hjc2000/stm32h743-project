@@ -65,12 +65,12 @@ extern "C"
 #define ETH_CHIP_INIT_TO ((uint32_t)2000U)    /* 初始化等待时间 */
 #define ETH_CHIP_MAX_DEV_ADDR ((uint32_t)31U) /* PHY地址的最大值 */
 
-    /* PHY自动识别状态 */
-    enum PHY_AUTO
-    {
-        PHY_AUTO_SELECT_NABLE = 0,
-        PHY_AUTO_SELECT_DISABLE
-    };
+	/* PHY自动识别状态 */
+	enum PHY_AUTO
+	{
+		PHY_AUTO_SELECT_NABLE = 0,
+		PHY_AUTO_SELECT_DISABLE
+	};
 
 /* 使能/禁用PHY自动选择功能 */
 #define PHY_AUTO_SELECT PHY_AUTO_SELECT_NABLE
@@ -81,7 +81,7 @@ extern "C"
 
 #if PHY_AUTO_SELECT
 
-    /* 选择PHY芯片 ---- 由用户设置 */
+	/* 选择PHY芯片 ---- 由用户设置 */
 
 #define PHY_TYPE YT8512C
 
@@ -109,21 +109,20 @@ extern uint16_t ETH_CHIP_SPEED_STATUS;
 extern uint16_t ETH_CHIP_DUPLEX_STATUS;
 #endif
 
-    /* 注册到组件对象结构体 */
-    typedef struct
-    {
-        uint32_t devaddr;        /* PHY地址 */
-        uint32_t is_initialized; /* 描述该设备是否初始化 */
-        void *pdata;             /* 传入的形参 */
-    } eth_chip_object_t;
+	/* 注册到组件对象结构体 */
+	typedef struct
+	{
+		uint32_t is_initialized; /* 描述该设备是否初始化 */
+		void *pdata;             /* 传入的形参 */
+	} eth_chip_object_t;
 
-    int32_t eth_chip_deinit(eth_chip_object_t *pobj);                             /* 反初始化ETH_CHIP及其硬件资源 */
-    int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj);            /* 关闭ETH_CHIP的下电模式 */
-    int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj);             /* 使能ETH_CHIP的下电模式 */
-    int32_t eth_chip_get_link_state(eth_chip_object_t *pobj);                     /* 获取ETH_CHIP设备的链路状态 */
-    int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate); /* 设置ETH_CHIP设备的链路状态 */
-    int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj);              /* 启用环回模式 */
-    int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj);             /* 禁用环回模式 */
+	int32_t eth_chip_deinit(eth_chip_object_t *pobj);                             /* 反初始化ETH_CHIP及其硬件资源 */
+	int32_t eth_chip_disable_power_down_mode(eth_chip_object_t *pobj);            /* 关闭ETH_CHIP的下电模式 */
+	int32_t eth_chip_enable_power_down_mode(eth_chip_object_t *pobj);             /* 使能ETH_CHIP的下电模式 */
+	int32_t eth_chip_get_link_state(eth_chip_object_t *pobj);                     /* 获取ETH_CHIP设备的链路状态 */
+	int32_t eth_chip_set_link_state(eth_chip_object_t *pobj, uint32_t linkstate); /* 设置ETH_CHIP设备的链路状态 */
+	int32_t eth_chip_enable_loop_back_mode(eth_chip_object_t *pobj);              /* 启用环回模式 */
+	int32_t eth_chip_disable_loop_back_mode(eth_chip_object_t *pobj);             /* 禁用环回模式 */
 
 #ifdef __cplusplus
 }

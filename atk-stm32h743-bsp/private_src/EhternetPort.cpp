@@ -5,6 +5,7 @@
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
+#include <bsp-interface/di/system_time.h>
 #include <ethernet_chip.h>
 #include <EthernetController.h>
 #include <hal.h>
@@ -19,9 +20,6 @@ extern eth_chip_object_t ETHCHIP;
 
 void bsp::EhternetPort::ChipInitialize()
 {
-	uint32_t tickstart = 0, regvalue = 0, addr = 0;
-	int32_t status = ETH_CHIP_STATUS_OK;
-
 	/*  SR8201F     Register 2    0x001C
 					Register 3    0xC016
 
@@ -33,8 +31,7 @@ void bsp::EhternetPort::ChipInitialize()
 
 		RTL8201BL   Register 2    0x0000
 					Register 3    0x8201 */
-	regvalue = DI_EthernetController().ReadPHYRegister(PHY_REGISTER2);
-
+	uint32_t regvalue = DI_EthernetController().ReadPHYRegister(PHY_REGISTER2);
 	switch (regvalue)
 	{
 	case YT8512C_AND_RTL8201BL_PHYREGISTER2:
@@ -80,87 +77,27 @@ void bsp::EhternetPort::ChipInitialize()
 		/* MDC时钟 */
 		ETH_PHY_IO_Init();
 
-		/* 设置PHY地址为32 */
-		ETHCHIP.devaddr = ETH_CHIP_MAX_DEV_ADDR + 1;
-
-		/* 主要为了查找PHY地址 */
-		for (addr = 0; addr <= ETH_CHIP_MAX_DEV_ADDR; addr++)
+		// 软件复位
+		WritePHYRegister(ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET);
+		base::Seconds now = DI_SystemTime();
+		while (true)
 		{
-			if (ETH_PHY_IO_ReadReg(addr, ETH_CHIP_PHYSCSR, &regvalue) < 0)
+			if (static_cast<int64_t>(DI_SystemTime() - now) > ETH_CHIP_SW_RESET_TO)
 			{
-				status = ETH_CHIP_STATUS_READ_ERROR;
-				/* 无法读取这个设备地址继续下一个地址 */
-				continue;
+				throw std::runtime_error{"软件复位 PHY 超时"};
 			}
 
-			/* 已经找到PHY地址了 */
-			if ((regvalue & ETH_CHIP_PHY_COUNT) == addr)
+			uint32_t register_value = ReadPHYRegister(ETH_CHIP_BCR);
+			if (!(register_value & ETH_CHIP_BCR_SOFT_RESET))
 			{
-				ETHCHIP.devaddr = addr;
-				status = ETH_CHIP_STATUS_OK;
 				break;
-			}
-		}
-
-		/* 判断这个PHY地址是否大于32（2^5）*/
-		if (ETHCHIP.devaddr > ETH_CHIP_MAX_DEV_ADDR)
-		{
-			status = ETH_CHIP_STATUS_ADDRESS_ERROR;
-		}
-
-		/* 如果PHY地址有效 */
-		if (status == ETH_CHIP_STATUS_OK)
-		{
-			/* 设置软件复位  */
-			if (ETH_PHY_IO_WriteReg(ETHCHIP.devaddr, ETH_CHIP_BCR, ETH_CHIP_BCR_SOFT_RESET) >= 0)
-			{
-				/* 获取软件重置状态 */
-				if (ETH_PHY_IO_ReadReg(ETHCHIP.devaddr, ETH_CHIP_BCR, &regvalue) >= 0)
-				{
-					tickstart = ETH_PHY_IO_GetTick();
-
-					/* 等待软件复位完成或超时  */
-					while (regvalue & ETH_CHIP_BCR_SOFT_RESET)
-					{
-						if ((ETH_PHY_IO_GetTick() - tickstart) <= ETH_CHIP_SW_RESET_TO)
-						{
-							if (ETH_PHY_IO_ReadReg(ETHCHIP.devaddr, ETH_CHIP_BCR, &regvalue) < 0)
-							{
-								status = ETH_CHIP_STATUS_READ_ERROR;
-								break;
-							}
-						}
-						else
-						{
-							status = ETH_CHIP_STATUS_RESET_TIMEOUT;
-							break;
-						}
-					}
-				}
-				else
-				{
-					status = ETH_CHIP_STATUS_READ_ERROR;
-				}
-			}
-			else
-			{
-				status = ETH_CHIP_STATUS_WRITE_ERROR;
 			}
 		}
 	}
 
 	/* 到了这里，初始化完成！！！ */
-	if (status == ETH_CHIP_STATUS_OK)
-	{
-		tickstart = ETH_PHY_IO_GetTick();
-
-		/* 等待2s进行初始化 */
-		while ((ETH_PHY_IO_GetTick() - tickstart) <= ETH_CHIP_INIT_TO)
-		{
-		}
-
-		ETHCHIP.is_initialized = 1;
-	}
+	DI_Delayer().Delay(std::chrono::seconds{2});
+	ETHCHIP.is_initialized = 1;
 }
 
 bsp::EhternetPort &bsp::EhternetPort::Instance()
