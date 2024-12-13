@@ -31,24 +31,17 @@ namespace bsp
 		/// @brief 获取本控制器当前使用的接口类型。
 		/// @note 要打开本控制器后本属性才有效。
 		/// @return
-		bsp::Ethernet_InterfaceType InterfaceType() const override
-		{
-			return _interface_type;
-		}
+		bsp::Ethernet_InterfaceType InterfaceType() const override;
 
 		/// @brief 获取本控制器绑定的 PHY 地址。
+		/// @note 要打开本控制器后本属性才有效。
 		/// @return
-		uint32_t PhyAddress() const override
-		{
-			return _phy_address;
-		}
+		uint32_t PhyAddress() const override;
 
 		/// @brief 获取本控制器绑定的 MAC 地址。
+		/// @note 要打开本控制器后本属性才有效。
 		/// @return
-		base::Mac Mac() const override
-		{
-			return _mac;
-		}
+		base::Mac Mac() const override;
 
 		/// @brief 打开以太网控制器。
 		/// @param interface_type 连接着 PHY 的接口类型。（使用的是 MII 还是 RMII）

@@ -36,8 +36,6 @@
 #define ETH_TXD1_GPIO_PORT GPIOG
 #define ETH_TXD1_GPIO_PIN GPIO_PIN_14
 
-uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".ARM.__at_0x30040200"))); /* Ethernet Receive Buffers */
-
 bsp::EthernetController::EthernetController()
 {
 	// MPU 设置
@@ -159,6 +157,21 @@ std::string bsp::EthernetController::Name() const
 	return "eth";
 }
 
+bsp::Ethernet_InterfaceType bsp::EthernetController::InterfaceType() const
+{
+	return _interface_type;
+}
+
+uint32_t bsp::EthernetController::PhyAddress() const
+{
+	return _phy_address;
+}
+
+base::Mac bsp::EthernetController::Mac() const
+{
+	return _mac;
+}
+
 void bsp::EthernetController::Open(bsp::Ethernet_InterfaceType interface_type,
 								   uint32_t phy_address,
 								   base::Mac const &mac)
@@ -188,11 +201,13 @@ void bsp::EthernetController::Open(bsp::Ethernet_InterfaceType interface_type,
 	// MDC时钟
 	HAL_ETH_SetMDIOClockRange(&_handle);
 
+	using buffer_type = uint8_t(*)[ETH_MAX_PACKET_SIZE];
+	buffer_type buffer = reinterpret_cast<buffer_type>(0x30040200);
 	for (int idx = 0; idx < static_cast<int>(ETH_RX_DESC_CNT); idx++)
 	{
 		HAL_ETH_DescAssignMemory(&_handle,
 								 idx,
-								 Rx_Buff[idx],
+								 buffer[idx],
 								 NULL);
 	}
 
@@ -241,26 +256,22 @@ void bsp::EthernetController::Start(bsp::Ethernet_DuplexMode duplex_mode, base::
 	ETH_MACConfigTypeDef def{};
 	HAL_ETH_GetMACConfig(&_handle, &def);
 
-	if (speed == static_cast<base::Bps>(base::Mbps{10}))
+	if (speed == base::Mbps{10})
 	{
 		def.Speed = ETH_SPEED_10M;
 	}
-	else if (speed == static_cast<base::Bps>(base::Mbps{100}))
+	else
 	{
 		def.Speed = ETH_SPEED_100M;
 	}
-	else
-	{
-		throw std::invalid_argument{"不支持的速率"};
-	}
 
-	if (duplex_mode == bsp::Ethernet_DuplexMode::FullDuplex)
-	{
-		def.DuplexMode = ETH_FULLDUPLEX_MODE;
-	}
-	else
+	if (duplex_mode == bsp::Ethernet_DuplexMode::HalfDuplex)
 	{
 		def.DuplexMode = ETH_HALFDUPLEX_MODE;
+	}
+	else
+	{
+		def.DuplexMode = ETH_FULLDUPLEX_MODE;
 	}
 
 	HAL_ETH_SetMACConfig(&_handle, &def);

@@ -117,11 +117,11 @@ void bsp::EhternetPort::ResetPHY()
 	 */
 
 	// 硬件复位
-	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
+	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0);
 	DI_Delayer().Delay(std::chrono::milliseconds{100});
 
 	// 复位结束
-	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0);
+	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
 	DI_Delayer().Delay(std::chrono::milliseconds{100});
 }
 

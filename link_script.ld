@@ -185,8 +185,4 @@ SECTIONS
 	}
 
 	.ARM.attributes 0 : { *(.ARM.attributes) }
-
-	.eth_rx_buff 0x30040200 (NOLOAD): {
-		*(.ARM.__at_0x30040200)
-	} >RAM_D2
 }
