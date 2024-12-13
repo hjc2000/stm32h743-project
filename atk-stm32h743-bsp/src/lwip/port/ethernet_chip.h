@@ -86,15 +86,12 @@ extern "C"
 #define PHY_TYPE YT8512C
 
 #if (PHY_TYPE == LAN8720)
-#define ETH_CHIP_PHYSCSR ((uint16_t)0x1F)         /*!< tranceiver status register */
 #define ETH_CHIP_SPEED_STATUS ((uint16_t)0x0004)  /*!< configured information of speed: 100Mbit/s */
 #define ETH_CHIP_DUPLEX_STATUS ((uint16_t)0x0010) /*!< configured information of duplex: full-duplex */
 #elif (PHY_TYPE == SR8201F)
-#define ETH_CHIP_PHYSCSR ((uint16_t)0x00)         /*!< tranceiver status register */
 #define ETH_CHIP_SPEED_STATUS ((uint16_t)0x2020)  /*!< configured information of speed: 100Mbit/s */
 #define ETH_CHIP_DUPLEX_STATUS ((uint16_t)0x0100) /*!< configured information of duplex: full-duplex */
 #elif (PHY_TYPE == YT8512C)
-#define ETH_CHIP_PHYSCSR ((uint16_t)0x11)         /*!< tranceiver status register */
 #define ETH_CHIP_SPEED_STATUS ((uint16_t)0x4010)  /*!< configured information of speed: 100Mbit/s */
 #define ETH_CHIP_DUPLEX_STATUS ((uint16_t)0x2000) /*!< configured information of duplex: full-duplex */
 #elif (PHY_TYPE == RTL8201)
@@ -104,7 +101,6 @@ extern "C"
 #endif                                            /* PHY_TYPE */
 #else
 extern int PHY_TYPE;
-extern uint16_t ETH_CHIP_PHYSCSR;
 extern uint16_t ETH_CHIP_SPEED_STATUS;
 extern uint16_t ETH_CHIP_DUPLEX_STATUS;
 #endif

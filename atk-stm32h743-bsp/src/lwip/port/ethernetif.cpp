@@ -205,7 +205,7 @@ static void low_level_init(struct netif *netif)
 	/* 开启虚拟网卡 */
 	netif_set_up(netif);
 	netif_set_link_up(netif);
-	while (!DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR)) /* 检查MCU与PHY芯片是否通信成功 */
+	while (!DI_EthernetController().ReadPHYRegister(0x1F)) /* 检查MCU与PHY芯片是否通信成功 */
 	{
 		printf("MCU与PHY芯片通信失败，请检查电路或者源码！！！！\r\n");
 	}
