@@ -12,8 +12,6 @@ namespace bsp
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
 
-		void ChipInitialize();
-
 	public:
 		static_function AtkLAN8720A_EhternetPort &Instance();
 

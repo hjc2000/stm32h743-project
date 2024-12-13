@@ -11,48 +11,6 @@
 #include <EthernetController.h>
 #include <hal.h>
 
-void bsp::AtkLAN8720A_EhternetPort::ChipInitialize()
-{
-	/*  SR8201F     Register 2    0x001C
-					Register 3    0xC016
-
-		YT8512C     Register 2    0x0000
-					Register 3    0x0128
-
-		LAN8720A    Register 2    0x0007
-					Register 3    0xC0F0
-
-		RTL8201BL   Register 2    0x0000
-					Register 3    0x8201 */
-
-	// ETH_CHIP_PHYSCSR = ((uint16_t)0x11);
-	// ETH_CHIP_SPEED_STATUS = ((uint16_t)0x4010);
-	// ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x2000);
-	// PHY_TYPE = YT8512C;
-	DI_Console().WriteLine("register2:" + base::ToHexString(ReadPHYRegister(2)));
-	DI_Console().WriteLine("register3:" + base::ToHexString(ReadPHYRegister(3)));
-
-	// 软件复位
-	WritePHYRegister(0, 0x8000U);
-	base::Seconds now = DI_SystemTime();
-	while (true)
-	{
-		if (static_cast<int64_t>(DI_SystemTime() - now) > 2)
-		{
-			throw std::runtime_error{"软件复位 PHY 超时"};
-		}
-
-		uint32_t register_value = ReadPHYRegister(0);
-		if (!(register_value & 0x8000U))
-		{
-			break;
-		}
-	}
-
-	/* 到了这里，初始化完成！！！ */
-	DI_Delayer().Delay(std::chrono::seconds{2});
-}
-
 bsp::AtkLAN8720A_EhternetPort &bsp::AtkLAN8720A_EhternetPort::Instance()
 {
 	class Getter :
@@ -93,7 +51,42 @@ void bsp::AtkLAN8720A_EhternetPort::Open(base::Mac const &mac)
 								 0,
 								 mac);
 
-	ChipInitialize();
+	/*  SR8201F     Register 2    0x001C
+					Register 3    0xC016
+
+		YT8512C     Register 2    0x0000
+					Register 3    0x0128
+
+		LAN8720A    Register 2    0x0007
+					Register 3    0xC0F0
+
+		RTL8201BL   Register 2    0x0000
+					Register 3    0x8201 */
+
+	// ETH_CHIP_PHYSCSR = ((uint16_t)0x11);
+	// ETH_CHIP_SPEED_STATUS = ((uint16_t)0x4010);
+	// ETH_CHIP_DUPLEX_STATUS = ((uint16_t)0x2000);
+	// PHY_TYPE = YT8512C;
+	DI_Console().WriteLine("register2:" + base::ToHexString(ReadPHYRegister(2)));
+	DI_Console().WriteLine("register3:" + base::ToHexString(ReadPHYRegister(3)));
+
+	// 软件复位
+	WritePHYRegister(0, 0x8000U);
+	base::Seconds now = DI_SystemTime();
+	while (true)
+	{
+		if (static_cast<int64_t>(DI_SystemTime() - now) > 2)
+		{
+			throw std::runtime_error{"软件复位 PHY 超时"};
+		}
+
+		uint32_t register_value = ReadPHYRegister(0);
+		if (!(register_value & 0x8000U))
+		{
+			break;
+		}
+	}
+
 	EnableAutoNegotiation();
 
 	// 启动以太网
