@@ -79,7 +79,6 @@ extern "C"
 #define YT8512C 2
 #define RTL8201 3
 
-	int32_t eth_chip_get_link_state();                   /* 获取ETH_CHIP设备的链路状态 */
 	int32_t eth_chip_set_link_state(uint32_t linkstate); /* 设置ETH_CHIP设备的链路状态 */
 
 #ifdef __cplusplus

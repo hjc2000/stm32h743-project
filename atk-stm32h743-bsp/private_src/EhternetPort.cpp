@@ -1,6 +1,7 @@
 #include "EhternetPort.h"
 #include <base/container/Dictionary.h>
 #include <base/di/SingletonGetter.h>
+#include <base/unit/Mbps.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/expanded_io.h>
@@ -157,10 +158,24 @@ void bsp::EhternetPort::DisableLoopbackMode()
 
 bsp::IEthernetPort_DuplexMode bsp::EhternetPort::DuplexMode()
 {
-	return bsp::IEthernetPort_DuplexMode();
+	uint32_t register_value = ReadPHYRegister(0x1F);
+	uint32_t const mask = 0b10000;
+	if (register_value & mask)
+	{
+		return bsp::IEthernetPort_DuplexMode::FullDuplex;
+	}
+
+	return bsp::IEthernetPort_DuplexMode::HalfDuplex;
 }
 
 base::Bps bsp::EhternetPort::Speed()
 {
-	return base::Bps();
+	uint32_t register_value = ReadPHYRegister(0x1F);
+	uint32_t const mask = 0b01000;
+	if (register_value & mask)
+	{
+		return base::Mbps{100};
+	}
+
+	return base::Mbps{10};
 }

@@ -6,44 +6,6 @@ int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal
 int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
 
 /**
-  * @brief       获取ETH_CHIP设备的链路状态
-  * @param       pobj: 设备对象
-  * @param       pLinkState: 指向链路状态的指针
-  * @retval      ETH_CHIP_STATUS_100MBITS_FULLDUPLEX：100M，全双工
-				 ETH_CHIP_STATUS_100MBITS_HALFDUPLEX ：100M，半双工
-				 ETH_CHIP_STATUS_10MBITS_FULLDUPLEX：10M，全双工
-				 ETH_CHIP_STATUS_10MBITS_HALFDUPLEX ：10M，半双工
-				 ETH_CHIP_STATUS_READ_ERROR：不能读取寄存器
-  */
-int32_t eth_chip_get_link_state()
-{
-	uint32_t readval = 0;
-
-	/* 检测特殊功能寄存器链接值 */
-	if (ETH_PHY_IO_ReadReg(0, 0x1F, &readval) < 0)
-	{
-		return ETH_CHIP_STATUS_READ_ERROR;
-	}
-
-	if (((readval & 0x0004) != 0x0004) && ((readval & 0x0010) != 0))
-	{
-		return ETH_CHIP_STATUS_100MBITS_FULLDUPLEX;
-	}
-	else if (((readval & 0x0004) != 0x0004))
-	{
-		return ETH_CHIP_STATUS_100MBITS_HALFDUPLEX;
-	}
-	else if (((readval & ETH_CHIP_BCR_DUPLEX_MODE) != ETH_CHIP_BCR_DUPLEX_MODE))
-	{
-		return ETH_CHIP_STATUS_10MBITS_FULLDUPLEX;
-	}
-	else
-	{
-		return ETH_CHIP_STATUS_10MBITS_HALFDUPLEX;
-	}
-}
-
-/**
   * @brief       设置ETH_CHIP设备的链路状态
   * @param       pobj: 设备对象
   * @param       pLinkState: 指向链路状态的指针
@@ -95,21 +57,4 @@ int32_t eth_chip_set_link_state(uint32_t linkstate)
 	}
 
 	return status;
-}
-
-/**
- * @breif       获得网络芯片的速度模式
- * @param       无
- * @retval      1:100M
-				0:10M
- */
-uint8_t ethernet_chip_get_speed(void)
-{
-	uint8_t speed = 0;
-	DI_Console().WriteLine("LAN8720");
-
-	/* 从LAN8720的31号寄存器中读取网络速度和双工模式 */
-	speed = ~((DI_EthernetController().ReadPHYRegister(0x1F) & 0x0004));
-
-	return speed;
 }

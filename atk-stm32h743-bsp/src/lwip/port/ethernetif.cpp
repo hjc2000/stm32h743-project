@@ -27,6 +27,7 @@
 #include "semphr.h"
 #include "string.h"
 #include "task.h"
+#include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/system_time.h>
@@ -101,7 +102,6 @@ uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_MAX_PACKET_SIZE] __attribute__((section(".A
 static void low_level_init(struct netif *netif)
 {
 	uint32_t idx = 0;
-	int32_t phy_link_state = 0;
 	uint32_t duplex = 0;
 	uint32_t speed = 0;
 	ETH_MACConfigTypeDef g_eth_macconfig_handler{};
@@ -162,37 +162,31 @@ static void low_level_init(struct netif *netif)
 
 	/* 必须等待初始化 */
 	DI_Delayer().Delay(std::chrono::milliseconds{2000});
-	phy_link_state = eth_chip_get_link_state();
-	if (phy_link_state == ETH_CHIP_STATUS_READ_ERROR)
+	try
 	{
+		if (DI_EthernetPort().Speed() == static_cast<base::Bps>(base::Mbps{100}))
+		{
+			speed = ETH_SPEED_100M;
+		}
+		else
+		{
+			speed = ETH_SPEED_10M;
+		}
+
+		if (DI_EthernetPort().DuplexMode() == bsp::IEthernetPort_DuplexMode::FullDuplex)
+		{
+			duplex = ETH_FULLDUPLEX_MODE;
+		}
+		else
+		{
+			duplex = ETH_HALFDUPLEX_MODE;
+		}
+	}
+	catch (...)
+	{
+		DI_Console().WriteLine("6666666666666666666666666666666666666666666");
 		netif_set_link_down(netif);
 		netif_set_down(netif);
-	}
-	else
-	{
-		switch (phy_link_state)
-		{
-		case ETH_CHIP_STATUS_100MBITS_FULLDUPLEX:
-			duplex = ETH_FULLDUPLEX_MODE;
-			speed = ETH_SPEED_100M;
-			break;
-		case ETH_CHIP_STATUS_100MBITS_HALFDUPLEX:
-			duplex = ETH_HALFDUPLEX_MODE;
-			speed = ETH_SPEED_100M;
-			break;
-		case ETH_CHIP_STATUS_10MBITS_FULLDUPLEX:
-			duplex = ETH_FULLDUPLEX_MODE;
-			speed = ETH_SPEED_10M;
-			break;
-		case ETH_CHIP_STATUS_10MBITS_HALFDUPLEX:
-			duplex = ETH_HALFDUPLEX_MODE;
-			speed = ETH_SPEED_10M;
-			break;
-		default:
-			duplex = ETH_FULLDUPLEX_MODE;
-			speed = ETH_SPEED_100M;
-			break;
-		}
 	}
 
 	/* 配置MAC */
