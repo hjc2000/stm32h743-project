@@ -46,7 +46,7 @@
 #define TCP_SND_BUF (11 * TCP_MSS)
 
 /*  TCP_SND_QUEUELEN: TCP发送缓冲区空间。这必须是至少
-    需要(2 * TCP_SND_BUF/TCP_MSS)才能正常工作 */
+	需要(2 * TCP_SND_BUF/TCP_MSS)才能正常工作 */
 
 #define TCP_SND_QUEUELEN (8 * TCP_SND_BUF / TCP_MSS)
 

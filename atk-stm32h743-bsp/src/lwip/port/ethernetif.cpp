@@ -81,9 +81,6 @@ void ethernetif_input(void *argument);
 // u32_t  sys_now(void);
 void pbuf_free_custom(struct pbuf *p);
 
-int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal);
-int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal);
-
 LWIP_MEMPOOL_DECLARE(RX_POOL, 10, sizeof(struct pbuf_custom), "Zero-copy RX PBUF pool");
 
 /* Private functions ---------------------------------------------------------*/
@@ -365,42 +362,6 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
 	{
 		portEND_SWITCHING_ISR(taskWoken);
 	}
-}
-
-/**
- * @brief  Read a PHY register through the MDIO interface.
- * @param  DevAddr: PHY port address
- * @param  RegAddr: PHY register address
- * @param  pRegVal: pointer to hold the register value
- * @retval 0 if OK -1 if Error
- */
-int32_t ETH_PHY_IO_ReadReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t *pRegVal)
-{
-	if (HAL_ETH_ReadPHYRegister(&bsp::EthernetController::Instance().Handle(),
-								DevAddr, RegAddr, pRegVal) != HAL_OK)
-	{
-		return -1;
-	}
-
-	return 0;
-}
-
-/**
- * @brief  Write a value to a PHY register through the MDIO interface.
- * @param  DevAddr: PHY port address
- * @param  RegAddr: PHY register address
- * @param  RegVal: Value to be written
- * @retval 0 if OK -1 if Error
- */
-int32_t ETH_PHY_IO_WriteReg(uint32_t DevAddr, uint32_t RegAddr, uint32_t RegVal)
-{
-	if (HAL_ETH_WritePHYRegister(&bsp::EthernetController::Instance().Handle(),
-								 DevAddr, RegAddr, RegVal) != HAL_OK)
-	{
-		return -1;
-	}
-
-	return 0;
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
