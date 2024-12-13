@@ -201,10 +201,10 @@ static void low_level_init(struct netif *netif)
 	g_eth_macconfig_handler.Speed = speed;
 	HAL_ETH_SetMACConfig(&bsp::EthernetController::Instance().Handle(), &g_eth_macconfig_handler);
 	HAL_ETH_Start(&bsp::EthernetController::Instance().Handle());
+
 	/* 开启虚拟网卡 */
 	netif_set_up(netif);
 	netif_set_link_up(netif);
-
 	while (!DI_EthernetController().ReadPHYRegister(ETH_CHIP_PHYSCSR)) /* 检查MCU与PHY芯片是否通信成功 */
 	{
 		printf("MCU与PHY芯片通信失败，请检查电路或者源码！！！！\r\n");
@@ -261,7 +261,9 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 	TxConfig.Length = p->tot_len;
 	TxConfig.TxBuffer = Txbuffer;
 
-	HAL_ETH_Transmit(&bsp::EthernetController::Instance().Handle(), &TxConfig, ETH_DMA_TRANSMIT_TIMEOUT);
+	HAL_ETH_Transmit(&bsp::EthernetController::Instance().Handle(),
+					 &TxConfig,
+					 ETH_DMA_TRANSMIT_TIMEOUT);
 
 	return errval;
 }
@@ -279,7 +281,6 @@ static struct pbuf *low_level_input(struct netif *netif)
 	struct pbuf *p = NULL;
 	ETH_BufferTypeDef RxBuff[ETH_RX_DESC_CNT];
 	uint32_t framelength = 0, i = 0;
-	;
 	struct pbuf_custom *custom_pbuf;
 
 	memset(RxBuff, 0, ETH_RX_DESC_CNT * sizeof(ETH_BufferTypeDef));
@@ -305,7 +306,12 @@ static struct pbuf *low_level_input(struct netif *netif)
 		{
 			custom_pbuf->custom_free_function = pbuf_free_custom;
 
-			p = pbuf_alloced_custom(PBUF_RAW, framelength, PBUF_REF, custom_pbuf, RxBuff->buffer, framelength);
+			p = pbuf_alloced_custom(PBUF_RAW,
+									framelength,
+									PBUF_REF,
+									custom_pbuf,
+									RxBuff->buffer,
+									framelength);
 		}
 	}
 

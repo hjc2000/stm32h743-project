@@ -54,5 +54,13 @@ namespace bsp
 
 		void EnableLoopbackMode() override;
 		void DisableLoopbackMode() override;
+
+		/// @brief 获取此网口的双工模式。
+		/// @return
+		bsp::IEthernetPort_DuplexMode DuplexMode() override;
+
+		/// @brief 获取此网口的速度。
+		/// @return
+		base::Bps Speed() override;
 	};
 } // namespace bsp
