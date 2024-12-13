@@ -6,7 +6,7 @@
 namespace bsp
 {
 	/// @brief 以太网端口。
-	class EhternetPort :
+	class AtkLAN8720A_EhternetPort :
 		public bsp::LAN8720A_EthernetPort
 	{
 	private:
@@ -15,7 +15,7 @@ namespace bsp
 		void ChipInitialize();
 
 	public:
-		static_function EhternetPort &Instance();
+		static_function AtkLAN8720A_EhternetPort &Instance();
 
 		/// @brief 以太网控制器的名称。
 		/// @return

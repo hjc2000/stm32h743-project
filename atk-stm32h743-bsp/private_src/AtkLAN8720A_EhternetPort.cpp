@@ -1,4 +1,4 @@
-#include "EhternetPort.h"
+#include "AtkLAN8720A_EhternetPort.h"
 #include <base/container/Dictionary.h>
 #include <base/di/SingletonGetter.h>
 #include <base/string/ToHexString.h>
@@ -11,7 +11,7 @@
 #include <EthernetController.h>
 #include <hal.h>
 
-void bsp::EhternetPort::ChipInitialize()
+void bsp::AtkLAN8720A_EhternetPort::ChipInitialize()
 {
 	/*  SR8201F     Register 2    0x001C
 					Register 3    0xC016
@@ -53,15 +53,15 @@ void bsp::EhternetPort::ChipInitialize()
 	DI_Delayer().Delay(std::chrono::seconds{2});
 }
 
-bsp::EhternetPort &bsp::EhternetPort::Instance()
+bsp::AtkLAN8720A_EhternetPort &bsp::AtkLAN8720A_EhternetPort::Instance()
 {
 	class Getter :
-		public base::SingletonGetter<EhternetPort>
+		public base::SingletonGetter<AtkLAN8720A_EhternetPort>
 	{
 	public:
-		std::unique_ptr<EhternetPort> Create() override
+		std::unique_ptr<AtkLAN8720A_EhternetPort> Create() override
 		{
-			return std::unique_ptr<EhternetPort>{new EhternetPort{}};
+			return std::unique_ptr<AtkLAN8720A_EhternetPort>{new AtkLAN8720A_EhternetPort{}};
 		}
 
 		void Lock() override
@@ -79,12 +79,12 @@ bsp::EhternetPort &bsp::EhternetPort::Instance()
 	return g.Instance();
 }
 
-std::string bsp::EhternetPort::Name() const
+std::string bsp::AtkLAN8720A_EhternetPort::Name() const
 {
 	return "eth";
 }
 
-void bsp::EhternetPort::Open(base::Mac const &mac)
+void bsp::AtkLAN8720A_EhternetPort::Open(base::Mac const &mac)
 {
 	ResetPHY();
 
@@ -100,17 +100,17 @@ void bsp::EhternetPort::Open(base::Mac const &mac)
 	DI_EthernetController().Start(DuplexMode(), Speed());
 }
 
-uint32_t bsp::EhternetPort::ReadPHYRegister(uint32_t register_index)
+uint32_t bsp::AtkLAN8720A_EhternetPort::ReadPHYRegister(uint32_t register_index)
 {
 	return _controller->ReadPHYRegister(register_index);
 }
 
-void bsp::EhternetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
+void bsp::AtkLAN8720A_EhternetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
 {
 	_controller->WritePHYRegister(register_index, value);
 }
 
-void bsp::EhternetPort::ResetPHY()
+void bsp::AtkLAN8720A_EhternetPort::ResetPHY()
 {
 	/* 公司的开发板是旧版的，复位需要先输出高电平，延时后输出低电平。
 	 * 家里的开发板是新版的，复位需要先输出低电平，延时后输出高电平。
@@ -125,7 +125,7 @@ void bsp::EhternetPort::ResetPHY()
 	DI_Delayer().Delay(std::chrono::milliseconds{100});
 }
 
-bsp::Ethernet_DuplexMode bsp::EhternetPort::DuplexMode()
+bsp::Ethernet_DuplexMode bsp::AtkLAN8720A_EhternetPort::DuplexMode()
 {
 	uint32_t register_value = ReadPHYRegister(0x1F);
 	uint32_t const mask = 0b10000;
@@ -137,7 +137,7 @@ bsp::Ethernet_DuplexMode bsp::EhternetPort::DuplexMode()
 	return bsp::Ethernet_DuplexMode::HalfDuplex;
 }
 
-base::Bps bsp::EhternetPort::Speed()
+base::Bps bsp::AtkLAN8720A_EhternetPort::Speed()
 {
 	uint32_t register_value = ReadPHYRegister(0x1F);
 	uint32_t const mask = 0b01000;
