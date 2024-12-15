@@ -88,4 +88,5 @@ void bsp::AtkLAN8720A_EhternetPort::ResetPHY()
 
 void bsp::AtkLAN8720A_EhternetPort::Send(base::ReadOnlySpan const &span)
 {
+	_controller->Send(span);
 }
