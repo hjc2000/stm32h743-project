@@ -154,29 +154,29 @@ static void low_level_init(struct netif *netif)
  *       to become available since the stack doesn't retry to send a packet
  *       dropped because of memory failure (except for the TCP timers).
  */
-static err_t low_level_output(struct netif *netif, struct pbuf *p)
+static err_t low_level_output(struct netif *netif, pbuf *p)
 {
 	uint32_t i = 0;
-	struct pbuf *q;
+	pbuf *current_pbuf;
 	err_t errval = ERR_OK;
 	ETH_BufferTypeDef Txbuffer[ETH_TX_DESC_CNT]{};
 
-	for (q = p; q != NULL; q = q->next)
+	for (current_pbuf = p; current_pbuf != NULL; current_pbuf = current_pbuf->next)
 	{
 		if (i >= ETH_TX_DESC_CNT)
 		{
 			return ERR_IF;
 		}
 
-		Txbuffer[i].buffer = reinterpret_cast<uint8_t *>(q->payload);
-		Txbuffer[i].len = q->len;
+		Txbuffer[i].buffer = reinterpret_cast<uint8_t *>(current_pbuf->payload);
+		Txbuffer[i].len = current_pbuf->len;
 
 		if (i > 0)
 		{
 			Txbuffer[i - 1].next = &Txbuffer[i];
 		}
 
-		if (q->next == NULL)
+		if (current_pbuf->next == NULL)
 		{
 			Txbuffer[i].next = NULL;
 		}

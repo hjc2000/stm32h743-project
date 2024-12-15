@@ -285,7 +285,7 @@ void bsp::EthernetController::Start(bsp::Ethernet_DuplexMode duplex_mode, base::
 	HAL_ETH_Start(&_handle);
 }
 
-void bsp::EthernetController::Send(base::ReadOnlySpan const &span)
+void bsp::EthernetController::Write(base::ReadOnlySpan const &span)
 {
 	_send_completion_signal->Acquire();
 	base::Guard g{[&]()
@@ -293,13 +293,22 @@ void bsp::EthernetController::Send(base::ReadOnlySpan const &span)
 					  _send_completion_signal->Release();
 				  }};
 
-	_send_config.Length = span.Size();
-	_send_config.TxBuffer = &_hal_eth_buffer;
+	_total_send_length += span.Size();
 	_hal_eth_buffer.buffer = const_cast<uint8_t *>(span.Buffer());
 	_hal_eth_buffer.len = span.Size();
 	_hal_eth_buffer.next = nullptr;
+}
 
-	HAL_ETH_Transmit(&_handle,
-					 &_send_config,
-					 20);
+void bsp::EthernetController::Flush()
+{
+	_send_completion_signal->Acquire();
+	base::Guard g{[&]()
+				  {
+					  _send_completion_signal->Release();
+				  }};
+
+	_send_config.Length = _total_send_length;
+	_send_config.TxBuffer = &_hal_eth_buffer;
+	HAL_ETH_Transmit(&_handle, &_send_config, 200);
+	_total_send_length = 0;
 }
