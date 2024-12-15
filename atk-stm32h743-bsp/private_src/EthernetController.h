@@ -19,6 +19,8 @@ namespace bsp
 	public:
 		static_function EthernetController &Instance();
 
+		/// @brief hal 句柄。
+		/// @return 
 		ETH_HandleTypeDef &Handle()
 		{
 			return _handle;
