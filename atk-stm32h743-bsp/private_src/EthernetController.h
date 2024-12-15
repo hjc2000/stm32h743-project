@@ -1,4 +1,5 @@
 #pragma once
+#include <base/container/List.h>
 #include <base/define.h>
 #include <bsp-interface/di/task.h>
 #include <bsp-interface/ethernet/IEthernetController.h>
@@ -17,6 +18,7 @@ namespace bsp
 		uint32_t _phy_address = 0;
 		base::Mac _mac;
 		ETH_TxPacketConfig _sending_config{};
+		base::List<ETH_BufferTypeDef> _eth_buffers{};
 		std::shared_ptr<bsp::IBinarySemaphore> _send_completion_signal = DICreate_BinarySemaphore();
 
 	public:

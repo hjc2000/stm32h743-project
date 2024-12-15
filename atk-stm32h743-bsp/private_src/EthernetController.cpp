@@ -294,9 +294,8 @@ void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &
 					  _send_completion_signal->Release();
 				  }};
 
-	std::vector<ETH_BufferTypeDef> eth_buffers{};
 	_sending_config.Length = 0;
-
+	_eth_buffers.Clear();
 	for (auto span : spans)
 	{
 		_sending_config.Length += span.Size();
@@ -306,16 +305,17 @@ void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &
 		eth_buffer.len = span.Size();
 		eth_buffer.next = nullptr;
 
-		eth_buffers.push_back(eth_buffer);
-		if (eth_buffers.size() > 1)
+		_eth_buffers.Add(eth_buffer);
+		if (_eth_buffers.Count() > 1)
 		{
-			eth_buffers[eth_buffers.size() - 1].next = &eth_buffers[eth_buffers.size()];
+			_eth_buffers[_eth_buffers.Count() - 2].next = &_eth_buffers[_eth_buffers.Count() - 1];
 		}
 	}
 
-	if (eth_buffers.size() > 0)
+	if (_eth_buffers.Count() > 0)
 	{
-		_sending_config.TxBuffer = &eth_buffers[0];
-		HAL_ETH_Transmit(&_handle, &_sending_config, 200);
+		_sending_config.TxBuffer = &_eth_buffers[0];
+		DI_Console().WriteLine("总长度：" + std::to_string(_sending_config.Length));
+		HAL_ETH_Transmit(&_handle, &_sending_config, 20);
 	}
 }

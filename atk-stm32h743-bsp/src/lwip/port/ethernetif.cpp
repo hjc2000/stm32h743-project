@@ -6,6 +6,7 @@
 #include "semphr.h"
 #include "string.h"
 #include "task.h"
+#include <base/container/List.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/ethernet.h>
@@ -156,41 +157,21 @@ static void low_level_init(struct netif *netif)
  */
 static err_t low_level_output(struct netif *netif, pbuf *p)
 {
-	uint32_t i = 0;
 	pbuf *current_pbuf;
 	err_t errval = ERR_OK;
-	ETH_BufferTypeDef Txbuffer[ETH_TX_DESC_CNT]{};
+	base::List<base::ReadOnlySpan> spans{};
 
 	for (current_pbuf = p; current_pbuf != NULL; current_pbuf = current_pbuf->next)
 	{
-		if (i >= ETH_TX_DESC_CNT)
-		{
-			return ERR_IF;
-		}
+		base::ReadOnlySpan span{
+			reinterpret_cast<uint8_t *>(current_pbuf->payload),
+			current_pbuf->len,
+		};
 
-		Txbuffer[i].buffer = reinterpret_cast<uint8_t *>(current_pbuf->payload);
-		Txbuffer[i].len = current_pbuf->len;
-
-		if (i > 0)
-		{
-			Txbuffer[i - 1].next = &Txbuffer[i];
-		}
-
-		if (current_pbuf->next == NULL)
-		{
-			Txbuffer[i].next = NULL;
-		}
-
-		i++;
+		spans.Add(span);
 	}
 
-	TxConfig.Length = p->tot_len;
-	TxConfig.TxBuffer = Txbuffer;
-
-	HAL_ETH_Transmit(&bsp::EthernetController::Instance().Handle(),
-					 &TxConfig,
-					 ETH_DMA_TRANSMIT_TIMEOUT);
-
+	DI_EthernetPort().Send(spans);
 	return errval;
 }
 
