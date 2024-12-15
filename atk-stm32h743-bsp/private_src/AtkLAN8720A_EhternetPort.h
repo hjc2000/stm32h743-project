@@ -2,12 +2,13 @@
 #include <base/define.h>
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/ethernet/phy/LAN8720A_EthernetPort.h>
+#include <bsp-interface/ethernet/phy/YT8512C_EthernetPort.h>
 
 namespace bsp
 {
 	/// @brief 以太网端口。
 	class AtkLAN8720A_EhternetPort :
-		public bsp::LAN8720A_EthernetPort
+		public bsp::YT8512C_EthernetPort
 	{
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
