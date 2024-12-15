@@ -36,5 +36,9 @@ namespace bsp
 
 		/// @brief 复位 PHY 芯片。
 		void ResetPHY() override;
+
+		/// @brief 发送。
+		/// @param span
+		void Send(base::ReadOnlySpan const &span) override;
 	};
 } // namespace bsp

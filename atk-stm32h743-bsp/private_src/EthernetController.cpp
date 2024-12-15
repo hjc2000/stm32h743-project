@@ -124,6 +124,12 @@ bsp::EthernetController::EthernetController()
 		gpio_init_struct.Pin = ETH_TXD1_GPIO_PIN;
 		HAL_GPIO_Init(ETH_TXD1_GPIO_PORT, &gpio_init_struct); /* ETH_TXD1初始化 */
 	}
+
+	_send_config.Attributes = ETH_TX_PACKETS_FEATURES_CSUM | ETH_TX_PACKETS_FEATURES_CRCPAD;
+	_send_config.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
+	_send_config.CRCPadCtrl = ETH_CRC_PAD_INSERT;
+
+	_send_completion_signal->Release();
 }
 
 bsp::EthernetController &bsp::EthernetController::Instance()
@@ -277,4 +283,23 @@ void bsp::EthernetController::Start(bsp::Ethernet_DuplexMode duplex_mode, base::
 
 	HAL_ETH_SetMACConfig(&_handle, &def);
 	HAL_ETH_Start(&_handle);
+}
+
+void bsp::EthernetController::Send(base::ReadOnlySpan const &span)
+{
+	_send_completion_signal->Acquire();
+	base::Guard g{[&]()
+				  {
+					  _send_completion_signal->Release();
+				  }};
+
+	_send_config.Length = span.Size();
+	_send_config.TxBuffer = &_hal_eth_buffer;
+	_hal_eth_buffer.buffer = const_cast<uint8_t *>(span.Buffer());
+	_hal_eth_buffer.len = span.Size();
+	_hal_eth_buffer.next = nullptr;
+
+	HAL_ETH_Transmit(&_handle,
+					 &_send_config,
+					 20);
 }

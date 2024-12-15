@@ -1,5 +1,6 @@
 #pragma once
 #include <base/define.h>
+#include <bsp-interface/di/task.h>
 #include <bsp-interface/ethernet/IEthernetController.h>
 #include <hal.h>
 
@@ -15,12 +16,15 @@ namespace bsp
 		bsp::Ethernet_InterfaceType _interface_type;
 		uint32_t _phy_address = 0;
 		base::Mac _mac;
+		ETH_TxPacketConfig _send_config{};
+		ETH_BufferTypeDef _hal_eth_buffer{};
+		std::shared_ptr<bsp::IBinarySemaphore> _send_completion_signal = DICreate_BinarySemaphore();
 
 	public:
 		static_function EthernetController &Instance();
 
 		/// @brief hal 句柄。
-		/// @return 
+		/// @return
 		ETH_HandleTypeDef &Handle()
 		{
 			return _handle;
@@ -68,6 +72,10 @@ namespace bsp
 		/// @param speed
 		void Start(bsp::Ethernet_DuplexMode duplex_mode,
 				   base::Bps const &speed) override;
+
+		/// @brief 发送。
+		/// @param span
+		void Send(base::ReadOnlySpan const &span) override;
 	};
 
 } // namespace bsp
