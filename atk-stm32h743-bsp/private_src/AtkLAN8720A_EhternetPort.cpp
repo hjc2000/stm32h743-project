@@ -72,7 +72,6 @@ void bsp::AtkLAN8720A_EhternetPort::Open(base::Mac const &mac)
 
 	SoftwareResetPHY();
 	EnableAutoNegotiation();
-	DI_Delayer().Delay(std::chrono::seconds{2});
 
 	// 启动以太网
 	DI_EthernetController().Start(DuplexMode(), Speed());
