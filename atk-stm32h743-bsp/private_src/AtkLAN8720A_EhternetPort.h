@@ -38,11 +38,7 @@ namespace bsp
 		void ResetPHY() override;
 
 		/// @brief 发送。
-		/// @param span
-		void Write(base::ReadOnlySpan const &span) override;
-
-		/// @brief 将 Write 写入流中的数据实际发送出去。不调用本方法的话，这些数据可能仅仅是
-		/// 存在于缓冲区中。
-		void Flush() override;
+		/// @param spans
+		void Send(base::IEnumerable<base::ReadOnlySpan> const &spans) override;
 	};
 } // namespace bsp

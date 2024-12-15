@@ -16,9 +16,7 @@ namespace bsp
 		bsp::Ethernet_InterfaceType _interface_type;
 		uint32_t _phy_address = 0;
 		base::Mac _mac;
-		ETH_TxPacketConfig _send_config{};
-		ETH_BufferTypeDef _hal_eth_buffer{};
-		int32_t _total_send_length = 0;
+		ETH_TxPacketConfig _sending_config{};
 		std::shared_ptr<bsp::IBinarySemaphore> _send_completion_signal = DICreate_BinarySemaphore();
 
 	public:
@@ -75,12 +73,8 @@ namespace bsp
 				   base::Bps const &speed) override;
 
 		/// @brief 发送。
-		/// @param span
-		void Write(base::ReadOnlySpan const &span) override;
-
-		/// @brief 将 Write 写入流中的数据实际发送出去。不调用本方法的话，这些数据可能仅仅是
-		/// 存在于缓冲区中。
-		void Flush() override;
+		/// @param spans
+		void Send(base::IEnumerable<base::ReadOnlySpan> const &spans) override;
 	};
 
 } // namespace bsp

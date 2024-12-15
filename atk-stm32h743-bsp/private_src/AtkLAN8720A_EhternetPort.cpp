@@ -86,12 +86,7 @@ void bsp::AtkLAN8720A_EhternetPort::ResetPHY()
 	DI_Delayer().Delay(std::chrono::milliseconds{100});
 }
 
-void bsp::AtkLAN8720A_EhternetPort::Write(base::ReadOnlySpan const &span)
+void bsp::AtkLAN8720A_EhternetPort::Send(base::IEnumerable<base::ReadOnlySpan> const &spans)
 {
-	_controller->Write(span);
-}
-
-void bsp::AtkLAN8720A_EhternetPort::Flush()
-{
-	_controller->Flush();
+	_controller->Send(spans);
 }
