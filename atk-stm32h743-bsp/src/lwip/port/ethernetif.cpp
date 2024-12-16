@@ -222,7 +222,7 @@ void ethernetif_input(void *argument)
 		netif *net_interface = reinterpret_cast<netif *>(argument);
 		while (true)
 		{
-			bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
+			base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
 			do
 			{
 				p = low_level_input();
@@ -239,7 +239,8 @@ void ethernetif_input(void *argument)
 	}
 
 	{
-		// for (base::ReadOnlySpan const &span : DI_EthernetPort().Receive())
+		// base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
+		// for (base::ReadOnlySpan const &span : spans)
 		// {
 		// 	pbuf_custom *custom_pbuf = new pbuf_custom{};
 		// 	custom_pbuf->custom_free_function = [](pbuf *p)

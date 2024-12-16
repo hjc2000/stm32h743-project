@@ -326,70 +326,54 @@ void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &
 base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 {
 	_receiving_completion_signal->Acquire();
-	DI_Console().WriteLine("666666666666666666666666666666666666666666666666666666666666");
-
-	uint32_t total_length = 0;
+	DI_Console().WriteLine("_receiving_completion_signal->Acquire() successfully");
 	_received_span_list.Clear();
 
-	HAL_StatusTypeDef result = HAL_ETH_GetRxDataLength(&_handle, &total_length);
-	if (result != HAL_StatusTypeDef::HAL_OK)
-	{
-		// 错误。跳过本轮接收，下轮继续。
-		DI_Console().WriteError("HAL_ETH_GetRxDataLength error");
-		return _received_span_list;
-	}
+	// ETH_BufferTypeDef eth_buffers[ETH_RX_DESC_CNT]{};
+	// for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
+	// {
+	// 	eth_buffers[i].next = &eth_buffers[i + 1];
+	// }
 
-	if (total_length == 0)
-	{
-		DI_Console().WriteError("total_length == 0");
-		return _received_span_list;
-	}
+	// HAL_StatusTypeDef result = HAL_ETH_GetRxDataBuffer(&_handle, eth_buffers);
+	// if (result != HAL_StatusTypeDef::HAL_OK)
+	// {
+	// 	DI_Console().WriteError("HAL_ETH_GetRxDataBuffer error");
+	// 	return _received_span_list;
+	// }
 
-	DI_Console().WriteLine("HAL_ETH_GetRxDataLength total_length = " + std::to_string(total_length));
-	uint32_t buffer_num = total_length / _handle.Init.RxBuffLen + 1;
-	base::List<ETH_BufferTypeDef> received_buffer_list{};
-	for (uint32_t i = 0; i < buffer_num; i++)
-	{
-		ETH_BufferTypeDef buffer{};
-		received_buffer_list.Add(buffer);
+	// uint32_t total_length = 0;
+	// result = HAL_ETH_GetRxDataLength(&_handle, &total_length);
+	// if (result != HAL_StatusTypeDef::HAL_OK)
+	// {
+	// 	// 错误。跳过本轮接收，下轮继续。
+	// 	DI_Console().WriteError("HAL_ETH_GetRxDataLength error");
+	// 	return _received_span_list;
+	// }
 
-		if (received_buffer_list.Count() > 1)
-		{
-			received_buffer_list[received_buffer_list.Count() - 2].next =
-				&received_buffer_list[received_buffer_list.Count() - 1];
-		}
-	}
+	// /* Build Rx descriptor to be ready for next data reception */
+	// HAL_ETH_BuildRxDescriptors(&_handle);
+	// SCB_InvalidateDCache_by_Addr(eth_buffers[0].buffer, total_length);
+	// for (auto buffer : eth_buffers)
+	// {
+	// 	if (buffer.buffer == nullptr)
+	// 	{
+	// 		break;
+	// 	}
 
-	received_buffer_list[received_buffer_list.Count() - 1].next = nullptr;
-	result = HAL_ETH_GetRxDataBuffer(&_handle, &received_buffer_list[0]);
-	if (result != HAL_StatusTypeDef::HAL_OK)
-	{
-		DI_Console().WriteError("HAL_ETH_GetRxDataBuffer error");
-		return _received_span_list;
-	}
+	// 	if (buffer.len == 0)
+	// 	{
+	// 		break;
+	// 	}
 
-	/* Build Rx descriptor to be ready for next data reception */
-	HAL_ETH_BuildRxDescriptors(&_handle);
-	SCB_InvalidateDCache_by_Addr(received_buffer_list[0].buffer, total_length);
-	for (auto buffer : received_buffer_list)
-	{
-		if (buffer.buffer == nullptr)
-		{
-			break;
-		}
+	// 	base::ReadOnlySpan span{buffer.buffer, static_cast<int32_t>(total_length)};
+	// 	_received_span_list.Add(span);
+	// 	if (buffer.next == nullptr)
+	// 	{
+	// 		break;
+	// 	}
+	// }
 
-		if (buffer.len == 0)
-		{
-			break;
-		}
-
-		base::ReadOnlySpan span{buffer.buffer, static_cast<int32_t>(buffer.len)};
-		_received_span_list.Add(span);
-		if (buffer.next == nullptr)
-		{
-			break;
-		}
-	}
-
+	// DI_Console().WriteLine("_received_span_list.Count = " + std::to_string(_received_span_list.Count()));
 	return _received_span_list;
 }
