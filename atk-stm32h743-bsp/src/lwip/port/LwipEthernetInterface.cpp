@@ -95,8 +95,10 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 
 					if (ip != 0)
 					{
-						_dhcpstatus = 2; /* DHCP成功 */
-						/* 解析出通过DHCP获取到的IP地址 */
+						// DHCP成功
+						_dhcpstatus = 2;
+
+						// 解析出通过DHCP获取到的IP地址
 						_ip_address[3] = (uint8_t)(ip >> 24);
 						_ip_address[2] = (uint8_t)(ip >> 16);
 						_ip_address[1] = (uint8_t)(ip >> 8);
@@ -108,7 +110,7 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 											   std::to_string(_ip_address[2]) + '.' +
 											   std::to_string(_ip_address[3]));
 
-						/* 解析通过DHCP获取到的子网掩码地址 */
+						// 解析通过DHCP获取到的子网掩码地址
 						_netmask[3] = (uint8_t)(netmask >> 24);
 						_netmask[2] = (uint8_t)(netmask >> 16);
 						_netmask[1] = (uint8_t)(netmask >> 8);
@@ -120,7 +122,7 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 											   std::to_string(_netmask[2]) + '.' +
 											   std::to_string(_netmask[3]));
 
-						/* 解析出通过DHCP获取到的默认网关 */
+						// 解析出通过DHCP获取到的默认网关
 						_gateway[3] = (uint8_t)(gw >> 24);
 						_gateway[2] = (uint8_t)(gw >> 16);
 						_gateway[1] = (uint8_t)(gw >> 8);
