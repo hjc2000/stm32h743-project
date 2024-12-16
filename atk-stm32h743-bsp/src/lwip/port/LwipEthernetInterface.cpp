@@ -84,8 +84,6 @@ bsp::LwipEthernetInterface::LwipEthernetInterface()
 void bsp::LwipEthernetInterface::DhcpThreadFunc()
 {
 #if LWIP_DHCP
-	DI_Console().WriteLine("enter lwip_periodic_handle");
-
 	uint32_t ip = 0;
 	uint32_t netmask = 0;
 	uint32_t gw = 0;
@@ -207,10 +205,7 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 
 void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 {
-	DI_Console().WriteLine("enter lwip_link_thread");
-
 	int link_again_num = 0;
-
 	while (true)
 	{
 		/* 读取PHY状态寄存器，获取链接信息 */
