@@ -47,7 +47,8 @@ void freertos_demo()
 		}
 	}
 
-	while (g_lwipdev.dhcpstatus != 2 && g_lwipdev.dhcpstatus != 0xff) /* 等待静态和动态分配完成  */
+	while (bsp::LwipEthernetInterface::Instance().dhcpstatus != 2 &&
+		   bsp::LwipEthernetInterface::Instance().dhcpstatus != 0xff) /* 等待静态和动态分配完成  */
 	{
 		DI_Delayer().Delay(std::chrono::milliseconds{500});
 	}
