@@ -185,10 +185,7 @@ static struct pbuf *low_level_input()
 	uint32_t framelength = 0;
 	HAL_ETH_GetRxDataLength(&bsp::EthernetController::Instance().Handle(), &framelength);
 
-	/* Build Rx descriptor to be ready for next data reception */
 	HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
-
-	/* Invalidate data cache for ETH Rx Buffers */
 	SCB_InvalidateDCache_by_Addr(rx_buffers->buffer, framelength);
 	DI_Console().WriteLine("HAL_ETH_GetRxDataLength framelength = " + std::to_string(framelength));
 
