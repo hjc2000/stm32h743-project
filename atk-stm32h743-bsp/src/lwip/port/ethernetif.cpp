@@ -174,10 +174,8 @@ void ethernetif_input(void *argument)
 	while (true)
 	{
 		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
-		int count = 0;
 		for (base::ReadOnlySpan const &span : spans)
 		{
-			count++;
 			pbuf_custom *custom_pbuf = new pbuf_custom{};
 			custom_pbuf->custom_free_function = [](pbuf *p)
 			{
@@ -196,11 +194,6 @@ void ethernetif_input(void *argument)
 			{
 				pbuf_free(p);
 			}
-		}
-
-		if (count == 0)
-		{
-			continue;
 		}
 	}
 }
