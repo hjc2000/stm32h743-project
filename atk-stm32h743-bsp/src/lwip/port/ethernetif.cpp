@@ -171,81 +171,54 @@ static err_t low_level_output(netif *net_interface, pbuf *p)
  */
 void ethernetif_input(void *argument)
 {
+	while (true)
 	{
+		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
 		while (true)
 		{
-			base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
-			while (true)
+			ETH_BufferTypeDef rx_buffers[ETH_RX_DESC_CNT]{};
+			for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
 			{
-				ETH_BufferTypeDef rx_buffers[ETH_RX_DESC_CNT]{};
-				for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
-				{
-					rx_buffers[i].next = &rx_buffers[i + 1];
-				}
+				rx_buffers[i].next = &rx_buffers[i + 1];
+			}
 
-				if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
-				{
-					DI_Console().WriteLine("no rx data avaliable");
-					break;
-				}
+			if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
+			{
+				DI_Console().WriteLine("no rx data avaliable");
+				break;
+			}
 
-				if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
-				{
-					DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
-					break;
-				}
+			if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
+			{
+				DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
+				break;
+			}
 
-				HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
-				SCB_InvalidateDCache_by_Addr(rx_buffers[0].buffer, rx_buffers[0].len);
+			HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
+			SCB_InvalidateDCache_by_Addr(rx_buffers[0].buffer, rx_buffers[0].len);
 
-				DI_Console().WriteLine("HAL_ETH_GetRxDataLength rx_buffers[0].len = " +
-									   std::to_string(rx_buffers[0].len));
+			DI_Console().WriteLine("HAL_ETH_GetRxDataLength rx_buffers[0].len = " +
+								   std::to_string(rx_buffers[0].len));
 
-				pbuf_custom *custom_pbuf = new pbuf_custom{};
-				custom_pbuf->custom_free_function = [](pbuf *p)
-				{
-					delete reinterpret_cast<pbuf_custom *>(p);
-				};
+			pbuf_custom *custom_pbuf = new pbuf_custom{};
+			custom_pbuf->custom_free_function = [](pbuf *p)
+			{
+				delete reinterpret_cast<pbuf_custom *>(p);
+			};
 
-				pbuf *p = pbuf_alloced_custom(PBUF_RAW,
-											  rx_buffers[0].len,
-											  PBUF_REF,
-											  custom_pbuf,
-											  rx_buffers[0].buffer,
-											  rx_buffers[0].len);
+			pbuf *p = pbuf_alloced_custom(PBUF_RAW,
+										  rx_buffers[0].len,
+										  PBUF_REF,
+										  custom_pbuf,
+										  rx_buffers[0].buffer,
+										  rx_buffers[0].len);
 
-				netif *net_interface = reinterpret_cast<netif *>(argument);
-				if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
-				{
-					pbuf_free(p);
-				}
+			netif *net_interface = reinterpret_cast<netif *>(argument);
+			if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
+			{
+				pbuf_free(p);
 			}
 		}
-	}
-
-	{
-		// base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
-		// for (base::ReadOnlySpan const &span : spans)
-		// {
-		// 	pbuf_custom *custom_pbuf = new pbuf_custom{};
-		// 	custom_pbuf->custom_free_function = [](pbuf *p)
-		// 	{
-		// 		delete reinterpret_cast<pbuf_custom *>(p);
-		// 	};
-
-		// 	pbuf *p = pbuf_alloced_custom(PBUF_RAW,
-		// 								  span.Size(),
-		// 								  PBUF_REF,
-		// 								  custom_pbuf,
-		// 								  const_cast<uint8_t *>(span.Buffer()),
-		// 								  span.Size());
-
-		// 	netif *net_interface = reinterpret_cast<netif *>(argument);
-		// 	if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
-		// 	{
-		// 		pbuf_free(p);
-		// 	}
-		// }
 	}
 }
 
