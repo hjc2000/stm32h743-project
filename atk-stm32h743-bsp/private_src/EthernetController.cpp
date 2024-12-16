@@ -325,8 +325,6 @@ void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &
 
 base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 {
-	_receiving_completion_signal->Acquire();
-	DI_Console().WriteLine("_receiving_completion_signal->Acquire() successfully");
 	_received_span_list.Clear();
 
 	ETH_BufferTypeDef rx_buffers[ETH_RX_DESC_CNT]{};

@@ -173,6 +173,8 @@ void ethernetif_input(void *argument)
 {
 	while (true)
 	{
+		bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
+		DI_Console().WriteLine("_receiving_completion_signal->Acquire() successfully");
 		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
 		base::List<base::ReadOnlySpan> received_span_list{};
 
