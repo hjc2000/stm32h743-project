@@ -224,7 +224,7 @@ void ethernetif_input(void *argument)
 		netif *net_interface = reinterpret_cast<netif *>(argument);
 		while (true)
 		{
-			base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
+			base::IEnumerable<base::ReadOnlySpan> const *spans = DI_EthernetPort().Receive();
 			do
 			{
 				p = low_level_input();
