@@ -14,14 +14,6 @@
 #include <bsp-interface/di/task.h>
 #include <hal.h>
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* The time to block waiting for input. */
-#define TIME_WAITING_FOR_INPUT (portMAX_DELAY)
-/* Stack size of the interface thread */
-#define INTERFACE_THREAD_STACK_SIZE (512)
-#define NETIF_IN_TASK_PRIORITY (2)
-
 /* Define those to better describe your network interface. */
 #define IFNAME0 's'
 #define IFNAME1 't'
