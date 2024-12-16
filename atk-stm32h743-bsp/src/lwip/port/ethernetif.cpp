@@ -161,54 +161,6 @@ static err_t low_level_output(netif *net_interface, pbuf *p)
 }
 
 /**
- * @brief Should allocate a pbuf and transfer the bytes of the incoming
- * packet from the interface into the pbuf.
- *
- * @param netif the lwip network interface structure for this ethernetif
- * @return a pbuf filled with the received packet (including MAC header)
- *         NULL on memory error
- */
-static struct pbuf *low_level_input()
-{
-	ETH_BufferTypeDef rx_buffers[ETH_RX_DESC_CNT]{};
-	for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
-	{
-		rx_buffers[i].next = &rx_buffers[i + 1];
-	}
-
-	if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
-	{
-		DI_Console().WriteLine("no rx data avaliable");
-		return nullptr;
-	}
-
-	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
-	{
-		DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
-		return nullptr;
-	}
-
-	HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
-	SCB_InvalidateDCache_by_Addr(rx_buffers[0].buffer, rx_buffers[0].len);
-	DI_Console().WriteLine("HAL_ETH_GetRxDataLength rx_buffers[0].len = " + std::to_string(rx_buffers[0].len));
-
-	pbuf_custom *custom_pbuf = new pbuf_custom{};
-	custom_pbuf->custom_free_function = [](pbuf *p)
-	{
-		delete reinterpret_cast<pbuf_custom *>(p);
-	};
-
-	pbuf *p = pbuf_alloced_custom(PBUF_RAW,
-								  rx_buffers[0].len,
-								  PBUF_REF,
-								  custom_pbuf,
-								  rx_buffers[0].buffer,
-								  rx_buffers[0].len);
-
-	return p;
-}
-
-/**
  * @brief This function is the ethernetif_input task, it is processed when a packet
  * is ready to be read from the interface. It uses the function low_level_input()
  * that should handle the actual reception of bytes from the network
@@ -220,19 +172,49 @@ static struct pbuf *low_level_input()
 void ethernetif_input(void *argument)
 {
 	{
-		pbuf *p = nullptr;
-		netif *net_interface = reinterpret_cast<netif *>(argument);
 		while (true)
 		{
 			base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
 			while (true)
 			{
-				p = low_level_input();
-				if (p == nullptr)
+				ETH_BufferTypeDef rx_buffers[ETH_RX_DESC_CNT]{};
+				for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
 				{
+					rx_buffers[i].next = &rx_buffers[i + 1];
+				}
+
+				if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
+				{
+					DI_Console().WriteLine("no rx data avaliable");
 					break;
 				}
 
+				if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
+				{
+					DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
+					break;
+				}
+
+				HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
+				SCB_InvalidateDCache_by_Addr(rx_buffers[0].buffer, rx_buffers[0].len);
+
+				DI_Console().WriteLine("HAL_ETH_GetRxDataLength rx_buffers[0].len = " +
+									   std::to_string(rx_buffers[0].len));
+
+				pbuf_custom *custom_pbuf = new pbuf_custom{};
+				custom_pbuf->custom_free_function = [](pbuf *p)
+				{
+					delete reinterpret_cast<pbuf_custom *>(p);
+				};
+
+				pbuf *p = pbuf_alloced_custom(PBUF_RAW,
+											  rx_buffers[0].len,
+											  PBUF_REF,
+											  custom_pbuf,
+											  rx_buffers[0].buffer,
+											  rx_buffers[0].len);
+
+				netif *net_interface = reinterpret_cast<netif *>(argument);
 				if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
 				{
 					pbuf_free(p);
