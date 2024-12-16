@@ -29,6 +29,7 @@
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/interrupt.h>
 #include <lwip_demo.h>
+#include <LwipEthernetInterface.h>
 
 void freertos_demo()
 {
@@ -36,7 +37,7 @@ void freertos_demo()
 	{
 		try
 		{
-			lwip_comm_init();
+			bsp::LwipEthernetInterface::Instance().Open();
 			break;
 		}
 		catch (std::exception const &e)
@@ -45,8 +46,6 @@ void freertos_demo()
 			DI_Delayer().Delay(std::chrono::milliseconds{500});
 		}
 	}
-
-	DI_Console().WriteLine("lwip_comm_init successfully");
 
 	while (g_lwipdev.dhcpstatus != 2 && g_lwipdev.dhcpstatus != 0xff) /* 等待静态和动态分配完成  */
 	{

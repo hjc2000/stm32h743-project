@@ -37,4 +37,3 @@ typedef struct
 extern __lwip_dev g_lwipdev; /* lwip控制结构体 */
 
 void lwip_comm_default_ip_set(__lwip_dev *lwipx); /* lwip 默认IP设置 */
-void lwip_comm_init();                            /* LWIP初始化(LWIP启动的时候使用) */
