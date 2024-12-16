@@ -266,12 +266,6 @@ bsp::LwipEthernetInterface::LwipEthernetInterface()
 void bsp::LwipEthernetInterface::DhcpThreadFunc()
 {
 #if LWIP_DHCP
-	uint32_t ip = 0;
-	uint32_t netmask = 0;
-	uint32_t gw = 0;
-	struct dhcp *dhcp;
-	uint8_t iptxt[20];
-
 	while (true)
 	{
 		switch (_lwip_dhcp_state)
@@ -294,6 +288,12 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 			}
 		case LWIP_DHCP_WAIT_ADDRESS:
 			{
+				uint32_t ip = 0;
+				uint32_t netmask = 0;
+				uint32_t gw = 0;
+				struct dhcp *dhcp;
+				uint8_t iptxt[20];
+
 				if (dhcp_supplied_address(&_lwip_netif))
 				{
 					_lwip_dhcp_state = LWIP_DHCP_ADDRESS_ASSIGNED;
