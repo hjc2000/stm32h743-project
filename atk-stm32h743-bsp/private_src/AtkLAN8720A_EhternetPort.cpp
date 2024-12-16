@@ -51,9 +51,6 @@ void bsp::AtkLAN8720A_EhternetPort::Open(base::Mac const &mac)
 								 0,
 								 mac);
 
-	DI_Console().WriteLine("register2:" + base::ToHexString(ReadPHYRegister(2)));
-	DI_Console().WriteLine("register3:" + base::ToHexString(ReadPHYRegister(3)));
-
 	SoftwareResetPHY();
 	EnableAutoNegotiation();
 

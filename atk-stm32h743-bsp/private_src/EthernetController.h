@@ -28,13 +28,6 @@ namespace bsp
 
 		std::shared_ptr<bsp::IBinarySemaphore> _receiving_completion_signal = DICreate_BinarySemaphore();
 
-		/// @brief hal 句柄。
-		/// @return
-		ETH_HandleTypeDef &Handle()
-		{
-			return _handle;
-		}
-
 		/// @brief 以太网控制器的名称。
 		/// @return
 		std::string Name() const override;
