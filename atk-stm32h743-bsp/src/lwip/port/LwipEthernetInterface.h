@@ -2,6 +2,7 @@
 #include <base/define.h>
 #include <lwip/err.h>
 #include <lwip/netif.h>
+#include <lwip_comm.h>
 
 namespace bsp
 {
@@ -15,9 +16,7 @@ namespace bsp
 		void LinkStateCheckingThreadFunc();
 		void UpdataLinkState();
 
-	public:
-		static_function LwipEthernetInterface &Instance();
-
+		uint8_t _lwip_dhcp_state = LWIP_DHCP_OFF;
 		netif _lwip_netif{};
 
 		uint8_t _remoteip[4];   /* 远端主机IP地址 */
@@ -32,6 +31,9 @@ namespace bsp
 							0XFF,获取失败 */
 
 		uint8_t link_status; /* 连接状态 */
+
+	public:
+		static_function LwipEthernetInterface &Instance();
 
 		void Open();
 	};

@@ -22,9 +22,6 @@
 #include <stdio.h>
 #include <task.h>
 
-uint32_t g_dhcp_fine_timer = 0;                 /* DHCP精细处理计时器 */
-__IO uint8_t g_lwip_dhcp_state = LWIP_DHCP_OFF; /* DHCP状态初始化 */
-
 bsp::LwipEthernetInterface::LwipEthernetInterface()
 {
 	/* 默认远端IP为:192.168.1.134 */
@@ -65,7 +62,7 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 
 	while (true)
 	{
-		switch (g_lwip_dhcp_state)
+		switch (_lwip_dhcp_state)
 		{
 		case LWIP_DHCP_START:
 			{
@@ -77,7 +74,7 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 				ip_addr_set_zero_ip4(&_lwip_netif.netmask);
 				ip_addr_set_zero_ip4(&_lwip_netif.gw);
 
-				g_lwip_dhcp_state = LWIP_DHCP_WAIT_ADDRESS;
+				_lwip_dhcp_state = LWIP_DHCP_WAIT_ADDRESS;
 
 				printf("State: Looking for DHCP server ...\r\n");
 				dhcp_start(&_lwip_netif);
@@ -87,7 +84,7 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 			{
 				if (dhcp_supplied_address(&_lwip_netif))
 				{
-					g_lwip_dhcp_state = LWIP_DHCP_ADDRESS_ASSIGNED;
+					_lwip_dhcp_state = LWIP_DHCP_ADDRESS_ASSIGNED;
 
 					ip = _lwip_netif.ip_addr.addr;      /* 读取新IP地址 */
 					netmask = _lwip_netif.netmask.addr; /* 读取子网掩码 */
@@ -138,18 +135,38 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 				}
 				else
 				{
-					dhcp = (struct dhcp *)netif_get_client_data(&_lwip_netif, LWIP_NETIF_CLIENT_DATA_INDEX_DHCP);
+					dhcp = (struct dhcp *)netif_get_client_data(&_lwip_netif,
+																LWIP_NETIF_CLIENT_DATA_INDEX_DHCP);
 
 					/* DHCP timeout */
 					if (dhcp->tries > LWIP_MAX_DHCP_TRIES)
 					{
-						g_lwip_dhcp_state = LWIP_DHCP_TIMEOUT;
+						_lwip_dhcp_state = LWIP_DHCP_TIMEOUT;
 						_dhcpstatus = 0XFF;
+
 						/* 使用静态IP地址 */
-						IP4_ADDR(&(_lwip_netif.ip_addr), _ip_address[0], _ip_address[1], _ip_address[2], _ip_address[3]);
-						IP4_ADDR(&(_lwip_netif.netmask), _netmask[0], _netmask[1], _netmask[2], _netmask[3]);
-						IP4_ADDR(&(_lwip_netif.gw), _gateway[0], _gateway[1], _gateway[2], _gateway[3]);
-						netif_set_addr(&_lwip_netif, &_lwip_netif.ip_addr, &_lwip_netif.netmask, &_lwip_netif.gw);
+						IP4_ADDR(&(_lwip_netif.ip_addr),
+								 _ip_address[0],
+								 _ip_address[1],
+								 _ip_address[2],
+								 _ip_address[3]);
+
+						IP4_ADDR(&(_lwip_netif.netmask),
+								 _netmask[0],
+								 _netmask[1],
+								 _netmask[2],
+								 _netmask[3]);
+
+						IP4_ADDR(&(_lwip_netif.gw),
+								 _gateway[0],
+								 _gateway[1],
+								 _gateway[2],
+								 _gateway[3]);
+
+						netif_set_addr(&_lwip_netif,
+									   &_lwip_netif.ip_addr,
+									   &_lwip_netif.netmask,
+									   &_lwip_netif.gw);
 
 						sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(&_lwip_netif)));
 						printf("DHCP Timeout !! \r\n");
@@ -161,7 +178,7 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 			}
 		case LWIP_DHCP_LINK_DOWN:
 			{
-				g_lwip_dhcp_state = LWIP_DHCP_OFF;
+				_lwip_dhcp_state = LWIP_DHCP_OFF;
 				break;
 			}
 		default:
@@ -201,7 +218,7 @@ void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 				DI_Console().WriteLine("close ethernet");
 
 #if LWIP_DHCP
-				g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
+				_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
 				dhcp_stop(&_lwip_netif);
 #endif
 				netif_set_down(&_lwip_netif);
@@ -233,7 +250,7 @@ void bsp::LwipEthernetInterface::UpdataLinkState()
 	{
 #if LWIP_DHCP
 		/* Update DHCP state machine */
-		g_lwip_dhcp_state = LWIP_DHCP_START;
+		_lwip_dhcp_state = LWIP_DHCP_START;
 #endif
 		/* LWIP_DHCP */
 		printf("The network cable is connected \r\n");
@@ -242,7 +259,7 @@ void bsp::LwipEthernetInterface::UpdataLinkState()
 	{
 #if LWIP_DHCP
 		/* Update DHCP state machine */
-		g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
+		_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
 #endif
 		/* LWIP_DHCP */
 		printf("The network cable is not connected \r\n");
@@ -330,4 +347,10 @@ void bsp::LwipEthernetInterface::Open()
 		},
 		512);
 #endif
+
+	// 等待静态和动态分配完成
+	while (_dhcpstatus != 2 && _dhcpstatus != 0xff)
+	{
+		DI_Delayer().Delay(std::chrono::milliseconds{500});
+	}
 }
