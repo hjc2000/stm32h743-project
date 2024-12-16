@@ -327,19 +327,15 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 {
 	_receiving_completion_signal->Acquire();
 	DI_Console().WriteLine("_receiving_completion_signal->Acquire() successfully");
+	_received_span_list.Clear();
 
-	while (true)
+	ETH_BufferTypeDef eth_buffers[ETH_RX_DESC_CNT]{};
+	for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
 	{
-		_received_span_list.Clear();
-
-		ETH_BufferTypeDef eth_buffers[ETH_RX_DESC_CNT]{};
-		for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
-		{
-			eth_buffers[i].next = &eth_buffers[i + 1];
-		}
-
-		return _received_span_list;
+		eth_buffers[i].next = &eth_buffers[i + 1];
 	}
+
+	return _received_span_list;
 
 	// HAL_StatusTypeDef result = HAL_ETH_GetRxDataBuffer(&_handle, eth_buffers);
 	// if (result != HAL_StatusTypeDef::HAL_OK)
