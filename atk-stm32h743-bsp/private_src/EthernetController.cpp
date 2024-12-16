@@ -335,8 +335,6 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 		eth_buffers[i].next = &eth_buffers[i + 1];
 	}
 
-	return _received_span_list;
-
 	// HAL_StatusTypeDef result = HAL_ETH_GetRxDataBuffer(&_handle, eth_buffers);
 	// if (result != HAL_StatusTypeDef::HAL_OK)
 	// {
@@ -379,4 +377,5 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 	// }
 
 	// DI_Console().WriteLine("_received_span_list.Count = " + std::to_string(_received_span_list.Count()));
+	return _received_span_list;
 }
