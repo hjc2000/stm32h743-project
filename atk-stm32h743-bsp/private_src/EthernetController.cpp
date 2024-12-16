@@ -314,14 +314,6 @@ void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &
 	if (_eth_buffers.Count() > 0)
 	{
 		_sending_config.TxBuffer = &_eth_buffers[0];
-		HAL_StatusTypeDef result = HAL_ETH_Transmit_IT(&_handle, &_sending_config);
-		if (result == HAL_StatusTypeDef::HAL_OK)
-		{
-			DI_Console().WriteLine("HAL_ETH_Transmit_IT OK");
-		}
-		else
-		{
-			DI_Console().WriteLine("HAL_ETH_Transmit_IT error");
-		}
+		HAL_ETH_Transmit_IT(&_handle, &_sending_config);
 	}
 }
