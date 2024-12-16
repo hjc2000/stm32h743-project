@@ -256,20 +256,11 @@ void lwip_comm_default_ip_set(__lwip_dev *lwipx)
 	lwipx->dhcpstatus = 0; /* 没有DHCP */
 }
 
-/**
- * @breif       LWIP初始化(LWIP启动的时候使用)
- * @param       无
- * @retval      0,成功
- *              1,内存错误
- *              2,以太网芯片初始化失败
- *              3,网卡添加失败.
- */
-uint8_t lwip_comm_init(void)
+void lwip_comm_init()
 {
-	struct netif *netif_init_flag = nullptr; /* 调用netif_add()函数时的返回值,用于判断网络初始化是否成功 */
-	ip_addr_t ipaddr{};                      /* ip地址 */
-	ip_addr_t netmask{};                     /* 子网掩码 */
-	ip_addr_t gw{};                          /* 默认网关 */
+	ip_addr_t ipaddr{};  /* ip地址 */
+	ip_addr_t netmask{}; /* 子网掩码 */
+	ip_addr_t gw{};      /* 默认网关 */
 
 	tcpip_init(NULL, NULL);
 	DI_Console().WriteLine("tcpip_init successfully");
@@ -293,52 +284,48 @@ uint8_t lwip_comm_init(void)
 #endif
 
 	/* 向网卡列表中添加一个网口 */
-	netif_init_flag = netif_add(&bsp::LwipEthernetInterface::Instance()._lwip_netif,
-								(ip_addr_t const *)&ipaddr,
-								(ip_addr_t const *)&netmask,
-								(ip_addr_t const *)&gw,
-								NULL,
-								&ethernetif_init,
-								&tcpip_input);
+	netif *netif_add_result = netif_add(&bsp::LwipEthernetInterface::Instance()._lwip_netif,
+										(ip_addr_t const *)&ipaddr,
+										(ip_addr_t const *)&netmask,
+										(ip_addr_t const *)&gw,
+										nullptr,
+										&ethernetif_init,
+										&tcpip_input);
 
-	if (netif_init_flag == NULL)
+	if (netif_add_result == nullptr)
 	{
-		DI_Console().WriteLine("netif_add failed");
-
-		/* 网卡添加失败 */
-		return 1;
+		DI_Console().WriteLine("添加网卡失败。");
+		throw std::runtime_error{"添加网卡失败。"};
 	}
-	else
-	{
-		DI_Console().WriteLine("netif_add successfully");
 
-		/* 网口添加成功后,设置netif为默认值,并且打开netif网口 */
-		netif_set_default(&bsp::LwipEthernetInterface::Instance()._lwip_netif); /* 设置netif为默认网口 */
-		DI_Console().WriteLine("netif_set_default successfully");
+	DI_Console().WriteLine("添加网卡成功。");
+
+	/* 网口添加成功后,设置netif为默认值,并且打开netif网口 */
+	netif_set_default(&bsp::LwipEthernetInterface::Instance()._lwip_netif); /* 设置netif为默认网口 */
+	DI_Console().WriteLine("netif_set_default successfully");
 
 #if LWIP_NETIF_LINK_CALLBACK
-		/* DHCP链接状态更新函数 */
-		lwip_link_status_updated(&bsp::LwipEthernetInterface::Instance()._lwip_netif);
-		DI_Console().WriteLine("lwip_link_status_updated successfully");
+	/* DHCP链接状态更新函数 */
+	lwip_link_status_updated(&bsp::LwipEthernetInterface::Instance()._lwip_netif);
+	DI_Console().WriteLine("lwip_link_status_updated successfully");
 
-		netif_set_link_callback(&bsp::LwipEthernetInterface::Instance()._lwip_netif, lwip_link_status_updated);
-		DI_Console().WriteLine("netif_set_link_callback successfully");
+	netif_set_link_callback(&bsp::LwipEthernetInterface::Instance()._lwip_netif, lwip_link_status_updated);
+	DI_Console().WriteLine("netif_set_link_callback successfully");
 
-		DI_TaskManager().Create(
-			[]()
-			{
-				lwip_link_thread();
-			},
-			512);
+	DI_TaskManager().Create(
+		[]()
+		{
+			lwip_link_thread();
+		},
+		512);
 
-		DI_Console().WriteLine("sys_thread_new eth_link thread successfully");
-
+	DI_Console().WriteLine("sys_thread_new eth_link thread successfully");
 #endif
-	}
 
 	g_lwipdev.link_status = LWIP_LINK_OFF; /* 链接标记为0 */
-#if LWIP_DHCP                              /* 如果使用DHCP的话 */
-	g_lwipdev.dhcpstatus = 0;              /* DHCP标记为0 */
+
+#if LWIP_DHCP                 /* 如果使用DHCP的话 */
+	g_lwipdev.dhcpstatus = 0; /* DHCP标记为0 */
 
 	DI_TaskManager().Create(
 		[]()
@@ -348,7 +335,5 @@ uint8_t lwip_comm_init(void)
 		512);
 
 	DI_Console().WriteLine("sys_thread_new eth_dhcp thread successfully");
-
 #endif
-	return 0; /* 操作OK. */
 }
