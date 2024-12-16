@@ -98,6 +98,8 @@ void lwip_link_thread()
 			if (g_lwipdev.link_status == LWIP_LINK_OFF)
 			{
 				/* 开启以太网及虚拟网卡 */
+				DI_EthernetPort().Restart();
+
 				g_lwipdev.link_status = LWIP_LINK_ON;
 				netif_set_up(&g_lwip_netif);
 				netif_set_link_up(&g_lwip_netif);

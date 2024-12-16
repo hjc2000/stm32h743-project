@@ -47,15 +47,15 @@ void bsp::AtkLAN8720A_EhternetPort::Open(base::Mac const &mac)
 	ResetPHY();
 
 	// 打开以太网控制器
-	DI_EthernetController().Open(bsp::Ethernet_InterfaceType::RMII,
-								 0,
-								 mac);
+	_controller->Open(bsp::Ethernet_InterfaceType::RMII,
+					  0,
+					  mac);
 
 	SoftwareResetPHY();
 	EnableAutoNegotiation();
 
 	// 启动以太网
-	DI_EthernetController().Start(DuplexMode(), Speed());
+	_controller->Start(DuplexMode(), Speed());
 }
 
 void bsp::AtkLAN8720A_EhternetPort::Restart()
@@ -64,7 +64,7 @@ void bsp::AtkLAN8720A_EhternetPort::Restart()
 	EnableAutoNegotiation();
 
 	// 启动以太网
-	DI_EthernetController().Start(DuplexMode(), Speed());
+	_controller->Start(DuplexMode(), Speed());
 }
 
 uint32_t bsp::AtkLAN8720A_EhternetPort::ReadPHYRegister(uint32_t register_index)
