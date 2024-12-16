@@ -189,6 +189,7 @@ static struct pbuf *low_level_input()
 
 	/* Invalidate data cache for ETH Rx Buffers */
 	SCB_InvalidateDCache_by_Addr(rx_buffers->buffer, framelength);
+	DI_Console().WriteLine("HAL_ETH_GetRxDataLength framelength = " + std::to_string(framelength));
 
 	pbuf_custom *custom_pbuf = new pbuf_custom{};
 	custom_pbuf->custom_free_function = [](pbuf *p)
