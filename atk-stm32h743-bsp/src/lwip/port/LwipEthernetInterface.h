@@ -20,11 +20,13 @@ namespace bsp
 		uint8_t ip[4];       /* 本机IP地址 */
 		uint8_t netmask[4];  /* 子网掩码 */
 		uint8_t gateway[4];  /* 默认网关的IP地址 */
-		uint8_t dhcpstatus;  /* dhcp状态
-							 0, 未获取DHCP地址
-							 1, 进入DHCP获取状态
-							 2, 成功获取DHCP地址
-							 0XFF,获取失败 */
+
+		uint8_t _dhcpstatus; /* dhcp状态
+							0, 未获取DHCP地址
+							1, 进入DHCP获取状态
+							2, 成功获取DHCP地址
+							0XFF,获取失败 */
+
 		uint8_t link_status; /* 连接状态 */
 
 		void Open();

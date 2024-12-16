@@ -162,7 +162,7 @@ void lwip_periodic_handle()
 
 					if (ip != 0)
 					{
-						bsp::LwipEthernetInterface::Instance().dhcpstatus = 2; /* DHCP成功 */
+						bsp::LwipEthernetInterface::Instance()._dhcpstatus = 2; /* DHCP成功 */
 						/* 解析出通过DHCP获取到的IP地址 */
 						bsp::LwipEthernetInterface::Instance().ip[3] = (uint8_t)(ip >> 24);
 						bsp::LwipEthernetInterface::Instance().ip[2] = (uint8_t)(ip >> 16);
@@ -191,7 +191,7 @@ void lwip_periodic_handle()
 					if (dhcp->tries > LWIP_MAX_DHCP_TRIES)
 					{
 						g_lwip_dhcp_state = LWIP_DHCP_TIMEOUT;
-						bsp::LwipEthernetInterface::Instance().dhcpstatus = 0XFF;
+						bsp::LwipEthernetInterface::Instance()._dhcpstatus = 0XFF;
 						/* 使用静态IP地址 */
 						IP4_ADDR(&(bsp::LwipEthernetInterface::Instance()._lwip_netif.ip_addr), bsp::LwipEthernetInterface::Instance().ip[0], bsp::LwipEthernetInterface::Instance().ip[1], bsp::LwipEthernetInterface::Instance().ip[2], bsp::LwipEthernetInterface::Instance().ip[3]);
 						IP4_ADDR(&(bsp::LwipEthernetInterface::Instance()._lwip_netif.netmask), bsp::LwipEthernetInterface::Instance().netmask[0], bsp::LwipEthernetInterface::Instance().netmask[1], bsp::LwipEthernetInterface::Instance().netmask[2], bsp::LwipEthernetInterface::Instance().netmask[3]);
@@ -248,7 +248,8 @@ bsp::LwipEthernetInterface::LwipEthernetInterface()
 	gateway[1] = 168;
 	gateway[2] = 1;
 	gateway[3] = 1;
-	dhcpstatus = 0; /* 没有DHCP */
+
+	_dhcpstatus = 0; /* 没有DHCP */
 }
 
 bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
@@ -279,26 +280,15 @@ bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 
 void bsp::LwipEthernetInterface::Open()
 {
-	ip_addr_t ipaddr{};  /* ip地址 */
-	ip_addr_t netmask{}; /* 子网掩码 */
-	ip_addr_t gateway{}; /* 默认网关 */
-
 	tcpip_init(NULL, NULL);
 
-#if !LWIP_DHCP /* 使用动态IP */
-	/* 使用静态IP */
-	IP4_ADDR(&ipaddr, bsp::LwipEthernetInterface::Instance().ip[0], bsp::LwipEthernetInterface::Instance().ip[1], bsp::LwipEthernetInterface::Instance().ip[2], bsp::LwipEthernetInterface::Instance().ip[3]);
-	IP4_ADDR(&netmask, bsp::LwipEthernetInterface::Instance().netmask[0], bsp::LwipEthernetInterface::Instance().netmask[1], bsp::LwipEthernetInterface::Instance().netmask[2], bsp::LwipEthernetInterface::Instance().netmask[3]);
-	IP4_ADDR(&gateway, bsp::LwipEthernetInterface::Instance().gateway[0], bsp::LwipEthernetInterface::Instance().gateway[1], bsp::LwipEthernetInterface::Instance().gateway[2], bsp::LwipEthernetInterface::Instance().gateway[3]);
-	printf("静态IP地址........................%d.%d.%d.%d\r\n", bsp::LwipEthernetInterface::Instance().ip[0], bsp::LwipEthernetInterface::Instance().ip[1], bsp::LwipEthernetInterface::Instance().ip[2], bsp::LwipEthernetInterface::Instance().ip[3]);
-	printf("子网掩码..........................%d.%d.%d.%d\r\n", bsp::LwipEthernetInterface::Instance().netmask[0], bsp::LwipEthernetInterface::Instance().netmask[1], bsp::LwipEthernetInterface::Instance().netmask[2], bsp::LwipEthernetInterface::Instance().netmask[3]);
-	printf("默认网关..........................%d.%d.%d.%d\r\n", bsp::LwipEthernetInterface::Instance().gateway[0], bsp::LwipEthernetInterface::Instance().gateway[1], bsp::LwipEthernetInterface::Instance().gateway[2], bsp::LwipEthernetInterface::Instance().gateway[3]);
-	bsp::LwipEthernetInterface::Instance().dhcpstatus = 0XFF;
+#if !LWIP_DHCP
+	_dhcpstatus = 0XFF;
 #endif
 
 	/* 向网卡列表中添加一个网口 */
 	netif *netif_add_result = netif_add(&_lwip_netif,
-										(ip_addr_t const *)&ipaddr,
+										(ip_addr_t const *)&ip,
 										(ip_addr_t const *)&netmask,
 										(ip_addr_t const *)&gateway,
 										nullptr,
@@ -327,10 +317,10 @@ void bsp::LwipEthernetInterface::Open()
 		512);
 #endif
 
-	bsp::LwipEthernetInterface::Instance().link_status = LWIP_LINK_OFF; /* 链接标记为0 */
+	link_status = LWIP_LINK_OFF; /* 链接标记为0 */
 
-#if LWIP_DHCP                                              /* 如果使用DHCP的话 */
-	bsp::LwipEthernetInterface::Instance().dhcpstatus = 0; /* DHCP标记为0 */
+#if LWIP_DHCP       /* 如果使用DHCP的话 */
+	_dhcpstatus = 0; /* DHCP标记为0 */
 
 	DI_TaskManager().Create(
 		[]()
