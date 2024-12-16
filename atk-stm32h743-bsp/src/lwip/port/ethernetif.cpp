@@ -176,18 +176,21 @@ static struct pbuf *low_level_input()
 		rx_buffers[i].next = &rx_buffers[i + 1];
 	}
 
+	if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
+	{
+		DI_Console().WriteLine("no rx data avaliable");
+		return nullptr;
+	}
+
 	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
 	{
 		DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
 		return nullptr;
 	}
 
-	uint32_t framelength = 0;
-	HAL_ETH_GetRxDataLength(&bsp::EthernetController::Instance().Handle(), &framelength);
-
 	HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
-	SCB_InvalidateDCache_by_Addr(rx_buffers->buffer, framelength);
-	DI_Console().WriteLine("HAL_ETH_GetRxDataLength framelength = " + std::to_string(framelength));
+	SCB_InvalidateDCache_by_Addr(rx_buffers[0].buffer, rx_buffers[0].len);
+	DI_Console().WriteLine("HAL_ETH_GetRxDataLength rx_buffers[0].len = " + std::to_string(rx_buffers[0].len));
 
 	pbuf_custom *custom_pbuf = new pbuf_custom{};
 	custom_pbuf->custom_free_function = [](pbuf *p)
@@ -196,11 +199,11 @@ static struct pbuf *low_level_input()
 	};
 
 	pbuf *p = pbuf_alloced_custom(PBUF_RAW,
-								  framelength,
+								  rx_buffers[0].len,
 								  PBUF_REF,
 								  custom_pbuf,
-								  rx_buffers->buffer,
-								  framelength);
+								  rx_buffers[0].buffer,
+								  rx_buffers[0].len);
 
 	return p;
 }
