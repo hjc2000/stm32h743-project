@@ -333,20 +333,19 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 		rx_buffers[i].next = &rx_buffers[i + 1];
 	}
 
-	if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
+	if (!HAL_ETH_IsRxDataAvailable(&_handle))
 	{
-		bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
-		DI_Console().WriteLine("_receiving_completion_signal->Acquire() successfully");
+		// 无数据可接收，等待信号量。有数据到来会触发中断，中断服务函数会释放信号量。
+		_receiving_completion_signal->Acquire();
+	}
+
+	if (HAL_ETH_GetRxDataBuffer(&_handle, rx_buffers) != HAL_OK)
+	{
+		DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer 接收数据发生错误。");
 		return _received_span_list;
 	}
 
-	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
-	{
-		DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
-		return _received_span_list;
-	}
-
-	HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
+	HAL_ETH_BuildRxDescriptors(&_handle);
 
 	for (ETH_BufferTypeDef buffer : rx_buffers)
 	{
@@ -369,6 +368,5 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 		}
 	}
 
-	DI_Console().WriteLine("received_span_list.Count = " + std::to_string(_received_span_list.Count()));
 	return _received_span_list;
 }
