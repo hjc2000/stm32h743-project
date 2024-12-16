@@ -168,7 +168,7 @@ static err_t low_level_output(netif *net_interface, pbuf *p)
  * @return a pbuf filled with the received packet (including MAC header)
  *         NULL on memory error
  */
-static struct pbuf *low_level_input(netif *net_interface)
+static struct pbuf *low_level_input()
 {
 	ETH_BufferTypeDef rx_buffer[ETH_RX_DESC_CNT]{};
 	uint32_t framelength = 0, i = 0;
@@ -224,7 +224,7 @@ void ethernetif_input(void *argument)
 		bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
 		do
 		{
-			p = low_level_input(net_interface);
+			p = low_level_input();
 			if (p != nullptr)
 			{
 				if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
