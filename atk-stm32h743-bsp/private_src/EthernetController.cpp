@@ -372,6 +372,10 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 	{
 		base::ReadOnlySpan span{buffer.buffer, static_cast<int32_t>(buffer.len)};
 		_received_span_list.Add(span);
+		if (buffer.next == nullptr)
+		{
+			break;
+		}
 	}
 
 	return _received_span_list;
