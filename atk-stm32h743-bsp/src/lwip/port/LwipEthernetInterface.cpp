@@ -242,12 +242,6 @@ err_t ethernetif_init(struct netif *netif)
 
 bsp::LwipEthernetInterface::LwipEthernetInterface()
 {
-	/* 默认远端IP为:192.168.1.134 */
-	_remoteip[0] = 192;
-	_remoteip[1] = 168;
-	_remoteip[2] = 1;
-	_remoteip[3] = 134;
-
 	/* 默认本地IP为:192.168.1.30 */
 	_ip_address[0] = 192;
 	_ip_address[1] = 168;

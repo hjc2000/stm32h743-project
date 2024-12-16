@@ -19,7 +19,6 @@ namespace bsp
 		uint8_t _lwip_dhcp_state = LWIP_DHCP_OFF;
 		netif _lwip_netif{};
 
-		uint8_t _remoteip[4];   /* 远端主机IP地址 */
 		uint8_t _ip_address[4]; /* 本机IP地址 */
 		uint8_t _netmask[4];    /* 子网掩码 */
 		uint8_t _gateway[4];    /* 默认网关的IP地址 */
