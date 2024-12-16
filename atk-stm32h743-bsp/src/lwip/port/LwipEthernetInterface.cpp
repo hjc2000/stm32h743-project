@@ -52,65 +52,6 @@ void lwip_link_status_updated(netif *netif)
 	}
 }
 
-/**
- * @brief       检查ETH链路状态，更新netif
- * @param       argument: netif
- * @retval      无
- */
-void lwip_link_thread()
-{
-	DI_Console().WriteLine("enter lwip_link_thread");
-
-	int link_again_num = 0;
-
-	while (true)
-	{
-		/* 读取PHY状态寄存器，获取链接信息 */
-		uint32_t regval = DI_EthernetController().ReadPHYRegister(1);
-
-		/* 判断链接状态 */
-		if ((regval & 0x0004U) == 0)
-		{
-			bsp::LwipEthernetInterface::Instance().link_status = LWIP_LINK_OFF;
-			link_again_num++;
-
-			if (link_again_num >= 2)
-			{
-				/* 网线一段时间没有插入 */
-				continue;
-			}
-			else
-			{
-				/* 关闭虚拟网卡及以太网中断 */
-				DI_Console().WriteLine("close ethernet");
-
-#if LWIP_DHCP
-				g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
-				dhcp_stop(&bsp::LwipEthernetInterface::Instance()._lwip_netif);
-#endif
-				netif_set_down(&bsp::LwipEthernetInterface::Instance()._lwip_netif);
-				netif_set_link_down(&bsp::LwipEthernetInterface::Instance()._lwip_netif);
-			}
-		}
-		else
-		{
-			/* 网线插入检测 */
-			link_again_num = 0;
-			if (bsp::LwipEthernetInterface::Instance().link_status == LWIP_LINK_OFF)
-			{
-				/* 开启以太网及虚拟网卡 */
-				DI_EthernetPort().Restart();
-
-				bsp::LwipEthernetInterface::Instance().link_status = LWIP_LINK_ON;
-				netif_set_up(&bsp::LwipEthernetInterface::Instance()._lwip_netif);
-				netif_set_link_up(&bsp::LwipEthernetInterface::Instance()._lwip_netif);
-			}
-		}
-
-		DI_Delayer().Delay(std::chrono::milliseconds{100});
-	}
-}
-
 bsp::LwipEthernetInterface::LwipEthernetInterface()
 {
 	/* 默认远端IP为:192.168.1.134 */
@@ -264,6 +205,60 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 #endif
 }
 
+void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
+{
+	DI_Console().WriteLine("enter lwip_link_thread");
+
+	int link_again_num = 0;
+
+	while (true)
+	{
+		/* 读取PHY状态寄存器，获取链接信息 */
+		uint32_t regval = DI_EthernetController().ReadPHYRegister(1);
+
+		/* 判断链接状态 */
+		if ((regval & 0x0004U) == 0)
+		{
+			link_status = LWIP_LINK_OFF;
+			link_again_num++;
+
+			if (link_again_num >= 2)
+			{
+				/* 网线一段时间没有插入 */
+				continue;
+			}
+			else
+			{
+				/* 关闭虚拟网卡及以太网中断 */
+				DI_Console().WriteLine("close ethernet");
+
+#if LWIP_DHCP
+				g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
+				dhcp_stop(&_lwip_netif);
+#endif
+				netif_set_down(&_lwip_netif);
+				netif_set_link_down(&_lwip_netif);
+			}
+		}
+		else
+		{
+			/* 网线插入检测 */
+			link_again_num = 0;
+			if (link_status == LWIP_LINK_OFF)
+			{
+				/* 开启以太网及虚拟网卡 */
+				DI_EthernetPort().Restart();
+
+				link_status = LWIP_LINK_ON;
+				netif_set_up(&_lwip_netif);
+				netif_set_link_up(&_lwip_netif);
+			}
+		}
+
+		DI_Delayer().Delay(std::chrono::milliseconds{100});
+	}
+}
+
 bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 {
 	class Getter :
@@ -322,9 +317,9 @@ void bsp::LwipEthernetInterface::Open()
 	netif_set_link_callback(&_lwip_netif, lwip_link_status_updated);
 
 	DI_TaskManager().Create(
-		[]()
+		[this]()
 		{
-			lwip_link_thread();
+			LinkStateCheckingThreadFunc();
 		},
 		512);
 #endif

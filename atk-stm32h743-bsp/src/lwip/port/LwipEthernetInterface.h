@@ -12,6 +12,7 @@ namespace bsp
 		LwipEthernetInterface();
 
 		void DhcpThreadFunc();
+		void LinkStateCheckingThreadFunc();
 
 	public:
 		static_function LwipEthernetInterface &Instance();
