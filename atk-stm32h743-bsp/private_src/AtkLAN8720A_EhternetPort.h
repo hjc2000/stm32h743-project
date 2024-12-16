@@ -24,6 +24,12 @@ namespace bsp
 		/// @param mac MAC 地址。
 		void Open(base::Mac const &mac) override;
 
+		/// @brief 重启网口。
+		/// @note 会保留 MAC 地址等配置。
+		/// @note 会重新进行自动协商的过程。断线重连后可以调用本方法，防止 MAC 控制器
+		/// 所使用的速率、双工等配置与新插入的网线不符。
+		void Restart() override;
+
 		/// @brief 读 PHY 的寄存器
 		/// @param register_index 寄存器索引。
 		/// @return
