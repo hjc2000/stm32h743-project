@@ -83,7 +83,7 @@ namespace bsp
 
 		/// @brief 接收。
 		/// @return
-		base::IEnumerable<base::ReadOnlySpan> const *Receive() override;
+		base::IEnumerable<base::ReadOnlySpan> const &Receive() override;
 	};
 
 } // namespace bsp

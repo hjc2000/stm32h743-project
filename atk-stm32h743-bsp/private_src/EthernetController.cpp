@@ -323,7 +323,7 @@ void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &
 	}
 }
 
-base::IEnumerable<base::ReadOnlySpan> const *bsp::EthernetController::Receive()
+base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 {
 	_receiving_completion_signal->Acquire();
 	DI_Console().WriteLine("_receiving_completion_signal->Acquire() successfully");
@@ -335,7 +335,7 @@ base::IEnumerable<base::ReadOnlySpan> const *bsp::EthernetController::Receive()
 		eth_buffers[i].next = &eth_buffers[i + 1];
 	}
 
-	return &_received_span_list;
+	return _received_span_list;
 
 	// HAL_StatusTypeDef result = HAL_ETH_GetRxDataBuffer(&_handle, eth_buffers);
 	// if (result != HAL_StatusTypeDef::HAL_OK)
