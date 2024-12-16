@@ -174,6 +174,9 @@ void ethernetif_input(void *argument)
 	while (true)
 	{
 		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
+		pbuf *head_pbuf = nullptr;
+		pbuf *current_pbuf = nullptr;
+
 		for (base::ReadOnlySpan const &span : spans)
 		{
 			pbuf_custom *custom_pbuf = new pbuf_custom{};
@@ -189,11 +192,23 @@ void ethernetif_input(void *argument)
 										  const_cast<uint8_t *>(span.Buffer()),
 										  span.Size());
 
-			netif *net_interface = reinterpret_cast<netif *>(argument);
-			if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
+			p->next = nullptr;
+			if (head_pbuf == nullptr)
 			{
-				pbuf_free(p);
+				head_pbuf = p;
+				current_pbuf = p;
 			}
+			else
+			{
+				current_pbuf->next = p;
+				current_pbuf = p;
+			}
+		}
+
+		netif *net_interface = reinterpret_cast<netif *>(argument);
+		if (net_interface->input(head_pbuf, net_interface) != err_enum_t::ERR_OK)
+		{
+			pbuf_free(head_pbuf);
 		}
 	}
 }
