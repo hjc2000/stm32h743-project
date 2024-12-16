@@ -90,8 +90,8 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 					netmask = _lwip_netif.netmask.addr; /* 读取子网掩码 */
 					gw = _lwip_netif.gw.addr;           /* 读取默认网关 */
 
-					sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(&_lwip_netif)));
-					printf("IP address assigned by a DHCP server: %s\r\n", iptxt);
+					// sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(&_lwip_netif)));
+					// printf("IP address assigned by a DHCP server: %s\r\n", iptxt);
 
 					if (ip != 0)
 					{
@@ -102,11 +102,11 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 						_ip_address[1] = (uint8_t)(ip >> 8);
 						_ip_address[0] = (uint8_t)(ip);
 
-						printf("通过DHCP获取到IP地址..............%d.%d.%d.%d\r\n",
-							   _ip_address[0],
-							   _ip_address[1],
-							   _ip_address[2],
-							   _ip_address[3]);
+						DI_Console().WriteLine("通过 DHCP 获取到 IP 地址：" +
+											   std::to_string(_ip_address[0]) + '.' +
+											   std::to_string(_ip_address[1]) + '.' +
+											   std::to_string(_ip_address[2]) + '.' +
+											   std::to_string(_ip_address[3]));
 
 						/* 解析通过DHCP获取到的子网掩码地址 */
 						_netmask[3] = (uint8_t)(netmask >> 24);
@@ -114,11 +114,11 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 						_netmask[1] = (uint8_t)(netmask >> 8);
 						_netmask[0] = (uint8_t)(netmask);
 
-						printf("通过DHCP获取到子网掩码............%d.%d.%d.%d\r\n",
-							   _netmask[0],
-							   _netmask[1],
-							   _netmask[2],
-							   _netmask[3]);
+						DI_Console().WriteLine("通过DHCP获取到子网掩码：" +
+											   std::to_string(_netmask[0]) + '.' +
+											   std::to_string(_netmask[1]) + '.' +
+											   std::to_string(_netmask[2]) + '.' +
+											   std::to_string(_netmask[3]));
 
 						/* 解析出通过DHCP获取到的默认网关 */
 						_gateway[3] = (uint8_t)(gw >> 24);
@@ -126,11 +126,11 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 						_gateway[1] = (uint8_t)(gw >> 8);
 						_gateway[0] = (uint8_t)(gw);
 
-						printf("通过DHCP获取到的默认网关..........%d.%d.%d.%d\r\n",
-							   _gateway[0],
-							   _gateway[1],
-							   _gateway[2],
-							   _gateway[3]);
+						DI_Console().WriteLine("通过 DHCP 获取到的默认网关：" +
+											   std::to_string(_gateway[0]) + '.' +
+											   std::to_string(_gateway[1]) + '.' +
+											   std::to_string(_gateway[2]) + '.' +
+											   std::to_string(_gateway[3]));
 					}
 				}
 				else
