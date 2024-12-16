@@ -174,12 +174,20 @@ void ethernetif_input(void *argument)
 	while (true)
 	{
 		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
+		base::List<base::ReadOnlySpan> received_span_list{};
+
 		while (true)
 		{
 			ETH_BufferTypeDef rx_buffers[ETH_RX_DESC_CNT]{};
 			for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
 			{
 				rx_buffers[i].next = &rx_buffers[i + 1];
+			}
+
+			if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
+			{
+				DI_Console().WriteLine("no rx data avaliable");
+				break;
 			}
 
 			if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
@@ -189,28 +197,48 @@ void ethernetif_input(void *argument)
 			}
 
 			HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
-			SCB_InvalidateDCache_by_Addr(rx_buffers[0].buffer, rx_buffers[0].len);
-
-			DI_Console().WriteLine("HAL_ETH_GetRxDataLength rx_buffers[0].len = " +
-								   std::to_string(rx_buffers[0].len));
-
-			pbuf_custom *custom_pbuf = new pbuf_custom{};
-			custom_pbuf->custom_free_function = [](pbuf *p)
+			for (ETH_BufferTypeDef buffer : rx_buffers)
 			{
-				delete reinterpret_cast<pbuf_custom *>(p);
-			};
+				if (buffer.buffer == nullptr)
+				{
+					break;
+				}
 
-			pbuf *p = pbuf_alloced_custom(PBUF_RAW,
-										  rx_buffers[0].len,
-										  PBUF_REF,
-										  custom_pbuf,
-										  rx_buffers[0].buffer,
-										  rx_buffers[0].len);
+				if (buffer.len == 0)
+				{
+					break;
+				}
 
-			netif *net_interface = reinterpret_cast<netif *>(argument);
-			if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
+				SCB_InvalidateDCache_by_Addr(buffer.buffer, buffer.len);
+				base::ReadOnlySpan span{buffer.buffer, static_cast<int32_t>(buffer.len)};
+				received_span_list.Add(span);
+				if (buffer.next == nullptr)
+				{
+					break;
+				}
+			}
+
+			DI_Console().WriteLine("received_span_list.Count = " + std::to_string(received_span_list.Count()));
+			for (base::ReadOnlySpan &span : received_span_list)
 			{
-				pbuf_free(p);
+				pbuf_custom *custom_pbuf = new pbuf_custom{};
+				custom_pbuf->custom_free_function = [](pbuf *p)
+				{
+					delete reinterpret_cast<pbuf_custom *>(p);
+				};
+
+				pbuf *p = pbuf_alloced_custom(PBUF_RAW,
+											  span.Size(),
+											  PBUF_REF,
+											  custom_pbuf,
+											  const_cast<uint8_t *>(span.Buffer()),
+											  span.Size());
+
+				netif *net_interface = reinterpret_cast<netif *>(argument);
+				if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
+				{
+					pbuf_free(p);
+				}
 			}
 		}
 	}
