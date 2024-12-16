@@ -15,7 +15,8 @@
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/task.h>
-#include <EthernetController.h>
+#include <hal.h>
+#include <stdint.h>
 #include <stdio.h>
 
 __lwip_dev g_lwipdev; /* lwip控制结构体 */

@@ -6,7 +6,6 @@
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
-#include <EthernetController.h>
 #include <hal.h>
 #include <vector>
 

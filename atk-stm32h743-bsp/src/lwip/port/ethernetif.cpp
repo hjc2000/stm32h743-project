@@ -12,7 +12,7 @@
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/system_time.h>
 #include <bsp-interface/di/task.h>
-#include <EthernetController.h>
+#include <hal.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
