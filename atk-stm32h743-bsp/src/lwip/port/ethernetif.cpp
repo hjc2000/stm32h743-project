@@ -182,12 +182,6 @@ void ethernetif_input(void *argument)
 				rx_buffers[i].next = &rx_buffers[i + 1];
 			}
 
-			if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
-			{
-				DI_Console().WriteLine("no rx data avaliable");
-				break;
-			}
-
 			if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
 			{
 				DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
