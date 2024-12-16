@@ -198,12 +198,16 @@ void bsp::EthernetController::Open(bsp::Ethernet_InterfaceType interface_type,
 	_handle.Init.RxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000);
 	_handle.Init.TxDesc = reinterpret_cast<ETH_DMADescTypeDef *>(0x30040000 + 4 * sizeof(ETH_DMADescTypeDef));
 	_handle.Init.RxBuffLen = ETH_MAX_PACKET_SIZE;
-
 	HAL_StatusTypeDef result = HAL_ETH_Init(&_handle);
 	if (result != HAL_OK)
 	{
 		throw std::runtime_error{"打开以太网口失败"};
 	}
+
+	_handle.TxCpltCallback = [](ETH_HandleTypeDef *handle)
+	{
+		EthernetController::Instance()._send_completion_signal->ReleaseFromISR();
+	};
 
 	// MDC时钟
 	HAL_ETH_SetMDIOClockRange(&_handle);
@@ -283,17 +287,12 @@ void bsp::EthernetController::Start(bsp::Ethernet_DuplexMode duplex_mode, base::
 	}
 
 	HAL_ETH_SetMACConfig(&_handle, &def);
-	HAL_ETH_Start(&_handle);
+	HAL_ETH_Start_IT(&_handle);
 }
 
 void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &spans)
 {
 	_send_completion_signal->Acquire();
-	base::Guard g{[&]()
-				  {
-					  _send_completion_signal->Release();
-				  }};
-
 	_sending_config.Length = 0;
 	_eth_buffers.Clear();
 	for (auto span : spans)
@@ -315,7 +314,14 @@ void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &
 	if (_eth_buffers.Count() > 0)
 	{
 		_sending_config.TxBuffer = &_eth_buffers[0];
-		DI_Console().WriteLine("总长度：" + std::to_string(_sending_config.Length));
-		HAL_ETH_Transmit(&_handle, &_sending_config, 20);
+		HAL_StatusTypeDef result = HAL_ETH_Transmit_IT(&_handle, &_sending_config);
+		if (result == HAL_StatusTypeDef::HAL_OK)
+		{
+			DI_Console().WriteLine("HAL_ETH_Transmit_IT OK");
+		}
+		else
+		{
+			DI_Console().WriteLine("HAL_ETH_Transmit_IT error");
+		}
 	}
 }
