@@ -217,23 +217,49 @@ static struct pbuf *low_level_input()
  */
 void ethernetif_input(void *argument)
 {
-	pbuf *p = nullptr;
-	netif *net_interface = reinterpret_cast<netif *>(argument);
-	while (true)
 	{
-		bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
-		do
+		pbuf *p = nullptr;
+		netif *net_interface = reinterpret_cast<netif *>(argument);
+		while (true)
 		{
-			p = low_level_input();
-			if (p != nullptr)
+			bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
+			do
 			{
-				if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
+				p = low_level_input();
+				if (p != nullptr)
 				{
-					pbuf_free(p);
+					if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
+					{
+						pbuf_free(p);
+					}
 				}
-			}
 
-		} while (p != nullptr);
+			} while (p != nullptr);
+		}
+	}
+
+	{
+		// for (base::ReadOnlySpan const &span : DI_EthernetPort().Receive())
+		// {
+		// 	pbuf_custom *custom_pbuf = new pbuf_custom{};
+		// 	custom_pbuf->custom_free_function = [](pbuf *p)
+		// 	{
+		// 		delete reinterpret_cast<pbuf_custom *>(p);
+		// 	};
+
+		// 	pbuf *p = pbuf_alloced_custom(PBUF_RAW,
+		// 								  span.Size(),
+		// 								  PBUF_REF,
+		// 								  custom_pbuf,
+		// 								  const_cast<uint8_t *>(span.Buffer()),
+		// 								  span.Size());
+
+		// 	netif *net_interface = reinterpret_cast<netif *>(argument);
+		// 	if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
+		// 	{
+		// 		pbuf_free(p);
+		// 	}
+		// }
 	}
 }
 

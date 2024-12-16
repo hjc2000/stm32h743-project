@@ -326,6 +326,8 @@ void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &
 base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 {
 	_receiving_completion_signal->Acquire();
+	DI_Console().WriteLine("666666666666666666666666666666666666666666666666666666666666");
+
 	uint32_t total_length = 0;
 	_received_span_list.Clear();
 
@@ -358,6 +360,7 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 		}
 	}
 
+	received_buffer_list[received_buffer_list.Count() - 1].next = nullptr;
 	result = HAL_ETH_GetRxDataBuffer(&_handle, &received_buffer_list[0]);
 	if (result != HAL_StatusTypeDef::HAL_OK)
 	{
@@ -370,6 +373,16 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 	SCB_InvalidateDCache_by_Addr(received_buffer_list[0].buffer, total_length);
 	for (auto buffer : received_buffer_list)
 	{
+		if (buffer.buffer == nullptr)
+		{
+			break;
+		}
+
+		if (buffer.len == 0)
+		{
+			break;
+		}
+
 		base::ReadOnlySpan span{buffer.buffer, static_cast<int32_t>(buffer.len)};
 		_received_span_list.Add(span);
 		if (buffer.next == nullptr)
