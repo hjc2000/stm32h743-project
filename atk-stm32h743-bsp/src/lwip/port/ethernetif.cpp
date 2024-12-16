@@ -178,6 +178,7 @@ static struct pbuf *low_level_input()
 
 	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
 	{
+		DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
 		return nullptr;
 	}
 
