@@ -173,40 +173,34 @@ void ethernetif_input(void *argument)
 {
 	while (true)
 	{
-		bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
-		DI_Console().WriteLine("_receiving_completion_signal->Acquire() successfully");
-
-		while (true)
+		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
+		int count = 0;
+		for (base::ReadOnlySpan const &span : spans)
 		{
-			base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
-			int count = 0;
-			for (base::ReadOnlySpan const &span : spans)
+			count++;
+			pbuf_custom *custom_pbuf = new pbuf_custom{};
+			custom_pbuf->custom_free_function = [](pbuf *p)
 			{
-				count++;
-				pbuf_custom *custom_pbuf = new pbuf_custom{};
-				custom_pbuf->custom_free_function = [](pbuf *p)
-				{
-					delete reinterpret_cast<pbuf_custom *>(p);
-				};
+				delete reinterpret_cast<pbuf_custom *>(p);
+			};
 
-				pbuf *p = pbuf_alloced_custom(PBUF_RAW,
-											  span.Size(),
-											  PBUF_REF,
-											  custom_pbuf,
-											  const_cast<uint8_t *>(span.Buffer()),
-											  span.Size());
+			pbuf *p = pbuf_alloced_custom(PBUF_RAW,
+										  span.Size(),
+										  PBUF_REF,
+										  custom_pbuf,
+										  const_cast<uint8_t *>(span.Buffer()),
+										  span.Size());
 
-				netif *net_interface = reinterpret_cast<netif *>(argument);
-				if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
-				{
-					pbuf_free(p);
-				}
-			}
-
-			if (count == 0)
+			netif *net_interface = reinterpret_cast<netif *>(argument);
+			if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
 			{
-				break;
+				pbuf_free(p);
 			}
+		}
+
+		if (count == 0)
+		{
+			continue;
 		}
 	}
 }

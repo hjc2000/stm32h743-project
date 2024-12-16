@@ -335,7 +335,8 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 
 	if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
 	{
-		DI_Console().WriteLine("no rx data avaliable");
+		bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
+		DI_Console().WriteLine("_receiving_completion_signal->Acquire() successfully");
 		return _received_span_list;
 	}
 
