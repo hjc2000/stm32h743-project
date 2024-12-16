@@ -345,7 +345,7 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 		return _received_span_list;
 	}
 
-	DI_Console().WriteLine("total_length = " + std::to_string(total_length));
+	DI_Console().WriteLine("HAL_ETH_GetRxDataLength total_length = " + std::to_string(total_length));
 	uint32_t buffer_num = total_length / _handle.Init.RxBuffLen + 1;
 	base::List<ETH_BufferTypeDef> received_buffer_list{};
 	for (uint32_t i = 0; i < buffer_num; i++)
