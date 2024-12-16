@@ -52,7 +52,7 @@
 	   to L1-CACHE line size (32 bytes).
 */
 
-QueueHandle_t g_rx_semaphore = NULL; /* 定义一个TX信号量 */
+std::shared_ptr<bsp::IBinarySemaphore> _receiving_completion_signal = nullptr;
 
 /* Private function prototypes -----------------------------------------------*/
 void ethernetif_input(void *argument);
@@ -68,7 +68,7 @@ void ethernetif_input(void *argument);
  * @param netif the already initialized lwip network interface structure
  *        for this ethernetif
  */
-static void low_level_init(struct netif *netif)
+static void low_level_init(netif *net_interface)
 {
 	base::Mac mac{
 		std::endian::big,
@@ -90,36 +90,35 @@ static void low_level_init(struct netif *netif)
 	{
 		DI_Console().WriteLine(e.what());
 		DI_Console().WriteLine("打开网口失败");
-		netif_set_link_down(netif);
-		netif_set_down(netif);
+		netif_set_link_down(net_interface);
+		netif_set_down(net_interface);
 	}
 
 	/* 设置MAC地址长度,为6个字节 */
-	netif->hwaddr_len = ETHARP_HWADDR_LEN;
+	net_interface->hwaddr_len = ETHARP_HWADDR_LEN;
 
 	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
-	base::Span netif_mac_buff_span{netif->hwaddr, 6};
+	base::Span netif_mac_buff_span{net_interface->hwaddr, 6};
 	netif_mac_buff_span.CopyFrom(mac.AsReadOnlySpan());
 	netif_mac_buff_span.Reverse();
 
-	netif->mtu = ETH_MAX_PAYLOAD; /* 最大允许传输单元,允许该网卡广播和ARP功能 */
+	net_interface->mtu = ETH_MAX_PAYLOAD; /* 最大允许传输单元,允许该网卡广播和ARP功能 */
 
 	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
 	/* 使能、 ARP 使能等等重要控制位 */
-	netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+	net_interface->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
 
-	/* create a binary semaphore used for informing ethernetif of frame reception */
-	g_rx_semaphore = xSemaphoreCreateBinary();
+	_receiving_completion_signal = DICreate_BinarySemaphore();
 
 	/* 开启虚拟网卡 */
-	netif_set_up(netif);
-	netif_set_link_up(netif);
+	netif_set_up(net_interface);
+	netif_set_link_up(net_interface);
 
 	/* create the task that handles the ETH_MAC */
 	DI_TaskManager().Create(
-		[netif]()
+		[net_interface]()
 		{
-			ethernetif_input(netif);
+			ethernetif_input(net_interface);
 		},
 		512);
 }
@@ -175,14 +174,14 @@ static err_t low_level_output(netif *net_interface, pbuf *p)
  */
 static struct pbuf *low_level_input(netif *net_interface)
 {
-	ETH_BufferTypeDef RxBuff[ETH_RX_DESC_CNT]{};
+	ETH_BufferTypeDef rx_buffer[ETH_RX_DESC_CNT]{};
 	uint32_t framelength = 0, i = 0;
 	for (i = 0; i < ETH_RX_DESC_CNT - 1; i++)
 	{
-		RxBuff[i].next = &RxBuff[i + 1];
+		rx_buffer[i].next = &rx_buffer[i + 1];
 	}
 
-	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), RxBuff) == HAL_OK)
+	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffer) == HAL_OK)
 	{
 		HAL_ETH_GetRxDataLength(&bsp::EthernetController::Instance().Handle(), &framelength);
 
@@ -190,7 +189,7 @@ static struct pbuf *low_level_input(netif *net_interface)
 		HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
 
 		/* Invalidate data cache for ETH Rx Buffers */
-		SCB_InvalidateDCache_by_Addr((uint32_t *)RxBuff->buffer, framelength);
+		SCB_InvalidateDCache_by_Addr((uint32_t *)rx_buffer->buffer, framelength);
 
 		pbuf_custom *custom_pbuf = new pbuf_custom{};
 		custom_pbuf->custom_free_function = [](pbuf *p)
@@ -202,7 +201,7 @@ static struct pbuf *low_level_input(netif *net_interface)
 									  framelength,
 									  PBUF_REF,
 									  custom_pbuf,
-									  RxBuff->buffer,
+									  rx_buffer->buffer,
 									  framelength);
 
 		return p;
@@ -223,24 +222,22 @@ static struct pbuf *low_level_input(netif *net_interface)
 void ethernetif_input(void *argument)
 {
 	pbuf *p = nullptr;
-	netif *netif = reinterpret_cast<struct netif *>(argument);
+	netif *net_interface = reinterpret_cast<netif *>(argument);
 	while (true)
 	{
-		if (xSemaphoreTake(g_rx_semaphore, TIME_WAITING_FOR_INPUT) == pdTRUE)
+		_receiving_completion_signal->Acquire();
+		do
 		{
-			do
+			p = low_level_input(net_interface);
+			if (p != nullptr)
 			{
-				p = low_level_input(netif);
-				if (p != nullptr)
+				if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
 				{
-					if (netif->input(p, netif) != ERR_OK)
-					{
-						pbuf_free(p);
-					}
+					pbuf_free(p);
 				}
+			}
 
-			} while (p != nullptr);
-		}
+		} while (p != nullptr);
 	}
 }
 
@@ -284,7 +281,7 @@ err_t ethernetif_init(struct netif *netif)
 
 	/* initialize the hardware */
 	low_level_init(netif);
-	return ERR_OK;
+	return err_enum_t::ERR_OK;
 }
 
 /**
@@ -294,12 +291,7 @@ err_t ethernetif_init(struct netif *netif)
  */
 void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
 {
-	portBASE_TYPE taskWoken = pdFALSE;
-
-	if (xSemaphoreGiveFromISR(g_rx_semaphore, &taskWoken) == pdTRUE)
-	{
-		portEND_SWITCHING_ISR(taskWoken);
-	}
+	_receiving_completion_signal->ReleaseFromISR();
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
