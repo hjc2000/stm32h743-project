@@ -14,8 +14,6 @@
 #include <bsp-interface/di/task.h>
 #include <EthernetController.h>
 
-ETH_TxPacketConfig TxConfig{};
-
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* The time to block waiting for input. */
@@ -117,12 +115,6 @@ static void low_level_init(struct netif *netif)
 
 	/* Initialize the RX POOL */
 	LWIP_MEMPOOL_INIT(RX_POOL);
-
-	/* Set Tx packet config common parameters */
-	TxConfig = ETH_TxPacketConfig{};
-	TxConfig.Attributes = ETH_TX_PACKETS_FEATURES_CSUM | ETH_TX_PACKETS_FEATURES_CRCPAD;
-	TxConfig.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
-	TxConfig.CRCPadCtrl = ETH_CRC_PAD_INSERT;
 
 	/* create a binary semaphore used for informing ethernetif of frame reception */
 	g_rx_semaphore = xSemaphoreCreateBinary();
