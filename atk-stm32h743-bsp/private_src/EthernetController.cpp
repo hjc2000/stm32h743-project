@@ -333,11 +333,41 @@ base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
 		rx_buffers[i].next = &rx_buffers[i + 1];
 	}
 
-	// if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
-	// {
-	// 	DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
-	// 	return _received_span_list;
-	// }
+	if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
+	{
+		DI_Console().WriteLine("no rx data avaliable");
+		return _received_span_list;
+	}
 
+	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
+	{
+		DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
+		return _received_span_list;
+	}
+
+	HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
+
+	for (ETH_BufferTypeDef buffer : rx_buffers)
+	{
+		if (buffer.buffer == nullptr)
+		{
+			break;
+		}
+
+		if (buffer.len == 0)
+		{
+			break;
+		}
+
+		SCB_InvalidateDCache_by_Addr(buffer.buffer, buffer.len);
+		base::ReadOnlySpan span{buffer.buffer, static_cast<int32_t>(buffer.len)};
+		_received_span_list.Add(span);
+		if (buffer.next == nullptr)
+		{
+			break;
+		}
+	}
+
+	DI_Console().WriteLine("received_span_list.Count = " + std::to_string(_received_span_list.Count()));
 	return _received_span_list;
 }

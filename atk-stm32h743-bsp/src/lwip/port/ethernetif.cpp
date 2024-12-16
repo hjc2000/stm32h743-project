@@ -175,54 +175,14 @@ void ethernetif_input(void *argument)
 	{
 		bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
 		DI_Console().WriteLine("_receiving_completion_signal->Acquire() successfully");
-		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
-		base::List<base::ReadOnlySpan> received_span_list{};
 
 		while (true)
 		{
-			ETH_BufferTypeDef rx_buffers[ETH_RX_DESC_CNT]{};
-			for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
+			base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
+			int count = 0;
+			for (base::ReadOnlySpan const &span : spans)
 			{
-				rx_buffers[i].next = &rx_buffers[i + 1];
-			}
-
-			if (!HAL_ETH_IsRxDataAvailable(&bsp::EthernetController::Instance().Handle()))
-			{
-				DI_Console().WriteLine("no rx data avaliable");
-				break;
-			}
-
-			if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
-			{
-				DI_Console().WriteLine("HAL_ETH_GetRxDataBuffer error");
-				break;
-			}
-
-			HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
-			for (ETH_BufferTypeDef buffer : rx_buffers)
-			{
-				if (buffer.buffer == nullptr)
-				{
-					break;
-				}
-
-				if (buffer.len == 0)
-				{
-					break;
-				}
-
-				SCB_InvalidateDCache_by_Addr(buffer.buffer, buffer.len);
-				base::ReadOnlySpan span{buffer.buffer, static_cast<int32_t>(buffer.len)};
-				received_span_list.Add(span);
-				if (buffer.next == nullptr)
-				{
-					break;
-				}
-			}
-
-			DI_Console().WriteLine("received_span_list.Count = " + std::to_string(received_span_list.Count()));
-			for (base::ReadOnlySpan &span : received_span_list)
-			{
+				count++;
 				pbuf_custom *custom_pbuf = new pbuf_custom{};
 				custom_pbuf->custom_free_function = [](pbuf *p)
 				{
@@ -241,6 +201,11 @@ void ethernetif_input(void *argument)
 				{
 					pbuf_free(p);
 				}
+			}
+
+			if (count == 0)
+			{
+				break;
 			}
 		}
 	}
