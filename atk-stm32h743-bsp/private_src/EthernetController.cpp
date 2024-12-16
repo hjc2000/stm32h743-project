@@ -322,3 +322,55 @@ void bsp::EthernetController::Send(base::IEnumerable<base::ReadOnlySpan> const &
 		HAL_ETH_Transmit_IT(&_handle, &_sending_config);
 	}
 }
+
+base::IEnumerable<base::ReadOnlySpan> const &bsp::EthernetController::Receive()
+{
+	while (true)
+	{
+		uint32_t total_length = 0;
+		_received_buffer_list.Clear();
+		_received_span_list.Clear();
+
+		HAL_StatusTypeDef result = HAL_ETH_GetRxDataLength(&_handle, &total_length);
+		if (result != HAL_StatusTypeDef::HAL_OK)
+		{
+			// 错误。跳过本轮接收，下轮继续。
+			continue;
+		}
+
+		if (total_length == 0)
+		{
+			continue;
+		}
+
+		uint32_t buffer_num = total_length / _handle.Init.RxBuffLen + 1;
+		for (uint32_t i = 0; i < buffer_num; i++)
+		{
+			ETH_BufferTypeDef buffer{};
+			_received_buffer_list.Add(buffer);
+
+			if (_received_buffer_list.Count() > 1)
+			{
+				_received_buffer_list[_received_buffer_list.Count() - 2].next =
+					&_received_buffer_list[_received_buffer_list.Count() - 1];
+			}
+		}
+
+		result = HAL_ETH_GetRxDataBuffer(&_handle, &_received_buffer_list[0]);
+		if (result != HAL_StatusTypeDef::HAL_OK)
+		{
+			continue;
+		}
+
+		/* Build Rx descriptor to be ready for next data reception */
+		HAL_ETH_BuildRxDescriptors(&_handle);
+		SCB_InvalidateDCache_by_Addr(_received_buffer_list[0].buffer, total_length);
+		for (auto buffer : _received_buffer_list)
+		{
+			base::ReadOnlySpan span{buffer.buffer, static_cast<int32_t>(buffer.len)};
+			_received_span_list.Add(span);
+		}
+
+		return _received_span_list;
+	}
+}

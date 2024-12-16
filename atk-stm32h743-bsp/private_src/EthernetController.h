@@ -20,6 +20,8 @@ namespace bsp
 		ETH_TxPacketConfig _sending_config{};
 		base::List<ETH_BufferTypeDef> _eth_buffers{};
 		std::shared_ptr<bsp::IBinarySemaphore> _send_completion_signal = DICreate_BinarySemaphore();
+		base::List<ETH_BufferTypeDef> _received_buffer_list{};
+		base::List<base::ReadOnlySpan> _received_span_list{};
 
 	public:
 		static_function EthernetController &Instance();
@@ -79,6 +81,10 @@ namespace bsp
 		/// @brief 发送。
 		/// @param spans
 		void Send(base::IEnumerable<base::ReadOnlySpan> const &spans) override;
+
+		/// @brief 接收。
+		/// @return
+		base::IEnumerable<base::ReadOnlySpan> const &Receive() override;
 	};
 
 } // namespace bsp

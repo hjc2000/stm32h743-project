@@ -90,3 +90,8 @@ void bsp::AtkLAN8720A_EhternetPort::Send(base::IEnumerable<base::ReadOnlySpan> c
 {
 	_controller->Send(spans);
 }
+
+base::IEnumerable<base::ReadOnlySpan> const &bsp::AtkLAN8720A_EhternetPort::Receive()
+{
+	return _controller->Receive();
+}

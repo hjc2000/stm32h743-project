@@ -40,5 +40,9 @@ namespace bsp
 		/// @brief 发送。
 		/// @param spans
 		void Send(base::IEnumerable<base::ReadOnlySpan> const &spans) override;
+
+		/// @brief 接收。
+		/// @return
+		base::IEnumerable<base::ReadOnlySpan> const &Receive() override;
 	};
 } // namespace bsp
