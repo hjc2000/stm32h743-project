@@ -104,7 +104,7 @@ void lwip_link_thread()
 			}
 		}
 
-		vTaskDelay(100);
+		DI_Delayer().Delay(std::chrono::milliseconds{100});
 	}
 }
 
@@ -215,7 +215,6 @@ void lwip_periodic_handle()
 		}
 
 		DI_Delayer().Delay(std::chrono::milliseconds{1000});
-		vTaskDelay(1000);
 	}
 
 #endif
