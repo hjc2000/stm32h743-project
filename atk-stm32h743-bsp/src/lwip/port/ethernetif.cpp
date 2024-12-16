@@ -170,25 +170,25 @@ static err_t low_level_output(netif *net_interface, pbuf *p)
  */
 static struct pbuf *low_level_input()
 {
-	ETH_BufferTypeDef rx_buffer[ETH_RX_DESC_CNT]{};
-	uint32_t framelength = 0;
+	ETH_BufferTypeDef rx_buffers[ETH_RX_DESC_CNT]{};
 	for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
 	{
-		rx_buffer[i].next = &rx_buffer[i + 1];
+		rx_buffers[i].next = &rx_buffers[i + 1];
 	}
 
-	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffer) != HAL_OK)
+	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffers) != HAL_OK)
 	{
 		return nullptr;
 	}
 
+	uint32_t framelength = 0;
 	HAL_ETH_GetRxDataLength(&bsp::EthernetController::Instance().Handle(), &framelength);
 
 	/* Build Rx descriptor to be ready for next data reception */
 	HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
 
 	/* Invalidate data cache for ETH Rx Buffers */
-	SCB_InvalidateDCache_by_Addr((uint32_t *)rx_buffer->buffer, framelength);
+	SCB_InvalidateDCache_by_Addr(rx_buffers->buffer, framelength);
 
 	pbuf_custom *custom_pbuf = new pbuf_custom{};
 	custom_pbuf->custom_free_function = [](pbuf *p)
@@ -200,7 +200,7 @@ static struct pbuf *low_level_input()
 								  framelength,
 								  PBUF_REF,
 								  custom_pbuf,
-								  rx_buffer->buffer,
+								  rx_buffers->buffer,
 								  framelength);
 
 	return p;
