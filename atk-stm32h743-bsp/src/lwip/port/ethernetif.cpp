@@ -147,13 +147,12 @@ static void low_level_init(struct netif *netif)
  *       to become available since the stack doesn't retry to send a packet
  *       dropped because of memory failure (except for the TCP timers).
  */
-static err_t low_level_output(struct netif *netif, pbuf *p)
+static err_t low_level_output(netif *net_interface, pbuf *p)
 {
 	pbuf *current_pbuf;
-	err_t errval = ERR_OK;
 	base::List<base::ReadOnlySpan> spans{};
 
-	for (current_pbuf = p; current_pbuf != NULL; current_pbuf = current_pbuf->next)
+	for (current_pbuf = p; current_pbuf != nullptr; current_pbuf = current_pbuf->next)
 	{
 		base::ReadOnlySpan span{
 			reinterpret_cast<uint8_t *>(current_pbuf->payload),
@@ -163,8 +162,15 @@ static err_t low_level_output(struct netif *netif, pbuf *p)
 		spans.Add(span);
 	}
 
-	DI_EthernetPort().Send(spans);
-	return errval;
+	try
+	{
+		DI_EthernetPort().Send(spans);
+		return err_enum_t::ERR_OK;
+	}
+	catch (std::exception const &e)
+	{
+		return err_enum_t::ERR_BUF;
+	}
 }
 
 /**
