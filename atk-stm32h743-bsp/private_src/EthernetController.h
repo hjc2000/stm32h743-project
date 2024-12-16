@@ -24,6 +24,8 @@ namespace bsp
 	public:
 		static_function EthernetController &Instance();
 
+		std::shared_ptr<bsp::IBinarySemaphore> _receiving_completion_signal = DICreate_BinarySemaphore();
+
 		/// @brief hal 句柄。
 		/// @return
 		ETH_HandleTypeDef &Handle()

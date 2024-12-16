@@ -209,6 +209,11 @@ void bsp::EthernetController::Open(bsp::Ethernet_InterfaceType interface_type,
 		EthernetController::Instance()._send_completion_signal->ReleaseFromISR();
 	};
 
+	_handle.RxCpltCallback = [](ETH_HandleTypeDef *heth)
+	{
+		EthernetController::Instance()._receiving_completion_signal->ReleaseFromISR();
+	};
+
 	// MDC时钟
 	HAL_ETH_SetMDIOClockRange(&_handle);
 

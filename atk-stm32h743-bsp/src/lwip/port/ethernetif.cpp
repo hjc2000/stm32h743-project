@@ -52,8 +52,6 @@
 	   to L1-CACHE line size (32 bytes).
 */
 
-std::shared_ptr<bsp::IBinarySemaphore> _receiving_completion_signal = nullptr;
-
 /* Private function prototypes -----------------------------------------------*/
 void ethernetif_input(void *argument);
 
@@ -107,8 +105,6 @@ static void low_level_init(netif *net_interface)
 	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
 	/* 使能、 ARP 使能等等重要控制位 */
 	net_interface->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
-
-	_receiving_completion_signal = DICreate_BinarySemaphore();
 
 	/* 开启虚拟网卡 */
 	netif_set_up(net_interface);
@@ -225,7 +221,7 @@ void ethernetif_input(void *argument)
 	netif *net_interface = reinterpret_cast<netif *>(argument);
 	while (true)
 	{
-		_receiving_completion_signal->Acquire();
+		bsp::EthernetController::Instance()._receiving_completion_signal->Acquire();
 		do
 		{
 			p = low_level_input(net_interface);
@@ -282,16 +278,6 @@ err_t ethernetif_init(struct netif *netif)
 	/* initialize the hardware */
 	low_level_init(netif);
 	return err_enum_t::ERR_OK;
-}
-
-/**
- * @brief  Ethernet Rx Transfer completed callback
- * @param  heth: ETH handle
- * @retval None
- */
-void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
-{
-	_receiving_completion_signal->ReleaseFromISR();
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
