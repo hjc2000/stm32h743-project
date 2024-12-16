@@ -302,12 +302,12 @@ void bsp::LwipEthernetInterface::Open()
 
 	/* 向网卡列表中添加一个网口 */
 	netif *netif_add_result = netif_add(&_lwip_netif,
-										(ip_addr_t const *)&_ip_address,
-										(ip_addr_t const *)&_netmask,
-										(ip_addr_t const *)&_gateway,
+										reinterpret_cast<ip_addr_t const *>(&_ip_address),
+										reinterpret_cast<ip_addr_t const *>(&_netmask),
+										reinterpret_cast<ip_addr_t const *>(&_gateway),
 										nullptr,
-										&ethernetif_init,
-										&tcpip_input);
+										ethernetif_init,
+										tcpip_input);
 
 	if (netif_add_result == nullptr)
 	{
