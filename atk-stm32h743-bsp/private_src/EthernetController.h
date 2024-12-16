@@ -20,13 +20,11 @@ namespace bsp
 		ETH_TxPacketConfig _sending_config{};
 		base::List<ETH_BufferTypeDef> _eth_buffers{};
 		std::shared_ptr<bsp::IBinarySemaphore> _send_completion_signal = DICreate_BinarySemaphore();
-
 		base::List<base::ReadOnlySpan> _received_span_list{};
+		std::shared_ptr<bsp::IBinarySemaphore> _receiving_completion_signal = DICreate_BinarySemaphore();
 
 	public:
 		static_function EthernetController &Instance();
-
-		std::shared_ptr<bsp::IBinarySemaphore> _receiving_completion_signal = DICreate_BinarySemaphore();
 
 		/// @brief 以太网控制器的名称。
 		/// @return
