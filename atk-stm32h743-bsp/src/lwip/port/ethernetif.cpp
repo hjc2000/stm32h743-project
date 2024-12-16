@@ -171,39 +171,39 @@ static err_t low_level_output(netif *net_interface, pbuf *p)
 static struct pbuf *low_level_input()
 {
 	ETH_BufferTypeDef rx_buffer[ETH_RX_DESC_CNT]{};
-	uint32_t framelength = 0, i = 0;
-	for (i = 0; i < ETH_RX_DESC_CNT - 1; i++)
+	uint32_t framelength = 0;
+	for (uint32_t i = 0; i < ETH_RX_DESC_CNT - 1; i++)
 	{
 		rx_buffer[i].next = &rx_buffer[i + 1];
 	}
 
-	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffer) == HAL_OK)
+	if (HAL_ETH_GetRxDataBuffer(&bsp::EthernetController::Instance().Handle(), rx_buffer) != HAL_OK)
 	{
-		HAL_ETH_GetRxDataLength(&bsp::EthernetController::Instance().Handle(), &framelength);
-
-		/* Build Rx descriptor to be ready for next data reception */
-		HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
-
-		/* Invalidate data cache for ETH Rx Buffers */
-		SCB_InvalidateDCache_by_Addr((uint32_t *)rx_buffer->buffer, framelength);
-
-		pbuf_custom *custom_pbuf = new pbuf_custom{};
-		custom_pbuf->custom_free_function = [](pbuf *p)
-		{
-			delete reinterpret_cast<pbuf_custom *>(p);
-		};
-
-		pbuf *p = pbuf_alloced_custom(PBUF_RAW,
-									  framelength,
-									  PBUF_REF,
-									  custom_pbuf,
-									  rx_buffer->buffer,
-									  framelength);
-
-		return p;
+		return nullptr;
 	}
 
-	return nullptr;
+	HAL_ETH_GetRxDataLength(&bsp::EthernetController::Instance().Handle(), &framelength);
+
+	/* Build Rx descriptor to be ready for next data reception */
+	HAL_ETH_BuildRxDescriptors(&bsp::EthernetController::Instance().Handle());
+
+	/* Invalidate data cache for ETH Rx Buffers */
+	SCB_InvalidateDCache_by_Addr((uint32_t *)rx_buffer->buffer, framelength);
+
+	pbuf_custom *custom_pbuf = new pbuf_custom{};
+	custom_pbuf->custom_free_function = [](pbuf *p)
+	{
+		delete reinterpret_cast<pbuf_custom *>(p);
+	};
+
+	pbuf *p = pbuf_alloced_custom(PBUF_RAW,
+								  framelength,
+								  PBUF_REF,
+								  custom_pbuf,
+								  rx_buffer->buffer,
+								  framelength);
+
+	return p;
 }
 
 /**
