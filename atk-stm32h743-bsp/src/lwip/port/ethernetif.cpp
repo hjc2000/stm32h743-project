@@ -225,18 +225,19 @@ void ethernetif_input(void *argument)
 		while (true)
 		{
 			base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
-			do
+			while (true)
 			{
 				p = low_level_input();
-				if (p != nullptr)
+				if (p == nullptr)
 				{
-					if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
-					{
-						pbuf_free(p);
-					}
+					break;
 				}
 
-			} while (p != nullptr);
+				if (net_interface->input(p, net_interface) != err_enum_t::ERR_OK)
+				{
+					pbuf_free(p);
+				}
+			}
 		}
 	}
 
