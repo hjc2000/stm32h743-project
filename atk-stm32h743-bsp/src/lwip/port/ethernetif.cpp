@@ -53,7 +53,7 @@
 */
 
 /* Private function prototypes -----------------------------------------------*/
-void ethernetif_input(void *argument);
+void ethernetif_input(netif *net_interface);
 
 /* Private functions ---------------------------------------------------------*/
 /*******************************************************************************
@@ -169,7 +169,7 @@ static err_t low_level_output(netif *net_interface, pbuf *p)
  *
  * @param netif the lwip network interface structure for this ethernetif
  */
-void ethernetif_input(void *argument)
+void ethernetif_input(netif *net_interface)
 {
 	while (true)
 	{
@@ -205,7 +205,7 @@ void ethernetif_input(void *argument)
 			}
 		}
 
-		netif *net_interface = reinterpret_cast<netif *>(argument);
+		// 串成链表后一次性输入。
 		if (net_interface->input(head_pbuf, net_interface) != err_enum_t::ERR_OK)
 		{
 			pbuf_free(head_pbuf);
