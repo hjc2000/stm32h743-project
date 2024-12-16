@@ -14,10 +14,6 @@
 #include <bsp-interface/di/task.h>
 #include <hal.h>
 
-/* Define those to better describe your network interface. */
-#define IFNAME0 's'
-#define IFNAME1 't'
-
 #define ETH_RX_BUFFER_SIZE (1536UL)
 
 #define ETH_DMA_TRANSMIT_TIMEOUT (20U)
@@ -47,10 +43,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void ethernetif_input(netif *net_interface);
 
-/* Private functions ---------------------------------------------------------*/
-/*******************************************************************************
-					   LL Driver Interface ( LwIP stack --> ETH)
-*******************************************************************************/
 /**
  * @brief In this function, the hardware should be initialized.
  * Called from ethernetif_init().
@@ -233,8 +225,8 @@ err_t ethernetif_init(struct netif *netif)
 	 */
 	MIB2_INIT_NETIF(netif, snmp_ifType_ethernet_csmacd, LINK_SPEED_OF_YOUR_NETIF_IN_BPS);
 
-	netif->name[0] = IFNAME0;
-	netif->name[1] = IFNAME1;
+	netif->name[0] = 'p';
+	netif->name[1] = 'n';
 
 	/* We directly use etharp_output() here to save a function call.
 	 * You can instead declare your own function an call etharp_output()
