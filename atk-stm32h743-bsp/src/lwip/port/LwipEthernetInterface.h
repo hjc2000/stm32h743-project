@@ -11,6 +11,8 @@ namespace bsp
 	private:
 		LwipEthernetInterface();
 
+		void DhcpThreadFunc();
+
 	public:
 		static_function LwipEthernetInterface &Instance();
 

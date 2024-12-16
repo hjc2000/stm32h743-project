@@ -111,135 +111,6 @@ void lwip_link_thread()
 	}
 }
 
-/**
- * @breif       DHCP进程
- * @param       argument:传入的形参
- * @retval      无
- */
-void lwip_periodic_handle()
-{
-#if LWIP_DHCP
-	DI_Console().WriteLine("enter lwip_periodic_handle");
-
-	uint32_t ip = 0;
-	uint32_t netmask = 0;
-	uint32_t gw = 0;
-	struct dhcp *dhcp;
-	uint8_t iptxt[20];
-
-	while (true)
-	{
-		switch (g_lwip_dhcp_state)
-		{
-		case LWIP_DHCP_START:
-			{
-				/* 对IP地址、网关地址及子网页码清零操作 */
-				ip_addr_set_zero_ip4(&bsp::LwipEthernetInterface::Instance()._lwip_netif.ip_addr);
-				ip_addr_set_zero_ip4(&bsp::LwipEthernetInterface::Instance()._lwip_netif.netmask);
-				ip_addr_set_zero_ip4(&bsp::LwipEthernetInterface::Instance()._lwip_netif.gw);
-				ip_addr_set_zero_ip4(&bsp::LwipEthernetInterface::Instance()._lwip_netif.ip_addr);
-				ip_addr_set_zero_ip4(&bsp::LwipEthernetInterface::Instance()._lwip_netif.netmask);
-				ip_addr_set_zero_ip4(&bsp::LwipEthernetInterface::Instance()._lwip_netif.gw);
-
-				g_lwip_dhcp_state = LWIP_DHCP_WAIT_ADDRESS;
-
-				printf("State: Looking for DHCP server ...\r\n");
-				dhcp_start(&bsp::LwipEthernetInterface::Instance()._lwip_netif);
-				break;
-			}
-		case LWIP_DHCP_WAIT_ADDRESS:
-			{
-				if (dhcp_supplied_address(&bsp::LwipEthernetInterface::Instance()._lwip_netif))
-				{
-					g_lwip_dhcp_state = LWIP_DHCP_ADDRESS_ASSIGNED;
-
-					ip = bsp::LwipEthernetInterface::Instance()._lwip_netif.ip_addr.addr;      /* 读取新IP地址 */
-					netmask = bsp::LwipEthernetInterface::Instance()._lwip_netif.netmask.addr; /* 读取子网掩码 */
-					gw = bsp::LwipEthernetInterface::Instance()._lwip_netif.gw.addr;           /* 读取默认网关 */
-
-					sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(&bsp::LwipEthernetInterface::Instance()._lwip_netif)));
-					printf("IP address assigned by a DHCP server: %s\r\n", iptxt);
-
-					if (ip != 0)
-					{
-						bsp::LwipEthernetInterface::Instance()._dhcpstatus = 2; /* DHCP成功 */
-						/* 解析出通过DHCP获取到的IP地址 */
-						bsp::LwipEthernetInterface::Instance()._ip_address[3] = (uint8_t)(ip >> 24);
-						bsp::LwipEthernetInterface::Instance()._ip_address[2] = (uint8_t)(ip >> 16);
-						bsp::LwipEthernetInterface::Instance()._ip_address[1] = (uint8_t)(ip >> 8);
-						bsp::LwipEthernetInterface::Instance()._ip_address[0] = (uint8_t)(ip);
-
-						printf("通过DHCP获取到IP地址..............%d.%d.%d.%d\r\n",
-							   bsp::LwipEthernetInterface::Instance()._ip_address[0],
-							   bsp::LwipEthernetInterface::Instance()._ip_address[1],
-							   bsp::LwipEthernetInterface::Instance()._ip_address[2],
-							   bsp::LwipEthernetInterface::Instance()._ip_address[3]);
-
-						/* 解析通过DHCP获取到的子网掩码地址 */
-						bsp::LwipEthernetInterface::Instance()._netmask[3] = (uint8_t)(netmask >> 24);
-						bsp::LwipEthernetInterface::Instance()._netmask[2] = (uint8_t)(netmask >> 16);
-						bsp::LwipEthernetInterface::Instance()._netmask[1] = (uint8_t)(netmask >> 8);
-						bsp::LwipEthernetInterface::Instance()._netmask[0] = (uint8_t)(netmask);
-
-						printf("通过DHCP获取到子网掩码............%d.%d.%d.%d\r\n",
-							   bsp::LwipEthernetInterface::Instance()._netmask[0],
-							   bsp::LwipEthernetInterface::Instance()._netmask[1],
-							   bsp::LwipEthernetInterface::Instance()._netmask[2],
-							   bsp::LwipEthernetInterface::Instance()._netmask[3]);
-
-						/* 解析出通过DHCP获取到的默认网关 */
-						bsp::LwipEthernetInterface::Instance()._gateway[3] = (uint8_t)(gw >> 24);
-						bsp::LwipEthernetInterface::Instance()._gateway[2] = (uint8_t)(gw >> 16);
-						bsp::LwipEthernetInterface::Instance()._gateway[1] = (uint8_t)(gw >> 8);
-						bsp::LwipEthernetInterface::Instance()._gateway[0] = (uint8_t)(gw);
-
-						printf("通过DHCP获取到的默认网关..........%d.%d.%d.%d\r\n",
-							   bsp::LwipEthernetInterface::Instance()._gateway[0],
-							   bsp::LwipEthernetInterface::Instance()._gateway[1],
-							   bsp::LwipEthernetInterface::Instance()._gateway[2],
-							   bsp::LwipEthernetInterface::Instance()._gateway[3]);
-					}
-				}
-				else
-				{
-					dhcp = (struct dhcp *)netif_get_client_data(&bsp::LwipEthernetInterface::Instance()._lwip_netif, LWIP_NETIF_CLIENT_DATA_INDEX_DHCP);
-
-					/* DHCP timeout */
-					if (dhcp->tries > LWIP_MAX_DHCP_TRIES)
-					{
-						g_lwip_dhcp_state = LWIP_DHCP_TIMEOUT;
-						bsp::LwipEthernetInterface::Instance()._dhcpstatus = 0XFF;
-						/* 使用静态IP地址 */
-						IP4_ADDR(&(bsp::LwipEthernetInterface::Instance()._lwip_netif.ip_addr), bsp::LwipEthernetInterface::Instance()._ip_address[0], bsp::LwipEthernetInterface::Instance()._ip_address[1], bsp::LwipEthernetInterface::Instance()._ip_address[2], bsp::LwipEthernetInterface::Instance()._ip_address[3]);
-						IP4_ADDR(&(bsp::LwipEthernetInterface::Instance()._lwip_netif.netmask), bsp::LwipEthernetInterface::Instance()._netmask[0], bsp::LwipEthernetInterface::Instance()._netmask[1], bsp::LwipEthernetInterface::Instance()._netmask[2], bsp::LwipEthernetInterface::Instance()._netmask[3]);
-						IP4_ADDR(&(bsp::LwipEthernetInterface::Instance()._lwip_netif.gw), bsp::LwipEthernetInterface::Instance()._gateway[0], bsp::LwipEthernetInterface::Instance()._gateway[1], bsp::LwipEthernetInterface::Instance()._gateway[2], bsp::LwipEthernetInterface::Instance()._gateway[3]);
-						netif_set_addr(&bsp::LwipEthernetInterface::Instance()._lwip_netif, &bsp::LwipEthernetInterface::Instance()._lwip_netif.ip_addr, &bsp::LwipEthernetInterface::Instance()._lwip_netif.netmask, &bsp::LwipEthernetInterface::Instance()._lwip_netif.gw);
-
-						sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(&bsp::LwipEthernetInterface::Instance()._lwip_netif)));
-						printf("DHCP Timeout !! \r\n");
-						printf("Static IP address: %s\r\n", iptxt);
-					}
-				}
-
-				break;
-			}
-		case LWIP_DHCP_LINK_DOWN:
-			{
-				g_lwip_dhcp_state = LWIP_DHCP_OFF;
-				break;
-			}
-		default:
-			{
-				break;
-			}
-		}
-
-		DI_Delayer().Delay(std::chrono::milliseconds{1000});
-	}
-
-#endif
-}
-
 bsp::LwipEthernetInterface::LwipEthernetInterface()
 {
 	/* 默认远端IP为:192.168.1.134 */
@@ -267,6 +138,130 @@ bsp::LwipEthernetInterface::LwipEthernetInterface()
 	_gateway[3] = 1;
 
 	_dhcpstatus = 0; /* 没有DHCP */
+}
+
+void bsp::LwipEthernetInterface::DhcpThreadFunc()
+{
+#if LWIP_DHCP
+	DI_Console().WriteLine("enter lwip_periodic_handle");
+
+	uint32_t ip = 0;
+	uint32_t netmask = 0;
+	uint32_t gw = 0;
+	struct dhcp *dhcp;
+	uint8_t iptxt[20];
+
+	while (true)
+	{
+		switch (g_lwip_dhcp_state)
+		{
+		case LWIP_DHCP_START:
+			{
+				/* 对IP地址、网关地址及子网页码清零操作 */
+				ip_addr_set_zero_ip4(&_lwip_netif.ip_addr);
+				ip_addr_set_zero_ip4(&_lwip_netif.netmask);
+				ip_addr_set_zero_ip4(&_lwip_netif.gw);
+				ip_addr_set_zero_ip4(&_lwip_netif.ip_addr);
+				ip_addr_set_zero_ip4(&_lwip_netif.netmask);
+				ip_addr_set_zero_ip4(&_lwip_netif.gw);
+
+				g_lwip_dhcp_state = LWIP_DHCP_WAIT_ADDRESS;
+
+				printf("State: Looking for DHCP server ...\r\n");
+				dhcp_start(&_lwip_netif);
+				break;
+			}
+		case LWIP_DHCP_WAIT_ADDRESS:
+			{
+				if (dhcp_supplied_address(&_lwip_netif))
+				{
+					g_lwip_dhcp_state = LWIP_DHCP_ADDRESS_ASSIGNED;
+
+					ip = _lwip_netif.ip_addr.addr;      /* 读取新IP地址 */
+					netmask = _lwip_netif.netmask.addr; /* 读取子网掩码 */
+					gw = _lwip_netif.gw.addr;           /* 读取默认网关 */
+
+					sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(&_lwip_netif)));
+					printf("IP address assigned by a DHCP server: %s\r\n", iptxt);
+
+					if (ip != 0)
+					{
+						_dhcpstatus = 2; /* DHCP成功 */
+						/* 解析出通过DHCP获取到的IP地址 */
+						_ip_address[3] = (uint8_t)(ip >> 24);
+						_ip_address[2] = (uint8_t)(ip >> 16);
+						_ip_address[1] = (uint8_t)(ip >> 8);
+						_ip_address[0] = (uint8_t)(ip);
+
+						printf("通过DHCP获取到IP地址..............%d.%d.%d.%d\r\n",
+							   _ip_address[0],
+							   _ip_address[1],
+							   _ip_address[2],
+							   _ip_address[3]);
+
+						/* 解析通过DHCP获取到的子网掩码地址 */
+						_netmask[3] = (uint8_t)(netmask >> 24);
+						_netmask[2] = (uint8_t)(netmask >> 16);
+						_netmask[1] = (uint8_t)(netmask >> 8);
+						_netmask[0] = (uint8_t)(netmask);
+
+						printf("通过DHCP获取到子网掩码............%d.%d.%d.%d\r\n",
+							   _netmask[0],
+							   _netmask[1],
+							   _netmask[2],
+							   _netmask[3]);
+
+						/* 解析出通过DHCP获取到的默认网关 */
+						_gateway[3] = (uint8_t)(gw >> 24);
+						_gateway[2] = (uint8_t)(gw >> 16);
+						_gateway[1] = (uint8_t)(gw >> 8);
+						_gateway[0] = (uint8_t)(gw);
+
+						printf("通过DHCP获取到的默认网关..........%d.%d.%d.%d\r\n",
+							   _gateway[0],
+							   _gateway[1],
+							   _gateway[2],
+							   _gateway[3]);
+					}
+				}
+				else
+				{
+					dhcp = (struct dhcp *)netif_get_client_data(&_lwip_netif, LWIP_NETIF_CLIENT_DATA_INDEX_DHCP);
+
+					/* DHCP timeout */
+					if (dhcp->tries > LWIP_MAX_DHCP_TRIES)
+					{
+						g_lwip_dhcp_state = LWIP_DHCP_TIMEOUT;
+						_dhcpstatus = 0XFF;
+						/* 使用静态IP地址 */
+						IP4_ADDR(&(_lwip_netif.ip_addr), _ip_address[0], _ip_address[1], _ip_address[2], _ip_address[3]);
+						IP4_ADDR(&(_lwip_netif.netmask), _netmask[0], _netmask[1], _netmask[2], _netmask[3]);
+						IP4_ADDR(&(_lwip_netif.gw), _gateway[0], _gateway[1], _gateway[2], _gateway[3]);
+						netif_set_addr(&_lwip_netif, &_lwip_netif.ip_addr, &_lwip_netif.netmask, &_lwip_netif.gw);
+
+						sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(&_lwip_netif)));
+						printf("DHCP Timeout !! \r\n");
+						printf("Static IP address: %s\r\n", iptxt);
+					}
+				}
+
+				break;
+			}
+		case LWIP_DHCP_LINK_DOWN:
+			{
+				g_lwip_dhcp_state = LWIP_DHCP_OFF;
+				break;
+			}
+		default:
+			{
+				break;
+			}
+		}
+
+		DI_Delayer().Delay(std::chrono::milliseconds{1000});
+	}
+
+#endif
 }
 
 bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
@@ -340,9 +335,9 @@ void bsp::LwipEthernetInterface::Open()
 	_dhcpstatus = 0; /* DHCP标记为0 */
 
 	DI_TaskManager().Create(
-		[]()
+		[this]()
 		{
-			lwip_periodic_handle();
+			DhcpThreadFunc();
 		},
 		512);
 #endif
