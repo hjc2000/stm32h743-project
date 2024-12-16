@@ -25,33 +25,6 @@
 uint32_t g_dhcp_fine_timer = 0;                 /* DHCP精细处理计时器 */
 __IO uint8_t g_lwip_dhcp_state = LWIP_DHCP_OFF; /* DHCP状态初始化 */
 
-/**
- * @brief       通知用户DHCP配置状态
- * @param       netif：网卡控制块
- * @retval      无
- */
-void lwip_link_status_updated(netif *netif)
-{
-	if (netif_is_up(netif))
-	{
-#if LWIP_DHCP
-		/* Update DHCP state machine */
-		g_lwip_dhcp_state = LWIP_DHCP_START;
-#endif
-		/* LWIP_DHCP */
-		printf("The network cable is connected \r\n");
-	}
-	else
-	{
-#if LWIP_DHCP
-		/* Update DHCP state machine */
-		g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
-#endif
-		/* LWIP_DHCP */
-		printf("The network cable is not connected \r\n");
-	}
-}
-
 bsp::LwipEthernetInterface::LwipEthernetInterface()
 {
 	/* 默认远端IP为:192.168.1.134 */
@@ -254,6 +227,28 @@ void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 	}
 }
 
+void bsp::LwipEthernetInterface::UpdataLinkState()
+{
+	if (netif_is_up(&_lwip_netif))
+	{
+#if LWIP_DHCP
+		/* Update DHCP state machine */
+		g_lwip_dhcp_state = LWIP_DHCP_START;
+#endif
+		/* LWIP_DHCP */
+		printf("The network cable is connected \r\n");
+	}
+	else
+	{
+#if LWIP_DHCP
+		/* Update DHCP state machine */
+		g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
+#endif
+		/* LWIP_DHCP */
+		printf("The network cable is not connected \r\n");
+	}
+}
+
 bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 {
 	class Getter :
@@ -308,8 +303,12 @@ void bsp::LwipEthernetInterface::Open()
 
 #if LWIP_NETIF_LINK_CALLBACK
 	/* DHCP链接状态更新函数 */
-	lwip_link_status_updated(&_lwip_netif);
-	netif_set_link_callback(&_lwip_netif, lwip_link_status_updated);
+	UpdataLinkState();
+	netif_set_link_callback(&_lwip_netif,
+							[](netif *p)
+							{
+								bsp::LwipEthernetInterface::Instance().UpdataLinkState();
+							});
 
 	DI_TaskManager().Create(
 		[this]()
