@@ -57,11 +57,6 @@ QueueHandle_t g_rx_semaphore = NULL; /* 定义一个TX信号量 */
 /* Private function prototypes -----------------------------------------------*/
 void ethernetif_input(void *argument);
 
-// u32_t  sys_now(void);
-void pbuf_free_custom(struct pbuf *p);
-
-LWIP_MEMPOOL_DECLARE(RX_POOL, 10, sizeof(struct pbuf_custom), "Zero-copy RX PBUF pool");
-
 /* Private functions ---------------------------------------------------------*/
 /*******************************************************************************
 					   LL Driver Interface ( LwIP stack --> ETH)
@@ -112,9 +107,6 @@ static void low_level_init(struct netif *netif)
 	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
 	/* 使能、 ARP 使能等等重要控制位 */
 	netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
-
-	/* Initialize the RX POOL */
-	LWIP_MEMPOOL_INIT(RX_POOL);
 
 	/* create a binary semaphore used for informing ethernetif of frame reception */
 	g_rx_semaphore = xSemaphoreCreateBinary();
@@ -181,13 +173,10 @@ static err_t low_level_output(netif *net_interface, pbuf *p)
  * @return a pbuf filled with the received packet (including MAC header)
  *         NULL on memory error
  */
-static struct pbuf *low_level_input(struct netif *netif)
+static struct pbuf *low_level_input(netif *net_interface)
 {
-	struct pbuf *p = NULL;
 	ETH_BufferTypeDef RxBuff[ETH_RX_DESC_CNT]{};
 	uint32_t framelength = 0, i = 0;
-	struct pbuf_custom *custom_pbuf;
-
 	for (i = 0; i < ETH_RX_DESC_CNT - 1; i++)
 	{
 		RxBuff[i].next = &RxBuff[i + 1];
@@ -203,22 +192,23 @@ static struct pbuf *low_level_input(struct netif *netif)
 		/* Invalidate data cache for ETH Rx Buffers */
 		SCB_InvalidateDCache_by_Addr((uint32_t *)RxBuff->buffer, framelength);
 
-		custom_pbuf = (struct pbuf_custom *)LWIP_MEMPOOL_ALLOC(RX_POOL);
-
-		if (custom_pbuf != NULL)
+		pbuf_custom *custom_pbuf = new pbuf_custom{};
+		custom_pbuf->custom_free_function = [](pbuf *p)
 		{
-			custom_pbuf->custom_free_function = pbuf_free_custom;
+			delete reinterpret_cast<pbuf_custom *>(p);
+		};
 
-			p = pbuf_alloced_custom(PBUF_RAW,
-									framelength,
-									PBUF_REF,
-									custom_pbuf,
-									RxBuff->buffer,
-									framelength);
-		}
+		pbuf *p = pbuf_alloced_custom(PBUF_RAW,
+									  framelength,
+									  PBUF_REF,
+									  custom_pbuf,
+									  RxBuff->buffer,
+									  framelength);
+
+		return p;
 	}
 
-	return p;
+	return nullptr;
 }
 
 /**
@@ -295,17 +285,6 @@ err_t ethernetif_init(struct netif *netif)
 	/* initialize the hardware */
 	low_level_init(netif);
 	return ERR_OK;
-}
-
-/**
- * @brief  Custom Rx pbuf free callback
- * @param  pbuf: pbuf to be freed
- * @retval None
- */
-void pbuf_free_custom(struct pbuf *p)
-{
-	struct pbuf_custom *custom_pbuf = (struct pbuf_custom *)p;
-	LWIP_MEMPOOL_FREE(RX_POOL, custom_pbuf);
 }
 
 /**
