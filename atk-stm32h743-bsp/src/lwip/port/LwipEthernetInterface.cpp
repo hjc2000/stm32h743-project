@@ -23,10 +23,6 @@
 #include <stdio.h>
 #include <task.h>
 
-#define ETH_RX_BUFFER_SIZE (1536UL)
-
-#define ETH_DMA_TRANSMIT_TIMEOUT (20U)
-
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /*
