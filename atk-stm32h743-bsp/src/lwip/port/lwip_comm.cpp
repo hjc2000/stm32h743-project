@@ -87,7 +87,6 @@ void lwip_link_thread()
 				g_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
 				dhcp_stop(&g_lwip_netif);
 #endif
-				HAL_ETH_Stop_IT(&bsp::EthernetController::Instance().Handle());
 				netif_set_down(&g_lwip_netif);
 				netif_set_link_down(&g_lwip_netif);
 			}
@@ -100,7 +99,6 @@ void lwip_link_thread()
 			{
 				/* 开启以太网及虚拟网卡 */
 				g_lwipdev.link_status = LWIP_LINK_ON;
-				HAL_ETH_Start_IT(&bsp::EthernetController::Instance().Handle());
 				netif_set_up(&g_lwip_netif);
 				netif_set_link_up(&g_lwip_netif);
 			}
@@ -144,8 +142,8 @@ void lwip_periodic_handle()
 
 				printf("State: Looking for DHCP server ...\r\n");
 				dhcp_start(&g_lwip_netif);
+				break;
 			}
-			break;
 		case LWIP_DHCP_WAIT_ADDRESS:
 			{
 				if (dhcp_supplied_address(&g_lwip_netif))
@@ -202,15 +200,18 @@ void lwip_periodic_handle()
 						printf("Static IP address: %s\r\n", iptxt);
 					}
 				}
+
+				break;
 			}
-			break;
 		case LWIP_DHCP_LINK_DOWN:
 			{
 				g_lwip_dhcp_state = LWIP_DHCP_OFF;
+				break;
 			}
-			break;
 		default:
-			break;
+			{
+				break;
+			}
 		}
 
 		DI_Delayer().Delay(std::chrono::milliseconds{1000});
