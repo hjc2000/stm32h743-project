@@ -223,9 +223,9 @@ int main(void)
 				DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
 				SDRAM_Init();
 
+				TestFatFs();
 				freertos_demo();
 				// TestLittleFs();
-				// TestFatFs();
 
 				// while (true)
 				// {

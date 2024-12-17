@@ -281,7 +281,6 @@ int pnal_load_file(
 uint32_t pnal_get_system_uptime_10ms(void)
 {
 	uint32_t uptime = 0;
-
 	MIB2_COPY_SYSUPTIME_TO(&uptime);
 	return uptime;
 }
