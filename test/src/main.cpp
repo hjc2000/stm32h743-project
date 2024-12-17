@@ -225,8 +225,8 @@ int main(void)
 				SDRAM_Init();
 
 				TestFatFs();
-				freertos_demo();
-				// p_net_sample_app_main();
+				// freertos_demo();
+				p_net_sample_app_main();
 				// TestLittleFs();
 
 				// while (true)
