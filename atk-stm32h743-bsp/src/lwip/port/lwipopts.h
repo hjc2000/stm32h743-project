@@ -64,9 +64,6 @@
 #define LWIP_UDP 1
 #define UDP_TTL 255
 
-/* ---------- Statistics 选项 ---------- */
-#define LWIP_STATS 0
-
 /* ---------- 链接回调选项 ---------- */
 /* WIP_NETIF_LINK_CALLBACK==1:支持来自接口的回调函数
    每当链接改变(例如，向下链接)
