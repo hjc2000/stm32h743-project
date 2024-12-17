@@ -8,7 +8,7 @@ namespace bsp
 {
 	/// @brief 以太网端口。
 	class AtkLAN8720A_EhternetPort :
-		public bsp::LAN8720A_EthernetPort
+		public bsp::YT8512C_EthernetPort
 	{
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
