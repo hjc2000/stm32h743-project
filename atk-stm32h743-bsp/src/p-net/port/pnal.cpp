@@ -243,6 +243,7 @@ int pnal_load_file(
 			"PNAL(%d): Could not yet open file %s\n",
 			__LINE__,
 			fullpath);
+
 		return -1;
 	}
 
@@ -260,6 +261,7 @@ int pnal_load_file(
 				fullpath);
 		}
 	}
+
 	if (size_2 > 0 && ret == 0)
 	{
 		fres = f_read(&fil, object_2, size_2, &count);
@@ -292,7 +294,7 @@ pnal_buf_t *pnal_buf_alloc(uint16_t length)
 
 void pnal_buf_free(pnal_buf_t *p)
 {
-	CC_ASSERT(pbuf_free(p) == 1);
+	pbuf_free(p);
 }
 
 uint8_t pnal_buf_header(pnal_buf_t *p, int16_t header_size_increment)

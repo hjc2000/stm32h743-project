@@ -49,14 +49,13 @@ int _main(void)
 	uint16_t number_of_ports;
 
 	strcpy(app_args.eth_interfaces, APP_DEFAULT_ETHERNET_INTERFACE);
+
+	/* Note: station name is defined by app_gsdml.h */
 	strcpy(app_args.station_name, APP_GSDML_DEFAULT_STATION_NAME);
 	app_log_set_log_level(APP_DEFAULT_LOG_LEVEL);
 
-	APP_LOG_INFO("\n** Starting P-Net sample application " PNET_VERSION
-				 " **\n");
-	APP_LOG_INFO(
-		"Number of slots:      %u (incl slot for DAP module)\n",
-		PNET_MAX_SLOTS);
+	APP_LOG_INFO("\n** Starting P-Net sample application " PNET_VERSION " **\n");
+	APP_LOG_INFO("Number of slots:      %u (incl slot for DAP module)\n", PNET_MAX_SLOTS);
 	APP_LOG_INFO("P-net log level:      %u (DEBUG=0, FATAL=4)\n", LOG_LEVEL);
 	APP_LOG_INFO("App log level:        %u (DEBUG=0, FATAL=4)\n", APP_LOG_LEVEL);
 	APP_LOG_INFO("Max number of ports:  %u\n", PNET_MAX_PHYSICAL_PORTS);
@@ -65,15 +64,12 @@ int _main(void)
 
 	app_pnet_cfg_init_default(&pnet_cfg);
 
-	/* Note: station name is defined by app_gsdml.h */
-
 	strcpy(pnet_cfg.file_directory, APP_DEFAULT_FILE_DIRECTORY);
 
-	ret = app_utils_pnet_cfg_init_netifs(
-		app_args.eth_interfaces,
-		&netif_name_list,
-		&number_of_ports,
-		&netif_cfg);
+	ret = app_utils_pnet_cfg_init_netifs(app_args.eth_interfaces,
+										 &netif_name_list,
+										 &number_of_ports,
+										 &netif_cfg);
 
 	if (ret != 0)
 	{
@@ -86,8 +82,7 @@ int _main(void)
 	app_utils_print_network_config(&netif_cfg, number_of_ports);
 
 	pnet_cfg.pnal_cfg.bg_worker_thread.prio = APP_BG_WORKER_THREAD_PRIORITY;
-	pnet_cfg.pnal_cfg.bg_worker_thread.stack_size =
-		APP_BG_WORKER_THREAD_STACKSIZE;
+	pnet_cfg.pnal_cfg.bg_worker_thread.stack_size = APP_BG_WORKER_THREAD_STACKSIZE;
 
 	printf("xPortGetFreeHeapSize = %d\r\n", xPortGetFreeHeapSize());
 	printf("xPortGetMinimumEverFreeHeapSize = %d\r\n", xPortGetMinimumEverFreeHeapSize());
