@@ -22,8 +22,8 @@
 #include "osal_log.h" /* For LOG_LEVEL */
 #include "pnal.h"
 #include "sampleapp_common.h"
+#include <bsp-interface/di/console.h>
 #include <pnet_api.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -480,6 +480,7 @@ void app_utils_print_network_config(
 
 	APP_LOG_INFO("Management port:      %s ", if_cfg->main_netif_name);
 	app_utils_print_mac_address(if_cfg->main_netif_name);
+
 	for (i = 1; i <= number_of_ports; i++)
 	{
 		APP_LOG_INFO(
@@ -494,6 +495,8 @@ void app_utils_print_network_config(
 	{
 		hostname_string[0] = '\0';
 	}
+
+	DI_Console().WriteLine("666666666666666666666666666666666666");
 
 	APP_LOG_INFO("Hostname:             %s\n", hostname_string);
 	APP_LOG_INFO(

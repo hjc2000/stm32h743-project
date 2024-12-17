@@ -67,7 +67,7 @@
 #endif
 
 #if !defined(PNET_OPTION_SNMP)
-#define PNET_OPTION_SNMP 1
+#define PNET_OPTION_SNMP 0
 #endif
 
 /**

@@ -20,9 +20,9 @@
 
 #include "osal.h"
 #include "osal_log.h"
-#include <pnet_api.h>
-
+#include <bsp-interface/di/console.h>
 #include <lwip/netif.h>
+#include <pnet_api.h>
 
 #include <string.h>
 
@@ -36,16 +36,16 @@
 /********************************** Globals ***********************************/
 
 static app_data_t *sample_app = NULL;
-static pnet_cfg_t pnet_cfg = {0};
-app_args_t app_args = {0};
+static pnet_cfg_t pnet_cfg{};
+app_args_t app_args{};
 
 /****************************** Main ******************************************/
 
-int _main(void)
+int p_net_sample_app_main()
 {
 	int ret;
 	app_utils_netif_namelist_t netif_name_list;
-	pnet_if_cfg_t netif_cfg = {0};
+	pnet_if_cfg_t netif_cfg{};
 	uint16_t number_of_ports;
 
 	strcpy(app_args.eth_interfaces, APP_DEFAULT_ETHERNET_INTERFACE);

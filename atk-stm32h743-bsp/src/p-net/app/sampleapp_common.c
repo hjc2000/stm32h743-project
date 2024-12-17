@@ -1562,12 +1562,12 @@ static void update_button_states(app_data_t *app)
 void app_loop_forever(void *arg)
 {
 	app_data_t *app = (app_data_t *)arg;
+
 	uint32_t mask = APP_EVENT_READY_FOR_DATA | APP_EVENT_TIMER |
 					APP_EVENT_ALARM | APP_EVENT_ABORT;
+
 	uint32_t flags = 0;
-
 	app->main_api.arep = UINT32_MAX;
-
 	app_set_led(APP_DATA_LED_ID, false);
 	app_plug_dap(app, app->pnet_cfg->num_physical_ports);
 	APP_LOG_INFO("Waiting for PLC connect request\n\n");
@@ -1575,43 +1575,36 @@ void app_loop_forever(void *arg)
 	/* Main event loop */
 	for (;;)
 	{
-		// test
-		//      printf("xPortGetFreeHeapSize = %d\r\n", xPortGetFreeHeapSize());
-		//      printf("xPortGetMinimumEverFreeHeapSize = %d\r\n",xPortGetMinimumEverFreeHeapSize());
-
 		os_event_wait(app->main_events, mask, &flags, OS_WAIT_FOREVER);
 		if (flags & APP_EVENT_READY_FOR_DATA)
 		{
 			os_event_clr(app->main_events, APP_EVENT_READY_FOR_DATA);
-
 			app_handle_send_application_ready(app->net, app->arep_for_appl_ready);
 		}
 		else if (flags & APP_EVENT_ALARM)
 		{
 			os_event_clr(app->main_events, APP_EVENT_ALARM);
 
-			app_handle_send_alarm_ack(
-				app->net,
-				app->main_api.arep,
-				&app->alarm_arg);
+			app_handle_send_alarm_ack(app->net,
+									  app->main_api.arep,
+									  &app->alarm_arg);
 		}
 		else if (flags & APP_EVENT_TIMER)
 		{
 			os_event_clr(app->main_events, APP_EVENT_TIMER);
-
 			update_button_states(app);
+
 			if (app_is_connected_to_controller(app))
 			{
 				app_handle_cyclic_data(app);
 			}
 
 			/* Run alarm demo function if button2 is pressed */
-			if (
-				(app->button1_pressed == true) &&
-				(app->button1_pressed_previous == false))
+			if ((app->button1_pressed == true) && (app->button1_pressed_previous == false))
 			{
 				app_handle_demo_pnet_api(app);
 			}
+
 			app->button1_pressed_previous = app->button1_pressed;
 
 			/* Run p-net stack */
@@ -1620,12 +1613,10 @@ void app_loop_forever(void *arg)
 		else if (flags & APP_EVENT_ABORT)
 		{
 			os_event_clr(app->main_events, APP_EVENT_ABORT);
-
 			app->main_api.arep = UINT32_MAX;
 			app->alarm_allowed = true;
 			APP_LOG_DEBUG("Connection closed\n");
 			APP_LOG_DEBUG("Waiting for PLC connect request\n\n");
 		}
-		// osDelay(1);
 	}
 }

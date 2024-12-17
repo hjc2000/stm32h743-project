@@ -14,20 +14,20 @@
  ********************************************************************/
 
 #include "pnal.h"
-
 #include "options.h"
 #include "osal.h"
 #include "osal_log.h"
-
+#include <algorithm>
+#include <bsp-interface/di/console.h>
 #include <lwip/apps/snmp.h>
 #include <lwip/netif.h>
 #include <lwip/snmp.h>
 #include <lwip/sys.h>
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 
 int pnal_set_ip_suite(
 	char const *interface_name,
@@ -80,7 +80,8 @@ pnal_ipaddr_t pnal_get_gateway(char const *interface_name)
 
 int pnal_get_hostname(char *hostname)
 {
-	strcpy(hostname, netif_default->hostname);
+	std::string name{"p-net"};
+	std::copy(name.c_str(), name.c_str() + name.size() + 1, hostname);
 	return 0;
 }
 

@@ -187,6 +187,7 @@ inline void TestFatFs()
 }
 
 void freertos_demo();
+int p_net_sample_app_main();
 
 int main(void)
 {
@@ -225,6 +226,7 @@ int main(void)
 
 				TestFatFs();
 				freertos_demo();
+				// p_net_sample_app_main();
 				// TestLittleFs();
 
 				// while (true)
