@@ -66,7 +66,9 @@
 #define PNET_OPTION_SRL 0
 #endif
 
+#if !defined(PNET_OPTION_SNMP)
 #define PNET_OPTION_SNMP 1
+#endif
 
 /**
  * Disable use of atomic operations (stdatomic.h).
