@@ -80,7 +80,7 @@ pnal_ipaddr_t pnal_get_gateway(char const *interface_name)
 
 int pnal_get_hostname(char *hostname)
 {
-	// strcpy(hostname, netif_default->hostname);
+	strcpy(hostname, netif_default->hostname);
 	return 0;
 }
 
@@ -132,8 +132,6 @@ int pnal_eth_get_status(char const *interface_name, pnal_eth_status_t *status)
 	return 0;
 }
 
-extern int SDFatFSMounted;
-
 int pnal_save_file(
 	char const *fullpath,
 	void const *object_1,
@@ -141,12 +139,10 @@ int pnal_save_file(
 	void const *object_2,
 	size_t size_2)
 {
-	return 0;
-
-	// FIL fil;
-	// FRESULT fres;
-	// UINT count;
-	// int ret = 0; /* Assume everything goes well */
+	FIL fil;
+	FRESULT fres;
+	UINT count;
+	int ret = 0; /* Assume everything goes well */
 
 	// if (!SDFatFSMounted)
 	// {
@@ -158,47 +154,47 @@ int pnal_save_file(
 	// 	return -1;
 	// }
 
-	// fres = f_open(&fil, fullpath, FA_WRITE | FA_OPEN_ALWAYS | FA_CREATE_ALWAYS);
-	// if (fres != FR_OK)
-	// {
-	// 	LOG_ERROR(
-	// 		PF_PNAL_LOG,
-	// 		"PNAL(%d): Could not open file %s\n",
-	// 		__LINE__,
-	// 		fullpath);
-	// 	return -1;
-	// }
+	fres = f_open(&fil, fullpath, FA_WRITE | FA_OPEN_ALWAYS | FA_CREATE_ALWAYS);
+	if (fres != FR_OK)
+	{
+		LOG_ERROR(
+			PF_PNAL_LOG,
+			"PNAL(%d): Could not open file %s\n",
+			__LINE__,
+			fullpath);
+		return -1;
+	}
 
-	// /* Write file contents */
-	// if (size_1 > 0)
-	// {
-	// 	fres = f_write(&fil, object_1, size_1, &count);
-	// 	if (fres != FR_OK || count != size_1)
-	// 	{
-	// 		ret = -1;
-	// 		LOG_ERROR(
-	// 			PF_PNAL_LOG,
-	// 			"PNAL(%d): Failed to write file %s\n",
-	// 			__LINE__,
-	// 			fullpath);
-	// 	}
-	// }
-	// if (size_2 > 0 && ret == 0)
-	// {
-	// 	fres = f_write(&fil, object_2, size_2, &count);
-	// 	if (fres != FR_OK || count != size_2)
-	// 	{
-	// 		ret = -1;
-	// 		LOG_ERROR(
-	// 			PF_PNAL_LOG,
-	// 			"PNAL(%d): Failed to write file %s (second buffer)\n",
-	// 			__LINE__,
-	// 			fullpath);
-	// 	}
-	// }
+	/* Write file contents */
+	if (size_1 > 0)
+	{
+		fres = f_write(&fil, object_1, size_1, &count);
+		if (fres != FR_OK || count != size_1)
+		{
+			ret = -1;
+			LOG_ERROR(
+				PF_PNAL_LOG,
+				"PNAL(%d): Failed to write file %s\n",
+				__LINE__,
+				fullpath);
+		}
+	}
+	if (size_2 > 0 && ret == 0)
+	{
+		fres = f_write(&fil, object_2, size_2, &count);
+		if (fres != FR_OK || count != size_2)
+		{
+			ret = -1;
+			LOG_ERROR(
+				PF_PNAL_LOG,
+				"PNAL(%d): Failed to write file %s (second buffer)\n",
+				__LINE__,
+				fullpath);
+		}
+	}
 
-	// f_close(&fil);
-	// return ret;
+	f_close(&fil);
+	return ret;
 }
 
 void pnal_clear_file(char const *fullpath)
@@ -212,8 +208,9 @@ void pnal_clear_file(char const *fullpath)
 	// 		fullpath);
 	// 	return;
 	// }
-	// LOG_DEBUG(PF_PNAL_LOG, "PNAL(%d): Clearing file %s\n", __LINE__, fullpath);
-	// f_unlink(fullpath);
+
+	LOG_DEBUG(PF_PNAL_LOG, "PNAL(%d): Clearing file %s\n", __LINE__, fullpath);
+	f_unlink(fullpath);
 }
 
 int pnal_load_file(
@@ -223,12 +220,10 @@ int pnal_load_file(
 	void *object_2,
 	size_t size_2)
 {
-	return 0;
-
-	// FIL fil;
-	// FRESULT fres;
-	// UINT count;
-	// int ret = 0; /* Assume everything goes well */
+	FIL fil;
+	FRESULT fres;
+	UINT count;
+	int ret = 0; /* Assume everything goes well */
 
 	// if (!SDFatFSMounted)
 	// {
@@ -240,52 +235,53 @@ int pnal_load_file(
 	// 	return -1;
 	// }
 
-	// fres = f_open(&fil, fullpath, FA_READ);
-	// if (fres != FR_OK)
-	// {
-	// 	LOG_ERROR(
-	// 		PF_PNAL_LOG,
-	// 		"PNAL(%d): Could not yet open file %s\n",
-	// 		__LINE__,
-	// 		fullpath);
-	// 	return -1;
-	// }
+	fres = f_open(&fil, fullpath, FA_READ);
+	if (fres != FR_OK)
+	{
+		LOG_ERROR(
+			PF_PNAL_LOG,
+			"PNAL(%d): Could not yet open file %s\n",
+			__LINE__,
+			fullpath);
+		return -1;
+	}
 
-	// /* Write file contents */
-	// if (size_1 > 0)
-	// {
-	// 	fres = f_read(&fil, object_1, size_1, &count);
-	// 	if (fres != FR_OK || count != size_1)
-	// 	{
-	// 		ret = -1;
-	// 		LOG_ERROR(
-	// 			PF_PNAL_LOG,
-	// 			"PNAL(%d): Failed to read file %s\n",
-	// 			__LINE__,
-	// 			fullpath);
-	// 	}
-	// }
-	// if (size_2 > 0 && ret == 0)
-	// {
-	// 	fres = f_read(&fil, object_2, size_2, &count);
-	// 	if (fres != FR_OK || count != size_2)
-	// 	{
-	// 		ret = -1;
-	// 		LOG_ERROR(
-	// 			PF_PNAL_LOG,
-	// 			"PNAL(%d): Failed to read file %s (second buffer)\n",
-	// 			__LINE__,
-	// 			fullpath);
-	// 	}
-	// }
+	/* Write file contents */
+	if (size_1 > 0)
+	{
+		fres = f_read(&fil, object_1, size_1, &count);
+		if (fres != FR_OK || count != size_1)
+		{
+			ret = -1;
+			LOG_ERROR(
+				PF_PNAL_LOG,
+				"PNAL(%d): Failed to read file %s\n",
+				__LINE__,
+				fullpath);
+		}
+	}
+	if (size_2 > 0 && ret == 0)
+	{
+		fres = f_read(&fil, object_2, size_2, &count);
+		if (fres != FR_OK || count != size_2)
+		{
+			ret = -1;
+			LOG_ERROR(
+				PF_PNAL_LOG,
+				"PNAL(%d): Failed to read file %s (second buffer)\n",
+				__LINE__,
+				fullpath);
+		}
+	}
 
-	// f_close(&fil);
-	// return ret;
+	f_close(&fil);
+	return ret;
 }
 
 uint32_t pnal_get_system_uptime_10ms(void)
 {
 	uint32_t uptime = 0;
+
 	MIB2_COPY_SYSUPTIME_TO(&uptime);
 	return uptime;
 }
@@ -297,8 +293,7 @@ pnal_buf_t *pnal_buf_alloc(uint16_t length)
 
 void pnal_buf_free(pnal_buf_t *p)
 {
-	// CC_ASSERT (pbuf_free (p) == 1);
-	pbuf_free(p);
+	CC_ASSERT(pbuf_free(p) == 1);
 }
 
 uint8_t pnal_buf_header(pnal_buf_t *p, int16_t header_size_increment)
