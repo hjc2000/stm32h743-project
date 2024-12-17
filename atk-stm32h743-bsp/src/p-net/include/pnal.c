@@ -67,15 +67,15 @@ pnal_ipaddr_t pnal_get_netmask(char const *interface_name)
 
 pnal_ipaddr_t pnal_get_gateway(char const *interface_name)
 {
-	// /* TODO Read the actual default gateway */
+	/* TODO Read the actual default gateway */
 
-	// pnal_ipaddr_t ip;
-	// pnal_ipaddr_t gateway;
+	pnal_ipaddr_t ip;
+	pnal_ipaddr_t gateway;
 
-	// ip = pnal_get_ip_address(interface_name);
-	// gateway = (ip & 0xFFFFFF00) | 0x00000001;
+	ip = pnal_get_ip_address(interface_name);
+	gateway = (ip & 0xFFFFFF00) | 0x00000001;
 
-	// return gateway;
+	return gateway;
 }
 
 int pnal_get_hostname(char *hostname)
@@ -105,12 +105,12 @@ int pnal_get_port_statistics(
 	char const *interface_name,
 	pnal_port_stats_t *port_stats)
 {
-	// port_stats->if_in_octets = netif_default->mib2_counters.ifinoctets;
-	// port_stats->if_in_errors = netif_default->mib2_counters.ifinerrors;
-	// port_stats->if_in_discards = netif_default->mib2_counters.ifindiscards;
-	// port_stats->if_out_octets = netif_default->mib2_counters.ifoutoctets;
-	// port_stats->if_out_errors = netif_default->mib2_counters.ifouterrors;
-	// port_stats->if_out_discards = netif_default->mib2_counters.ifoutdiscards;
+	port_stats->if_in_octets = netif_default->mib2_counters.ifinoctets;
+	port_stats->if_in_errors = netif_default->mib2_counters.ifinerrors;
+	port_stats->if_in_discards = netif_default->mib2_counters.ifindiscards;
+	port_stats->if_out_octets = netif_default->mib2_counters.ifoutoctets;
+	port_stats->if_out_errors = netif_default->mib2_counters.ifouterrors;
+	port_stats->if_out_discards = netif_default->mib2_counters.ifoutdiscards;
 
 	return 0;
 }
@@ -132,6 +132,8 @@ int pnal_eth_get_status(char const *interface_name, pnal_eth_status_t *status)
 	return 0;
 }
 
+extern int SDFatFSMounted;
+
 int pnal_save_file(
 	char const *fullpath,
 	void const *object_1,
@@ -139,13 +141,79 @@ int pnal_save_file(
 	void const *object_2,
 	size_t size_2)
 {
-	// TODO
 	return 0;
+
+	// FIL fil;
+	// FRESULT fres;
+	// UINT count;
+	// int ret = 0; /* Assume everything goes well */
+
+	// if (!SDFatFSMounted)
+	// {
+	// 	LOG_ERROR(
+	// 		PF_PNAL_LOG,
+	// 		"PNAL(%d): SD-Card not mounted (%s)\n",
+	// 		__LINE__,
+	// 		fullpath);
+	// 	return -1;
+	// }
+
+	// fres = f_open(&fil, fullpath, FA_WRITE | FA_OPEN_ALWAYS | FA_CREATE_ALWAYS);
+	// if (fres != FR_OK)
+	// {
+	// 	LOG_ERROR(
+	// 		PF_PNAL_LOG,
+	// 		"PNAL(%d): Could not open file %s\n",
+	// 		__LINE__,
+	// 		fullpath);
+	// 	return -1;
+	// }
+
+	// /* Write file contents */
+	// if (size_1 > 0)
+	// {
+	// 	fres = f_write(&fil, object_1, size_1, &count);
+	// 	if (fres != FR_OK || count != size_1)
+	// 	{
+	// 		ret = -1;
+	// 		LOG_ERROR(
+	// 			PF_PNAL_LOG,
+	// 			"PNAL(%d): Failed to write file %s\n",
+	// 			__LINE__,
+	// 			fullpath);
+	// 	}
+	// }
+	// if (size_2 > 0 && ret == 0)
+	// {
+	// 	fres = f_write(&fil, object_2, size_2, &count);
+	// 	if (fres != FR_OK || count != size_2)
+	// 	{
+	// 		ret = -1;
+	// 		LOG_ERROR(
+	// 			PF_PNAL_LOG,
+	// 			"PNAL(%d): Failed to write file %s (second buffer)\n",
+	// 			__LINE__,
+	// 			fullpath);
+	// 	}
+	// }
+
+	// f_close(&fil);
+	// return ret;
 }
 
 void pnal_clear_file(char const *fullpath)
 {
-	// TODO
+	// if (!SDFatFSMounted)
+	// {
+	// 	LOG_ERROR(
+	// 		PF_PNAL_LOG,
+	// 		"PNAL(%d): SD-Card not mounted (%s)\n",
+	// 		__LINE__,
+	// 		fullpath);
+	// 	return;
+	// }
+	// LOG_DEBUG(PF_PNAL_LOG, "PNAL(%d): Clearing file %s\n", __LINE__, fullpath);
+	// f_unlink(fullpath);
 }
 
 int pnal_load_file(
@@ -155,14 +223,69 @@ int pnal_load_file(
 	void *object_2,
 	size_t size_2)
 {
-	// TODO
 	return 0;
+
+	// FIL fil;
+	// FRESULT fres;
+	// UINT count;
+	// int ret = 0; /* Assume everything goes well */
+
+	// if (!SDFatFSMounted)
+	// {
+	// 	LOG_ERROR(
+	// 		PF_PNAL_LOG,
+	// 		"PNAL(%d): SD-Card not mounted (%s)\n",
+	// 		__LINE__,
+	// 		fullpath);
+	// 	return -1;
+	// }
+
+	// fres = f_open(&fil, fullpath, FA_READ);
+	// if (fres != FR_OK)
+	// {
+	// 	LOG_ERROR(
+	// 		PF_PNAL_LOG,
+	// 		"PNAL(%d): Could not yet open file %s\n",
+	// 		__LINE__,
+	// 		fullpath);
+	// 	return -1;
+	// }
+
+	// /* Write file contents */
+	// if (size_1 > 0)
+	// {
+	// 	fres = f_read(&fil, object_1, size_1, &count);
+	// 	if (fres != FR_OK || count != size_1)
+	// 	{
+	// 		ret = -1;
+	// 		LOG_ERROR(
+	// 			PF_PNAL_LOG,
+	// 			"PNAL(%d): Failed to read file %s\n",
+	// 			__LINE__,
+	// 			fullpath);
+	// 	}
+	// }
+	// if (size_2 > 0 && ret == 0)
+	// {
+	// 	fres = f_read(&fil, object_2, size_2, &count);
+	// 	if (fres != FR_OK || count != size_2)
+	// 	{
+	// 		ret = -1;
+	// 		LOG_ERROR(
+	// 			PF_PNAL_LOG,
+	// 			"PNAL(%d): Failed to read file %s (second buffer)\n",
+	// 			__LINE__,
+	// 			fullpath);
+	// 	}
+	// }
+
+	// f_close(&fil);
+	// return ret;
 }
 
 uint32_t pnal_get_system_uptime_10ms(void)
 {
 	uint32_t uptime = 0;
-
 	MIB2_COPY_SYSUPTIME_TO(&uptime);
 	return uptime;
 }
