@@ -28,6 +28,7 @@ extern "C"
 
 #include "pf_lldp.h"
 #include "pf_snmp.h"
+#include <osal.h>
 
 #if PNET_USE_ATOMICS
 #include <stdatomic.h>
