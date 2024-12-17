@@ -175,5 +175,6 @@ int pnal_eth_send(pnal_eth_handle_t *handle, pnal_buf_t *buf)
 		handle->netif->linkoutput(handle->netif, buf);
 		ret = buf->len;
 	}
+
 	return ret;
 }
