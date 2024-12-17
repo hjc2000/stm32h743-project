@@ -202,7 +202,6 @@ int app_start(app_data_t *app, app_run_in_separate_task_t task_config)
 	}
 
 	os_timer_start(app->main_timer);
-
 	return 0;
 }
 
@@ -333,6 +332,7 @@ static int app_write_ind(
 		idx,
 		p_write_data,
 		write_length);
+
 	if (result != 0)
 	{
 		APP_LOG_WARNING(
@@ -343,6 +343,7 @@ static int app_write_ind(
 			slot_nbr,
 			subslot_nbr,
 			idx);
+
 		p_result->pnio_status.error_code = PNET_ERROR_CODE_WRITE;
 		p_result->pnio_status.error_decode = PNET_ERROR_DECODE_PNIORW;
 		p_result->pnio_status.error_code_1 = PNET_ERROR_CODE_1_APP_WRITE_ERROR;
@@ -391,6 +392,7 @@ static int app_read_ind(
 			api,
 			slot_nbr,
 			subslot_nbr);
+
 		p_result->pnio_status.error_code = PNET_ERROR_CODE_READ;
 		p_result->pnio_status.error_decode = PNET_ERROR_DECODE_PNIORW;
 		p_result->pnio_status.error_code_1 = PNET_ERROR_CODE_1_APP_READ_ERROR;
@@ -416,6 +418,7 @@ static int app_read_ind(
 			slot_nbr,
 			subslot_nbr,
 			idx);
+
 		p_result->pnio_status.error_code = PNET_ERROR_CODE_READ;
 		p_result->pnio_status.error_decode = PNET_ERROR_DECODE_PNIORW;
 		p_result->pnio_status.error_code_1 = PNET_ERROR_CODE_1_APP_READ_ERROR;
