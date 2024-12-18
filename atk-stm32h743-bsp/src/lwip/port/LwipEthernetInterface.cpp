@@ -153,7 +153,7 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 	dhcp_start(&_lwip_netif);
 
 	bool dhcp_result = false;
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		// 如果失败，最多重试 100 次。
 		dhcp_result = dhcp_supplied_address(&_lwip_netif);
@@ -167,6 +167,8 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 
 	if (!dhcp_result)
 	{
+		dhcp_stop(&_lwip_netif);
+
 		/* 使用静态IP地址 */
 		IP4_ADDR(&(_lwip_netif.ip_addr),
 				 _ip_address[0],
@@ -193,13 +195,13 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 
 		DI_Console().WriteLine("DHCP 超时。");
 
-		// char ip_address_string_buffer[20] = {};
+		char ip_address_string_buffer[20] = {};
 
-		// ip4addr_ntoa_r(netif_ip4_addr(&_lwip_netif),
-		// 			   ip_address_string_buffer,
-		// 			   sizeof(ip_address_string_buffer));
+		ip4addr_ntoa_r(netif_ip4_addr(&_lwip_netif),
+					   ip_address_string_buffer,
+					   sizeof(ip_address_string_buffer));
 
-		// DI_Console().WriteLine(std::string{"静态 IP 地址："} + ip_address_string_buffer);
+		DI_Console().WriteLine(std::string{"静态 IP 地址："} + ip_address_string_buffer);
 
 		return false;
 	}
@@ -316,9 +318,7 @@ void bsp::LwipEthernetInterface::LinkStateDetectingThreadFunc()
 		}
 		else
 		{
-#if LWIP_DHCP
 			dhcp_stop(&_lwip_netif);
-#endif
 
 			/* LWIP_DHCP */
 			DI_Console().WriteLine("检测到网线断开。");
