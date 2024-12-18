@@ -21,6 +21,8 @@ namespace bsp
 		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
 		void InitializingNetifCallbackFunc();
 
+		void SendPbuf(pbuf *p);
+
 		uint8_t _lwip_dhcp_state = LWIP_DHCP_OFF;
 
 		/// @brief 网卡。

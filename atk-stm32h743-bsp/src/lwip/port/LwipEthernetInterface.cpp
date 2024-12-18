@@ -42,49 +42,6 @@
   2.c. 接收缓冲区的地址和大小必须正确地定义，以确保与L1-CACHE线大小（32字节）对齐。
 */
 
-void ethernetif_input(netif *net_interface);
-
-/**
- * @brief This function should do the actual transmission of the packet. The packet is
- * contained in the pbuf that is passed to the function. This pbuf
- * might be chained.
- *
- * @param netif the lwip network interface structure for this ethernetif
- * @param p the MAC packet to send (e.g. IP packet including MAC addresses and type)
- * @return ERR_OK if the packet could be sent
- *         an err_t value if the packet couldn't be sent
- *
- * @note Returning ERR_MEM here if a DMA queue of your MAC is full can lead to
- *       strange results. You might consider waiting for space in the DMA queue
- *       to become available since the stack doesn't retry to send a packet
- *       dropped because of memory failure (except for the TCP timers).
- */
-static err_t low_level_output(netif *net_interface, pbuf *p)
-{
-	pbuf *current_pbuf;
-	base::List<base::ReadOnlySpan> spans{};
-
-	for (current_pbuf = p; current_pbuf != nullptr; current_pbuf = current_pbuf->next)
-	{
-		base::ReadOnlySpan span{
-			reinterpret_cast<uint8_t *>(current_pbuf->payload),
-			current_pbuf->len,
-		};
-
-		spans.Add(span);
-	}
-
-	try
-	{
-		DI_EthernetPort().Send(spans);
-		return err_enum_t::ERR_OK;
-	}
-	catch (std::exception const &e)
-	{
-		return err_enum_t::ERR_BUF;
-	}
-}
-
 /**
  * @brief This function is the ethernetif_input task, it is processed when a packet
  * is ready to be read from the interface. It uses the function low_level_input()
@@ -383,7 +340,19 @@ void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 	 * from it if you have to do some checks before sending (e.g. if link
 	 * is available...) */
 	_lwip_netif.output = etharp_output;
-	_lwip_netif.linkoutput = low_level_output;
+
+	_lwip_netif.linkoutput = [](netif *net_interface, pbuf *p) -> err_t
+	{
+		try
+		{
+			bsp::LwipEthernetInterface::Instance().SendPbuf(p);
+			return err_enum_t::ERR_OK;
+		}
+		catch (std::exception const &e)
+		{
+			return err_enum_t::ERR_IF;
+		}
+	};
 
 	/* initialize the hardware */
 	base::Mac mac{
@@ -427,6 +396,24 @@ void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 	/* 开启虚拟网卡 */
 	netif_set_up(&_lwip_netif);
 	netif_set_link_up(&_lwip_netif);
+}
+
+void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
+{
+	pbuf *current_pbuf;
+	base::List<base::ReadOnlySpan> spans{};
+
+	for (current_pbuf = p; current_pbuf != nullptr; current_pbuf = current_pbuf->next)
+	{
+		base::ReadOnlySpan span{
+			reinterpret_cast<uint8_t *>(current_pbuf->payload),
+			current_pbuf->len,
+		};
+
+		spans.Add(span);
+	}
+
+	DI_EthernetPort().Send(spans);
 }
 
 bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
