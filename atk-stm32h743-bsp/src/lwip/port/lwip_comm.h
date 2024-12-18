@@ -11,10 +11,5 @@
 #define LWIP_DHCP_TIMEOUT (uint8_t)4          /* DHCP服务器超时状态 */
 #define LWIP_DHCP_LINK_DOWN (uint8_t)5        /* DHCP服务器链接失败状态 */
 
-/* 链接状态 */
-#define LWIP_LINK_OFF (uint8_t)0   /* 链接关闭状态 */
-#define LWIP_LINK_ON (uint8_t)1    /* 链接开启状态 */
-#define LWIP_LINK_AGAIN (uint8_t)2 /* 重复开启 */
-
 /* DHCP服务器最大重试次数 */
 #define LWIP_MAX_DHCP_TRIES (uint8_t)4
