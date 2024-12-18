@@ -380,7 +380,7 @@ void bsp::LwipEthernetInterface::UpdataLinkState()
 	}
 }
 
-void bsp::LwipEthernetInterface::netif_add_callback_func()
+void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 {
 #if LWIP_NETIF_HOSTNAME
 	/* Initialize interface hostname */
@@ -487,7 +487,7 @@ void bsp::LwipEthernetInterface::Open()
 	{
 		auto callback = [](netif *p) -> err_t
 		{
-			bsp::LwipEthernetInterface::Instance().netif_add_callback_func();
+			bsp::LwipEthernetInterface::Instance().InitializingNetifCallbackFunc();
 			return err_enum_t::ERR_OK;
 		};
 

@@ -15,7 +15,9 @@ namespace bsp
 		void DhcpThreadFunc();
 		void LinkStateCheckingThreadFunc();
 		void UpdataLinkState();
-		void netif_add_callback_func();
+
+		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
+		void InitializingNetifCallbackFunc();
 
 		uint8_t _lwip_dhcp_state = LWIP_DHCP_OFF;
 		netif _lwip_netif{};
