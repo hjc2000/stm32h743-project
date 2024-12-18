@@ -12,7 +12,10 @@ namespace bsp
 	private:
 		LwipEthernetInterface();
 
+		/// @brief DHCP 线程函数。
 		void DhcpThreadFunc();
+
+		/// @brief 检测链接状态的线程函数。
 		void LinkStateCheckingThreadFunc();
 
 		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
