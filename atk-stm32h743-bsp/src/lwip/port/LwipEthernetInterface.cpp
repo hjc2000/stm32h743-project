@@ -470,7 +470,6 @@ void bsp::LwipEthernetInterface::Open()
 		},
 		512);
 
-#if LWIP_NETIF_LINK_CALLBACK
 	// 链接状态更新
 	DI_TaskManager().Create(
 		[this]()
@@ -478,7 +477,6 @@ void bsp::LwipEthernetInterface::Open()
 			LinkStateCheckingThreadFunc();
 		},
 		512);
-#endif
 
 	link_status = LWIP_LINK_OFF; /* 链接标记为0 */
 

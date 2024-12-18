@@ -64,11 +64,9 @@
 #define LWIP_UDP 1
 #define UDP_TTL 255
 
-/* ---------- 链接回调选项 ---------- */
-/* WIP_NETIF_LINK_CALLBACK==1:支持来自接口的回调函数
-   每当链接改变(例如，向下链接)
- */
-#define LWIP_NETIF_LINK_CALLBACK 1
+// 是否使能 netif_set_link_callback 功能。
+#define LWIP_NETIF_LINK_CALLBACK 0
+
 /*
    --------------------------------------
    ---------- 帧校验和选项 ----------
