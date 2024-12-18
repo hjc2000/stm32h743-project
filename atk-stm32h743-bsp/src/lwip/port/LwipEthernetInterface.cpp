@@ -138,91 +138,6 @@ void ethernetif_input(netif *net_interface)
 	}
 }
 
-/**
- * @brief Should be called at the beginning of the program to set up the
- * network interface. It calls the function low_level_init() to do the
- * actual setup of the hardware.
- *
- * This function should be passed as a parameter to netif_add().
- *
- * @param netif the lwip network interface structure for this ethernetif
- * @return ERR_OK if the loopif is initialized
- *         ERR_MEM if private data couldn't be allocated
- *         any other err_t on error
- */
-err_t ethernetif_init(netif *net_interface)
-{
-	LWIP_ASSERT("netif != NULL", (net_interface != NULL));
-
-#if LWIP_NETIF_HOSTNAME
-	/* Initialize interface hostname */
-	net_interface->hostname = "lwip";
-#endif /* LWIP_NETIF_HOSTNAME */
-
-	net_interface->name[0] = 'p';
-	net_interface->name[1] = 'n';
-
-	/* We directly use etharp_output() here to save a function call.
-	 * You can instead declare your own function an call etharp_output()
-	 * from it if you have to do some checks before sending (e.g. if link
-	 * is available...) */
-	net_interface->output = etharp_output;
-	net_interface->linkoutput = low_level_output;
-
-	/* initialize the hardware */
-	base::Mac mac{
-		std::endian::big,
-		base::Array<uint8_t, 6>{
-			0xB8,
-			0xAE,
-			0x1D,
-			0x00,
-			0x04,
-			0x00,
-		},
-	};
-
-	try
-	{
-		DI_EthernetPort().Open(mac);
-	}
-	catch (std::exception const &e)
-	{
-		DI_Console().WriteLine(e.what());
-		DI_Console().WriteLine("打开网口失败");
-		netif_set_link_down(net_interface);
-		netif_set_down(net_interface);
-	}
-
-	/* 设置MAC地址长度,为6个字节 */
-	net_interface->hwaddr_len = ETHARP_HWADDR_LEN;
-
-	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
-	base::Span netif_mac_buff_span{net_interface->hwaddr, 6};
-	netif_mac_buff_span.CopyFrom(mac.AsReadOnlySpan());
-	netif_mac_buff_span.Reverse();
-
-	net_interface->mtu = ETH_MAX_PAYLOAD; /* 最大允许传输单元,允许该网卡广播和ARP功能 */
-
-	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
-	/* 使能、 ARP 使能等等重要控制位 */
-	net_interface->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
-
-	/* 开启虚拟网卡 */
-	netif_set_up(net_interface);
-	netif_set_link_up(net_interface);
-
-	/* create the task that handles the ETH_MAC */
-	DI_TaskManager().Create(
-		[net_interface]()
-		{
-			ethernetif_input(net_interface);
-		},
-		512);
-
-	return err_enum_t::ERR_OK;
-}
-
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
 bsp::LwipEthernetInterface::LwipEthernetInterface()
@@ -465,6 +380,75 @@ void bsp::LwipEthernetInterface::UpdataLinkState()
 	}
 }
 
+void bsp::LwipEthernetInterface::netif_add_callback_func()
+{
+#if LWIP_NETIF_HOSTNAME
+	/* Initialize interface hostname */
+	_lwip_netif.hostname = "lwip";
+#endif /* LWIP_NETIF_HOSTNAME */
+
+	_lwip_netif.name[0] = 'p';
+	_lwip_netif.name[1] = 'n';
+
+	/* We directly use etharp_output() here to save a function call.
+	 * You can instead declare your own function an call etharp_output()
+	 * from it if you have to do some checks before sending (e.g. if link
+	 * is available...) */
+	_lwip_netif.output = etharp_output;
+	_lwip_netif.linkoutput = low_level_output;
+
+	/* initialize the hardware */
+	base::Mac mac{
+		std::endian::big,
+		base::Array<uint8_t, 6>{
+			0xB8,
+			0xAE,
+			0x1D,
+			0x00,
+			0x04,
+			0x00,
+		},
+	};
+
+	try
+	{
+		DI_EthernetPort().Open(mac);
+	}
+	catch (std::exception const &e)
+	{
+		DI_Console().WriteLine(e.what());
+		DI_Console().WriteLine("打开网口失败");
+		netif_set_link_down(&_lwip_netif);
+		netif_set_down(&_lwip_netif);
+	}
+
+	/* 设置MAC地址长度,为6个字节 */
+	_lwip_netif.hwaddr_len = ETHARP_HWADDR_LEN;
+
+	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
+	base::Span netif_mac_buff_span{_lwip_netif.hwaddr, 6};
+	netif_mac_buff_span.CopyFrom(mac.AsReadOnlySpan());
+	netif_mac_buff_span.Reverse();
+
+	_lwip_netif.mtu = ETH_MAX_PAYLOAD; /* 最大允许传输单元,允许该网卡广播和ARP功能 */
+
+	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
+	/* 使能、 ARP 使能等等重要控制位 */
+	_lwip_netif.flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+
+	/* 开启虚拟网卡 */
+	netif_set_up(&_lwip_netif);
+	netif_set_link_up(&_lwip_netif);
+
+	/* create the task that handles the ETH_MAC */
+	DI_TaskManager().Create(
+		[this]()
+		{
+			ethernetif_input(&_lwip_netif);
+		},
+		512);
+}
+
 bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 {
 	class Getter :
@@ -499,39 +483,52 @@ void bsp::LwipEthernetInterface::Open()
 	_dhcpstatus = 0XFF;
 #endif
 
-	/* 向网卡列表中添加一个网口 */
-	netif *netif_add_result = netif_add(&_lwip_netif,
-										reinterpret_cast<ip_addr_t const *>(&_ip_address),
-										reinterpret_cast<ip_addr_t const *>(&_netmask),
-										reinterpret_cast<ip_addr_t const *>(&_gateway),
-										nullptr,
-										ethernetif_init,
-										tcpip_input);
-
-	if (netif_add_result == nullptr)
+	// 添加网卡
 	{
-		DI_Console().WriteLine("添加网卡失败。");
-		throw std::runtime_error{"添加网卡失败。"};
+		auto callback = [](netif *p) -> err_t
+		{
+			bsp::LwipEthernetInterface::Instance().netif_add_callback_func();
+			return err_enum_t::ERR_OK;
+		};
+
+		/* 向网卡列表中添加一个网口 */
+		netif *netif_add_result = netif_add(&_lwip_netif,
+											reinterpret_cast<ip_addr_t const *>(&_ip_address),
+											reinterpret_cast<ip_addr_t const *>(&_netmask),
+											reinterpret_cast<ip_addr_t const *>(&_gateway),
+											nullptr,
+											callback,
+											tcpip_input);
+
+		if (netif_add_result == nullptr)
+		{
+			DI_Console().WriteLine("添加网卡失败。");
+			throw std::runtime_error{"添加网卡失败。"};
+		}
 	}
 
 	// 添加网卡成功后将其设置为默认网卡
 	netif_set_default(&_lwip_netif);
 
 #if LWIP_NETIF_LINK_CALLBACK
-	/* DHCP链接状态更新函数 */
-	UpdataLinkState();
-	netif_set_link_callback(&_lwip_netif,
-							[](netif *p)
-							{
-								bsp::LwipEthernetInterface::Instance().UpdataLinkState();
-							});
+	// 链接状态更新
+	{
+		UpdataLinkState();
 
-	DI_TaskManager().Create(
-		[this]()
+		auto callback = [](netif *p)
 		{
-			LinkStateCheckingThreadFunc();
-		},
-		512);
+			bsp::LwipEthernetInterface::Instance().UpdataLinkState();
+		};
+
+		netif_set_link_callback(&_lwip_netif, callback);
+
+		DI_TaskManager().Create(
+			[this]()
+			{
+				LinkStateCheckingThreadFunc();
+			},
+			512);
+	}
 #endif
 
 	link_status = LWIP_LINK_OFF; /* 链接标记为0 */

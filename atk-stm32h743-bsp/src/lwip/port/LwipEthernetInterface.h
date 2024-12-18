@@ -15,6 +15,7 @@ namespace bsp
 		void DhcpThreadFunc();
 		void LinkStateCheckingThreadFunc();
 		void UpdataLinkState();
+		void netif_add_callback_func();
 
 		uint8_t _lwip_dhcp_state = LWIP_DHCP_OFF;
 		netif _lwip_netif{};
