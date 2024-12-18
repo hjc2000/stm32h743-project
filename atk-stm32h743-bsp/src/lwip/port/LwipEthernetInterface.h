@@ -1,6 +1,7 @@
 #pragma once
 #include <base/define.h>
 #include <base/net/Mac.h>
+#include <bsp-interface/di/ethernet.h>
 #include <lwip/err.h>
 #include <lwip/netif.h>
 #include <lwip_comm.h>
@@ -12,6 +13,8 @@ namespace bsp
 	{
 	private:
 		LwipEthernetInterface();
+
+		bsp::IEthernetPort *_ethernet_port = &DI_EthernetPort();
 
 		/// @brief 向 lwip 添加默认网卡。
 		void AddDefaultNetInterface();

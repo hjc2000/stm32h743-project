@@ -103,7 +103,7 @@ void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 
 	try
 	{
-		DI_EthernetPort().Open(_mac);
+		_ethernet_port->Open(_mac);
 	}
 	catch (std::exception const &e)
 	{
@@ -147,7 +147,7 @@ void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
 		spans.Add(span);
 	}
 
-	DI_EthernetPort().Send(spans);
+	_ethernet_port->Send(spans);
 }
 
 #pragma region 线程函数
@@ -300,7 +300,7 @@ void bsp::LwipEthernetInterface::InputThreadFunc()
 {
 	while (true)
 	{
-		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
+		base::IEnumerable<base::ReadOnlySpan> const &spans = _ethernet_port->Receive();
 		pbuf *head_pbuf = nullptr;
 		pbuf *current_pbuf = nullptr;
 
@@ -357,7 +357,7 @@ void bsp::LwipEthernetInterface::LinkStateDetectingThreadFunc()
 		if (is_linked)
 		{
 			// 开启以太网及虚拟网卡
-			DI_EthernetPort().Restart();
+			_ethernet_port->Restart();
 
 #if LWIP_DHCP
 			/* Update DHCP state machine */
