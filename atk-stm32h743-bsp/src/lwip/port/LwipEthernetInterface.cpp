@@ -335,6 +335,9 @@ void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 				_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
 				dhcp_stop(&_lwip_netif);
 #endif
+
+				/* LWIP_DHCP */
+				DI_Console().WriteLine("检测到网线断开。");
 				netif_set_down(&_lwip_netif);
 				netif_set_link_down(&_lwip_netif);
 			}
@@ -347,6 +350,13 @@ void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 			{
 				/* 开启以太网及虚拟网卡 */
 				DI_EthernetPort().Restart();
+
+#if LWIP_DHCP
+				/* Update DHCP state machine */
+				_lwip_dhcp_state = LWIP_DHCP_START;
+#endif
+				/* LWIP_DHCP */
+				DI_Console().WriteLine("检测到网线插入");
 
 				link_status = LWIP_LINK_ON;
 				netif_set_up(&_lwip_netif);
@@ -490,38 +500,12 @@ void bsp::LwipEthernetInterface::Open()
 
 #if LWIP_NETIF_LINK_CALLBACK
 	// 链接状态更新
-	{
-		auto callback = [](netif *p)
+	DI_TaskManager().Create(
+		[this]()
 		{
-			if (netif_is_up(&bsp::LwipEthernetInterface::Instance()._lwip_netif))
-			{
-#if LWIP_DHCP
-				/* Update DHCP state machine */
-				_lwip_dhcp_state = LWIP_DHCP_START;
-#endif
-				/* LWIP_DHCP */
-				printf("The network cable is connected \r\n");
-			}
-			else
-			{
-#if LWIP_DHCP
-				/* Update DHCP state machine */
-				_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
-#endif
-				/* LWIP_DHCP */
-				printf("The network cable is not connected \r\n");
-			}
-		};
-
-		netif_set_link_callback(&_lwip_netif, callback);
-
-		DI_TaskManager().Create(
-			[this]()
-			{
-				LinkStateCheckingThreadFunc();
-			},
-			512);
-	}
+			LinkStateCheckingThreadFunc();
+		},
+		512);
 #endif
 
 	link_status = LWIP_LINK_OFF; /* 链接标记为0 */
