@@ -16,7 +16,11 @@ namespace bsp
 		/// @brief DHCP 线程函数。
 		void DhcpThreadFunc();
 
+		/// @brief 负责将网口接收到的数据送给 lwip.
 		void InputThreadFunc();
+
+		/// @brief 向 lwip 添加默认网卡。
+		void AddDefaultNetInterface();
 
 		/// @brief 检测链接状态的线程函数。
 		void LinkStateCheckingThreadFunc();

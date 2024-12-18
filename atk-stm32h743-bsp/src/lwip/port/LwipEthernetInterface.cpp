@@ -253,6 +253,32 @@ void bsp::LwipEthernetInterface::InputThreadFunc()
 	}
 }
 
+void bsp::LwipEthernetInterface::AddDefaultNetInterface()
+{
+	auto initialization_callback = [](netif *p) -> err_t
+	{
+		bsp::LwipEthernetInterface::Instance().InitializingNetifCallbackFunc();
+		return err_enum_t::ERR_OK;
+	};
+
+	netif *netif_add_result = netif_add(&_lwip_netif,
+										reinterpret_cast<ip_addr_t const *>(&_ip_address),
+										reinterpret_cast<ip_addr_t const *>(&_netmask),
+										reinterpret_cast<ip_addr_t const *>(&_gateway),
+										nullptr,
+										initialization_callback,
+										tcpip_input);
+
+	if (netif_add_result == nullptr)
+	{
+		DI_Console().WriteLine("添加网卡失败。");
+		throw std::runtime_error{"添加网卡失败。"};
+	}
+
+	// 因为本函数是 “添加默认网卡” ，所以添加网卡成功后要将网卡设置为默认网卡。
+	netif_set_default(&_lwip_netif);
+}
+
 void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 {
 	int link_again_num = 0;
@@ -426,30 +452,7 @@ void bsp::LwipEthernetInterface::Open()
 	_dhcpstatus = 0XFF;
 #endif
 
-	// 添加网卡
-	auto initialization_callback = [](netif *p) -> err_t
-	{
-		bsp::LwipEthernetInterface::Instance().InitializingNetifCallbackFunc();
-		return err_enum_t::ERR_OK;
-	};
-
-	/* 向网卡列表中添加一个网口 */
-	netif *netif_add_result = netif_add(&_lwip_netif,
-										reinterpret_cast<ip_addr_t const *>(&_ip_address),
-										reinterpret_cast<ip_addr_t const *>(&_netmask),
-										reinterpret_cast<ip_addr_t const *>(&_gateway),
-										nullptr,
-										initialization_callback,
-										tcpip_input);
-
-	if (netif_add_result == nullptr)
-	{
-		DI_Console().WriteLine("添加网卡失败。");
-		throw std::runtime_error{"添加网卡失败。"};
-	}
-
-	// 添加网卡成功后将其设置为默认网卡
-	netif_set_default(&_lwip_netif);
+	AddDefaultNetInterface();
 
 	/* create the task that handles the ETH_MAC */
 	DI_TaskManager().Create(
