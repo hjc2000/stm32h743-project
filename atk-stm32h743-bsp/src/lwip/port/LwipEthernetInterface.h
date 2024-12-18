@@ -1,5 +1,6 @@
 #pragma once
 #include <base/define.h>
+#include <base/net/IPAddress.h>
 #include <base/net/Mac.h>
 #include <bsp-interface/di/ethernet.h>
 #include <lwip/err.h>
