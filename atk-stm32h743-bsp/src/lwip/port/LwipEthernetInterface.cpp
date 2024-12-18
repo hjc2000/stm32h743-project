@@ -46,6 +46,34 @@ bsp::LwipEthernetInterface::LwipEthernetInterface()
 	_dhcpstatus = 0; /* 没有DHCP */
 }
 
+void bsp::LwipEthernetInterface::AddDefaultNetInterface()
+{
+	auto initialization_callback = [](netif *p) -> err_t
+	{
+		bsp::LwipEthernetInterface::Instance().InitializingNetifCallbackFunc();
+		return err_enum_t::ERR_OK;
+	};
+
+	netif *netif_add_result = netif_add(&_lwip_netif,
+										reinterpret_cast<ip_addr_t const *>(&_ip_address),
+										reinterpret_cast<ip_addr_t const *>(&_netmask),
+										reinterpret_cast<ip_addr_t const *>(&_gateway),
+										nullptr,
+										initialization_callback,
+										tcpip_input);
+
+	if (netif_add_result == nullptr)
+	{
+		DI_Console().WriteLine("添加网卡失败。");
+		throw std::runtime_error{"添加网卡失败。"};
+	}
+
+	// 因为本函数是 “添加默认网卡” ，所以添加网卡成功后要将网卡设置为默认网卡。
+	netif_set_default(&_lwip_netif);
+}
+
+#pragma region 线程函数
+
 void bsp::LwipEthernetInterface::DhcpThreadFunc()
 {
 #if LWIP_DHCP
@@ -234,32 +262,6 @@ void bsp::LwipEthernetInterface::InputThreadFunc()
 	}
 }
 
-void bsp::LwipEthernetInterface::AddDefaultNetInterface()
-{
-	auto initialization_callback = [](netif *p) -> err_t
-	{
-		bsp::LwipEthernetInterface::Instance().InitializingNetifCallbackFunc();
-		return err_enum_t::ERR_OK;
-	};
-
-	netif *netif_add_result = netif_add(&_lwip_netif,
-										reinterpret_cast<ip_addr_t const *>(&_ip_address),
-										reinterpret_cast<ip_addr_t const *>(&_netmask),
-										reinterpret_cast<ip_addr_t const *>(&_gateway),
-										nullptr,
-										initialization_callback,
-										tcpip_input);
-
-	if (netif_add_result == nullptr)
-	{
-		DI_Console().WriteLine("添加网卡失败。");
-		throw std::runtime_error{"添加网卡失败。"};
-	}
-
-	// 因为本函数是 “添加默认网卡” ，所以添加网卡成功后要将网卡设置为默认网卡。
-	netif_set_default(&_lwip_netif);
-}
-
 void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 {
 	int link_again_num = 0;
@@ -320,6 +322,8 @@ void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 		DI_Delayer().Delay(std::chrono::milliseconds{100});
 	}
 }
+
+#pragma endregion
 
 void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 {

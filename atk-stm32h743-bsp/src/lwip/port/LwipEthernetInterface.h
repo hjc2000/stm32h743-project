@@ -13,17 +13,19 @@ namespace bsp
 	private:
 		LwipEthernetInterface();
 
+		/// @brief 向 lwip 添加默认网卡。
+		void AddDefaultNetInterface();
+
+#pragma region 线程函数
 		/// @brief DHCP 线程函数。
 		void DhcpThreadFunc();
 
 		/// @brief 负责将网口接收到的数据送给 lwip.
 		void InputThreadFunc();
 
-		/// @brief 向 lwip 添加默认网卡。
-		void AddDefaultNetInterface();
-
 		/// @brief 检测链接状态的线程函数。
 		void LinkStateCheckingThreadFunc();
+#pragma endregion
 
 		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
 		void InitializingNetifCallbackFunc();
@@ -54,6 +56,7 @@ namespace bsp
 		/// @brief 连接状态。
 		uint8_t link_status = 0;
 
+		/// @brief 本网卡所使用的 MAC 地址。
 		base::Mac _mac{
 			std::endian::big,
 			base::Array<uint8_t, 6>{
@@ -69,6 +72,7 @@ namespace bsp
 	public:
 		static_function LwipEthernetInterface &Instance();
 
+		/// @brief 打开本网卡并作为 lwip 的默认网卡。
 		void Open();
 	};
 } // namespace bsp
