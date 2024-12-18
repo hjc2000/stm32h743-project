@@ -1,5 +1,6 @@
 #pragma once
 #include <base/define.h>
+#include <base/net/Mac.h>
 #include <lwip/err.h>
 #include <lwip/netif.h>
 #include <lwip_comm.h>
@@ -46,6 +47,18 @@ namespace bsp
 
 		/// @brief 连接状态。
 		uint8_t link_status = 0;
+
+		base::Mac _mac{
+			std::endian::big,
+			base::Array<uint8_t, 6>{
+				0xB8,
+				0xAE,
+				0x1D,
+				0x00,
+				0x04,
+				0x00,
+			},
+		};
 
 	public:
 		static_function LwipEthernetInterface &Instance();

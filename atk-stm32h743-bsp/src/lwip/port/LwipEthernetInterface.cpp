@@ -354,22 +354,9 @@ void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 		}
 	};
 
-	/* initialize the hardware */
-	base::Mac mac{
-		std::endian::big,
-		base::Array<uint8_t, 6>{
-			0xB8,
-			0xAE,
-			0x1D,
-			0x00,
-			0x04,
-			0x00,
-		},
-	};
-
 	try
 	{
-		DI_EthernetPort().Open(mac);
+		DI_EthernetPort().Open(_mac);
 	}
 	catch (std::exception const &e)
 	{
@@ -384,10 +371,10 @@ void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 
 	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
 	base::Span netif_mac_buff_span{_lwip_netif.hwaddr, 6};
-	netif_mac_buff_span.CopyFrom(mac.AsReadOnlySpan());
+	netif_mac_buff_span.CopyFrom(_mac.AsReadOnlySpan());
 	netif_mac_buff_span.Reverse();
 
-	_lwip_netif.mtu = ETH_MAX_PAYLOAD; /* 最大允许传输单元,允许该网卡广播和ARP功能 */
+	_lwip_netif.mtu = ETH_MAX_PAYLOAD;
 
 	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
 	/* 使能、 ARP 使能等等重要控制位 */
