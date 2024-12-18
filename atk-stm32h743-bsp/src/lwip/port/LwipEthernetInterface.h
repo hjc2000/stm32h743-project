@@ -29,17 +29,12 @@ namespace bsp
 		bool TryDHCP();
 
 #pragma region 线程函数
-		/// @brief DHCP 线程函数。
-		void DhcpThreadFunc();
-
 		/// @brief 负责将网口接收到的数据送给 lwip.
 		void InputThreadFunc();
 
 		/// @brief 检测链接状态的线程函数。
 		void LinkStateDetectingThreadFunc();
 #pragma endregion
-
-		uint8_t _lwip_dhcp_state = 0;
 
 		/// @brief 网卡。
 		netif _lwip_netif{};
@@ -52,13 +47,6 @@ namespace bsp
 
 		/// @brief 默认网关的IP地址
 		uint8_t _gateway[4] = {};
-
-		/// @brief DHCP 状态。
-		///		0：未获取DHCP地址。
-		/// 	1：进入DHCP获取状态。
-		/// 	2：成功获取DHCP地址。
-		/// 	0xff：获取失败。
-		uint8_t _dhcpstatus = 0;
 
 		/// @brief 本网卡所使用的 MAC 地址。
 		base::Mac _mac{
