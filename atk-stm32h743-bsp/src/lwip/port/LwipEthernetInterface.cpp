@@ -72,6 +72,84 @@ void bsp::LwipEthernetInterface::AddDefaultNetInterface()
 	netif_set_default(&_lwip_netif);
 }
 
+void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
+{
+#if LWIP_NETIF_HOSTNAME
+	/* Initialize interface hostname */
+	_lwip_netif.hostname = "lwip";
+#endif /* LWIP_NETIF_HOSTNAME */
+
+	_lwip_netif.name[0] = 'p';
+	_lwip_netif.name[1] = 'n';
+
+	/* We directly use etharp_output() here to save a function call.
+	 * You can instead declare your own function an call etharp_output()
+	 * from it if you have to do some checks before sending (e.g. if link
+	 * is available...) */
+	_lwip_netif.output = etharp_output;
+
+	_lwip_netif.linkoutput = [](netif *net_interface, pbuf *p) -> err_t
+	{
+		try
+		{
+			bsp::LwipEthernetInterface::Instance().SendPbuf(p);
+			return err_enum_t::ERR_OK;
+		}
+		catch (std::exception const &e)
+		{
+			return err_enum_t::ERR_IF;
+		}
+	};
+
+	try
+	{
+		DI_EthernetPort().Open(_mac);
+	}
+	catch (std::exception const &e)
+	{
+		DI_Console().WriteLine(e.what());
+		DI_Console().WriteLine("打开网口失败");
+		netif_set_link_down(&_lwip_netif);
+		netif_set_down(&_lwip_netif);
+	}
+
+	/* 设置MAC地址长度,为6个字节 */
+	_lwip_netif.hwaddr_len = ETHARP_HWADDR_LEN;
+
+	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
+	base::Span netif_mac_buff_span{_lwip_netif.hwaddr, 6};
+	netif_mac_buff_span.CopyFrom(_mac.AsReadOnlySpan());
+	netif_mac_buff_span.Reverse();
+
+	_lwip_netif.mtu = ETH_MAX_PAYLOAD;
+
+	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
+	/* 使能、 ARP 使能等等重要控制位 */
+	_lwip_netif.flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+
+	/* 开启虚拟网卡 */
+	netif_set_up(&_lwip_netif);
+	netif_set_link_up(&_lwip_netif);
+}
+
+void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
+{
+	pbuf *current_pbuf;
+	base::List<base::ReadOnlySpan> spans{};
+
+	for (current_pbuf = p; current_pbuf != nullptr; current_pbuf = current_pbuf->next)
+	{
+		base::ReadOnlySpan span{
+			reinterpret_cast<uint8_t *>(current_pbuf->payload),
+			current_pbuf->len,
+		};
+
+		spans.Add(span);
+	}
+
+	DI_EthernetPort().Send(spans);
+}
+
 #pragma region 线程函数
 
 void bsp::LwipEthernetInterface::DhcpThreadFunc()
@@ -324,84 +402,6 @@ void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 }
 
 #pragma endregion
-
-void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
-{
-#if LWIP_NETIF_HOSTNAME
-	/* Initialize interface hostname */
-	_lwip_netif.hostname = "lwip";
-#endif /* LWIP_NETIF_HOSTNAME */
-
-	_lwip_netif.name[0] = 'p';
-	_lwip_netif.name[1] = 'n';
-
-	/* We directly use etharp_output() here to save a function call.
-	 * You can instead declare your own function an call etharp_output()
-	 * from it if you have to do some checks before sending (e.g. if link
-	 * is available...) */
-	_lwip_netif.output = etharp_output;
-
-	_lwip_netif.linkoutput = [](netif *net_interface, pbuf *p) -> err_t
-	{
-		try
-		{
-			bsp::LwipEthernetInterface::Instance().SendPbuf(p);
-			return err_enum_t::ERR_OK;
-		}
-		catch (std::exception const &e)
-		{
-			return err_enum_t::ERR_IF;
-		}
-	};
-
-	try
-	{
-		DI_EthernetPort().Open(_mac);
-	}
-	catch (std::exception const &e)
-	{
-		DI_Console().WriteLine(e.what());
-		DI_Console().WriteLine("打开网口失败");
-		netif_set_link_down(&_lwip_netif);
-		netif_set_down(&_lwip_netif);
-	}
-
-	/* 设置MAC地址长度,为6个字节 */
-	_lwip_netif.hwaddr_len = ETHARP_HWADDR_LEN;
-
-	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
-	base::Span netif_mac_buff_span{_lwip_netif.hwaddr, 6};
-	netif_mac_buff_span.CopyFrom(_mac.AsReadOnlySpan());
-	netif_mac_buff_span.Reverse();
-
-	_lwip_netif.mtu = ETH_MAX_PAYLOAD;
-
-	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
-	/* 使能、 ARP 使能等等重要控制位 */
-	_lwip_netif.flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
-
-	/* 开启虚拟网卡 */
-	netif_set_up(&_lwip_netif);
-	netif_set_link_up(&_lwip_netif);
-}
-
-void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
-{
-	pbuf *current_pbuf;
-	base::List<base::ReadOnlySpan> spans{};
-
-	for (current_pbuf = p; current_pbuf != nullptr; current_pbuf = current_pbuf->next)
-	{
-		base::ReadOnlySpan span{
-			reinterpret_cast<uint8_t *>(current_pbuf->payload),
-			current_pbuf->len,
-		};
-
-		spans.Add(span);
-	}
-
-	DI_EthernetPort().Send(spans);
-}
 
 bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 {

@@ -16,6 +16,13 @@ namespace bsp
 		/// @brief 向 lwip 添加默认网卡。
 		void AddDefaultNetInterface();
 
+		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
+		void InitializingNetifCallbackFunc();
+
+		/// @brief 使用本网卡发送 pbuf 链表。
+		/// @param p
+		void SendPbuf(pbuf *p);
+
 #pragma region 线程函数
 		/// @brief DHCP 线程函数。
 		void DhcpThreadFunc();
@@ -26,11 +33,6 @@ namespace bsp
 		/// @brief 检测链接状态的线程函数。
 		void LinkStateCheckingThreadFunc();
 #pragma endregion
-
-		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
-		void InitializingNetifCallbackFunc();
-
-		void SendPbuf(pbuf *p);
 
 		uint8_t _lwip_dhcp_state = LWIP_DHCP_OFF;
 
