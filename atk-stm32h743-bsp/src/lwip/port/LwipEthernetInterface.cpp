@@ -427,14 +427,6 @@ void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 	/* 开启虚拟网卡 */
 	netif_set_up(&_lwip_netif);
 	netif_set_link_up(&_lwip_netif);
-
-	/* create the task that handles the ETH_MAC */
-	DI_TaskManager().Create(
-		[this]()
-		{
-			ethernetif_input(&_lwip_netif);
-		},
-		512);
 }
 
 bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
@@ -497,6 +489,14 @@ void bsp::LwipEthernetInterface::Open()
 
 	// 添加网卡成功后将其设置为默认网卡
 	netif_set_default(&_lwip_netif);
+
+	/* create the task that handles the ETH_MAC */
+	DI_TaskManager().Create(
+		[this]()
+		{
+			ethernetif_input(&_lwip_netif);
+		},
+		512);
 
 #if LWIP_NETIF_LINK_CALLBACK
 	// 链接状态更新
