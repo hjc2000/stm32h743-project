@@ -344,10 +344,7 @@ void bsp::LwipEthernetInterface::LinkStateDetectingThreadFunc()
 {
 	while (true)
 	{
-		/* 读取PHY状态寄存器，获取链接信息 */
-		uint32_t regval = DI_EthernetController().ReadPHYRegister(1);
-		bool is_linked = regval & 0x0004U;
-
+		bool is_linked = _ethernet_port->IsLinked();
 		if (is_linked == netif_is_up(&_lwip_netif))
 		{
 			DI_Delayer().Delay(std::chrono::milliseconds{100});

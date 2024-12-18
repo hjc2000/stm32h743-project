@@ -13,6 +13,17 @@ namespace bsp
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
 
+	protected:
+		/// @brief 读 PHY 的寄存器
+		/// @param register_index 寄存器索引。
+		/// @return
+		uint32_t ReadPHYRegister(uint32_t register_index) override;
+
+		/// @brief 写 PHY 的寄存器。
+		/// @param register_index 寄存器索引。
+		/// @param value
+		void WritePHYRegister(uint32_t register_index, uint32_t value) override;
+
 	public:
 		static_function AtkLAN8720A_EhternetPort &Instance();
 
@@ -29,16 +40,6 @@ namespace bsp
 		/// @note 会重新进行自动协商的过程。断线重连后可以调用本方法，防止 MAC 控制器
 		/// 所使用的速率、双工等配置与新插入的网线不符。
 		void Restart() override;
-
-		/// @brief 读 PHY 的寄存器
-		/// @param register_index 寄存器索引。
-		/// @return
-		uint32_t ReadPHYRegister(uint32_t register_index) override;
-
-		/// @brief 写 PHY 的寄存器。
-		/// @param register_index 寄存器索引。
-		/// @param value
-		void WritePHYRegister(uint32_t register_index, uint32_t value) override;
 
 		/// @brief 复位 PHY 芯片。
 		void ResetPHY() override;

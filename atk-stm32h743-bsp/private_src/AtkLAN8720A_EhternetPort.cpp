@@ -10,6 +10,16 @@
 #include <bsp-interface/di/system_time.h>
 #include <hal.h>
 
+uint32_t bsp::AtkLAN8720A_EhternetPort::ReadPHYRegister(uint32_t register_index)
+{
+	return _controller->ReadPHYRegister(register_index);
+}
+
+void bsp::AtkLAN8720A_EhternetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
+{
+	_controller->WritePHYRegister(register_index, value);
+}
+
 bsp::AtkLAN8720A_EhternetPort &bsp::AtkLAN8720A_EhternetPort::Instance()
 {
 	class Getter :
@@ -64,16 +74,6 @@ void bsp::AtkLAN8720A_EhternetPort::Restart()
 
 	// 启动以太网
 	_controller->Start(DuplexMode(), Speed());
-}
-
-uint32_t bsp::AtkLAN8720A_EhternetPort::ReadPHYRegister(uint32_t register_index)
-{
-	return _controller->ReadPHYRegister(register_index);
-}
-
-void bsp::AtkLAN8720A_EhternetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
-{
-	_controller->WritePHYRegister(register_index, value);
 }
 
 void bsp::AtkLAN8720A_EhternetPort::ResetPHY()
