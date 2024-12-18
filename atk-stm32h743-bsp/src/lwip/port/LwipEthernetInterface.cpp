@@ -477,7 +477,7 @@ bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 
 void bsp::LwipEthernetInterface::Open()
 {
-	tcpip_init(NULL, NULL);
+	tcpip_init(nullptr, nullptr);
 
 #if !LWIP_DHCP
 	_dhcpstatus = 0XFF;

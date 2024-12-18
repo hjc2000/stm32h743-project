@@ -20,19 +20,28 @@ namespace bsp
 		void InitializingNetifCallbackFunc();
 
 		uint8_t _lwip_dhcp_state = LWIP_DHCP_OFF;
+
+		/// @brief 网卡。
 		netif _lwip_netif{};
 
-		uint8_t _ip_address[4]; /* 本机IP地址 */
-		uint8_t _netmask[4];    /* 子网掩码 */
-		uint8_t _gateway[4];    /* 默认网关的IP地址 */
+		/// @brief 本机IP地址
+		uint8_t _ip_address[4] = {};
 
-		uint8_t _dhcpstatus; /* dhcp状态
-							0, 未获取DHCP地址
-							1, 进入DHCP获取状态
-							2, 成功获取DHCP地址
-							0XFF,获取失败 */
+		/// @brief 子网掩码
+		uint8_t _netmask[4] = {};
 
-		uint8_t link_status; /* 连接状态 */
+		/// @brief 默认网关的IP地址
+		uint8_t _gateway[4] = {};
+
+		/// @brief DHCP 状态。
+		///		0：未获取DHCP地址。
+		/// 	1：进入DHCP获取状态。
+		/// 	2：成功获取DHCP地址。
+		/// 	0xff：获取失败。
+		uint8_t _dhcpstatus = 0;
+
+		/// @brief 连接状态。
+		uint8_t link_status = 0;
 
 	public:
 		static_function LwipEthernetInterface &Instance();
