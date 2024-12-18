@@ -45,66 +45,6 @@
 void ethernetif_input(netif *net_interface);
 
 /**
- * @brief In this function, the hardware should be initialized.
- * Called from ethernetif_init().
- *
- * @param netif the already initialized lwip network interface structure
- *        for this ethernetif
- */
-static void low_level_init(netif *net_interface)
-{
-	base::Mac mac{
-		std::endian::big,
-		base::Array<uint8_t, 6>{
-			0xB8,
-			0xAE,
-			0x1D,
-			0x00,
-			0x04,
-			0x00,
-		},
-	};
-
-	try
-	{
-		DI_EthernetPort().Open(mac);
-	}
-	catch (std::exception const &e)
-	{
-		DI_Console().WriteLine(e.what());
-		DI_Console().WriteLine("打开网口失败");
-		netif_set_link_down(net_interface);
-		netif_set_down(net_interface);
-	}
-
-	/* 设置MAC地址长度,为6个字节 */
-	net_interface->hwaddr_len = ETHARP_HWADDR_LEN;
-
-	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
-	base::Span netif_mac_buff_span{net_interface->hwaddr, 6};
-	netif_mac_buff_span.CopyFrom(mac.AsReadOnlySpan());
-	netif_mac_buff_span.Reverse();
-
-	net_interface->mtu = ETH_MAX_PAYLOAD; /* 最大允许传输单元,允许该网卡广播和ARP功能 */
-
-	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
-	/* 使能、 ARP 使能等等重要控制位 */
-	net_interface->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
-
-	/* 开启虚拟网卡 */
-	netif_set_up(net_interface);
-	netif_set_link_up(net_interface);
-
-	/* create the task that handles the ETH_MAC */
-	DI_TaskManager().Create(
-		[net_interface]()
-		{
-			ethernetif_input(net_interface);
-		},
-		512);
-}
-
-/**
  * @brief This function should do the actual transmission of the packet. The packet is
  * contained in the pbuf that is passed to the function. This pbuf
  * might be chained.
@@ -210,27 +150,76 @@ void ethernetif_input(netif *net_interface)
  *         ERR_MEM if private data couldn't be allocated
  *         any other err_t on error
  */
-err_t ethernetif_init(struct netif *netif)
+err_t ethernetif_init(netif *net_interface)
 {
-	LWIP_ASSERT("netif != NULL", (netif != NULL));
+	LWIP_ASSERT("netif != NULL", (net_interface != NULL));
 
 #if LWIP_NETIF_HOSTNAME
 	/* Initialize interface hostname */
-	netif->hostname = "lwip";
+	net_interface->hostname = "lwip";
 #endif /* LWIP_NETIF_HOSTNAME */
 
-	netif->name[0] = 'p';
-	netif->name[1] = 'n';
+	net_interface->name[0] = 'p';
+	net_interface->name[1] = 'n';
 
 	/* We directly use etharp_output() here to save a function call.
 	 * You can instead declare your own function an call etharp_output()
 	 * from it if you have to do some checks before sending (e.g. if link
 	 * is available...) */
-	netif->output = etharp_output;
-	netif->linkoutput = low_level_output;
+	net_interface->output = etharp_output;
+	net_interface->linkoutput = low_level_output;
 
 	/* initialize the hardware */
-	low_level_init(netif);
+	base::Mac mac{
+		std::endian::big,
+		base::Array<uint8_t, 6>{
+			0xB8,
+			0xAE,
+			0x1D,
+			0x00,
+			0x04,
+			0x00,
+		},
+	};
+
+	try
+	{
+		DI_EthernetPort().Open(mac);
+	}
+	catch (std::exception const &e)
+	{
+		DI_Console().WriteLine(e.what());
+		DI_Console().WriteLine("打开网口失败");
+		netif_set_link_down(net_interface);
+		netif_set_down(net_interface);
+	}
+
+	/* 设置MAC地址长度,为6个字节 */
+	net_interface->hwaddr_len = ETHARP_HWADDR_LEN;
+
+	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
+	base::Span netif_mac_buff_span{net_interface->hwaddr, 6};
+	netif_mac_buff_span.CopyFrom(mac.AsReadOnlySpan());
+	netif_mac_buff_span.Reverse();
+
+	net_interface->mtu = ETH_MAX_PAYLOAD; /* 最大允许传输单元,允许该网卡广播和ARP功能 */
+
+	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
+	/* 使能、 ARP 使能等等重要控制位 */
+	net_interface->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+
+	/* 开启虚拟网卡 */
+	netif_set_up(net_interface);
+	netif_set_link_up(net_interface);
+
+	/* create the task that handles the ETH_MAC */
+	DI_TaskManager().Create(
+		[net_interface]()
+		{
+			ethernetif_input(net_interface);
+		},
+		512);
+
 	return err_enum_t::ERR_OK;
 }
 
