@@ -4,7 +4,6 @@
 #include <bsp-interface/di/ethernet.h>
 #include <lwip/err.h>
 #include <lwip/netif.h>
-#include <lwip_comm.h>
 
 namespace bsp
 {
@@ -37,7 +36,7 @@ namespace bsp
 		void LinkStateDetectingThreadFunc();
 #pragma endregion
 
-		uint8_t _lwip_dhcp_state = LWIP_DHCP_OFF;
+		uint8_t _lwip_dhcp_state = 0;
 
 		/// @brief 网卡。
 		netif _lwip_netif{};

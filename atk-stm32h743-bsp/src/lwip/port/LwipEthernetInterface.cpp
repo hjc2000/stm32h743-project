@@ -17,11 +17,21 @@
 #include <lwip/memp.h>
 #include <lwip/tcpip.h>
 #include <lwip/timeouts.h>
-#include <lwip_comm.h>
 #include <netif/etharp.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <task.h>
+
+/* DHCP进程状态 */
+#define LWIP_DHCP_OFF (uint8_t)0              /* DHCP服务器关闭状态 */
+#define LWIP_DHCP_START (uint8_t)1            /* DHCP服务器启动状态 */
+#define LWIP_DHCP_WAIT_ADDRESS (uint8_t)2     /* DHCP服务器等待分配IP状态 */
+#define LWIP_DHCP_ADDRESS_ASSIGNED (uint8_t)3 /* DHCP服务器地址已分配状态 */
+#define LWIP_DHCP_TIMEOUT (uint8_t)4          /* DHCP服务器超时状态 */
+#define LWIP_DHCP_LINK_DOWN (uint8_t)5        /* DHCP服务器链接失败状态 */
+
+/* DHCP服务器最大重试次数 */
+#define LWIP_MAX_DHCP_TRIES (uint8_t)4
 
 bsp::LwipEthernetInterface::LwipEthernetInterface()
 {
@@ -75,9 +85,8 @@ void bsp::LwipEthernetInterface::AddDefaultNetInterface()
 void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 {
 #if LWIP_NETIF_HOSTNAME
-	/* Initialize interface hostname */
 	_lwip_netif.hostname = "lwip";
-#endif /* LWIP_NETIF_HOSTNAME */
+#endif
 
 	_lwip_netif.name[0] = 'p';
 	_lwip_netif.name[1] = 'n';
@@ -181,7 +190,6 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 				uint32_t netmask = 0;
 				uint32_t gw = 0;
 				struct dhcp *dhcp;
-				uint8_t iptxt[20];
 
 				if (dhcp_supplied_address(&_lwip_netif))
 				{
@@ -190,9 +198,6 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 					ip = _lwip_netif.ip_addr.addr;      /* 读取新IP地址 */
 					netmask = _lwip_netif.netmask.addr; /* 读取子网掩码 */
 					gw = _lwip_netif.gw.addr;           /* 读取默认网关 */
-
-					// sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(&_lwip_netif)));
-					// printf("IP address assigned by a DHCP server: %s\r\n", iptxt);
 
 					if (ip != 0)
 					{
@@ -271,9 +276,15 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 									   &_lwip_netif.netmask,
 									   &_lwip_netif.gw);
 
-						sprintf((char *)iptxt, "%s", ip4addr_ntoa(netif_ip4_addr(&_lwip_netif)));
-						printf("DHCP Timeout !! \r\n");
-						printf("Static IP address: %s\r\n", iptxt);
+						DI_Console().WriteLine("DHCP 超时。");
+
+						char ip_address_string_buffer[20] = {};
+
+						ip4addr_ntoa_r(netif_ip4_addr(&_lwip_netif),
+									   ip_address_string_buffer,
+									   sizeof(ip_address_string_buffer));
+
+						DI_Console().WriteLine(std::string{"静态 IP 地址："} + ip_address_string_buffer);
 					}
 				}
 

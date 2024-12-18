@@ -19,7 +19,6 @@
  */
 
 #include "FreeRTOS.h"
-#include "lwip_comm.h"
 #include "lwipopts.h"
 #include "queue.h"
 #include "stdio.h"
