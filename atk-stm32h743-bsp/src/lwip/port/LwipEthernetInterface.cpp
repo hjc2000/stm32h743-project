@@ -171,16 +171,13 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 		case LWIP_DHCP_START:
 			{
 				/* 对IP地址、网关地址及子网页码清零操作 */
-				ip_addr_set_zero_ip4(&_lwip_netif.ip_addr);
-				ip_addr_set_zero_ip4(&_lwip_netif.netmask);
-				ip_addr_set_zero_ip4(&_lwip_netif.gw);
-				ip_addr_set_zero_ip4(&_lwip_netif.ip_addr);
-				ip_addr_set_zero_ip4(&_lwip_netif.netmask);
-				ip_addr_set_zero_ip4(&_lwip_netif.gw);
+				_lwip_netif.ip_addr = ip_addr_t{};
+				_lwip_netif.netmask = ip_addr_t{};
+				_lwip_netif.gw = ip_addr_t{};
 
 				_lwip_dhcp_state = LWIP_DHCP_WAIT_ADDRESS;
 
-				printf("State: Looking for DHCP server ...\r\n");
+				DI_Console().WriteLine("开始进行 DHCP.");
 				dhcp_start(&_lwip_netif);
 				break;
 			}
