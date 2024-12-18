@@ -7,7 +7,7 @@
 namespace bsp
 {
 	/// @brief 以太网端口。
-	class AtkLAN8720A_EhternetPort :
+	class AtkEhternetPort :
 		public bsp::LAN8720A_EthernetPort
 	{
 	private:
@@ -25,7 +25,7 @@ namespace bsp
 		void WritePHYRegister(uint32_t register_index, uint32_t value) override;
 
 	public:
-		static_function AtkLAN8720A_EhternetPort &Instance();
+		static_function AtkEhternetPort &Instance();
 
 		/// @brief 以太网控制器的名称。
 		/// @return
