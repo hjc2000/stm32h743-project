@@ -23,7 +23,6 @@
 #include <task.h>
 
 /* DHCP进程状态 */
-#define LWIP_DHCP_OFF (uint8_t)0              /* DHCP服务器关闭状态 */
 #define LWIP_DHCP_START (uint8_t)1            /* DHCP服务器启动状态 */
 #define LWIP_DHCP_WAIT_ADDRESS (uint8_t)2     /* DHCP服务器等待分配IP状态 */
 #define LWIP_DHCP_ADDRESS_ASSIGNED (uint8_t)3 /* DHCP服务器地址已分配状态 */
@@ -159,6 +158,11 @@ void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
 	_ethernet_port->Send(spans);
 }
 
+bool bsp::LwipEthernetInterface::TryDHCP()
+{
+	return false;
+}
+
 #pragma region 线程函数
 
 void bsp::LwipEthernetInterface::DhcpThreadFunc()
@@ -282,11 +286,6 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 					}
 				}
 
-				break;
-			}
-		case LWIP_DHCP_LINK_DOWN:
-			{
-				_lwip_dhcp_state = LWIP_DHCP_OFF;
 				break;
 			}
 		default:

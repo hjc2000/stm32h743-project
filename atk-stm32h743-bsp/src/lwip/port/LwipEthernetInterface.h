@@ -26,6 +26,8 @@ namespace bsp
 		/// @param p
 		void SendPbuf(pbuf *p);
 
+		bool TryDHCP();
+
 #pragma region 线程函数
 		/// @brief DHCP 线程函数。
 		void DhcpThreadFunc();
