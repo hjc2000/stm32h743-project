@@ -14,7 +14,6 @@ namespace bsp
 
 		void DhcpThreadFunc();
 		void LinkStateCheckingThreadFunc();
-		void UpdataLinkState();
 
 		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
 		void InitializingNetifCallbackFunc();

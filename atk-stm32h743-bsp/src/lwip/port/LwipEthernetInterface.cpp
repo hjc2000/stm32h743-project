@@ -358,28 +358,6 @@ void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
 	}
 }
 
-void bsp::LwipEthernetInterface::UpdataLinkState()
-{
-	if (netif_is_up(&_lwip_netif))
-	{
-#if LWIP_DHCP
-		/* Update DHCP state machine */
-		_lwip_dhcp_state = LWIP_DHCP_START;
-#endif
-		/* LWIP_DHCP */
-		printf("The network cable is connected \r\n");
-	}
-	else
-	{
-#if LWIP_DHCP
-		/* Update DHCP state machine */
-		_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
-#endif
-		/* LWIP_DHCP */
-		printf("The network cable is not connected \r\n");
-	}
-}
-
 void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 {
 #if LWIP_NETIF_HOSTNAME
@@ -513,11 +491,26 @@ void bsp::LwipEthernetInterface::Open()
 #if LWIP_NETIF_LINK_CALLBACK
 	// 链接状态更新
 	{
-		UpdataLinkState();
-
 		auto callback = [](netif *p)
 		{
-			bsp::LwipEthernetInterface::Instance().UpdataLinkState();
+			if (netif_is_up(&bsp::LwipEthernetInterface::Instance()._lwip_netif))
+			{
+#if LWIP_DHCP
+				/* Update DHCP state machine */
+				_lwip_dhcp_state = LWIP_DHCP_START;
+#endif
+				/* LWIP_DHCP */
+				printf("The network cable is connected \r\n");
+			}
+			else
+			{
+#if LWIP_DHCP
+				/* Update DHCP state machine */
+				_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
+#endif
+				/* LWIP_DHCP */
+				printf("The network cable is not connected \r\n");
+			}
 		};
 
 		netif_set_link_callback(&_lwip_netif, callback);
