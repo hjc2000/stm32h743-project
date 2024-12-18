@@ -42,61 +42,6 @@
   2.c. 接收缓冲区的地址和大小必须正确地定义，以确保与L1-CACHE线大小（32字节）对齐。
 */
 
-/**
- * @brief This function is the ethernetif_input task, it is processed when a packet
- * is ready to be read from the interface. It uses the function low_level_input()
- * that should handle the actual reception of bytes from the network
- * interface. Then the type of the received packet is determined and
- * the appropriate input function is called.
- *
- * @param netif the lwip network interface structure for this ethernetif
- */
-void ethernetif_input(netif *net_interface)
-{
-	while (true)
-	{
-		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
-		pbuf *head_pbuf = nullptr;
-		pbuf *current_pbuf = nullptr;
-
-		for (base::ReadOnlySpan const &span : spans)
-		{
-			pbuf_custom *custom_pbuf = new pbuf_custom{};
-			custom_pbuf->custom_free_function = [](pbuf *p)
-			{
-				delete reinterpret_cast<pbuf_custom *>(p);
-			};
-
-			pbuf *p = pbuf_alloced_custom(PBUF_RAW,
-										  span.Size(),
-										  PBUF_REF,
-										  custom_pbuf,
-										  const_cast<uint8_t *>(span.Buffer()),
-										  span.Size());
-
-			p->next = nullptr;
-			if (head_pbuf == nullptr)
-			{
-				head_pbuf = p;
-				current_pbuf = p;
-			}
-			else
-			{
-				current_pbuf->next = p;
-				current_pbuf = p;
-			}
-		}
-
-		// 串成链表后一次性输入。
-		if (net_interface->input(head_pbuf, net_interface) != err_enum_t::ERR_OK)
-		{
-			pbuf_free(head_pbuf);
-		}
-	}
-}
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
 bsp::LwipEthernetInterface::LwipEthernetInterface()
 {
 	/* 默认本地IP为:192.168.1.30 */
@@ -262,6 +207,50 @@ void bsp::LwipEthernetInterface::DhcpThreadFunc()
 	}
 
 #endif
+}
+
+void bsp::LwipEthernetInterface::InputThreadFunc()
+{
+	while (true)
+	{
+		base::IEnumerable<base::ReadOnlySpan> const &spans = DI_EthernetPort().Receive();
+		pbuf *head_pbuf = nullptr;
+		pbuf *current_pbuf = nullptr;
+
+		for (base::ReadOnlySpan const &span : spans)
+		{
+			pbuf_custom *custom_pbuf = new pbuf_custom{};
+			custom_pbuf->custom_free_function = [](pbuf *p)
+			{
+				delete reinterpret_cast<pbuf_custom *>(p);
+			};
+
+			pbuf *p = pbuf_alloced_custom(PBUF_RAW,
+										  span.Size(),
+										  PBUF_REF,
+										  custom_pbuf,
+										  const_cast<uint8_t *>(span.Buffer()),
+										  span.Size());
+
+			p->next = nullptr;
+			if (head_pbuf == nullptr)
+			{
+				head_pbuf = p;
+				current_pbuf = p;
+			}
+			else
+			{
+				current_pbuf->next = p;
+				current_pbuf = p;
+			}
+		}
+
+		// 串成链表后一次性输入。
+		if (_lwip_netif.input(head_pbuf, &_lwip_netif) != err_enum_t::ERR_OK)
+		{
+			pbuf_free(head_pbuf);
+		}
+	}
 }
 
 void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
@@ -466,7 +455,7 @@ void bsp::LwipEthernetInterface::Open()
 	DI_TaskManager().Create(
 		[this]()
 		{
-			ethernetif_input(&_lwip_netif);
+			InputThreadFunc();
 		},
 		512);
 

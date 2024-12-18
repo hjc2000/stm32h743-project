@@ -16,6 +16,8 @@ namespace bsp
 		/// @brief DHCP 线程函数。
 		void DhcpThreadFunc();
 
+		void InputThreadFunc();
+
 		/// @brief 检测链接状态的线程函数。
 		void LinkStateCheckingThreadFunc();
 
