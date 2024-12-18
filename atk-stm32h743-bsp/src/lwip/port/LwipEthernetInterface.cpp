@@ -167,8 +167,6 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 
 	if (!dhcp_result)
 	{
-		dhcp_stop(&_lwip_netif);
-
 		/* 使用静态IP地址 */
 		IP4_ADDR(&(_lwip_netif.ip_addr),
 				 _ip_address[0],
