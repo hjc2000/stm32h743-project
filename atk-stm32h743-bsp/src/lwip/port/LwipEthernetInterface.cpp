@@ -448,6 +448,7 @@ void bsp::LwipEthernetInterface::Open()
 
 #if LWIP_DHCP        /* 如果使用DHCP的话 */
 	_dhcpstatus = 0; /* DHCP标记为0 */
+	_lwip_dhcp_state = LWIP_DHCP_START;
 
 	DI_TaskManager().Create(
 		[this]()
