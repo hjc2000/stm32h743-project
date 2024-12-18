@@ -23,25 +23,6 @@
 #include <stdio.h>
 #include <task.h>
 
-/*
-@备注: 该接口仅实现为零复制模式操作：
-		- 接收缓冲区（Rx buffers）静态分配，并直接传递给LwIP栈，
-		  在被栈处理后，它们将返回到ETH DMA。
-		- 发送缓冲区（Tx Buffers）将从LwIP栈内存堆中分配，
-		  然后传递给ETH HAL驱动程序。
-
-@备注:
-  1.a. ETH DMA接收描述符必须是连续的，默认数量是4个，
-	   如果需要自定义，请在stm32xxxx_hal_conf.h中重新定义ETH_RX_DESC_CNT。
-  1.b. ETH DMA发送描述符也必须是连续的，默认数量是4个，
-	   如果需要自定义，请在stm32xxxx_hal_conf.h中重新定义ETH_TX_DESC_CNT。
-
-  2.a. 接收缓冲区的数量必须在ETH_RX_DESC_CNT和2*ETH_RX_DESC_CNT之间。
-  2.b. 接收缓冲区必须具有相同的大小：ETH_RX_BUFFER_SIZE，这个值必须
-	   在初始化字段中传递给ETH DMA (bsp::EthernetController::Instance().Handle().Init.RxBuffLen)。
-  2.c. 接收缓冲区的地址和大小必须正确地定义，以确保与L1-CACHE线大小（32字节）对齐。
-*/
-
 bsp::LwipEthernetInterface::LwipEthernetInterface()
 {
 	/* 默认本地IP为:192.168.1.30 */
