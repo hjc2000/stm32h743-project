@@ -340,64 +340,47 @@ void bsp::LwipEthernetInterface::InputThreadFunc()
 	}
 }
 
-void bsp::LwipEthernetInterface::LinkStateCheckingThreadFunc()
+void bsp::LwipEthernetInterface::LinkStateDetectingThreadFunc()
 {
-	int link_again_num = 0;
 	while (true)
 	{
 		/* 读取PHY状态寄存器，获取链接信息 */
 		uint32_t regval = DI_EthernetController().ReadPHYRegister(1);
+		bool is_linked = regval & 0x0004U;
 
-		/* 判断链接状态 */
-		if ((regval & 0x0004U) == 0)
+		if (is_linked == netif_is_up(&_lwip_netif))
 		{
-			link_status = LWIP_LINK_OFF;
-			link_again_num++;
+			DI_Delayer().Delay(std::chrono::milliseconds{100});
+			continue;
+		}
 
-			if (link_again_num >= 2)
-			{
-				/* 网线一段时间没有插入 */
-				continue;
-			}
-			else
-			{
-				/* 关闭虚拟网卡及以太网中断 */
-				DI_Console().WriteLine("close ethernet");
+		if (is_linked)
+		{
+			// 开启以太网及虚拟网卡
+			DI_EthernetPort().Restart();
 
 #if LWIP_DHCP
-				_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
-				dhcp_stop(&_lwip_netif);
+			/* Update DHCP state machine */
+			_lwip_dhcp_state = LWIP_DHCP_START;
 #endif
+			/* LWIP_DHCP */
+			DI_Console().WriteLine("检测到网线插入");
 
-				/* LWIP_DHCP */
-				DI_Console().WriteLine("检测到网线断开。");
-				netif_set_down(&_lwip_netif);
-				netif_set_link_down(&_lwip_netif);
-			}
+			netif_set_up(&_lwip_netif);
+			netif_set_link_up(&_lwip_netif);
 		}
 		else
 		{
-			/* 网线插入检测 */
-			link_again_num = 0;
-			if (link_status == LWIP_LINK_OFF)
-			{
-				/* 开启以太网及虚拟网卡 */
-				DI_EthernetPort().Restart();
-
 #if LWIP_DHCP
-				/* Update DHCP state machine */
-				_lwip_dhcp_state = LWIP_DHCP_START;
+			_lwip_dhcp_state = LWIP_DHCP_LINK_DOWN;
+			dhcp_stop(&_lwip_netif);
 #endif
-				/* LWIP_DHCP */
-				DI_Console().WriteLine("检测到网线插入");
 
-				link_status = LWIP_LINK_ON;
-				netif_set_up(&_lwip_netif);
-				netif_set_link_up(&_lwip_netif);
-			}
+			/* LWIP_DHCP */
+			DI_Console().WriteLine("检测到网线断开。");
+			netif_set_down(&_lwip_netif);
+			netif_set_link_down(&_lwip_netif);
 		}
-
-		DI_Delayer().Delay(std::chrono::milliseconds{100});
 	}
 }
 
@@ -451,11 +434,9 @@ void bsp::LwipEthernetInterface::Open()
 	DI_TaskManager().Create(
 		[this]()
 		{
-			LinkStateCheckingThreadFunc();
+			LinkStateDetectingThreadFunc();
 		},
 		512);
-
-	link_status = LWIP_LINK_OFF; /* 链接标记为0 */
 
 #if LWIP_DHCP        /* 如果使用DHCP的话 */
 	_dhcpstatus = 0; /* DHCP标记为0 */

@@ -31,7 +31,7 @@ namespace bsp
 		void InputThreadFunc();
 
 		/// @brief 检测链接状态的线程函数。
-		void LinkStateCheckingThreadFunc();
+		void LinkStateDetectingThreadFunc();
 #pragma endregion
 
 		uint8_t _lwip_dhcp_state = LWIP_DHCP_OFF;
@@ -54,9 +54,6 @@ namespace bsp
 		/// 	2：成功获取DHCP地址。
 		/// 	0xff：获取失败。
 		uint8_t _dhcpstatus = 0;
-
-		/// @brief 连接状态。
-		uint8_t link_status = 0;
 
 		/// @brief 本网卡所使用的 MAC 地址。
 		base::Mac _mac{
