@@ -1,4 +1,4 @@
-#include "AtkEhternetPort.h"
+#include "AtkApolloV2EthernetPort.h"
 #include <base/container/Dictionary.h>
 #include <base/di/SingletonGetter.h>
 #include <base/string/ToHexString.h>
@@ -8,27 +8,26 @@
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/system_time.h>
-#include <hal.h>
 
-uint32_t bsp::AtkEhternetPort::ReadPHYRegister(uint32_t register_index)
+uint32_t bsp::AtkApolloV2EthernetPort::ReadPHYRegister(uint32_t register_index)
 {
 	return _controller->ReadPHYRegister(register_index);
 }
 
-void bsp::AtkEhternetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
+void bsp::AtkApolloV2EthernetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
 {
 	_controller->WritePHYRegister(register_index, value);
 }
 
-bsp::AtkEhternetPort &bsp::AtkEhternetPort::Instance()
+bsp::AtkApolloV2EthernetPort &bsp::AtkApolloV2EthernetPort::Instance()
 {
 	class Getter :
-		public base::SingletonGetter<AtkEhternetPort>
+		public base::SingletonGetter<AtkApolloV2EthernetPort>
 	{
 	public:
-		std::unique_ptr<AtkEhternetPort> Create() override
+		std::unique_ptr<AtkApolloV2EthernetPort> Create() override
 		{
-			return std::unique_ptr<AtkEhternetPort>{new AtkEhternetPort{}};
+			return std::unique_ptr<AtkApolloV2EthernetPort>{new AtkApolloV2EthernetPort{}};
 		}
 
 		void Lock() override
@@ -46,12 +45,12 @@ bsp::AtkEhternetPort &bsp::AtkEhternetPort::Instance()
 	return g.Instance();
 }
 
-std::string bsp::AtkEhternetPort::Name() const
+std::string bsp::AtkApolloV2EthernetPort::Name() const
 {
 	return "eth";
 }
 
-void bsp::AtkEhternetPort::Open(base::Mac const &mac)
+void bsp::AtkApolloV2EthernetPort::Open(base::Mac const &mac)
 {
 	ResetPHY();
 
@@ -67,7 +66,7 @@ void bsp::AtkEhternetPort::Open(base::Mac const &mac)
 	_controller->Start(DuplexMode(), Speed());
 }
 
-void bsp::AtkEhternetPort::Restart()
+void bsp::AtkApolloV2EthernetPort::Restart()
 {
 	SoftwareResetPHY();
 	EnableAutoNegotiation();
@@ -76,7 +75,7 @@ void bsp::AtkEhternetPort::Restart()
 	_controller->Start(DuplexMode(), Speed());
 }
 
-void bsp::AtkEhternetPort::ResetPHY()
+void bsp::AtkApolloV2EthernetPort::ResetPHY()
 {
 	/* 公司的开发板是旧版的，复位需要先输出高电平，延时后输出低电平。
 	 * 家里的开发板是新版的，复位需要先输出低电平，延时后输出高电平。
@@ -91,12 +90,12 @@ void bsp::AtkEhternetPort::ResetPHY()
 	DI_Delayer().Delay(std::chrono::milliseconds{100});
 }
 
-void bsp::AtkEhternetPort::Send(base::IEnumerable<base::ReadOnlySpan> const &spans)
+void bsp::AtkApolloV2EthernetPort::Send(base::IEnumerable<base::ReadOnlySpan> const &spans)
 {
 	_controller->Send(spans);
 }
 
-base::IEnumerable<base::ReadOnlySpan> const &bsp::AtkEhternetPort::Receive()
+base::IEnumerable<base::ReadOnlySpan> const &bsp::AtkApolloV2EthernetPort::Receive()
 {
 	return _controller->Receive();
 }

@@ -7,7 +7,7 @@
 namespace bsp
 {
 	/// @brief 以太网端口。
-	class AtkEhternetPort :
+	class AtkApolloV2EthernetPort :
 		public bsp::YT8512C_EthernetPort
 	{
 	private:
@@ -25,7 +25,7 @@ namespace bsp
 		void WritePHYRegister(uint32_t register_index, uint32_t value) override;
 
 	public:
-		static_function AtkEhternetPort &Instance();
+		static_function AtkApolloV2EthernetPort &Instance();
 
 		/// @brief 以太网控制器的名称。
 		/// @return
