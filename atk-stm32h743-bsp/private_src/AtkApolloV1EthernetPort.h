@@ -1,13 +1,13 @@
 #pragma once
 #include <base/define.h>
 #include <bsp-interface/di/ethernet.h>
-#include <bsp-interface/ethernet/phy/YT8512C_EthernetPort.h>
+#include <bsp-interface/ethernet/phy/LAN8720A_EthernetPort.h>
 
 namespace bsp
 {
 	/// @brief 以太网端口。
-	class AtkApolloV2EthernetPort :
-		public bsp::YT8512C_EthernetPort
+	class AtkApolloV1EthernetPort :
+		public bsp::LAN8720A_EthernetPort
 	{
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
@@ -24,7 +24,7 @@ namespace bsp
 		void WritePHYRegister(uint32_t register_index, uint32_t value) override;
 
 	public:
-		static_function AtkApolloV2EthernetPort &Instance();
+		static_function AtkApolloV1EthernetPort &Instance();
 
 		/// @brief 以太网控制器的名称。
 		/// @return
