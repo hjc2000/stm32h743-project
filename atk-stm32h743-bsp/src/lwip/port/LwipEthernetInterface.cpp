@@ -195,28 +195,13 @@ void bsp::LwipEthernetInterface::Open()
 {
 	_ethernet_port->Open(_mac);
 	tcpip_init(nullptr, nullptr);
-	_netif_wrapper.Open(_ip_address, _netmask, _gateway);
+	_netif_wrapper.Open(_ip_address, _netmask, _gateway, ETH_MAX_PAYLOAD);
 	_netif_wrapper.SetAsDefaultNetInterface();
-
-	/* 设置MAC地址长度,为6个字节 */
-	_netif_wrapper->hwaddr_len = ETHARP_HWADDR_LEN;
 
 	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
 	base::Span netif_mac_buff_span{_netif_wrapper->hwaddr, 6};
 	netif_mac_buff_span.CopyFrom(_mac.AsReadOnlySpan());
 	netif_mac_buff_span.Reverse();
-
-	_netif_wrapper->mtu = ETH_MAX_PAYLOAD;
-
-	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
-	/* 使能、 ARP 使能等等重要控制位 */
-	_netif_wrapper->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
-
-	/* We directly use etharp_output() here to save a function call.
-	 * You can instead declare your own function an call etharp_output()
-	 * from it if you have to do some checks before sending (e.g. if link
-	 * is available...) */
-	_netif_wrapper->output = etharp_output;
 
 	_netif_wrapper->linkoutput = [](netif *net_interface, pbuf *p) -> err_t
 	{

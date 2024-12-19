@@ -33,7 +33,8 @@ namespace lwip
 
 		void Open(base::IPAddress const &ip_address,
 				  base::IPAddress const &netmask,
-				  base::IPAddress const &gateway);
+				  base::IPAddress const &gateway,
+				  int32_t mtu);
 
 		/// @brief 获取被包装对象的指针。
 		/// @return

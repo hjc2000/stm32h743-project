@@ -10,11 +10,15 @@ lwip::NetifWrapper::NetifWrapper()
 	_wrapped_obj->hostname = "lwip";
 	_wrapped_obj->name[0] = 'p';
 	_wrapped_obj->name[1] = 'n';
+
+	// 设置 MAC 地址长度，为 6 个字节
+	_wrapped_obj->hwaddr_len = ETHARP_HWADDR_LEN;
 }
 
 void lwip::NetifWrapper::Open(base::IPAddress const &ip_address,
 							  base::IPAddress const &netmask,
-							  base::IPAddress const &gateway)
+							  base::IPAddress const &gateway,
+							  int32_t mtu)
 {
 	ip_addr_t ip_addr_t_ip_address = base::Convert<ip_addr_t, base::IPAddress>(ip_address);
 	ip_addr_t ip_addr_t_netmask = base::Convert<ip_addr_t, base::IPAddress>(netmask);
@@ -38,6 +42,20 @@ void lwip::NetifWrapper::Open(base::IPAddress const &ip_address,
 		DI_Console().WriteLine("添加网卡失败。");
 		throw std::runtime_error{"添加网卡失败。"};
 	}
+
+	_wrapped_obj->mtu = mtu;
+
+	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播
+	 * 使能、 ARP 使能等等重要控制位
+	 */
+	_wrapped_obj->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+
+	/* We directly use etharp_output() here to save a function call.
+	 * You can instead declare your own function an call etharp_output()
+	 * from it if you have to do some checks before sending (e.g. if link
+	 * is available...)
+	 */
+	_wrapped_obj->output = etharp_output;
 }
 
 netif *lwip::NetifWrapper::WrappedObj() const
