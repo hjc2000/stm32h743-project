@@ -16,6 +16,31 @@ namespace lwip
 	private:
 		std::unique_ptr<netif> _wrapped_obj{new netif{}};
 
+#pragma region 初始化回调
+
+		class
+		{
+		public:
+			/// @brief 本网卡所使用的 MAC 地址。
+			base::Mac _mac{
+				std::endian::big,
+				base::Array<uint8_t, 6>{
+					0xB8,
+					0xAE,
+					0x1D,
+					0x00,
+					0x04,
+					0x00,
+				},
+			};
+
+			int32_t _mtu = 1500;
+
+		} _init_callback_func_context;
+
+		void InitializationCallbackFunc();
+#pragma endregion
+
 	public:
 		NetifWrapper();
 

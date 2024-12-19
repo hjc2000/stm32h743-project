@@ -5,7 +5,7 @@
 #include <lwip/tcpip.h>
 #include <lwip_convert.h>
 
-lwip::NetifWrapper::NetifWrapper()
+void lwip::NetifWrapper::InitializationCallbackFunc()
 {
 	_wrapped_obj->hostname = "lwip";
 	_wrapped_obj->name[0] = 'p';
@@ -13,6 +13,25 @@ lwip::NetifWrapper::NetifWrapper()
 
 	// 设置 MAC 地址长度，为 6 个字节
 	_wrapped_obj->hwaddr_len = ETHARP_HWADDR_LEN;
+
+	SetMac(_init_callback_func_context._mac);
+	_wrapped_obj->mtu = _init_callback_func_context._mtu;
+
+	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播
+	 * 使能、 ARP 使能等等重要控制位
+	 */
+	_wrapped_obj->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+
+	/* We directly use etharp_output() here to save a function call.
+	 * You can instead declare your own function an call etharp_output()
+	 * from it if you have to do some checks before sending (e.g. if link
+	 * is available...)
+	 */
+	_wrapped_obj->output = etharp_output;
+}
+
+lwip::NetifWrapper::NetifWrapper()
+{
 	_wrapped_obj->state = this;
 }
 
@@ -22,20 +41,20 @@ void lwip::NetifWrapper::Open(base::Mac const &mac,
 							  base::IPAddress const &gateway,
 							  int32_t mtu)
 {
+	_init_callback_func_context._mac = mac;
+	_init_callback_func_context._mtu = mtu;
+
 	ip_addr_t ip_addr_t_ip_address = base::Convert<ip_addr_t, base::IPAddress>(ip_address);
 	ip_addr_t ip_addr_t_netmask = base::Convert<ip_addr_t, base::IPAddress>(netmask);
 	ip_addr_t ip_addr_t_gataway = base::Convert<ip_addr_t, base::IPAddress>(gateway);
 
 	auto initialization_callback = [](netif *p) -> err_t
 	{
+		reinterpret_cast<NetifWrapper *>(p->state)->InitializationCallbackFunc();
 		return err_enum_t::ERR_OK;
 	};
 
-	/* 将 _wrapped_obj 添加到 lwip 的链表。这个函数内部没有根据 _wrapped_obj 填写的做什么
-	 * 初始化，所以完全可以在调用这个函数之后更改 _wrapped_obj 的字段，进行一些自定义的初始化。
-	 * 所以没有必要依靠这个函数安排的回调函数进行初始化。
-	 *
-	 * netif_add 函数的 state 参数是 lwip 用来让用户传递私有数据的，会被放到 netif 的 state 字段中，
+	/* netif_add 函数的 state 参数是 lwip 用来让用户传递私有数据的，会被放到 netif 的 state 字段中，
 	 * 这里传递了 this，这样就将 netif 和本类对象绑定了，只要拿到了 netif 指针，就能拿到本类对象的指针。
 	 */
 	netif *netif_add_result = netif_add(_wrapped_obj.get(),
@@ -51,21 +70,6 @@ void lwip::NetifWrapper::Open(base::Mac const &mac,
 		DI_Console().WriteLine("添加网卡失败。");
 		throw std::runtime_error{"添加网卡失败。"};
 	}
-
-	SetMac(mac);
-	_wrapped_obj->mtu = mtu;
-
-	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播
-	 * 使能、 ARP 使能等等重要控制位
-	 */
-	_wrapped_obj->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
-
-	/* We directly use etharp_output() here to save a function call.
-	 * You can instead declare your own function an call etharp_output()
-	 * from it if you have to do some checks before sending (e.g. if link
-	 * is available...)
-	 */
-	_wrapped_obj->output = etharp_output;
 }
 
 netif *lwip::NetifWrapper::WrappedObj() const
