@@ -41,12 +41,12 @@ void lwip::NetifWrapper::Open(base::Mac const &mac,
 							  base::IPAddress const &gateway,
 							  int32_t mtu)
 {
-	_init_callback_func_context._mac = mac;
-	_init_callback_func_context._mtu = mtu;
-
 	ip_addr_t ip_addr_t_ip_address = base::Convert<ip_addr_t, base::IPAddress>(ip_address);
 	ip_addr_t ip_addr_t_netmask = base::Convert<ip_addr_t, base::IPAddress>(netmask);
 	ip_addr_t ip_addr_t_gataway = base::Convert<ip_addr_t, base::IPAddress>(gateway);
+
+	_init_callback_func_context._mac = mac;
+	_init_callback_func_context._mtu = mtu;
 
 	auto initialization_callback = [](netif *p) -> err_t
 	{
