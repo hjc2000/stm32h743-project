@@ -1,5 +1,6 @@
 #include "NetifWrapper.h"
 #include <bsp-interface/di/console.h>
+#include <bsp-interface/di/delayer.h>
 #include <lwip/dhcp.h>
 #include <lwip/etharp.h>
 #include <lwip/tcpip.h>
@@ -14,8 +15,8 @@ void lwip::NetifWrapper::InitializationCallbackFunc()
 	// 设置 MAC 地址长度，为 6 个字节
 	_wrapped_obj->hwaddr_len = ETHARP_HWADDR_LEN;
 
-	SetMac(_init_callback_func_context._mac);
-	_wrapped_obj->mtu = _init_callback_func_context._mtu;
+	SetMac(_cache._mac);
+	_wrapped_obj->mtu = _cache._mtu;
 
 	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播
 	 * 使能、 ARP 使能等等重要控制位
@@ -28,6 +29,11 @@ void lwip::NetifWrapper::InitializationCallbackFunc()
 	 * is available...)
 	 */
 	_wrapped_obj->output = etharp_output;
+}
+
+netif *lwip::NetifWrapper::WrappedObj() const
+{
+	return _wrapped_obj.get();
 }
 
 lwip::NetifWrapper::NetifWrapper()
@@ -43,12 +49,22 @@ void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
 							  int32_t mtu)
 {
 	_ethernet_port = ethernet_port;
+	_cache._mac = mac;
+	_cache._ip_address = ip_address;
+	_cache._netmask = netmask;
+	_cache._gateway = gateway;
+	_cache._mtu = mtu;
+
+	if (_ethernet_port == nullptr)
+	{
+		throw std::runtime_error{"必须先调用 Open 方法传入一个 bsp::IEthernetPort 对象"};
+	}
+
+	_ethernet_port->Open(_cache._mac);
+
 	ip_addr_t ip_addr_t_ip_address = base::Convert<ip_addr_t, base::IPAddress>(ip_address);
 	ip_addr_t ip_addr_t_netmask = base::Convert<ip_addr_t, base::IPAddress>(netmask);
 	ip_addr_t ip_addr_t_gataway = base::Convert<ip_addr_t, base::IPAddress>(gateway);
-
-	_init_callback_func_context._mac = mac;
-	_init_callback_func_context._mtu = mtu;
 
 	auto initialization_callback = [](netif *p) -> err_t
 	{
@@ -82,10 +98,7 @@ void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
 	}
 }
 
-netif *lwip::NetifWrapper::WrappedObj() const
-{
-	return _wrapped_obj.get();
-}
+#pragma region 地址
 
 base::Mac lwip::NetifWrapper::Mac() const
 {
@@ -176,6 +189,53 @@ void lwip::NetifWrapper::ClearAllAddress()
 				   &_wrapped_obj->gw);
 }
 
+#pragma endregion
+
+#pragma region DHCP
+
+bool lwip::NetifWrapper::TryDHCP()
+{
+	DI_Console().WriteLine("开始进行 DHCP.");
+	ClearAllAddress();
+	StartDHCP();
+
+	bool dhcp_result = false;
+	for (int i = 0; i < 50; i++)
+	{
+		// 如果失败，最多重试 100 次。
+		dhcp_result = DhcpSuppliedAddress();
+		if (dhcp_result)
+		{
+			break;
+		}
+
+		DI_Delayer().Delay(std::chrono::milliseconds{100});
+	}
+
+	if (!dhcp_result)
+	{
+		// 使用静态IP地址
+		SetIPAddress(_cache._ip_address);
+		SetNetmask(_cache._netmask);
+		SetGateway(_cache._gateway);
+		DI_Console().WriteLine("DHCP 超时：");
+		DI_Console().WriteLine("使用静态 IP 地址：" + IPAddress().ToString());
+		DI_Console().WriteLine("使用静态子网掩码：" + Netmask().ToString());
+		DI_Console().WriteLine("使用静态网关：" + Gateway().ToString());
+		return false;
+	}
+
+	// DHCP 成功
+	_cache._ip_address = IPAddress();
+	_cache._netmask = Netmask();
+	_cache._gateway = Gateway();
+	DI_Console().WriteLine("DHCP 成功：");
+	DI_Console().WriteLine("通过 DHCP 获取到 IP 地址：" + _cache._ip_address.ToString());
+	DI_Console().WriteLine("通过 DHCP 获取到子网掩码：" + _cache._netmask.ToString());
+	DI_Console().WriteLine("通过 DHCP 获取到的默认网关：" + _cache._gateway.ToString());
+	return true;
+}
+
 void lwip::NetifWrapper::StartDHCP()
 {
 	dhcp_start(_wrapped_obj.get());
@@ -190,6 +250,8 @@ bool lwip::NetifWrapper::DhcpSuppliedAddress()
 {
 	return dhcp_supplied_address(_wrapped_obj.get());
 }
+
+#pragma endregion
 
 void lwip::NetifWrapper::SetAsDefaultNetInterface()
 {

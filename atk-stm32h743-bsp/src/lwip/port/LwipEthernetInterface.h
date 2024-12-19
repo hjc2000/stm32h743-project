@@ -21,8 +21,6 @@ namespace bsp
 		/// @param p
 		void SendPbuf(pbuf *p);
 
-		bool TryDHCP();
-
 #pragma region 线程函数
 		/// @brief 负责将网口接收到的数据送给 lwip.
 		void InputThreadFunc();

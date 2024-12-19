@@ -41,48 +41,6 @@ void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
 	_ethernet_port->Send(spans);
 }
 
-bool bsp::LwipEthernetInterface::TryDHCP()
-{
-	DI_Console().WriteLine("开始进行 DHCP.");
-	_netif_wrapper.ClearAllAddress();
-	_netif_wrapper.StartDHCP();
-
-	bool dhcp_result = false;
-	for (int i = 0; i < 50; i++)
-	{
-		// 如果失败，最多重试 100 次。
-		dhcp_result = _netif_wrapper.DhcpSuppliedAddress();
-		if (dhcp_result)
-		{
-			break;
-		}
-
-		DI_Delayer().Delay(std::chrono::milliseconds{100});
-	}
-
-	if (!dhcp_result)
-	{
-		/* 使用静态IP地址 */
-		_netif_wrapper.SetIPAddress(_ip_address);
-		_netif_wrapper.SetNetmask(_netmask);
-		_netif_wrapper.SetGateway(_gateway);
-		DI_Console().WriteLine("DHCP 超时：");
-		DI_Console().WriteLine("使用静态 IP 地址：" + _netif_wrapper.IPAddress().ToString());
-		DI_Console().WriteLine("使用静态子网掩码：" + _netif_wrapper.Netmask().ToString());
-		DI_Console().WriteLine("使用静态网关：" + _netif_wrapper.Gateway().ToString());
-		return false;
-	}
-
-	_ip_address = _netif_wrapper.IPAddress();
-	_netmask = _netif_wrapper.Netmask();
-	_gateway = _netif_wrapper.Gateway();
-	DI_Console().WriteLine("DHCP 成功：");
-	DI_Console().WriteLine("通过 DHCP 获取到 IP 地址：" + _ip_address.ToString());
-	DI_Console().WriteLine("通过 DHCP 获取到子网掩码：" + _netmask.ToString());
-	DI_Console().WriteLine("通过 DHCP 获取到的默认网关：" + _gateway.ToString());
-	return true;
-}
-
 #pragma region 线程函数
 
 void bsp::LwipEthernetInterface::InputThreadFunc()
@@ -147,7 +105,7 @@ void bsp::LwipEthernetInterface::LinkStateDetectingThreadFunc()
 			_ethernet_port->Restart();
 			netif_set_up(_netif_wrapper);
 			netif_set_link_up(_netif_wrapper);
-			TryDHCP();
+			_netif_wrapper.TryDHCP();
 		}
 		else
 		{
@@ -191,7 +149,6 @@ bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 
 void bsp::LwipEthernetInterface::Open()
 {
-	_ethernet_port->Open(_mac);
 	tcpip_init(nullptr, nullptr);
 
 	_netif_wrapper.Open(_ethernet_port,

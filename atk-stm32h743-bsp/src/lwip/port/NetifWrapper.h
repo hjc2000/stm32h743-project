@@ -18,11 +18,24 @@ namespace lwip
 		std::unique_ptr<netif> _wrapped_obj{new netif{}};
 		bsp::IEthernetPort *_ethernet_port = nullptr;
 
-#pragma region 初始化回调
-
-		class
+		struct
 		{
-		public:
+			/// @brief 本机IP地址
+			base::IPAddress _ip_address{
+				std::endian::big,
+				base::Array<uint8_t, 4>{192, 168, 1, 30},
+			};
+
+			base::IPAddress _netmask{
+				std::endian::big,
+				base::Array<uint8_t, 4>{255, 255, 255, 0},
+			};
+
+			base::IPAddress _gateway{
+				std::endian::big,
+				base::Array<uint8_t, 4>{192, 168, 1, 1},
+			};
+
 			/// @brief 本网卡所使用的 MAC 地址。
 			base::Mac _mac{
 				std::endian::big,
@@ -37,11 +50,13 @@ namespace lwip
 			};
 
 			int32_t _mtu = 1500;
-
-		} _init_callback_func_context;
+		} _cache;
 
 		void InitializationCallbackFunc();
-#pragma endregion
+
+		/// @brief 获取被包装对象的指针。
+		/// @return
+		netif *WrappedObj() const override;
 
 	public:
 		NetifWrapper();
@@ -52,10 +67,6 @@ namespace lwip
 				  base::IPAddress const &netmask,
 				  base::IPAddress const &gateway,
 				  int32_t mtu);
-
-		/// @brief 获取被包装对象的指针。
-		/// @return
-		netif *WrappedObj() const override;
 
 #pragma region 地址
 		base::Mac Mac() const;
@@ -86,6 +97,9 @@ namespace lwip
 		void ClearAllAddress();
 #pragma endregion
 
+#pragma region DHCP
+		bool TryDHCP();
+
 		/// @brief 启动 DHCP.
 		void StartDHCP();
 
@@ -95,6 +109,7 @@ namespace lwip
 		/// @brief 检查本次启动 DHCP 后 IP 地址是否被 DHCP 提供了。
 		/// @return 如果 DHCP 提供了 IP 地址，则返回 true, 否则返回 false.
 		bool DhcpSuppliedAddress();
+#pragma endregion
 
 		/// @brief 设置为默认网卡。
 		void SetAsDefaultNetInterface();
