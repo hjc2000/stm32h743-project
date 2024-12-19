@@ -51,6 +51,8 @@ namespace lwip
 						   base::IPAddress const &netmask,
 						   base::IPAddress const &gateway);
 
+		/// @brief 将所有地址清 0.
+		/// @note 包括：IP 地址、子网掩码、网关。
 		void ClearAllAddress();
 
 		/// @brief 启动 DHCP.
