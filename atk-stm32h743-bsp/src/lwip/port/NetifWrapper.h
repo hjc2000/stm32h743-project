@@ -61,6 +61,10 @@ namespace lwip
 		/// @brief 停止 DHCP.
 		void StopDHCP();
 
+		/// @brief 检查本次启动 DHCP 后 IP 地址是否被 DHCP 提供了。
+		/// @return 如果 DHCP 提供了 IP 地址，则返回 true, 否则返回 false.
+		bool DhcpSuppliedAddress();
+
 		/// @brief 设置为默认网卡。
 		void SetAsDefaultNetInterface();
 	};

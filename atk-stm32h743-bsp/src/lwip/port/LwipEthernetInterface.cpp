@@ -51,7 +51,7 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 	for (int i = 0; i < 50; i++)
 	{
 		// 如果失败，最多重试 100 次。
-		dhcp_result = dhcp_supplied_address(_netif_wrapper);
+		dhcp_result = _netif_wrapper.DhcpSuppliedAddress();
 		if (dhcp_result)
 		{
 			break;
@@ -67,6 +67,8 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 		_netif_wrapper.SetNetmask(_netmask);
 		_netif_wrapper.SetGateway(_gateway);
 		DI_Console().WriteLine("DHCP 超时。使用静态 IP 地址：" + _netif_wrapper.IPAddress().ToString());
+		DI_Console().WriteLine("子网掩码：" + _netif_wrapper.Netmask().ToString());
+		DI_Console().WriteLine("网关：" + _netif_wrapper.Gateway().ToString());
 		return false;
 	}
 

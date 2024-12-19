@@ -168,6 +168,11 @@ void lwip::NetifWrapper::StopDHCP()
 	dhcp_stop(_wrapped_obj.get());
 }
 
+bool lwip::NetifWrapper::DhcpSuppliedAddress()
+{
+	return dhcp_supplied_address(_wrapped_obj.get());
+}
+
 void lwip::NetifWrapper::SetAsDefaultNetInterface()
 {
 	netif_set_default(_wrapped_obj.get());
