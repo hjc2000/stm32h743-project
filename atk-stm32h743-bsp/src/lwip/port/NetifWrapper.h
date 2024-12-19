@@ -19,11 +19,18 @@ namespace lwip
 		netif *WrappedObj() const override;
 
 		base::IPAddress IPAddress() const;
-		void SetIPAddress(base::IPAddress const &ip_address);
+		void SetIPAddress(base::IPAddress const &value);
 
+		base::IPAddress Netmask() const;
+		void SetNetmask(base::IPAddress const &value);
+
+		/// @brief 启动 DHCP.
 		void StartDHCP();
+
+		/// @brief 停止 DHCP.
 		void StopDHCP();
 
+		/// @brief 设置为默认网卡。
 		void SetAsDefaultNetInterface();
 	};
 } // namespace lwip
