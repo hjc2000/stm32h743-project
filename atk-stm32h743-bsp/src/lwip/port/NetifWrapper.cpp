@@ -1,5 +1,6 @@
 #include "NetifWrapper.h"
 #include <lwip/dhcp.h>
+#include <lwip_convert.h>
 
 netif *lwip::NetifWrapper::WrappedObj() const
 {
@@ -8,48 +9,61 @@ netif *lwip::NetifWrapper::WrappedObj() const
 
 base::IPAddress lwip::NetifWrapper::IPAddress() const
 {
-	base::ReadOnlySpan span{
-		reinterpret_cast<uint8_t const *>(&_wrapped_obj->ip_addr.addr),
-		sizeof(_wrapped_obj->ip_addr.addr),
-	};
-
-	return base::IPAddress{std::endian::big, span};
+	return base::Convert<base::IPAddress, ip_addr_t>(_wrapped_obj->ip_addr);
 }
 
 void lwip::NetifWrapper::SetIPAddress(base::IPAddress const &value)
 {
-	base::Span span{
-		reinterpret_cast<uint8_t *>(&_wrapped_obj->ip_addr.addr),
-		sizeof(_wrapped_obj->ip_addr.addr),
-	};
+	_wrapped_obj->ip_addr = base::Convert<ip_addr_t, base::IPAddress>(value);
 
-	span.CopyFrom(value.AsReadOnlySpan());
-
-	/* base::IPAddress 类用小端序储存 IP 地址，而 lwip 的 net_interface.ip_addr.addr
-	 * 是用大端序，所以要翻转。
-	 */
-	span.Reverse();
+	netif_set_addr(_wrapped_obj.get(),
+				   &_wrapped_obj->ip_addr,
+				   &_wrapped_obj->netmask,
+				   &_wrapped_obj->gw);
 }
 
 base::IPAddress lwip::NetifWrapper::Netmask() const
 {
-	base::ReadOnlySpan span{
-		reinterpret_cast<uint8_t const *>(&_wrapped_obj->netmask.addr),
-		sizeof(_wrapped_obj->netmask.addr),
-	};
-
-	return base::IPAddress{std::endian::big, span};
+	return base::Convert<base::IPAddress, ip_addr_t>(_wrapped_obj->netmask);
 }
 
 void lwip::NetifWrapper::SetNetmask(base::IPAddress const &value)
 {
-	base::Span span{
-		reinterpret_cast<uint8_t *>(&_wrapped_obj->netmask.addr),
-		sizeof(_wrapped_obj->netmask.addr),
-	};
+	_wrapped_obj->netmask = base::Convert<ip_addr_t, base::IPAddress>(value);
 
-	span.CopyFrom(value.AsReadOnlySpan());
-	span.Reverse();
+	netif_set_addr(_wrapped_obj.get(),
+				   &_wrapped_obj->ip_addr,
+				   &_wrapped_obj->netmask,
+				   &_wrapped_obj->gw);
+}
+
+base::IPAddress lwip::NetifWrapper::Gateway() const
+{
+	return base::Convert<base::IPAddress, ip_addr_t>(_wrapped_obj->gw);
+}
+
+void lwip::NetifWrapper::SetGateway(base::IPAddress const &value)
+{
+	_wrapped_obj->gw = base::Convert<ip_addr_t, base::IPAddress>(value);
+
+	netif_set_addr(_wrapped_obj.get(),
+				   &_wrapped_obj->ip_addr,
+				   &_wrapped_obj->netmask,
+				   &_wrapped_obj->gw);
+}
+
+void lwip::NetifWrapper::SetAllAddress(base::IPAddress const &ip_address,
+									   base::IPAddress const &netmask,
+									   base::IPAddress const &gateway)
+{
+	_wrapped_obj->ip_addr = base::Convert<ip_addr_t, base::IPAddress>(ip_address);
+	_wrapped_obj->netmask = base::Convert<ip_addr_t, base::IPAddress>(netmask);
+	_wrapped_obj->gw = base::Convert<ip_addr_t, base::IPAddress>(gateway);
+
+	netif_set_addr(_wrapped_obj.get(),
+				   &_wrapped_obj->ip_addr,
+				   &_wrapped_obj->netmask,
+				   &_wrapped_obj->gw);
 }
 
 void lwip::NetifWrapper::StartDHCP()

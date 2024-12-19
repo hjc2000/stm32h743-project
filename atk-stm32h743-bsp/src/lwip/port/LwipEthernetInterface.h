@@ -13,7 +13,7 @@ namespace bsp
 	class LwipEthernetInterface
 	{
 	private:
-		LwipEthernetInterface();
+		LwipEthernetInterface() = default;
 
 		bsp::IEthernetPort *_ethernet_port = &DI_EthernetPort();
 
@@ -45,11 +45,15 @@ namespace bsp
 			base::Array<uint8_t, 4>{192, 168, 1, 30},
 		};
 
-		/// @brief 子网掩码
-		uint8_t _netmask[4] = {};
+		base::IPAddress _netmask{
+			std::endian::big,
+			base::Array<uint8_t, 4>{255, 255, 255, 0},
+		};
 
-		/// @brief 默认网关的IP地址
-		uint8_t _gateway[4] = {};
+		base::IPAddress _gateway{
+			std::endian::big,
+			base::Array<uint8_t, 4>{192, 168, 1, 1},
+		};
 
 		/// @brief 本网卡所使用的 MAC 地址。
 		base::Mac _mac{
