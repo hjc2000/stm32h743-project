@@ -28,6 +28,7 @@ namespace lwip
 		/// @return
 		netif *WrappedObj() const override;
 
+#pragma region 地址
 		base::Mac Mac() const;
 		void SetMac(base::Mac const &o);
 
@@ -54,6 +55,7 @@ namespace lwip
 		/// @brief 将所有地址清 0.
 		/// @note 包括：IP 地址、子网掩码、网关。
 		void ClearAllAddress();
+#pragma endregion
 
 		/// @brief 启动 DHCP.
 		void StartDHCP();
