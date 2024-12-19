@@ -35,12 +35,14 @@ lwip::NetifWrapper::NetifWrapper()
 	_wrapped_obj->state = this;
 }
 
-void lwip::NetifWrapper::Open(base::Mac const &mac,
+void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
+							  base::Mac const &mac,
 							  base::IPAddress const &ip_address,
 							  base::IPAddress const &netmask,
 							  base::IPAddress const &gateway,
 							  int32_t mtu)
 {
+	_ethernet_port = ethernet_port;
 	ip_addr_t ip_addr_t_ip_address = base::Convert<ip_addr_t, base::IPAddress>(ip_address);
 	ip_addr_t ip_addr_t_netmask = base::Convert<ip_addr_t, base::IPAddress>(netmask);
 	ip_addr_t ip_addr_t_gataway = base::Convert<ip_addr_t, base::IPAddress>(gateway);

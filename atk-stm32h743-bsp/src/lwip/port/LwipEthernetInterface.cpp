@@ -193,7 +193,14 @@ void bsp::LwipEthernetInterface::Open()
 {
 	_ethernet_port->Open(_mac);
 	tcpip_init(nullptr, nullptr);
-	_netif_wrapper.Open(_mac, _ip_address, _netmask, _gateway, ETH_MAX_PAYLOAD);
+
+	_netif_wrapper.Open(_ethernet_port,
+						_mac,
+						_ip_address,
+						_netmask,
+						_gateway,
+						ETH_MAX_PAYLOAD);
+
 	_netif_wrapper.SetAsDefaultNetInterface();
 
 	_netif_wrapper->linkoutput = [](netif *net_interface, pbuf *p) -> err_t

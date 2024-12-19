@@ -3,6 +3,7 @@
 #include <base/net/IPAddress.h>
 #include <base/net/Mac.h>
 #include <base/Wrapper.h>
+#include <bsp-interface/ethernet/IEthernetPort.h>
 #include <lwip/netif.h>
 #include <memory>
 
@@ -15,6 +16,7 @@ namespace lwip
 	{
 	private:
 		std::unique_ptr<netif> _wrapped_obj{new netif{}};
+		bsp::IEthernetPort *_ethernet_port = nullptr;
 
 #pragma region 初始化回调
 
@@ -44,7 +46,8 @@ namespace lwip
 	public:
 		NetifWrapper();
 
-		void Open(base::Mac const &mac,
+		void Open(bsp::IEthernetPort *ethernet_port,
+				  base::Mac const &mac,
 				  base::IPAddress const &ip_address,
 				  base::IPAddress const &netmask,
 				  base::IPAddress const &gateway,
