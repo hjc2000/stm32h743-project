@@ -66,19 +66,19 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 		_netif_wrapper.SetIPAddress(_ip_address);
 		_netif_wrapper.SetNetmask(_netmask);
 		_netif_wrapper.SetGateway(_gateway);
-		DI_Console().WriteLine("DHCP 超时。使用静态 IP 地址：" + _netif_wrapper.IPAddress().ToString());
-		DI_Console().WriteLine("子网掩码：" + _netif_wrapper.Netmask().ToString());
-		DI_Console().WriteLine("网关：" + _netif_wrapper.Gateway().ToString());
+		DI_Console().WriteLine("DHCP 超时：");
+		DI_Console().WriteLine("使用静态 IP 地址：" + _netif_wrapper.IPAddress().ToString());
+		DI_Console().WriteLine("使用静态子网掩码：" + _netif_wrapper.Netmask().ToString());
+		DI_Console().WriteLine("使用静态网关：" + _netif_wrapper.Gateway().ToString());
 		return false;
 	}
-
-	DI_Console().WriteLine("DHCP 成功。");
 
 	_ip_address = _netif_wrapper.IPAddress();
 	_netmask = _netif_wrapper.Netmask();
 	_gateway = _netif_wrapper.Gateway();
+	DI_Console().WriteLine("DHCP 成功：");
 	DI_Console().WriteLine("通过 DHCP 获取到 IP 地址：" + _ip_address.ToString());
-	DI_Console().WriteLine("通过DHCP获取到子网掩码：" + _netmask.ToString());
+	DI_Console().WriteLine("通过 DHCP 获取到子网掩码：" + _netmask.ToString());
 	DI_Console().WriteLine("通过 DHCP 获取到的默认网关：" + _gateway.ToString());
 	return true;
 }
