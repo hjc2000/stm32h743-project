@@ -1,4 +1,5 @@
 #include "NetifWrapper.h"
+#include <base/container/List.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <lwip/dhcp.h>
@@ -29,6 +30,42 @@ void lwip::NetifWrapper::InitializationCallbackFunc()
 	 * is available...)
 	 */
 	_wrapped_obj->output = etharp_output;
+
+	_wrapped_obj->linkoutput = [](netif *net_interface, pbuf *p) -> err_t
+	{
+		try
+		{
+			reinterpret_cast<NetifWrapper *>(net_interface->state)->SendPbuf(p);
+			return err_enum_t::ERR_OK;
+		}
+		catch (std::exception const &e)
+		{
+			return err_enum_t::ERR_IF;
+		}
+	};
+}
+
+void lwip::NetifWrapper::SendPbuf(pbuf *p)
+{
+	if (_ethernet_port == nullptr)
+	{
+		throw std::runtime_error{"必须先调用 Open 方法传入一个 bsp::IEthernetPort 对象"};
+	}
+
+	pbuf *current_pbuf;
+	base::List<base::ReadOnlySpan> spans{};
+
+	for (current_pbuf = p; current_pbuf != nullptr; current_pbuf = current_pbuf->next)
+	{
+		base::ReadOnlySpan span{
+			reinterpret_cast<uint8_t *>(current_pbuf->payload),
+			current_pbuf->len,
+		};
+
+		spans.Add(span);
+	}
+
+	_ethernet_port->Send(spans);
 }
 
 netif *lwip::NetifWrapper::WrappedObj() const
@@ -48,7 +85,9 @@ void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
 							  base::IPAddress const &gateway,
 							  int32_t mtu)
 {
+	tcpip_init(nullptr, nullptr);
 	_ethernet_port = ethernet_port;
+
 	_cache._mac = mac;
 	_cache._ip_address = ip_address;
 	_cache._netmask = netmask;

@@ -54,6 +54,10 @@ namespace lwip
 
 		void InitializationCallbackFunc();
 
+		/// @brief 使用本网卡发送 pbuf 链表。
+		/// @param p
+		void SendPbuf(pbuf *p);
+
 		/// @brief 获取被包装对象的指针。
 		/// @return
 		netif *WrappedObj() const override;

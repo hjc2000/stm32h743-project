@@ -23,24 +23,6 @@
 #include <stdio.h>
 #include <task.h>
 
-void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
-{
-	pbuf *current_pbuf;
-	base::List<base::ReadOnlySpan> spans{};
-
-	for (current_pbuf = p; current_pbuf != nullptr; current_pbuf = current_pbuf->next)
-	{
-		base::ReadOnlySpan span{
-			reinterpret_cast<uint8_t *>(current_pbuf->payload),
-			current_pbuf->len,
-		};
-
-		spans.Add(span);
-	}
-
-	_ethernet_port->Send(spans);
-}
-
 #pragma region 线程函数
 
 void bsp::LwipEthernetInterface::InputThreadFunc()
@@ -149,8 +131,6 @@ bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 
 void bsp::LwipEthernetInterface::Open()
 {
-	tcpip_init(nullptr, nullptr);
-
 	_netif_wrapper.Open(_ethernet_port,
 						_mac,
 						_ip_address,
@@ -159,19 +139,6 @@ void bsp::LwipEthernetInterface::Open()
 						ETH_MAX_PAYLOAD);
 
 	_netif_wrapper.SetAsDefaultNetInterface();
-
-	_netif_wrapper->linkoutput = [](netif *net_interface, pbuf *p) -> err_t
-	{
-		try
-		{
-			bsp::LwipEthernetInterface::Instance().SendPbuf(p);
-			return err_enum_t::ERR_OK;
-		}
-		catch (std::exception const &e)
-		{
-			return err_enum_t::ERR_IF;
-		}
-	};
 
 	// 链接状态更新
 	DI_TaskManager().Create(

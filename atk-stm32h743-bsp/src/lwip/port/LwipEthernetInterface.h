@@ -17,10 +17,6 @@ namespace bsp
 
 		bsp::IEthernetPort *_ethernet_port = &DI_EthernetPort();
 
-		/// @brief 使用本网卡发送 pbuf 链表。
-		/// @param p
-		void SendPbuf(pbuf *p);
-
 #pragma region 线程函数
 		/// @brief 负责将网口接收到的数据送给 lwip.
 		void InputThreadFunc();
