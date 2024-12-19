@@ -50,8 +50,16 @@ void lwip::NetifWrapper::Open(base::Mac const &mac,
 
 	auto initialization_callback = [](netif *p) -> err_t
 	{
-		reinterpret_cast<NetifWrapper *>(p->state)->InitializationCallbackFunc();
-		return err_enum_t::ERR_OK;
+		try
+		{
+			reinterpret_cast<NetifWrapper *>(p->state)->InitializationCallbackFunc();
+			return err_enum_t::ERR_OK;
+		}
+		catch (std::exception const &e)
+		{
+			DI_Console().WriteLine(e.what());
+			return err_enum_t::ERR_IF;
+		}
 	};
 
 	/* netif_add 函数的 state 参数是 lwip 用来让用户传递私有数据的，会被放到 netif 的 state 字段中，
