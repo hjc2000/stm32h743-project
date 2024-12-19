@@ -13,6 +13,7 @@ lwip::NetifWrapper::NetifWrapper()
 
 	// 设置 MAC 地址长度，为 6 个字节
 	_wrapped_obj->hwaddr_len = ETHARP_HWADDR_LEN;
+	_wrapped_obj->state = this;
 }
 
 void lwip::NetifWrapper::Open(base::Mac const &mac,
@@ -33,12 +34,15 @@ void lwip::NetifWrapper::Open(base::Mac const &mac,
 	/* 将 _wrapped_obj 添加到 lwip 的链表。这个函数内部没有根据 _wrapped_obj 填写的做什么
 	 * 初始化，所以完全可以在调用这个函数之后更改 _wrapped_obj 的字段，进行一些自定义的初始化。
 	 * 所以没有必要依靠这个函数安排的回调函数进行初始化。
+	 *
+	 * netif_add 函数的 state 参数是 lwip 用来让用户传递私有数据的，会被放到 netif 的 state 字段中，
+	 * 这里传递了 this，这样就将 netif 和本类对象绑定了，只要拿到了 netif 指针，就能拿到本类对象的指针。
 	 */
 	netif *netif_add_result = netif_add(_wrapped_obj.get(),
 										&ip_addr_t_ip_address,
 										&ip_addr_t_netmask,
 										&ip_addr_t_gataway,
-										nullptr,
+										this,
 										initialization_callback,
 										tcpip_input);
 
