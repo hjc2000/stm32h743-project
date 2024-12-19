@@ -146,6 +146,18 @@ void lwip::NetifWrapper::SetAllAddress(base::IPAddress const &ip_address,
 				   &_wrapped_obj->gw);
 }
 
+void lwip::NetifWrapper::ClearAllAddress()
+{
+	_wrapped_obj->ip_addr = ip_addr_t{};
+	_wrapped_obj->netmask = ip_addr_t{};
+	_wrapped_obj->gw = ip_addr_t{};
+
+	netif_set_addr(_wrapped_obj.get(),
+				   &_wrapped_obj->ip_addr,
+				   &_wrapped_obj->netmask,
+				   &_wrapped_obj->gw);
+}
+
 void lwip::NetifWrapper::StartDHCP()
 {
 	dhcp_start(_wrapped_obj.get());

@@ -43,12 +43,8 @@ void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
 
 bool bsp::LwipEthernetInterface::TryDHCP()
 {
-	/* 对IP地址、网关地址及子网页码清零操作 */
-	_netif_wrapper->ip_addr = ip_addr_t{};
-	_netif_wrapper->netmask = ip_addr_t{};
-	_netif_wrapper->gw = ip_addr_t{};
-
 	DI_Console().WriteLine("开始进行 DHCP.");
+	_netif_wrapper.ClearAllAddress();
 	_netif_wrapper.StartDHCP();
 
 	bool dhcp_result = false;

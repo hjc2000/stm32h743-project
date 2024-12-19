@@ -51,6 +51,8 @@ namespace lwip
 						   base::IPAddress const &netmask,
 						   base::IPAddress const &gateway);
 
+		void ClearAllAddress();
+
 		/// @brief 启动 DHCP.
 		void StartDHCP();
 
