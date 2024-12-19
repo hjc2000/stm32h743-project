@@ -6,11 +6,12 @@
 
 namespace lwip
 {
+	/// @brief lwip 的 netif 的包装器。
 	class NetifWrapper :
 		public base::Wrapper<netif>
 	{
 	private:
-		std::unique_ptr<netif> _net_interface{new netif{}};
+		std::unique_ptr<netif> _wrapped_obj{new netif{}};
 
 	public:
 		/// @brief 获取被包装对象的指针。
@@ -19,5 +20,10 @@ namespace lwip
 
 		base::IPAddress IPAddress() const;
 		void SetIPAddress(base::IPAddress const &ip_address);
+
+		void StartDHCP();
+		void StopDHCP();
+
+		void SetAsDefaultNetInterface();
 	};
 } // namespace lwip

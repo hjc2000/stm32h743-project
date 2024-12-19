@@ -63,8 +63,7 @@ void bsp::LwipEthernetInterface::AddDefaultNetInterface()
 		throw std::runtime_error{"添加网卡失败。"};
 	}
 
-	// 因为本函数是 “添加默认网卡” ，所以添加网卡成功后要将网卡设置为默认网卡。
-	netif_set_default(_netif_wrapper);
+	_netif_wrapper.SetAsDefaultNetInterface();
 }
 
 void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
@@ -148,7 +147,7 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 	_netif_wrapper->gw = ip_addr_t{};
 
 	DI_Console().WriteLine("开始进行 DHCP.");
-	dhcp_start(_netif_wrapper);
+	_netif_wrapper.StartDHCP();
 
 	bool dhcp_result = false;
 	for (int i = 0; i < 50; i++)
@@ -308,7 +307,7 @@ void bsp::LwipEthernetInterface::LinkStateDetectingThreadFunc()
 		}
 		else
 		{
-			dhcp_stop(_netif_wrapper);
+			_netif_wrapper.StopDHCP();
 
 			/* LWIP_DHCP */
 			DI_Console().WriteLine("检测到网线断开。");
