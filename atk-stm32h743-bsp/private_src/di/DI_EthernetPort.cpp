@@ -6,6 +6,6 @@
 /// @return
 bsp::IEthernetPort &DI_EthernetPort()
 {
-	return bsp::AtkApolloV1EthernetPort::Instance();
-	// return bsp::AtkApolloV2EthernetPort::Instance();
+	// return bsp::AtkApolloV1EthernetPort::Instance();
+	return bsp::AtkApolloV2EthernetPort::Instance();
 }
