@@ -1151,8 +1151,8 @@ err_t netif_loop_output(struct netif *netif, struct pbuf *p)
 #if LWIP_LOOPBACK_MAX_PBUFS
 	u16_t clen = 0;
 #endif /* LWIP_LOOPBACK_MAX_PBUFS */
-	   /* If we have a loopif, SNMP counters are adjusted for it,
-		* if not they are adjusted for 'netif'. */
+	/* If we have a loopif, SNMP counters are adjusted for it,
+	 * if not they are adjusted for 'netif'. */
 #if MIB2_STATS
 #if LWIP_HAVE_LOOPIF
 	struct netif *stats_if = &loop_netif;

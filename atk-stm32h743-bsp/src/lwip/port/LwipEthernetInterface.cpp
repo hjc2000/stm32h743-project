@@ -195,13 +195,8 @@ void bsp::LwipEthernetInterface::Open()
 {
 	_ethernet_port->Open(_mac);
 	tcpip_init(nullptr, nullptr);
-	_netif_wrapper.Open(_ip_address, _netmask, _gateway, ETH_MAX_PAYLOAD);
+	_netif_wrapper.Open(_mac, _ip_address, _netmask, _gateway, ETH_MAX_PAYLOAD);
 	_netif_wrapper.SetAsDefaultNetInterface();
-
-	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
-	base::Span netif_mac_buff_span{_netif_wrapper->hwaddr, 6};
-	netif_mac_buff_span.CopyFrom(_mac.AsReadOnlySpan());
-	netif_mac_buff_span.Reverse();
 
 	_netif_wrapper->linkoutput = [](netif *net_interface, pbuf *p) -> err_t
 	{

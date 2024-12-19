@@ -15,7 +15,8 @@ lwip::NetifWrapper::NetifWrapper()
 	_wrapped_obj->hwaddr_len = ETHARP_HWADDR_LEN;
 }
 
-void lwip::NetifWrapper::Open(base::IPAddress const &ip_address,
+void lwip::NetifWrapper::Open(base::Mac const &mac,
+							  base::IPAddress const &ip_address,
 							  base::IPAddress const &netmask,
 							  base::IPAddress const &gateway,
 							  int32_t mtu)
@@ -29,6 +30,10 @@ void lwip::NetifWrapper::Open(base::IPAddress const &ip_address,
 		return err_enum_t::ERR_OK;
 	};
 
+	/* 将 _wrapped_obj 添加到 lwip 的链表。这个函数内部没有根据 _wrapped_obj 填写的做什么
+	 * 初始化，所以完全可以在调用这个函数之后更改 _wrapped_obj 的字段，进行一些自定义的初始化。
+	 * 所以没有必要依靠这个函数安排的回调函数进行初始化。
+	 */
 	netif *netif_add_result = netif_add(_wrapped_obj.get(),
 										&ip_addr_t_ip_address,
 										&ip_addr_t_netmask,
@@ -43,6 +48,7 @@ void lwip::NetifWrapper::Open(base::IPAddress const &ip_address,
 		throw std::runtime_error{"添加网卡失败。"};
 	}
 
+	SetMac(mac);
 	_wrapped_obj->mtu = mtu;
 
 	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播
@@ -61,6 +67,24 @@ void lwip::NetifWrapper::Open(base::IPAddress const &ip_address,
 netif *lwip::NetifWrapper::WrappedObj() const
 {
 	return _wrapped_obj.get();
+}
+
+base::Mac lwip::NetifWrapper::Mac() const
+{
+	return base::Mac{
+		std::endian::big,
+		base::ReadOnlySpan{
+			_wrapped_obj->hwaddr,
+			sizeof(_wrapped_obj->hwaddr),
+		},
+	};
+}
+
+void lwip::NetifWrapper::SetMac(base::Mac const &o)
+{
+	base::Span netif_mac_buff_span{_wrapped_obj->hwaddr, 6};
+	netif_mac_buff_span.CopyFrom(o.AsReadOnlySpan());
+	netif_mac_buff_span.Reverse();
 }
 
 base::IPAddress lwip::NetifWrapper::IPAddress() const

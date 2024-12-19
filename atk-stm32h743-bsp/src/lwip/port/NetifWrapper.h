@@ -15,23 +15,11 @@ namespace lwip
 	private:
 		std::unique_ptr<netif> _wrapped_obj{new netif{}};
 
-		/// @brief 本网卡所使用的 MAC 地址。
-		base::Mac _mac{
-			std::endian::big,
-			base::Array<uint8_t, 6>{
-				0xB8,
-				0xAE,
-				0x1D,
-				0x00,
-				0x04,
-				0x00,
-			},
-		};
-
 	public:
 		NetifWrapper();
 
-		void Open(base::IPAddress const &ip_address,
+		void Open(base::Mac const &mac,
+				  base::IPAddress const &ip_address,
 				  base::IPAddress const &netmask,
 				  base::IPAddress const &gateway,
 				  int32_t mtu);
@@ -39,6 +27,9 @@ namespace lwip
 		/// @brief 获取被包装对象的指针。
 		/// @return
 		netif *WrappedObj() const override;
+
+		base::Mac Mac() const;
+		void SetMac(base::Mac const &o);
 
 		base::IPAddress IPAddress() const;
 		void SetIPAddress(base::IPAddress const &value);
