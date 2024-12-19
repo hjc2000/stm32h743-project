@@ -28,11 +28,12 @@ namespace lwip
 			},
 		};
 
-		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
-		void InitializingNetifCallbackFunc();
-
 	public:
 		NetifWrapper();
+
+		void Open(base::IPAddress const &ip_address,
+				  base::IPAddress const &netmask,
+				  base::IPAddress const &gateway);
 
 		/// @brief 获取被包装对象的指针。
 		/// @return

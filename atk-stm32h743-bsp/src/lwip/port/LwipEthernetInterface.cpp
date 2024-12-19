@@ -195,35 +195,7 @@ void bsp::LwipEthernetInterface::Open()
 {
 	_ethernet_port->Open(_mac);
 	tcpip_init(nullptr, nullptr);
-
-#if !LWIP_DHCP
-	_dhcpstatus = 0XFF;
-#endif
-
-	auto initialization_callback = [](netif *p) -> err_t
-	{
-		return err_enum_t::ERR_OK;
-	};
-
-	{
-		ip_addr_t ip_address = base::Convert<ip_addr_t, base::IPAddress>(_ip_address);
-		ip_addr_t netmask = base::Convert<ip_addr_t, base::IPAddress>(_netmask);
-		ip_addr_t gataway = base::Convert<ip_addr_t, base::IPAddress>(_gateway);
-		netif *netif_add_result = netif_add(_netif_wrapper,
-											&ip_address,
-											&netmask,
-											&gataway,
-											nullptr,
-											initialization_callback,
-											tcpip_input);
-
-		if (netif_add_result == nullptr)
-		{
-			DI_Console().WriteLine("添加网卡失败。");
-			throw std::runtime_error{"添加网卡失败。"};
-		}
-	}
-
+	_netif_wrapper.Open(_ip_address, _netmask, _gateway);
 	_netif_wrapper.SetAsDefaultNetInterface();
 
 	/* 设置MAC地址长度,为6个字节 */
