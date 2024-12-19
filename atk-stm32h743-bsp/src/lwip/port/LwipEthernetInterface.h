@@ -5,6 +5,7 @@
 #include <bsp-interface/di/ethernet.h>
 #include <lwip/err.h>
 #include <lwip/netif.h>
+#include <NetifWrapper.h>
 
 namespace bsp
 {
@@ -36,11 +37,13 @@ namespace bsp
 		void LinkStateDetectingThreadFunc();
 #pragma endregion
 
-		/// @brief 网卡。
-		netif _lwip_netif{};
+		lwip::NetifWrapper _netif_wrapper;
 
 		/// @brief 本机IP地址
-		uint8_t _ip_address[4] = {};
+		base::IPAddress _ip_address{
+			std::endian::big,
+			base::Array<uint8_t, 4>{192, 168, 1, 30},
+		};
 
 		/// @brief 子网掩码
 		uint8_t _netmask[4] = {};

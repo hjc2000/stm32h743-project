@@ -24,12 +24,6 @@
 
 bsp::LwipEthernetInterface::LwipEthernetInterface()
 {
-	/* 默认本地IP为:192.168.1.30 */
-	_ip_address[0] = 192;
-	_ip_address[1] = 168;
-	_ip_address[2] = 1;
-	_ip_address[3] = 30;
-
 	/* 默认子网掩码:255.255.255.0 */
 	_netmask[0] = 255;
 	_netmask[1] = 255;
@@ -51,8 +45,12 @@ void bsp::LwipEthernetInterface::AddDefaultNetInterface()
 		return err_enum_t::ERR_OK;
 	};
 
-	netif *netif_add_result = netif_add(&_lwip_netif,
-										reinterpret_cast<ip_addr_t const *>(&_ip_address),
+	base::Array<uint8_t, sizeof(_netif_wrapper->ip_addr.addr)> ip_address_buffer;
+	base::Span ip_address_buffer_span{ip_address_buffer.Buffer(), ip_address_buffer.Count()};
+	ip_address_buffer_span.CopyFrom(_ip_address.AsReadOnlySpan());
+	ip_address_buffer_span.Reverse();
+	netif *netif_add_result = netif_add(_netif_wrapper,
+										reinterpret_cast<ip_addr_t const *>(ip_address_buffer_span.Buffer()),
 										reinterpret_cast<ip_addr_t const *>(&_netmask),
 										reinterpret_cast<ip_addr_t const *>(&_gateway),
 										nullptr,
@@ -66,25 +64,25 @@ void bsp::LwipEthernetInterface::AddDefaultNetInterface()
 	}
 
 	// 因为本函数是 “添加默认网卡” ，所以添加网卡成功后要将网卡设置为默认网卡。
-	netif_set_default(&_lwip_netif);
+	netif_set_default(_netif_wrapper);
 }
 
 void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 {
 #if LWIP_NETIF_HOSTNAME
-	_lwip_netif.hostname = "lwip";
+	_netif_wrapper->hostname = "lwip";
 #endif
 
-	_lwip_netif.name[0] = 'p';
-	_lwip_netif.name[1] = 'n';
+	_netif_wrapper->name[0] = 'p';
+	_netif_wrapper->name[1] = 'n';
 
 	/* We directly use etharp_output() here to save a function call.
 	 * You can instead declare your own function an call etharp_output()
 	 * from it if you have to do some checks before sending (e.g. if link
 	 * is available...) */
-	_lwip_netif.output = etharp_output;
+	_netif_wrapper->output = etharp_output;
 
-	_lwip_netif.linkoutput = [](netif *net_interface, pbuf *p) -> err_t
+	_netif_wrapper->linkoutput = [](netif *net_interface, pbuf *p) -> err_t
 	{
 		try
 		{
@@ -105,23 +103,23 @@ void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 	{
 		DI_Console().WriteLine(e.what());
 		DI_Console().WriteLine("打开网口失败");
-		netif_set_link_down(&_lwip_netif);
-		netif_set_down(&_lwip_netif);
+		netif_set_link_down(_netif_wrapper);
+		netif_set_down(_netif_wrapper);
 	}
 
 	/* 设置MAC地址长度,为6个字节 */
-	_lwip_netif.hwaddr_len = ETHARP_HWADDR_LEN;
+	_netif_wrapper->hwaddr_len = ETHARP_HWADDR_LEN;
 
 	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
-	base::Span netif_mac_buff_span{_lwip_netif.hwaddr, 6};
+	base::Span netif_mac_buff_span{_netif_wrapper->hwaddr, 6};
 	netif_mac_buff_span.CopyFrom(_mac.AsReadOnlySpan());
 	netif_mac_buff_span.Reverse();
 
-	_lwip_netif.mtu = ETH_MAX_PAYLOAD;
+	_netif_wrapper->mtu = ETH_MAX_PAYLOAD;
 
 	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
 	/* 使能、 ARP 使能等等重要控制位 */
-	_lwip_netif.flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+	_netif_wrapper->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
 }
 
 void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
@@ -145,18 +143,18 @@ void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
 bool bsp::LwipEthernetInterface::TryDHCP()
 {
 	/* 对IP地址、网关地址及子网页码清零操作 */
-	_lwip_netif.ip_addr = ip_addr_t{};
-	_lwip_netif.netmask = ip_addr_t{};
-	_lwip_netif.gw = ip_addr_t{};
+	_netif_wrapper->ip_addr = ip_addr_t{};
+	_netif_wrapper->netmask = ip_addr_t{};
+	_netif_wrapper->gw = ip_addr_t{};
 
 	DI_Console().WriteLine("开始进行 DHCP.");
-	dhcp_start(&_lwip_netif);
+	dhcp_start(_netif_wrapper);
 
 	bool dhcp_result = false;
 	for (int i = 0; i < 50; i++)
 	{
 		// 如果失败，最多重试 100 次。
-		dhcp_result = dhcp_supplied_address(&_lwip_netif);
+		dhcp_result = dhcp_supplied_address(_netif_wrapper);
 		if (dhcp_result)
 		{
 			break;
@@ -168,34 +166,30 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 	if (!dhcp_result)
 	{
 		/* 使用静态IP地址 */
-		IP4_ADDR(&(_lwip_netif.ip_addr),
-				 _ip_address[0],
-				 _ip_address[1],
-				 _ip_address[2],
-				 _ip_address[3]);
+		_netif_wrapper.SetIPAddress(_ip_address);
 
-		IP4_ADDR(&(_lwip_netif.netmask),
+		IP4_ADDR(&(_netif_wrapper->netmask),
 				 _netmask[0],
 				 _netmask[1],
 				 _netmask[2],
 				 _netmask[3]);
 
-		IP4_ADDR(&(_lwip_netif.gw),
+		IP4_ADDR(&(_netif_wrapper->gw),
 				 _gateway[0],
 				 _gateway[1],
 				 _gateway[2],
 				 _gateway[3]);
 
-		netif_set_addr(&_lwip_netif,
-					   &_lwip_netif.ip_addr,
-					   &_lwip_netif.netmask,
-					   &_lwip_netif.gw);
+		netif_set_addr(_netif_wrapper,
+					   &_netif_wrapper->ip_addr,
+					   &_netif_wrapper->netmask,
+					   &_netif_wrapper->gw);
 
 		DI_Console().WriteLine("DHCP 超时。");
 
 		char ip_address_string_buffer[20] = {};
 
-		ip4addr_ntoa_r(netif_ip4_addr(&_lwip_netif),
+		ip4addr_ntoa_r(netif_ip4_addr(_netif_wrapper),
 					   ip_address_string_buffer,
 					   sizeof(ip_address_string_buffer));
 
@@ -205,21 +199,19 @@ bool bsp::LwipEthernetInterface::TryDHCP()
 	}
 
 	DI_Console().WriteLine("DHCP 成功。");
-	uint32_t ip = _lwip_netif.ip_addr.addr;      /* 读取新IP地址 */
-	uint32_t netmask = _lwip_netif.netmask.addr; /* 读取子网掩码 */
-	uint32_t gw = _lwip_netif.gw.addr;           /* 读取默认网关 */
+	uint32_t netmask = _netif_wrapper->netmask.addr; /* 读取子网掩码 */
+	uint32_t gw = _netif_wrapper->gw.addr;           /* 读取默认网关 */
 
 	// 解析出通过DHCP获取到的IP地址
-	_ip_address[3] = (uint8_t)(ip >> 24);
-	_ip_address[2] = (uint8_t)(ip >> 16);
-	_ip_address[1] = (uint8_t)(ip >> 8);
-	_ip_address[0] = (uint8_t)(ip);
+	_ip_address = base::IPAddress{
+		std::endian::big,
+		base::ReadOnlySpan{
+			reinterpret_cast<uint8_t const *>(&_netif_wrapper->ip_addr.addr),
+			sizeof(_netif_wrapper->ip_addr.addr),
+		},
+	};
 
-	DI_Console().WriteLine("通过 DHCP 获取到 IP 地址：" +
-						   std::to_string(_ip_address[0]) + '.' +
-						   std::to_string(_ip_address[1]) + '.' +
-						   std::to_string(_ip_address[2]) + '.' +
-						   std::to_string(_ip_address[3]));
+	DI_Console().WriteLine("通过 DHCP 获取到 IP 地址：" + _ip_address.ToString());
 
 	// 解析通过DHCP获取到的子网掩码地址
 	_netmask[3] = (uint8_t)(netmask >> 24);
@@ -287,7 +279,7 @@ void bsp::LwipEthernetInterface::InputThreadFunc()
 		}
 
 		// 串成链表后一次性输入。
-		if (_lwip_netif.input(head_pbuf, &_lwip_netif) != err_enum_t::ERR_OK)
+		if (_netif_wrapper->input(head_pbuf, _netif_wrapper) != err_enum_t::ERR_OK)
 		{
 			pbuf_free(head_pbuf);
 		}
@@ -299,7 +291,7 @@ void bsp::LwipEthernetInterface::LinkStateDetectingThreadFunc()
 	while (true)
 	{
 		bool is_linked = _ethernet_port->IsLinked();
-		if (is_linked == netif_is_up(&_lwip_netif))
+		if (is_linked == netif_is_up(_netif_wrapper))
 		{
 			DI_Delayer().Delay(std::chrono::milliseconds{100});
 			continue;
@@ -310,18 +302,18 @@ void bsp::LwipEthernetInterface::LinkStateDetectingThreadFunc()
 			// 开启以太网及虚拟网卡
 			DI_Console().WriteLine("检测到网线插入");
 			_ethernet_port->Restart();
-			netif_set_up(&_lwip_netif);
-			netif_set_link_up(&_lwip_netif);
+			netif_set_up(_netif_wrapper);
+			netif_set_link_up(_netif_wrapper);
 			TryDHCP();
 		}
 		else
 		{
-			dhcp_stop(&_lwip_netif);
+			dhcp_stop(_netif_wrapper);
 
 			/* LWIP_DHCP */
 			DI_Console().WriteLine("检测到网线断开。");
-			netif_set_down(&_lwip_netif);
-			netif_set_link_down(&_lwip_netif);
+			netif_set_down(_netif_wrapper);
+			netif_set_link_down(_netif_wrapper);
 		}
 	}
 }
