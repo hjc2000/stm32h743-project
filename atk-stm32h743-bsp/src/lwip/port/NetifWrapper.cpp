@@ -1,6 +1,18 @@
 #include "NetifWrapper.h"
 #include <lwip/dhcp.h>
+#include <lwip/etharp.h>
 #include <lwip_convert.h>
+
+void lwip::NetifWrapper::InitializingNetifCallbackFunc()
+{
+}
+
+lwip::NetifWrapper::NetifWrapper()
+{
+	_wrapped_obj->hostname = "lwip";
+	_wrapped_obj->name[0] = 'p';
+	_wrapped_obj->name[1] = 'n';
+}
 
 netif *lwip::NetifWrapper::WrappedObj() const
 {

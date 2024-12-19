@@ -17,12 +17,6 @@ namespace bsp
 
 		bsp::IEthernetPort *_ethernet_port = &DI_EthernetPort();
 
-		/// @brief 向 lwip 添加默认网卡。
-		void AddDefaultNetInterface();
-
-		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
-		void InitializingNetifCallbackFunc();
-
 		/// @brief 使用本网卡发送 pbuf 链表。
 		/// @param p
 		void SendPbuf(pbuf *p);

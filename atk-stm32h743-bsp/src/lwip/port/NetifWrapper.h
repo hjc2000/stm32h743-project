@@ -1,6 +1,7 @@
 #pragma once
 #include <base/Convert.h>
 #include <base/net/IPAddress.h>
+#include <base/net/Mac.h>
 #include <base/Wrapper.h>
 #include <lwip/netif.h>
 #include <memory>
@@ -14,7 +15,25 @@ namespace lwip
 	private:
 		std::unique_ptr<netif> _wrapped_obj{new netif{}};
 
+		/// @brief 本网卡所使用的 MAC 地址。
+		base::Mac _mac{
+			std::endian::big,
+			base::Array<uint8_t, 6>{
+				0xB8,
+				0xAE,
+				0x1D,
+				0x00,
+				0x04,
+				0x00,
+			},
+		};
+
+		/// @brief 初始化网卡的函数，被 netif_add 函数回调。
+		void InitializingNetifCallbackFunc();
+
 	public:
+		NetifWrapper();
+
 		/// @brief 获取被包装对象的指针。
 		/// @return
 		netif *WrappedObj() const override;

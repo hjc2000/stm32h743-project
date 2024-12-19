@@ -23,79 +23,6 @@
 #include <stdio.h>
 #include <task.h>
 
-void bsp::LwipEthernetInterface::AddDefaultNetInterface()
-{
-	auto initialization_callback = [](netif *p) -> err_t
-	{
-		bsp::LwipEthernetInterface::Instance().InitializingNetifCallbackFunc();
-		return err_enum_t::ERR_OK;
-	};
-
-	{
-		ip_addr_t ip_address = base::Convert<ip_addr_t, base::IPAddress>(_ip_address);
-		ip_addr_t netmask = base::Convert<ip_addr_t, base::IPAddress>(_netmask);
-		ip_addr_t gataway = base::Convert<ip_addr_t, base::IPAddress>(_gateway);
-		netif *netif_add_result = netif_add(_netif_wrapper,
-											&ip_address,
-											&netmask,
-											&gataway,
-											nullptr,
-											initialization_callback,
-											tcpip_input);
-
-		if (netif_add_result == nullptr)
-		{
-			DI_Console().WriteLine("添加网卡失败。");
-			throw std::runtime_error{"添加网卡失败。"};
-		}
-	}
-
-	_netif_wrapper.SetAsDefaultNetInterface();
-}
-
-void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
-{
-#if LWIP_NETIF_HOSTNAME
-	_netif_wrapper->hostname = "lwip";
-#endif
-
-	_netif_wrapper->name[0] = 'p';
-	_netif_wrapper->name[1] = 'n';
-
-	/* We directly use etharp_output() here to save a function call.
-	 * You can instead declare your own function an call etharp_output()
-	 * from it if you have to do some checks before sending (e.g. if link
-	 * is available...) */
-	_netif_wrapper->output = etharp_output;
-
-	_netif_wrapper->linkoutput = [](netif *net_interface, pbuf *p) -> err_t
-	{
-		try
-		{
-			bsp::LwipEthernetInterface::Instance().SendPbuf(p);
-			return err_enum_t::ERR_OK;
-		}
-		catch (std::exception const &e)
-		{
-			return err_enum_t::ERR_IF;
-		}
-	};
-
-	/* 设置MAC地址长度,为6个字节 */
-	_netif_wrapper->hwaddr_len = ETHARP_HWADDR_LEN;
-
-	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
-	base::Span netif_mac_buff_span{_netif_wrapper->hwaddr, 6};
-	netif_mac_buff_span.CopyFrom(_mac.AsReadOnlySpan());
-	netif_mac_buff_span.Reverse();
-
-	_netif_wrapper->mtu = ETH_MAX_PAYLOAD;
-
-	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
-	/* 使能、 ARP 使能等等重要控制位 */
-	_netif_wrapper->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
-}
-
 void bsp::LwipEthernetInterface::SendPbuf(pbuf *p)
 {
 	pbuf *current_pbuf;
@@ -273,7 +200,64 @@ void bsp::LwipEthernetInterface::Open()
 	_dhcpstatus = 0XFF;
 #endif
 
-	AddDefaultNetInterface();
+	auto initialization_callback = [](netif *p) -> err_t
+	{
+		return err_enum_t::ERR_OK;
+	};
+
+	{
+		ip_addr_t ip_address = base::Convert<ip_addr_t, base::IPAddress>(_ip_address);
+		ip_addr_t netmask = base::Convert<ip_addr_t, base::IPAddress>(_netmask);
+		ip_addr_t gataway = base::Convert<ip_addr_t, base::IPAddress>(_gateway);
+		netif *netif_add_result = netif_add(_netif_wrapper,
+											&ip_address,
+											&netmask,
+											&gataway,
+											nullptr,
+											initialization_callback,
+											tcpip_input);
+
+		if (netif_add_result == nullptr)
+		{
+			DI_Console().WriteLine("添加网卡失败。");
+			throw std::runtime_error{"添加网卡失败。"};
+		}
+	}
+
+	_netif_wrapper.SetAsDefaultNetInterface();
+
+	/* 设置MAC地址长度,为6个字节 */
+	_netif_wrapper->hwaddr_len = ETHARP_HWADDR_LEN;
+
+	/* 初始化MAC地址,设置什么地址由用户自己设置,但是不能与网络中其他设备MAC地址重复 */
+	base::Span netif_mac_buff_span{_netif_wrapper->hwaddr, 6};
+	netif_mac_buff_span.CopyFrom(_mac.AsReadOnlySpan());
+	netif_mac_buff_span.Reverse();
+
+	_netif_wrapper->mtu = ETH_MAX_PAYLOAD;
+
+	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播 */
+	/* 使能、 ARP 使能等等重要控制位 */
+	_netif_wrapper->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_LINK_UP;
+
+	/* We directly use etharp_output() here to save a function call.
+	 * You can instead declare your own function an call etharp_output()
+	 * from it if you have to do some checks before sending (e.g. if link
+	 * is available...) */
+	_netif_wrapper->output = etharp_output;
+
+	_netif_wrapper->linkoutput = [](netif *net_interface, pbuf *p) -> err_t
+	{
+		try
+		{
+			bsp::LwipEthernetInterface::Instance().SendPbuf(p);
+			return err_enum_t::ERR_OK;
+		}
+		catch (std::exception const &e)
+		{
+			return err_enum_t::ERR_IF;
+		}
+	};
 
 	// 链接状态更新
 	DI_TaskManager().Create(
