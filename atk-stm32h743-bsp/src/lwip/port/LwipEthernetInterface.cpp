@@ -81,18 +81,6 @@ void bsp::LwipEthernetInterface::InitializingNetifCallbackFunc()
 		}
 	};
 
-	try
-	{
-		_ethernet_port->Open(_mac);
-	}
-	catch (std::exception const &e)
-	{
-		DI_Console().WriteLine(e.what());
-		DI_Console().WriteLine("打开网口失败");
-		netif_set_link_down(_netif_wrapper);
-		netif_set_down(_netif_wrapper);
-	}
-
 	/* 设置MAC地址长度,为6个字节 */
 	_netif_wrapper->hwaddr_len = ETHARP_HWADDR_LEN;
 
@@ -278,6 +266,7 @@ bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 
 void bsp::LwipEthernetInterface::Open()
 {
+	_ethernet_port->Open(_mac);
 	tcpip_init(nullptr, nullptr);
 
 #if !LWIP_DHCP
