@@ -9,6 +9,7 @@
 namespace lwip
 {
 	/// @brief lwip 的 netif 的包装器。
+	/// @warning 本类依赖 netif 的 state 字段。使用本类后，禁止修改此字段。
 	class NetifWrapper :
 		public base::Wrapper<netif>
 	{
