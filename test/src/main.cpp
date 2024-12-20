@@ -20,6 +20,7 @@
 #include <bsp/bsp.h>
 #include <bsp/sdram.h>
 #include <ff.h>
+#include <heap_4.h>
 #include <littlefs/LfsFlashPort.h>
 #include <memory>
 #include <stdexcept>
@@ -224,8 +225,18 @@ int main(void)
 				DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
 				SDRAM_Init();
 
-				TestFatFs();
-				freertos_demo();
+				// freertos::FreertosHeap4 heap4{
+				// 	reinterpret_cast<uint8_t *>(0xC0000000),
+				// 	32 * 1024 * 1024,
+				// };
+
+				// void *mem = heap4.Malloc(1024);
+				int a = 5;
+				DI_Console().WriteLine(&a);
+				std::cout << &a << std::endl;
+
+				// TestFatFs();
+				// freertos_demo();
 				// p_net_sample_app_main();
 				// TestLittleFs();
 
