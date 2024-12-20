@@ -53,12 +53,11 @@ error:
 	return -1;
 }
 
-int pnal_udp_sendto(
-	uint32_t id,
-	pnal_ipaddr_t dst_addr,
-	pnal_ipport_t dst_port,
-	uint8_t const *data,
-	int size)
+int pnal_udp_sendto(uint32_t id,
+					pnal_ipaddr_t dst_addr,
+					pnal_ipport_t dst_port,
+					uint8_t const *data,
+					int size)
 {
 	struct sockaddr_in remote;
 	int len;
@@ -66,31 +65,28 @@ int pnal_udp_sendto(
 	remote.sin_family = AF_INET;
 	remote.sin_addr.s_addr = htonl(dst_addr);
 	remote.sin_port = htons(dst_port);
-
 	len = sendto(id, data, size, 0, (struct sockaddr *)&remote, sizeof(remote));
-
 	return len;
 }
 
-int pnal_udp_recvfrom(
-	uint32_t id,
-	pnal_ipaddr_t *src_addr,
-	pnal_ipport_t *src_port,
-	uint8_t *data,
-	int size)
+int pnal_udp_recvfrom(uint32_t id,
+					  pnal_ipaddr_t *src_addr,
+					  pnal_ipport_t *src_port,
+					  uint8_t *data,
+					  int size)
 {
 	struct sockaddr_in remote;
 	socklen_t addr_len = sizeof(remote);
 	int len;
 
 	memset(&remote, 0, sizeof(remote));
-	len = recvfrom(
-		id,
-		data,
-		size,
-		MSG_DONTWAIT,
-		(struct sockaddr *)&remote,
-		&addr_len);
+
+	len = recvfrom(id,
+				   data,
+				   size,
+				   MSG_DONTWAIT,
+				   (struct sockaddr *)&remote,
+				   &addr_len);
 
 	if (len > 0)
 	{

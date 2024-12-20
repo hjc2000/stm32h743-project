@@ -18,6 +18,7 @@ namespace lwip
 		std::unique_ptr<netif> _wrapped_obj{new netif{}};
 		bsp::IEthernetPort *_ethernet_port = nullptr;
 
+		/// @brief 缓存数据。
 		struct
 		{
 			/// @brief 本机IP地址

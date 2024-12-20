@@ -120,9 +120,7 @@ static err_t pnal_eth_sys_recv(struct pbuf *p_buf, struct netif *netif)
 	}
 }
 
-err_enum_t lwip_hook_unknown_eth_protocol(
-	struct pbuf *pbuf,
-	struct netif *netif)
+int lwip_hook_unknown_eth_protocol(struct pbuf *pbuf, struct netif *netif)
 {
 	return static_cast<err_enum_t>(pnal_eth_sys_recv(pbuf, netif));
 }
