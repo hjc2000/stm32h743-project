@@ -257,30 +257,28 @@ static int app_ccontrol_cnf(pnet_t *net,
 							uint32_t arep,
 							pnet_result_t *p_result)
 {
-	APP_LOG_DEBUG(
-		"PLC ccontrol message confirmation (The PLC has received our Application "
-		"Ready message). AREP: %u  Status codes: %d %d %d %d\n",
-		arep,
-		p_result->pnio_status.error_code,
-		p_result->pnio_status.error_decode,
-		p_result->pnio_status.error_code_1,
-		p_result->pnio_status.error_code_2);
+	APP_LOG_DEBUG("PLC ccontrol message confirmation (The PLC has received our Application "
+				  "Ready message). AREP: %u  Status codes: %d %d %d %d\n",
+				  arep,
+				  p_result->pnio_status.error_code,
+				  p_result->pnio_status.error_decode,
+				  p_result->pnio_status.error_code_1,
+				  p_result->pnio_status.error_code_2);
 
 	return 0;
 }
 
-static int app_write_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	uint32_t api,
-	uint16_t slot_nbr,
-	uint16_t subslot_nbr,
-	uint16_t idx,
-	uint16_t sequence_number,
-	uint16_t write_length,
-	uint8_t const *p_write_data,
-	pnet_result_t *p_result)
+static int app_write_ind(pnet_t *net,
+						 void *arg,
+						 uint32_t arep,
+						 uint32_t api,
+						 uint16_t slot_nbr,
+						 uint16_t subslot_nbr,
+						 uint16_t idx,
+						 uint16_t sequence_number,
+						 uint16_t write_length,
+						 uint8_t const *p_write_data,
+						 pnet_result_t *p_result)
 {
 	int result = 0;
 	app_data_t *app = (app_data_t *)arg;
@@ -315,24 +313,22 @@ static int app_write_ind(
 		return -1;
 	}
 
-	result = app_data_write_parameter(
-		slot_nbr,
-		subslot_nbr,
-		subslot->submodule_id,
-		idx,
-		p_write_data,
-		write_length);
+	result = app_data_write_parameter(slot_nbr,
+									  subslot_nbr,
+									  subslot->submodule_id,
+									  idx,
+									  p_write_data,
+									  write_length);
 
 	if (result != 0)
 	{
-		APP_LOG_WARNING(
-			"Failed to write index for AREP: %u API: %u Slot: %2u Subslot: %u "
-			"index %u.\n",
-			arep,
-			api,
-			slot_nbr,
-			subslot_nbr,
-			idx);
+		APP_LOG_WARNING("Failed to write index for AREP: %u API: %u Slot: %2u Subslot: %u "
+						"index %u.\n",
+						arep,
+						api,
+						slot_nbr,
+						subslot_nbr,
+						idx);
 
 		p_result->pnio_status.error_code = PNET_ERROR_CODE_WRITE;
 		p_result->pnio_status.error_decode = PNET_ERROR_DECODE_PNIORW;
@@ -360,28 +356,26 @@ static int app_read_ind(
 	app_data_t *app = (app_data_t *)arg;
 	app_subslot_t *subslot;
 
-	APP_LOG_DEBUG(
-		"PLC read record indication.\n"
-		"  AREP: %u API: %u Slot: %2u Subslot: %u Index: %u Sequence: %2u Max "
-		"length: %u\n",
-		arep,
-		api,
-		slot_nbr,
-		subslot_nbr,
-		(unsigned)idx,
-		sequence_number,
-		(unsigned)*p_read_length);
+	APP_LOG_DEBUG("PLC read record indication.\n"
+				  "  AREP: %u API: %u Slot: %2u Subslot: %u Index: %u Sequence: %2u Max "
+				  "length: %u\n",
+				  arep,
+				  api,
+				  slot_nbr,
+				  subslot_nbr,
+				  (unsigned)idx,
+				  sequence_number,
+				  (unsigned)*p_read_length);
 
 	subslot = app_utils_subslot_get(&app->main_api, slot_nbr, subslot_nbr);
 	if (subslot == NULL)
 	{
-		APP_LOG_WARNING(
-			"No submodule plugged in AREP: %u API: %u Slot: %2u Subslot: %u "
-			"Index will not be read.\n",
-			arep,
-			api,
-			slot_nbr,
-			subslot_nbr);
+		APP_LOG_WARNING("No submodule plugged in AREP: %u API: %u Slot: %2u Subslot: %u "
+						"Index will not be read.\n",
+						arep,
+						api,
+						slot_nbr,
+						subslot_nbr);
 
 		p_result->pnio_status.error_code = PNET_ERROR_CODE_READ;
 		p_result->pnio_status.error_decode = PNET_ERROR_DECODE_PNIORW;
@@ -390,24 +384,22 @@ static int app_read_ind(
 		return -1;
 	}
 
-	result = app_data_read_parameter(
-		slot_nbr,
-		subslot_nbr,
-		subslot->submodule_id,
-		idx,
-		pp_read_data,
-		p_read_length);
+	result = app_data_read_parameter(slot_nbr,
+									 subslot_nbr,
+									 subslot->submodule_id,
+									 idx,
+									 pp_read_data,
+									 p_read_length);
 
 	if (result != 0)
 	{
-		APP_LOG_WARNING(
-			"Failed to read index for AREP: %u API: %u Slot: %2u Subslot: %u "
-			"index %u.\n",
-			arep,
-			api,
-			slot_nbr,
-			subslot_nbr,
-			idx);
+		APP_LOG_WARNING("Failed to read index for AREP: %u API: %u Slot: %2u Subslot: %u "
+						"index %u.\n",
+						arep,
+						api,
+						slot_nbr,
+						subslot_nbr,
+						idx);
 
 		p_result->pnio_status.error_code = PNET_ERROR_CODE_READ;
 		p_result->pnio_status.error_decode = PNET_ERROR_DECODE_PNIORW;
@@ -418,11 +410,10 @@ static int app_read_ind(
 	return result;
 }
 
-static int app_state_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	pnet_event_values_t event)
+static int app_state_ind(pnet_t *net,
+						 void *arg,
+						 uint32_t arep,
+						 pnet_event_values_t event)
 {
 	uint16_t err_cls = 0;  /* Error code 1 */
 	uint16_t err_code = 0; /* Error code 2 */
@@ -431,32 +422,31 @@ static int app_state_ind(
 
 	app_data_t *app = (app_data_t *)arg;
 
-	APP_LOG_DEBUG(
-		"Event indication %s   AREP: %u\n",
-		app_utils_event_to_string(event),
-		arep);
+	APP_LOG_DEBUG("Event indication %s   AREP: %u\n",
+				  app_utils_event_to_string(event),
+				  arep);
 
 	if (event == PNET_EVENT_ABORT)
 	{
 		if (pnet_get_ar_error_codes(net, arep, &err_cls, &err_code) == 0)
 		{
-			app_utils_get_error_code_strings(
-				err_cls,
-				err_code,
-				&error_class_description,
-				&error_code_description);
-			APP_LOG_DEBUG(
-				"    Error class: 0x%02x %s \n"
-				"    Error code:  0x%02x %s \n",
-				(unsigned)err_cls,
-				error_class_description,
-				(unsigned)err_code,
-				error_code_description);
+			app_utils_get_error_code_strings(err_cls,
+											 err_code,
+											 &error_class_description,
+											 &error_code_description);
+
+			APP_LOG_DEBUG("    Error class: 0x%02x %s \n"
+						  "    Error code:  0x%02x %s \n",
+						  (unsigned)err_cls,
+						  error_class_description,
+						  (unsigned)err_code,
+						  error_code_description);
 		}
 		else
 		{
 			APP_LOG_DEBUG("    No error status available\n");
 		}
+
 		/* Set output values */
 		app_set_outputs_default_value();
 
@@ -469,9 +459,9 @@ static int app_state_ind(
 		{
 			APP_LOG_WARNING("Warning - AREP out of sync\n");
 		}
+
 		app->main_api.arep = arep;
 		app_set_initial_data_and_ioxs(app);
-
 		(void)pnet_set_provider_state(net, true);
 
 		/* Send application ready at next tick
@@ -488,16 +478,14 @@ static int app_state_ind(
 	return 0;
 }
 
-static int app_reset_ind(
-	pnet_t *net,
-	void *arg,
-	bool should_reset_application,
-	uint16_t reset_mode)
+static int app_reset_ind(pnet_t *net,
+						 void *arg,
+						 bool should_reset_application,
+						 uint16_t reset_mode)
 {
-	APP_LOG_DEBUG(
-		"PLC reset indication. Application reset mandatory: %u  Reset mode: %d\n",
-		should_reset_application,
-		reset_mode);
+	APP_LOG_DEBUG("PLC reset indication. Application reset mandatory: %u  Reset mode: %d\n",
+				  should_reset_application,
+				  reset_mode);
 
 	return 0;
 }
@@ -505,17 +493,15 @@ static int app_reset_ind(
 static int app_signal_led_ind(pnet_t *net, void *arg, bool led_state)
 {
 	APP_LOG_INFO("Profinet signal LED indication. New state: %u\n", led_state);
-
 	app_set_led(APP_PROFINET_SIGNAL_LED_ID, led_state);
 	return 0;
 }
 
-static int app_exp_module_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t api,
-	uint16_t slot,
-	uint32_t module_ident)
+static int app_exp_module_ind(pnet_t *net,
+							  void *arg,
+							  uint32_t api,
+							  uint16_t slot,
+							  uint32_t module_ident)
 {
 	int ret = -1;
 	int result = 0;
@@ -527,10 +513,9 @@ static int app_exp_module_ind(
 
 	if (slot >= PNET_MAX_SLOTS)
 	{
-		APP_LOG_ERROR(
-			"Wrong slot number received: %u  It should be less than %u\n",
-			slot,
-			PNET_MAX_SLOTS);
+		APP_LOG_ERROR("Wrong slot number received: %u  It should be less than %u\n",
+					  slot,
+					  PNET_MAX_SLOTS);
 		return -1;
 	}
 
@@ -550,18 +535,16 @@ static int app_exp_module_ind(
 
 	APP_LOG_DEBUG("  Pull old module.    API: %u Slot: %2u\n", api, slot);
 	result = pnet_pull_module(net, api, slot);
-
 	if (result == 0)
 	{
 		(void)app_utils_pull_module(&app->main_api, slot);
 	}
 
-	APP_LOG_DEBUG(
-		"  Plug module.        API: %u Slot: %2u Module ID: 0x%x \"%s\"\n",
-		api,
-		slot,
-		(unsigned)module_ident,
-		module_name);
+	APP_LOG_DEBUG("  Plug module.        API: %u Slot: %2u Module ID: 0x%x \"%s\"\n",
+				  api,
+				  slot,
+				  (unsigned)module_ident,
+				  module_name);
 
 	ret = pnet_plug_module(net, api, slot, module_ident);
 	if (ret == 0)
@@ -574,26 +557,24 @@ static int app_exp_module_ind(
 	}
 	else
 	{
-		APP_LOG_ERROR(
-			"Plug module failed. Ret: %u API: %u Slot: %2u Module ID: 0x%x\n",
-			ret,
-			api,
-			slot,
-			(unsigned)module_ident);
+		APP_LOG_ERROR("Plug module failed. Ret: %u API: %u Slot: %2u Module ID: 0x%x\n",
+					  ret,
+					  api,
+					  slot,
+					  (unsigned)module_ident);
 	}
 
 	return ret;
 }
 
-static int app_exp_submodule_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t api,
-	uint16_t slot,
-	uint16_t subslot,
-	uint32_t module_id,
-	uint32_t submodule_id,
-	pnet_data_cfg_t const *p_exp_data)
+static int app_exp_submodule_ind(pnet_t *net,
+								 void *arg,
+								 uint32_t api,
+								 uint16_t slot,
+								 uint16_t subslot,
+								 uint32_t module_id,
+								 uint32_t submodule_id,
+								 pnet_data_cfg_t const *p_exp_data)
 {
 	int ret = -1;
 	int result = 0;
@@ -662,11 +643,10 @@ static int app_exp_submodule_ind(
 		(unsigned)submodule_id,
 		name);
 
-	APP_LOG_DEBUG(
-		"                      Data Dir: %s  In: %u bytes  Out: %u bytes\n",
-		app_utils_submod_dir_to_string(data_cfg.data_dir),
-		data_cfg.insize,
-		data_cfg.outsize);
+	APP_LOG_DEBUG("Data Dir: %s  In: %u bytes  Out: %u bytes\n",
+				  app_utils_submod_dir_to_string(data_cfg.data_dir),
+				  data_cfg.insize,
+				  data_cfg.outsize);
 
 	if (
 		data_cfg.data_dir != p_exp_data->data_dir ||
@@ -674,78 +654,74 @@ static int app_exp_submodule_ind(
 		data_cfg.outsize != p_exp_data->outsize)
 	{
 		APP_LOG_WARNING(
-			"    Warning expected  Data Dir: %s  In: %u bytes  Out: %u bytes\n",
+			"Warning expected  Data Dir: %s  In: %u bytes  Out: %u bytes\n",
 			app_utils_submod_dir_to_string(p_exp_data->data_dir),
 			p_exp_data->insize,
 			p_exp_data->outsize);
 	}
-	ret = pnet_plug_submodule(
-		net,
-		api,
-		slot,
-		subslot,
-		module_id,
-		submodule_id,
-		data_cfg.data_dir,
-		data_cfg.insize,
-		data_cfg.outsize);
+
+	ret = pnet_plug_submodule(net,
+							  api,
+							  slot,
+							  subslot,
+							  module_id,
+							  submodule_id,
+							  data_cfg.data_dir,
+							  data_cfg.insize,
+							  data_cfg.outsize);
 
 	if (ret == 0)
 	{
-		(void)app_utils_plug_submodule(
-			&app->main_api,
-			slot,
-			subslot,
-			submodule_id,
-			&data_cfg,
-			name,
-			cyclic_data_callback,
-			app);
+		(void)app_utils_plug_submodule(&app->main_api,
+									   slot,
+									   subslot,
+									   submodule_id,
+									   &data_cfg,
+									   name,
+									   cyclic_data_callback,
+									   app);
 	}
 	else
 	{
-		APP_LOG_ERROR(
-			"  Plug submodule failed. Ret: %u API: %u Slot: %2u Subslot %u "
-			"Module ID: 0x%x Submodule ID: 0x%x \n",
-			ret,
-			api,
-			slot,
-			subslot,
-			(unsigned)module_id,
-			(unsigned)submodule_id);
+		APP_LOG_ERROR("  Plug submodule failed. Ret: %u API: %u Slot: %2u Subslot %u "
+					  "Module ID: 0x%x Submodule ID: 0x%x \n",
+					  ret,
+					  api,
+					  slot,
+					  subslot,
+					  (unsigned)module_id,
+					  (unsigned)submodule_id);
 	}
 
 	return ret;
 }
 
-static int app_new_data_status_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	uint32_t crep,
-	uint8_t changes,
-	uint8_t data_status)
+static int app_new_data_status_ind(pnet_t *net,
+								   void *arg,
+								   uint32_t arep,
+								   uint32_t crep,
+								   uint8_t changes,
+								   uint8_t data_status)
 {
 	bool is_running = data_status & BIT(PNET_DATA_STATUS_BIT_PROVIDER_STATE);
 	bool is_valid = data_status & BIT(PNET_DATA_STATUS_BIT_DATA_VALID);
 
-	APP_LOG_DEBUG(
-		"Data status indication. AREP: %u  Data status changes: 0x%02x  "
-		"Data status: 0x%02x\n",
-		arep,
-		changes,
-		data_status);
-	APP_LOG_DEBUG(
-		"   %s, %s, %s, %s, %s\n",
-		is_running ? "Run" : "Stop",
-		is_valid ? "Valid" : "Invalid",
-		(data_status & BIT(PNET_DATA_STATUS_BIT_STATE)) ? "Primary" : "Backup",
-		(data_status & BIT(PNET_DATA_STATUS_BIT_STATION_PROBLEM_INDICATOR))
-			? "Normal operation"
-			: "Problem",
-		(data_status & BIT(PNET_DATA_STATUS_BIT_IGNORE))
-			? "Ignore data status"
-			: "Evaluate data status");
+	APP_LOG_DEBUG("Data status indication. AREP: %u  Data status changes: 0x%02x  "
+				  "Data status: 0x%02x\n",
+				  arep,
+				  changes,
+				  data_status);
+
+	APP_LOG_DEBUG("   %s, %s, %s, %s, %s\n",
+				  is_running ? "Run" : "Stop",
+				  is_valid ? "Valid" : "Invalid",
+				  (data_status & BIT(PNET_DATA_STATUS_BIT_STATE)) ? "Primary" : "Backup",
+				  (data_status & BIT(PNET_DATA_STATUS_BIT_STATION_PROBLEM_INDICATOR))
+					  ? "Normal operation"
+					  : "Problem",
+				  (data_status & BIT(PNET_DATA_STATUS_BIT_IGNORE))
+					  ? "Ignore data status"
+					  : "Evaluate data status");
 
 	if (is_running == false || is_valid == false)
 	{
@@ -755,51 +731,46 @@ static int app_new_data_status_ind(
 	return 0;
 }
 
-static int app_alarm_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	pnet_alarm_argument_t const *p_alarm_arg,
-	uint16_t data_len,
-	uint16_t data_usi,
-	uint8_t const *p_data)
+static int app_alarm_ind(pnet_t *net,
+						 void *arg,
+						 uint32_t arep,
+						 pnet_alarm_argument_t const *p_alarm_arg,
+						 uint16_t data_len,
+						 uint16_t data_usi,
+						 uint8_t const *p_data)
 {
 	app_data_t *app = (app_data_t *)arg;
 
-	APP_LOG_DEBUG(
-		"Alarm indication. AREP: %u API: %d Slot: %d Subslot: %d "
-		"Type: %d Seq: %d Length: %d USI: %d\n",
-		arep,
-		p_alarm_arg->api_id,
-		p_alarm_arg->slot_nbr,
-		p_alarm_arg->subslot_nbr,
-		p_alarm_arg->alarm_type,
-		p_alarm_arg->sequence_number,
-		data_len,
-		data_usi);
+	APP_LOG_DEBUG("Alarm indication. AREP: %u API: %d Slot: %d Subslot: %d "
+				  "Type: %d Seq: %d Length: %d USI: %d\n",
+				  arep,
+				  p_alarm_arg->api_id,
+				  p_alarm_arg->slot_nbr,
+				  p_alarm_arg->subslot_nbr,
+				  p_alarm_arg->alarm_type,
+				  p_alarm_arg->sequence_number,
+				  data_len,
+				  data_usi);
 
 	app->alarm_arg = *p_alarm_arg;
 	os_event_set(app->main_events, APP_EVENT_ALARM);
-
 	return 0;
 }
 
-static int app_alarm_cnf(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	pnet_pnio_status_t const *p_pnio_status)
+static int app_alarm_cnf(pnet_t *net,
+						 void *arg,
+						 uint32_t arep,
+						 pnet_pnio_status_t const *p_pnio_status)
 {
 	app_data_t *app = (app_data_t *)arg;
 
-	APP_LOG_DEBUG(
-		"PLC alarm confirmation. AREP: %u  Status code %u, "
-		"%u, %u, %u\n",
-		arep,
-		p_pnio_status->error_code,
-		p_pnio_status->error_decode,
-		p_pnio_status->error_code_1,
-		p_pnio_status->error_code_2);
+	APP_LOG_DEBUG("PLC alarm confirmation. AREP: %u  Status code %u, "
+				  "%u, %u, %u\n",
+				  arep,
+				  p_pnio_status->error_code,
+				  p_pnio_status->error_decode,
+				  p_pnio_status->error_code_1,
+				  p_pnio_status->error_code_2);
 
 	app->alarm_allowed = true;
 
@@ -808,11 +779,10 @@ static int app_alarm_cnf(
 
 static int app_alarm_ack_cnf(pnet_t *net, void *arg, uint32_t arep, int res)
 {
-	APP_LOG_DEBUG(
-		"PLC alarm ACK confirmation. AREP: %u  Result: "
-		"%d\n",
-		arep,
-		res);
+	APP_LOG_DEBUG("PLC alarm ACK confirmation. AREP: %u  Result: "
+				  "%d\n",
+				  arep,
+				  res);
 
 	return 0;
 }
@@ -999,23 +969,21 @@ static void app_cyclic_data_callback(app_subslot_t *subslot, void *tag)
 		CC_ASSERT(outdata_length < sizeof(outdata_buf));
 
 		/* Get output data from the PLC */
-		(void)pnet_output_get_data_and_iops(
-			app->net,
-			APP_GSDML_API,
-			subslot->slot_nbr,
-			subslot->subslot_nbr,
-			&outdata_updated,
-			outdata_buf,
-			&outdata_length,
-			&outdata_iops);
+		(void)pnet_output_get_data_and_iops(app->net,
+											APP_GSDML_API,
+											subslot->slot_nbr,
+											subslot->subslot_nbr,
+											&outdata_updated,
+											outdata_buf,
+											&outdata_length,
+											&outdata_iops);
 
-		app_utils_print_ioxs_change(
-			subslot,
-			"Provider Status (IOPS)",
-			subslot->outdata_iops,
-			outdata_iops);
+		app_utils_print_ioxs_change(subslot,
+									"Provider Status (IOPS)",
+									subslot->outdata_iops,
+									outdata_iops);
+
 		subslot->outdata_iops = outdata_iops;
-
 		if (outdata_length != subslot->data_cfg.outsize)
 		{
 			APP_LOG_ERROR("Wrong outputdata length: %u\n", outdata_length);
@@ -1025,12 +993,11 @@ static void app_cyclic_data_callback(app_subslot_t *subslot, void *tag)
 		{
 			/* Application specific handling of the output data to a submodule.
 			   For the sample application, the data sets a LED. */
-			(void)app_data_set_output_data(
-				subslot->slot_nbr,
-				subslot->subslot_nbr,
-				subslot->submodule_id,
-				outdata_buf,
-				outdata_length);
+			(void)app_data_set_output_data(subslot->slot_nbr,
+										   subslot->subslot_nbr,
+										   subslot->submodule_id,
+										   outdata_buf,
+										   outdata_length);
 		}
 		else
 		{
@@ -1044,36 +1011,33 @@ static void app_cyclic_data_callback(app_subslot_t *subslot, void *tag)
 		 *
 		 * For the sample application, the data includes a button
 		 * state and a counter value. */
-		indata = app_data_get_input_data(
-			subslot->slot_nbr,
-			subslot->subslot_nbr,
-			subslot->submodule_id,
-			app->button1_pressed,
-			&indata_size,
-			&indata_iops);
+		indata = app_data_get_input_data(subslot->slot_nbr,
+										 subslot->subslot_nbr,
+										 subslot->submodule_id,
+										 app->button1_pressed,
+										 &indata_size,
+										 &indata_iops);
 
 		/* Send input data to the PLC */
-		(void)pnet_input_set_data_and_iops(
-			app->net,
-			APP_GSDML_API,
-			subslot->slot_nbr,
-			subslot->subslot_nbr,
-			indata,
-			indata_size,
-			indata_iops);
+		(void)pnet_input_set_data_and_iops(app->net,
+										   APP_GSDML_API,
+										   subslot->slot_nbr,
+										   subslot->subslot_nbr,
+										   indata,
+										   indata_size,
+										   indata_iops);
 
-		(void)pnet_input_get_iocs(
-			app->net,
-			APP_GSDML_API,
-			subslot->slot_nbr,
-			subslot->subslot_nbr,
-			&indata_iocs);
+		(void)pnet_input_get_iocs(app->net,
+								  APP_GSDML_API,
+								  subslot->slot_nbr,
+								  subslot->subslot_nbr,
+								  &indata_iocs);
 
-		app_utils_print_ioxs_change(
-			subslot,
-			"Consumer Status (IOCS)",
-			subslot->indata_iocs,
-			indata_iocs);
+		app_utils_print_ioxs_change(subslot,
+									"Consumer Status (IOCS)",
+									subslot->indata_iocs,
+									indata_iocs);
+
 		subslot->indata_iocs = indata_iocs;
 	}
 }
@@ -1095,8 +1059,7 @@ static int app_set_initial_data_and_ioxs(app_data_t *app)
 
 	for (slot = 0; slot < PNET_MAX_SLOTS; slot++)
 	{
-		for (subslot_index = 0; subslot_index < PNET_MAX_SUBSLOTS;
-			 subslot_index++)
+		for (subslot_index = 0; subslot_index < PNET_MAX_SUBSLOTS; subslot_index++)
 		{
 			p_subslot = &app->main_api.slots[slot].subslots[subslot_index];
 			if (p_subslot->plugged)
@@ -1105,9 +1068,7 @@ static int app_set_initial_data_and_ioxs(app_data_t *app)
 				indata_size = 0;
 				indata_iops = PNET_IOXS_BAD;
 
-				if (
-					p_subslot->data_cfg.insize > 0 ||
-					p_subslot->data_cfg.data_dir == PNET_DIR_NO_IO)
+				if (p_subslot->data_cfg.insize > 0 || p_subslot->data_cfg.data_dir == PNET_DIR_NO_IO)
 				{
 
 					/* Get input data for submodule
@@ -1115,31 +1076,27 @@ static int app_set_initial_data_and_ioxs(app_data_t *app)
 					 * For the sample application data includes
 					 * includes button state and a counter value
 					 */
-					if (
-						p_subslot->slot_nbr != PNET_SLOT_DAP_IDENT &&
-						p_subslot->data_cfg.insize > 0)
+					if (p_subslot->slot_nbr != PNET_SLOT_DAP_IDENT && p_subslot->data_cfg.insize > 0)
 					{
-						indata = app_data_get_input_data(
-							p_subslot->slot_nbr,
-							p_subslot->subslot_nbr,
-							p_subslot->submodule_id,
-							app->button1_pressed,
-							&indata_size,
-							&indata_iops);
+						indata = app_data_get_input_data(p_subslot->slot_nbr,
+														 p_subslot->subslot_nbr,
+														 p_subslot->submodule_id,
+														 app->button1_pressed,
+														 &indata_size,
+														 &indata_iops);
 					}
 					else if (p_subslot->slot_nbr == PNET_SLOT_DAP_IDENT)
 					{
 						indata_iops = PNET_IOXS_GOOD;
 					}
 
-					ret = pnet_input_set_data_and_iops(
-						app->net,
-						app->main_api.api_id,
-						p_subslot->slot_nbr,
-						p_subslot->subslot_nbr,
-						indata,
-						indata_size,
-						indata_iops);
+					ret = pnet_input_set_data_and_iops(app->net,
+													   app->main_api.api_id,
+													   p_subslot->slot_nbr,
+													   p_subslot->subslot_nbr,
+													   indata,
+													   indata_size,
+													   indata_iops);
 
 					/*
 					 * If a submodule is still plugged but not used in current AR,
@@ -1149,35 +1106,32 @@ static int app_set_initial_data_and_ioxs(app_data_t *app)
 					 */
 					if (ret == 0)
 					{
-						APP_LOG_DEBUG(
-							"  Set initial input data and IOPS for slot %2u subslot "
-							"%5u %9s size %3d \"%s\" \n",
-							p_subslot->slot_nbr,
-							p_subslot->subslot_nbr,
-							app_utils_ioxs_to_string(indata_iops),
-							p_subslot->data_cfg.insize,
-							p_subslot->submodule_name);
+						APP_LOG_DEBUG("  Set initial input data and IOPS for slot %2u subslot "
+									  "%5u %9s size %3d \"%s\" \n",
+									  p_subslot->slot_nbr,
+									  p_subslot->subslot_nbr,
+									  app_utils_ioxs_to_string(indata_iops),
+									  p_subslot->data_cfg.insize,
+									  p_subslot->submodule_name);
 					}
 				}
 
 				if (p_subslot->data_cfg.outsize > 0)
 				{
-					ret = pnet_output_set_iocs(
-						app->net,
-						app->main_api.api_id,
-						p_subslot->slot_nbr,
-						p_subslot->subslot_nbr,
-						PNET_IOXS_GOOD);
+					ret = pnet_output_set_iocs(app->net,
+											   app->main_api.api_id,
+											   p_subslot->slot_nbr,
+											   p_subslot->subslot_nbr,
+											   PNET_IOXS_GOOD);
 
 					if (ret == 0)
 					{
-						APP_LOG_DEBUG(
-							"  Set initial output         IOCS for slot %2u subslot "
-							"%5u %9s          \"%s\"\n",
-							p_subslot->slot_nbr,
-							p_subslot->subslot_nbr,
-							app_utils_ioxs_to_string(PNET_IOXS_GOOD),
-							p_subslot->submodule_name);
+						APP_LOG_DEBUG("  Set initial output         IOCS for slot %2u subslot "
+									  "%5u %9s          \"%s\"\n",
+									  p_subslot->slot_nbr,
+									  p_subslot->subslot_nbr,
+									  app_utils_ioxs_to_string(PNET_IOXS_GOOD),
+									  p_subslot->submodule_name);
 					}
 				}
 			}
@@ -1203,8 +1157,8 @@ static void app_handle_cyclic_data(app_data_t *app)
 	{
 		return;
 	}
-	app->process_data_tick_counter = 0;
 
+	app->process_data_tick_counter = 0;
 	app_utils_cyclic_data_poll(&app->main_api);
 }
 
@@ -1235,13 +1189,15 @@ static void app_handle_demo_pnet_api(app_data_t *app)
 	uint16_t subslot_ix = 0;
 	app_subslot_t const *p_subslot = NULL;
 	pnet_pnio_status_t pnio_status = {0};
+
 	pnet_diag_source_t diag_source = {
 		.api = APP_GSDML_API,
 		.slot = 0,
 		.subslot = 0,
 		.ch = APP_DIAG_CHANNEL_NUMBER,
 		.ch_grouping = PNET_DIAG_CH_INDIVIDUAL_CHANNEL,
-		.ch_direction = APP_DIAG_CHANNEL_DIRECTION};
+		.ch_direction = APP_DIAG_CHANNEL_DIRECTION,
+	};
 
 	/* Loop though all subslots to find first digital 8-bit input subslot */
 	while (!found_inputsubslot && (slot < PNET_MAX_SLOTS))
@@ -1251,8 +1207,8 @@ static void app_handle_demo_pnet_api(app_data_t *app)
 			 subslot_ix++)
 		{
 			p_subslot = &app->main_api.slots[slot].subslots[subslot_ix];
-			if (
-				app_utils_subslot_is_input(p_subslot) &&
+
+			if (app_utils_subslot_is_input(p_subslot) &&
 				(p_subslot->submodule_id == APP_GSDML_SUBMOD_ID_DIGITAL_IN ||
 				 p_subslot->submodule_id == APP_GSDML_SUBMOD_ID_DIGITAL_IN_OUT))
 			{
@@ -1260,6 +1216,7 @@ static void app_handle_demo_pnet_api(app_data_t *app)
 				break;
 			}
 		}
+
 		if (!found_inputsubslot)
 		{
 			slot++;
@@ -1309,8 +1266,7 @@ static void app_handle_demo_pnet_api(app_data_t *app)
 		break;
 
 	case APP_DEMO_STATE_CYCLIC_REDUNDANT:
-		APP_LOG_INFO(
-			"Setting cyclic data to backup and to redundant. See Wireshark.\n");
+		APP_LOG_INFO("Setting cyclic data to backup and to redundant. See Wireshark.\n");
 		if (pnet_set_primary_state(app->net, false) != 0)
 		{
 			APP_LOG_WARNING("   Could not set cyclic data state to backup.\n");
@@ -1322,9 +1278,8 @@ static void app_handle_demo_pnet_api(app_data_t *app)
 		break;
 
 	case APP_DEMO_STATE_CYCLIC_NORMAL:
-		APP_LOG_INFO(
-			"Setting cyclic data back to primary and non-redundant. See "
-			"Wireshark.\n");
+		APP_LOG_INFO("Setting cyclic data back to primary and non-redundant. See "
+					 "Wireshark.\n");
 		if (pnet_set_primary_state(app->net, true) != 0)
 		{
 			APP_LOG_ERROR("   Could not set cyclic data state to primary.\n");
@@ -1385,20 +1340,21 @@ static void app_handle_demo_pnet_api(app_data_t *app)
 			break;
 		}
 	case APP_DEMO_STATE_DIAG_USI_ADD:
-		APP_LOG_INFO(
-			"Adding USI diagnosis. Slot %u subslot %u\n",
-			slot,
-			p_subslot->subslot_nbr);
-		pnet_diag_usi_add(
-			app->net,
-			APP_GSDML_API,
-			slot,
-			p_subslot->subslot_nbr,
-			APP_GSDML_DIAG_CUSTOM_USI,
-			11,
-			(uint8_t *)"diagdata_1");
-		break;
+		{
+			APP_LOG_INFO("Adding USI diagnosis. Slot %u subslot %u\n",
+						 slot,
+						 p_subslot->subslot_nbr);
 
+			pnet_diag_usi_add(app->net,
+							  APP_GSDML_API,
+							  slot,
+							  p_subslot->subslot_nbr,
+							  APP_GSDML_DIAG_CUSTOM_USI,
+							  11,
+							  (uint8_t *)"diagdata_1");
+
+			break;
+		}
 	case APP_DEMO_STATE_DIAG_USI_UPDATE:
 		APP_LOG_INFO(
 			"Updating USI diagnosis. Slot %u subslot %u\n",
