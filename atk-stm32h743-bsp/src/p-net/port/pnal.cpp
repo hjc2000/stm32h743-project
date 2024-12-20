@@ -126,10 +126,8 @@ int pnal_eth_get_status(char const *interface_name, pnal_eth_status_t *status)
 	status->is_autonegotiation_supported = false;
 	status->is_autonegotiation_enabled = false;
 	status->autonegotiation_advertised_capabilities = 0;
-
 	status->operational_mau_type = PNAL_ETH_MAU_COPPER_100BaseTX_FULL_DUPLEX;
 	status->running = true;
-
 	return 0;
 }
 
