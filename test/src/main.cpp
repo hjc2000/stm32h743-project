@@ -230,17 +230,17 @@ int main(void)
 				// };
 
 				// void *mem = heap4.Malloc(1024);
-				while (true)
-				{
-					int a = 5;
-					DI_Console().Write(&a);
-					std::cout << std::endl;
-					std::cout << &a << std::endl;
-					std::cout << std::endl;
-					DI_Delayer().Delay(std::chrono::milliseconds{1000});
-				}
+				// while (true)
+				// {
+				// 	int a = 5;
+				// 	DI_Console().Write(&a);
+				// 	std::cout << std::endl;
+				// 	std::cout << &a << std::endl;
+				// 	std::cout << std::endl;
+				// 	DI_Delayer().Delay(std::chrono::milliseconds{1000});
+				// }
 				// TestFatFs();
-				// freertos_demo();
+				freertos_demo();
 				// p_net_sample_app_main();
 				// TestLittleFs();
 

@@ -251,7 +251,7 @@ bool lwip::NetifWrapper::TryDHCP()
 	StartDHCP();
 
 	bool dhcp_result = false;
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		// 如果失败，最多重试 100 次。
 		dhcp_result = DhcpSuppliedAddress();
