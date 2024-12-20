@@ -127,12 +127,11 @@ err_enum_t lwip_hook_unknown_eth_protocol(
 	return static_cast<err_enum_t>(pnal_eth_sys_recv(pbuf, netif));
 }
 
-pnal_eth_handle_t *pnal_eth_init(
-	char const *if_name,
-	pnal_ethertype_t receive_type,
-	pnal_cfg_t const *pnal_cfg,
-	pnal_eth_callback_t *callback,
-	void *arg)
+pnal_eth_handle_t *pnal_eth_init(char const *if_name,
+								 pnal_ethertype_t receive_type,
+								 pnal_cfg_t const *pnal_cfg,
+								 pnal_eth_callback_t *callback,
+								 void *arg)
 {
 	pnal_eth_handle_t *handle;
 	struct netif *netif;
@@ -156,14 +155,12 @@ pnal_eth_handle_t *pnal_eth_init(
 	handle->arg = arg;
 	handle->eth_rx_callback = callback;
 	handle->netif = netif;
-
 	return handle;
 }
 
 int pnal_eth_send(pnal_eth_handle_t *handle, pnal_buf_t *buf)
 {
 	int ret = -1;
-
 	CC_ASSERT(handle->netif->linkoutput != NULL);
 
 	/* TODO: Determine if buf could ever be NULL here */
@@ -171,9 +168,9 @@ int pnal_eth_send(pnal_eth_handle_t *handle, pnal_buf_t *buf)
 	{
 		/* TODO: remove tot_len from os_buff */
 		buf->tot_len = buf->len;
-
 		handle->netif->linkoutput(handle->netif, buf);
 		ret = buf->len;
 	}
+
 	return ret;
 }
