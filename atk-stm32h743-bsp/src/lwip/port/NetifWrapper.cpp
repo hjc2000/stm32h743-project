@@ -78,6 +78,8 @@ lwip::NetifWrapper::NetifWrapper()
 	_wrapped_obj->state = this;
 }
 
+#pragma region Open
+
 void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
 							  base::Mac const &mac,
 							  base::IPAddress const &ip_address,
@@ -85,25 +87,33 @@ void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
 							  base::IPAddress const &gateway,
 							  int32_t mtu)
 {
-	tcpip_init(nullptr, nullptr);
-	_ethernet_port = ethernet_port;
-
 	_cache._mac = mac;
 	_cache._ip_address = ip_address;
 	_cache._netmask = netmask;
 	_cache._gateway = gateway;
-	_cache._mtu = mtu;
+	Open(ethernet_port, mtu);
+}
 
+void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port, int32_t mtu)
+{
+	_cache._mtu = mtu;
+	Open(ethernet_port);
+}
+
+void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port)
+{
+	_ethernet_port = ethernet_port;
 	if (_ethernet_port == nullptr)
 	{
 		throw std::runtime_error{"必须先调用 Open 方法传入一个 bsp::IEthernetPort 对象"};
 	}
 
 	_ethernet_port->Open(_cache._mac);
+	tcpip_init(nullptr, nullptr);
 
-	ip_addr_t ip_addr_t_ip_address = base::Convert<ip_addr_t, base::IPAddress>(ip_address);
-	ip_addr_t ip_addr_t_netmask = base::Convert<ip_addr_t, base::IPAddress>(netmask);
-	ip_addr_t ip_addr_t_gataway = base::Convert<ip_addr_t, base::IPAddress>(gateway);
+	ip_addr_t ip_addr_t_ip_address = base::Convert<ip_addr_t, base::IPAddress>(_cache._ip_address);
+	ip_addr_t ip_addr_t_netmask = base::Convert<ip_addr_t, base::IPAddress>(_cache._netmask);
+	ip_addr_t ip_addr_t_gataway = base::Convert<ip_addr_t, base::IPAddress>(_cache._gateway);
 
 	auto initialization_callback = [](netif *p) -> err_t
 	{
@@ -136,6 +146,8 @@ void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
 		throw std::runtime_error{"添加网卡失败。"};
 	}
 }
+
+#pragma endregion
 
 #pragma region 地址
 

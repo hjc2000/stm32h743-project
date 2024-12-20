@@ -65,12 +65,17 @@ namespace lwip
 	public:
 		NetifWrapper();
 
+#pragma region Open
 		void Open(bsp::IEthernetPort *ethernet_port,
 				  base::Mac const &mac,
 				  base::IPAddress const &ip_address,
 				  base::IPAddress const &netmask,
 				  base::IPAddress const &gateway,
 				  int32_t mtu);
+
+		void Open(bsp::IEthernetPort *ethernet_port, int32_t mtu);
+		void Open(bsp::IEthernetPort *ethernet_port);
+#pragma endregion
 
 #pragma region 地址
 		base::Mac Mac() const;

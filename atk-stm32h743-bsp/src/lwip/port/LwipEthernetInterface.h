@@ -27,35 +27,6 @@ namespace bsp
 
 		lwip::NetifWrapper _netif_wrapper;
 
-		/// @brief 本机IP地址
-		base::IPAddress _ip_address{
-			std::endian::big,
-			base::Array<uint8_t, 4>{192, 168, 1, 30},
-		};
-
-		base::IPAddress _netmask{
-			std::endian::big,
-			base::Array<uint8_t, 4>{255, 255, 255, 0},
-		};
-
-		base::IPAddress _gateway{
-			std::endian::big,
-			base::Array<uint8_t, 4>{192, 168, 1, 1},
-		};
-
-		/// @brief 本网卡所使用的 MAC 地址。
-		base::Mac _mac{
-			std::endian::big,
-			base::Array<uint8_t, 6>{
-				0xB8,
-				0xAE,
-				0x1D,
-				0x00,
-				0x04,
-				0x00,
-			},
-		};
-
 	public:
 		static_function LwipEthernetInterface &Instance();
 

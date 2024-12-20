@@ -131,13 +131,7 @@ bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 
 void bsp::LwipEthernetInterface::Open()
 {
-	_netif_wrapper.Open(_ethernet_port,
-						_mac,
-						_ip_address,
-						_netmask,
-						_gateway,
-						ETH_MAX_PAYLOAD);
-
+	_netif_wrapper.Open(_ethernet_port, ETH_MAX_PAYLOAD);
 	_netif_wrapper.SetAsDefaultNetInterface();
 
 	// 链接状态更新
