@@ -12,17 +12,6 @@ namespace bsp
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
 
-	protected:
-		/// @brief 读 PHY 的寄存器
-		/// @param register_index 寄存器索引。
-		/// @return
-		uint32_t ReadPHYRegister(uint32_t register_index) override;
-
-		/// @brief 写 PHY 的寄存器。
-		/// @param register_index 寄存器索引。
-		/// @param value
-		void WritePHYRegister(uint32_t register_index, uint32_t value) override;
-
 	public:
 		static_function AtkApolloV1EthernetPort &Instance();
 
@@ -33,6 +22,16 @@ namespace bsp
 		/// @brief 打开以太网端口。
 		/// @param mac MAC 地址。
 		void Open(base::Mac const &mac) override;
+
+		/// @brief 读 PHY 的寄存器
+		/// @param register_index 寄存器索引。
+		/// @return
+		uint32_t ReadPHYRegister(uint32_t register_index) override;
+
+		/// @brief 写 PHY 的寄存器。
+		/// @param register_index 寄存器索引。
+		/// @param value
+		void WritePHYRegister(uint32_t register_index, uint32_t value) override;
 
 		/// @brief 重启网口。
 		/// @note 会保留 MAC 地址等配置。

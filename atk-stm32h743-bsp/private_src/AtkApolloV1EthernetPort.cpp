@@ -9,16 +9,6 @@
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/system_time.h>
 
-uint32_t bsp::AtkApolloV1EthernetPort::ReadPHYRegister(uint32_t register_index)
-{
-	return _controller->ReadPHYRegister(register_index);
-}
-
-void bsp::AtkApolloV1EthernetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
-{
-	_controller->WritePHYRegister(register_index, value);
-}
-
 bsp::AtkApolloV1EthernetPort &bsp::AtkApolloV1EthernetPort::Instance()
 {
 	class Getter :
@@ -64,6 +54,16 @@ void bsp::AtkApolloV1EthernetPort::Open(base::Mac const &mac)
 
 	// 启动以太网
 	_controller->Start(DuplexMode(), Speed());
+}
+
+uint32_t bsp::AtkApolloV1EthernetPort::ReadPHYRegister(uint32_t register_index)
+{
+	return _controller->ReadPHYRegister(register_index);
+}
+
+void bsp::AtkApolloV1EthernetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
+{
+	_controller->WritePHYRegister(register_index, value);
 }
 
 void bsp::AtkApolloV1EthernetPort::Restart()
