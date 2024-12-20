@@ -34,28 +34,26 @@
 
 void app_utils_ip_to_string(pnal_ipaddr_t ip, char *outputstring)
 {
-	snprintf(
-		outputstring,
-		PNAL_INET_ADDRSTR_SIZE,
-		"%u.%u.%u.%u",
-		(uint8_t)((ip >> 24) & 0xFF),
-		(uint8_t)((ip >> 16) & 0xFF),
-		(uint8_t)((ip >> 8) & 0xFF),
-		(uint8_t)(ip & 0xFF));
+	snprintf(outputstring,
+			 PNAL_INET_ADDRSTR_SIZE,
+			 "%u.%u.%u.%u",
+			 (uint8_t)((ip >> 24) & 0xFF),
+			 (uint8_t)((ip >> 16) & 0xFF),
+			 (uint8_t)((ip >> 8) & 0xFF),
+			 (uint8_t)(ip & 0xFF));
 }
 
 void app_utils_mac_to_string(pnet_ethaddr_t mac, char *outputstring)
 {
-	snprintf(
-		outputstring,
-		PNAL_ETH_ADDRSTR_SIZE,
-		"%02X:%02X:%02X:%02X:%02X:%02X",
-		mac.addr[0],
-		mac.addr[1],
-		mac.addr[2],
-		mac.addr[3],
-		mac.addr[4],
-		mac.addr[5]);
+	snprintf(outputstring,
+			 PNAL_ETH_ADDRSTR_SIZE,
+			 "%02X:%02X:%02X:%02X:%02X:%02X",
+			 mac.addr[0],
+			 mac.addr[1],
+			 mac.addr[2],
+			 mac.addr[3],
+			 mac.addr[4],
+			 mac.addr[5]);
 }
 
 char const *app_utils_submod_dir_to_string(pnet_submodule_dir_t direction)
@@ -97,11 +95,10 @@ char const *app_utils_ioxs_to_string(pnet_ioxs_values_t ioxs)
 	return s;
 }
 
-void app_utils_get_error_code_strings(
-	uint16_t err_cls,
-	uint16_t err_code,
-	char const **err_cls_str,
-	char const **err_code_str)
+void app_utils_get_error_code_strings(uint16_t err_cls,
+									  uint16_t err_code,
+									  char const **err_cls_str,
+									  char const **err_code_str)
 {
 	if (err_cls_str == NULL || err_cls_str == NULL)
 	{
@@ -150,9 +147,7 @@ void app_utils_get_error_code_strings(
 	}
 }
 
-void app_utils_copy_ip_to_struct(
-	pnet_cfg_ip_addr_t *destination_struct,
-	pnal_ipaddr_t ip)
+void app_utils_copy_ip_to_struct(pnet_cfg_ip_addr_t *destination_struct, pnal_ipaddr_t ip)
 {
 	destination_struct->a = ((ip >> 24) & 0xFF);
 	destination_struct->b = ((ip >> 16) & 0xFF);
@@ -160,8 +155,7 @@ void app_utils_copy_ip_to_struct(
 	destination_struct->d = (ip & 0xFF);
 }
 
-char const *app_utils_dcontrol_cmd_to_string(
-	pnet_control_command_t control_command)
+char const *app_utils_dcontrol_cmd_to_string(pnet_control_command_t control_command)
 {
 	char const *s = NULL;
 
@@ -236,41 +230,40 @@ int app_utils_pnet_cfg_init_default(pnet_cfg_t *cfg)
 	cfg->im_0_data.im_version_minor = 1; /** Always 1 */
 	cfg->im_0_data.im_supported = APP_GSDML_IM_SUPPORTED;
 
-	snprintf(
-		cfg->im_0_data.im_order_id,
-		sizeof(cfg->im_0_data.im_order_id),
-		"%s",
-		APP_GSDML_ORDER_ID);
-	snprintf(
-		cfg->im_0_data.im_serial_number,
-		sizeof(cfg->im_0_data.im_serial_number),
-		"%s",
-		APP_GSDML_EXAMPLE_SERIAL_NUMBER);
-	snprintf(
-		cfg->im_1_data.im_tag_function,
-		sizeof(cfg->im_1_data.im_tag_function),
-		"%s",
-		APP_GSDML_TAG_FUNCTION);
-	snprintf(
-		cfg->im_1_data.im_tag_location,
-		sizeof(cfg->im_1_data.im_tag_location),
-		"%s",
-		APP_GSDML_TAG_LOCATION);
-	snprintf(
-		cfg->im_2_data.im_date,
-		sizeof(cfg->im_2_data.im_date),
-		"%s",
-		APP_GSDML_IM_DATE);
-	snprintf(
-		cfg->im_3_data.im_descriptor,
-		sizeof(cfg->im_3_data.im_descriptor),
-		"%s",
-		APP_GSDML_DESCRIPTOR);
-	snprintf(
-		cfg->im_4_data.im_signature,
-		sizeof(cfg->im_4_data.im_signature),
-		"%s",
-		APP_GSDML_SIGNATURE);
+	snprintf(cfg->im_0_data.im_order_id,
+			 sizeof(cfg->im_0_data.im_order_id),
+			 "%s",
+			 APP_GSDML_ORDER_ID);
+
+	snprintf(cfg->im_0_data.im_serial_number,
+			 sizeof(cfg->im_0_data.im_serial_number),
+			 "%s",
+			 APP_GSDML_EXAMPLE_SERIAL_NUMBER);
+
+	snprintf(cfg->im_1_data.im_tag_function,
+			 sizeof(cfg->im_1_data.im_tag_function),
+			 "%s",
+			 APP_GSDML_TAG_FUNCTION);
+
+	snprintf(cfg->im_1_data.im_tag_location,
+			 sizeof(cfg->im_1_data.im_tag_location),
+			 "%s",
+			 APP_GSDML_TAG_LOCATION);
+
+	snprintf(cfg->im_2_data.im_date,
+			 sizeof(cfg->im_2_data.im_date),
+			 "%s",
+			 APP_GSDML_IM_DATE);
+
+	snprintf(cfg->im_3_data.im_descriptor,
+			 sizeof(cfg->im_3_data.im_descriptor),
+			 "%s",
+			 APP_GSDML_DESCRIPTOR);
+
+	snprintf(cfg->im_4_data.im_signature,
+			 sizeof(cfg->im_4_data.im_signature),
+			 "%s",
+			 APP_GSDML_SIGNATURE);
 
 	/* Device configuration */
 	cfg->device_id.vendor_id_hi = GET_HIGH_BYTE(APP_GSDML_VENDOR_ID);
@@ -282,11 +275,10 @@ int app_utils_pnet_cfg_init_default(pnet_cfg_t *cfg)
 	cfg->oem_device_id.device_id_hi = GET_HIGH_BYTE(APP_GSDML_OEM_DEVICE_ID);
 	cfg->oem_device_id.device_id_lo = GET_LOW_BYTE(APP_GSDML_OEM_DEVICE_ID);
 
-	snprintf(
-		cfg->product_name,
-		sizeof(cfg->product_name),
-		"%s",
-		APP_GSDML_PRODUCT_NAME);
+	snprintf(cfg->product_name,
+			 sizeof(cfg->product_name),
+			 "%s",
+			 APP_GSDML_PRODUCT_NAME);
 
 	cfg->send_hello = true;
 
@@ -296,11 +288,10 @@ int app_utils_pnet_cfg_init_default(pnet_cfg_t *cfg)
 	/* Should be set by application as part of network configuration. */
 	cfg->num_physical_ports = 1;
 
-	snprintf(
-		cfg->station_name,
-		sizeof(cfg->station_name),
-		"%s",
-		APP_GSDML_DEFAULT_STATION_NAME);
+	snprintf(cfg->station_name,
+			 sizeof(cfg->station_name),
+			 "%s",
+			 APP_GSDML_DEFAULT_STATION_NAME);
 
 	/* Diagnosis mechanism */
 	/* We prefer using "Extended channel diagnosis" instead of
@@ -312,11 +303,10 @@ int app_utils_pnet_cfg_init_default(pnet_cfg_t *cfg)
 	return 0;
 }
 
-int app_utils_get_netif_namelist(
-	char const *arg_str,
-	uint16_t max_port,
-	app_utils_netif_namelist_t *p_if_list,
-	uint16_t *p_num_ports)
+int app_utils_get_netif_namelist(char const *arg_str,
+								 uint16_t max_port,
+								 app_utils_netif_namelist_t *p_if_list,
+								 uint16_t *p_num_ports)
 {
 	int ret = 0;
 	uint16_t i = 0;
@@ -409,11 +399,10 @@ int app_utils_get_netif_namelist(
 	return ret;
 }
 
-int app_utils_pnet_cfg_init_netifs(
-	char const *netif_list_str,
-	app_utils_netif_namelist_t *if_list,
-	uint16_t *number_of_ports,
-	pnet_if_cfg_t *if_cfg)
+int app_utils_pnet_cfg_init_netifs(char const *netif_list_str,
+								   app_utils_netif_namelist_t *if_list,
+								   uint16_t *number_of_ports,
+								   pnet_if_cfg_t *if_cfg)
 {
 	int ret = 0;
 	int i = 0;
@@ -421,11 +410,11 @@ int app_utils_pnet_cfg_init_netifs(
 	pnal_ipaddr_t netmask;
 	pnal_ipaddr_t gateway;
 
-	ret = app_utils_get_netif_namelist(
-		netif_list_str,
-		PNET_MAX_PHYSICAL_PORTS,
-		if_list,
-		number_of_ports);
+	ret = app_utils_get_netif_namelist(netif_list_str,
+									   PNET_MAX_PHYSICAL_PORTS,
+									   if_list,
+									   number_of_ports);
+
 	if (ret != 0)
 	{
 		return ret;
@@ -471,9 +460,8 @@ static void app_utils_print_mac_address(char const *netif_name)
 	}
 }
 
-void app_utils_print_network_config(
-	pnet_if_cfg_t *if_cfg,
-	uint16_t number_of_ports)
+void app_utils_print_network_config(pnet_if_cfg_t *if_cfg,
+									uint16_t number_of_ports)
 {
 	uint16_t i;
 	char hostname_string[PNAL_HOSTNAME_MAX_SIZE]; /* Terminated string */
@@ -483,10 +471,9 @@ void app_utils_print_network_config(
 
 	for (i = 1; i <= number_of_ports; i++)
 	{
-		APP_LOG_INFO(
-			"Physical port [%u]:    %s ",
-			i,
-			if_cfg->physical_ports[i - 1].netif_name);
+		APP_LOG_INFO("Physical port [%u]:    %s ",
+					 i,
+					 if_cfg->physical_ports[i - 1].netif_name);
 
 		app_utils_print_mac_address(if_cfg->physical_ports[i - 1].netif_name);
 	}
@@ -499,71 +486,65 @@ void app_utils_print_network_config(
 	DI_Console().WriteLine("666666666666666666666666666666666666");
 
 	APP_LOG_INFO("Hostname:             %s\n", hostname_string);
-	APP_LOG_INFO(
-		"IP address:           %u.%u.%u.%u\n",
-		if_cfg->ip_cfg.ip_addr.a,
-		if_cfg->ip_cfg.ip_addr.b,
-		if_cfg->ip_cfg.ip_addr.c,
-		if_cfg->ip_cfg.ip_addr.d);
-	APP_LOG_INFO(
-		"Netmask:              %u.%u.%u.%u\n",
-		if_cfg->ip_cfg.ip_mask.a,
-		if_cfg->ip_cfg.ip_mask.b,
-		if_cfg->ip_cfg.ip_mask.c,
-		if_cfg->ip_cfg.ip_mask.d);
-	APP_LOG_INFO(
-		"Gateway:              %u.%u.%u.%u\n",
-		if_cfg->ip_cfg.ip_gateway.a,
-		if_cfg->ip_cfg.ip_gateway.b,
-		if_cfg->ip_cfg.ip_gateway.c,
-		if_cfg->ip_cfg.ip_gateway.d);
+	APP_LOG_INFO("IP address:           %u.%u.%u.%u\n",
+				 if_cfg->ip_cfg.ip_addr.a,
+				 if_cfg->ip_cfg.ip_addr.b,
+				 if_cfg->ip_cfg.ip_addr.c,
+				 if_cfg->ip_cfg.ip_addr.d);
+
+	APP_LOG_INFO("Netmask:              %u.%u.%u.%u\n",
+				 if_cfg->ip_cfg.ip_mask.a,
+				 if_cfg->ip_cfg.ip_mask.b,
+				 if_cfg->ip_cfg.ip_mask.c,
+				 if_cfg->ip_cfg.ip_mask.d);
+
+	APP_LOG_INFO("Gateway:              %u.%u.%u.%u\n",
+				 if_cfg->ip_cfg.ip_gateway.a,
+				 if_cfg->ip_cfg.ip_gateway.b,
+				 if_cfg->ip_cfg.ip_gateway.c,
+				 if_cfg->ip_cfg.ip_gateway.d);
 }
 
-void app_utils_print_ioxs_change(
-	app_subslot_t const *subslot,
-	char const *ioxs_str,
-	uint8_t iocs_current,
-	uint8_t iocs_new)
+void app_utils_print_ioxs_change(app_subslot_t const *subslot,
+								 char const *ioxs_str,
+								 uint8_t iocs_current,
+								 uint8_t iocs_new)
 {
 	if (iocs_current != iocs_new)
 	{
 		if (iocs_new == PNET_IOXS_BAD)
 		{
-			APP_LOG_DEBUG(
-				"PLC reports %s BAD for slot %u subslot %u \"%s\"\n",
-				ioxs_str,
-				subslot->slot_nbr,
-				subslot->subslot_nbr,
-				subslot->submodule_name);
+			APP_LOG_DEBUG("PLC reports %s BAD for slot %u subslot %u \"%s\"\n",
+						  ioxs_str,
+						  subslot->slot_nbr,
+						  subslot->subslot_nbr,
+						  subslot->submodule_name);
 		}
 		else if (iocs_new == PNET_IOXS_GOOD)
 		{
-			APP_LOG_DEBUG(
-				"PLC reports %s GOOD for slot %u subslot %u \"%s\".\n",
-				ioxs_str,
-				subslot->slot_nbr,
-				subslot->subslot_nbr,
-				subslot->submodule_name);
+			APP_LOG_DEBUG("PLC reports %s GOOD for slot %u subslot %u \"%s\".\n",
+						  ioxs_str,
+						  subslot->slot_nbr,
+						  subslot->subslot_nbr,
+						  subslot->submodule_name);
 		}
 		else if (iocs_new != PNET_IOXS_GOOD)
 		{
-			APP_LOG_DEBUG(
-				"PLC reports %s %u for input slot %u subslot %u \"%s\".\n"
-				"  Is the PLC in STOP mode?\n",
-				ioxs_str,
-				iocs_new,
-				subslot->slot_nbr,
-				subslot->subslot_nbr,
-				subslot->submodule_name);
+			APP_LOG_DEBUG("PLC reports %s %u for input slot %u subslot %u \"%s\".\n"
+						  "  Is the PLC in STOP mode?\n",
+						  ioxs_str,
+						  iocs_new,
+						  subslot->slot_nbr,
+						  subslot->subslot_nbr,
+						  subslot->submodule_name);
 		}
 	}
 }
 
-int app_utils_plug_module(
-	app_api_t *p_api,
-	uint16_t slot_nbr,
-	uint32_t id,
-	char const *name)
+int app_utils_plug_module(app_api_t *p_api,
+						  uint16_t slot_nbr,
+						  uint32_t id,
+						  char const *name)
 {
 	if (slot_nbr >= PNET_MAX_SLOTS)
 	{
@@ -589,15 +570,14 @@ int app_utils_pull_module(app_api_t *p_api, uint16_t slot_nbr)
 	return 0;
 }
 
-app_subslot_t *app_utils_plug_submodule(
-	app_api_t *p_api,
-	uint16_t slot_nbr,
-	uint16_t subslot_nbr,
-	uint32_t submodule_ident,
-	pnet_data_cfg_t const *p_data_cfg,
-	char const *submodule_name,
-	app_utils_cyclic_callback cyclic_callback,
-	void *tag)
+app_subslot_t *app_utils_plug_submodule(app_api_t *p_api,
+										uint16_t slot_nbr,
+										uint16_t subslot_nbr,
+										uint32_t submodule_ident,
+										pnet_data_cfg_t const *p_data_cfg,
+										char const *submodule_name,
+										app_utils_cyclic_callback cyclic_callback,
+										void *tag)
 {
 	uint16_t subslot_ix;
 
@@ -611,9 +591,7 @@ app_subslot_t *app_utils_plug_submodule(
 	{
 		if (p_api->slots[slot_nbr].subslots[subslot_ix].used == false)
 		{
-			app_subslot_t *p_subslot =
-				&p_api->slots[slot_nbr].subslots[subslot_ix];
-
+			app_subslot_t *p_subslot = &p_api->slots[slot_nbr].subslots[subslot_ix];
 			p_subslot->used = true;
 			p_subslot->plugged = true;
 			p_subslot->slot_nbr = slot_nbr;
@@ -632,10 +610,9 @@ app_subslot_t *app_utils_plug_submodule(
 	return NULL;
 }
 
-int app_utils_pull_submodule(
-	app_api_t *p_api,
-	uint16_t slot_nbr,
-	uint16_t subslot_nbr)
+int app_utils_pull_submodule(app_api_t *p_api,
+							 uint16_t slot_nbr,
+							 uint16_t subslot_nbr)
 {
 	app_subslot_t *p_subslot = NULL;
 
@@ -656,10 +633,9 @@ int app_utils_pull_submodule(
 	return 0;
 }
 
-app_subslot_t *app_utils_subslot_get(
-	app_api_t *p_api,
-	uint16_t slot_nbr,
-	uint16_t subslot_nbr)
+app_subslot_t *app_utils_subslot_get(app_api_t *p_api,
+									 uint16_t slot_nbr,
+									 uint16_t subslot_nbr)
 {
 	uint16_t subslot_ix;
 
@@ -686,8 +662,7 @@ bool app_utils_subslot_is_input(app_subslot_t const *p_subslot)
 		return false;
 	}
 
-	if (
-		p_subslot->data_cfg.data_dir == PNET_DIR_INPUT ||
+	if (p_subslot->data_cfg.data_dir == PNET_DIR_INPUT ||
 		p_subslot->data_cfg.data_dir == PNET_DIR_IO)
 	{
 		return true;
@@ -713,8 +688,7 @@ bool app_utils_subslot_is_output(app_subslot_t const *p_subslot)
 		return false;
 	}
 
-	if (
-		p_subslot->data_cfg.data_dir == PNET_DIR_OUTPUT ||
+	if (p_subslot->data_cfg.data_dir == PNET_DIR_OUTPUT ||
 		p_subslot->data_cfg.data_dir == PNET_DIR_IO)
 	{
 		return true;
@@ -731,8 +705,7 @@ void app_utils_cyclic_data_poll(app_api_t *p_api)
 
 	for (slot_nbr = 0; slot_nbr < PNET_MAX_SLOTS; slot_nbr++)
 	{
-		for (subslot_index = 0; subslot_index < PNET_MAX_SUBSLOTS;
-			 subslot_index++)
+		for (subslot_index = 0; subslot_index < PNET_MAX_SUBSLOTS; subslot_index++)
 		{
 			p_subslot = &p_api->slots[slot_nbr].subslots[subslot_index];
 			if (p_subslot->plugged && p_subslot->cyclic_callback != NULL)

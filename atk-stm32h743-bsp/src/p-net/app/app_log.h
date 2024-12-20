@@ -25,48 +25,49 @@
  */
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include <stdint.h>
 
-#define APP_LOG_LEVEL_DEBUG   0x00
-#define APP_LOG_LEVEL_INFO    0x01
+#define APP_LOG_LEVEL_DEBUG 0x00
+#define APP_LOG_LEVEL_INFO 0x01
 #define APP_LOG_LEVEL_WARNING 0x02
-#define APP_LOG_LEVEL_ERROR   0x03
-#define APP_LOG_LEVEL_FATAL   0x04
+#define APP_LOG_LEVEL_ERROR 0x03
+#define APP_LOG_LEVEL_FATAL 0x04
 
-#define APP_DEFAULT_LOG_LEVEL APP_LOG_LEVEL_FATAL
+#define APP_DEFAULT_LOG_LEVEL APP_LOG_LEVEL_DEBUG
 
-#define APP_LOG(level, ...) app_log (level, __VA_ARGS__)
+#define APP_LOG(level, ...) app_log(level, __VA_ARGS__)
 
-#define APP_LOG_DEBUG(...)   APP_LOG (APP_LOG_LEVEL_DEBUG, __VA_ARGS__)
-#define APP_LOG_INFO(...)    APP_LOG (APP_LOG_LEVEL_INFO, __VA_ARGS__)
-#define APP_LOG_WARNING(...) APP_LOG (APP_LOG_LEVEL_WARNING, __VA_ARGS__)
-#define APP_LOG_ERROR(...)   APP_LOG (APP_LOG_LEVEL_ERROR, __VA_ARGS__)
-#define APP_LOG_FATAL(...)   APP_LOG (APP_LOG_LEVEL_FATAL, __VA_ARGS__)
+#define APP_LOG_DEBUG(...) APP_LOG(APP_LOG_LEVEL_DEBUG, __VA_ARGS__)
+#define APP_LOG_INFO(...) APP_LOG(APP_LOG_LEVEL_INFO, __VA_ARGS__)
+#define APP_LOG_WARNING(...) APP_LOG(APP_LOG_LEVEL_WARNING, __VA_ARGS__)
+#define APP_LOG_ERROR(...) APP_LOG(APP_LOG_LEVEL_ERROR, __VA_ARGS__)
+#define APP_LOG_FATAL(...) APP_LOG(APP_LOG_LEVEL_FATAL, __VA_ARGS__)
 
-/**
- * Print log message depending on level
- * Use the APP_LOG_xxxxx macros instead of this function.
- * @param level         In: Message log level
- * @param fmt           In: Log message format string
- */
-void app_log (int32_t level, const char * fmt, ...);
+	/**
+	 * Print log message depending on level
+	 * Use the APP_LOG_xxxxx macros instead of this function.
+	 * @param level         In: Message log level
+	 * @param fmt           In: Log message format string
+	 */
+	void app_log(int32_t level, char const *fmt, ...);
 
-/**
- * Log an array of bytes
- * @param level         In: Log level
- * @param bytes         In: Array of bytes
- * @param length        In: Length of array
- */
-void app_log_print_bytes (int32_t level, const uint8_t * bytes, uint32_t length);
+	/**
+	 * Log an array of bytes
+	 * @param level         In: Log level
+	 * @param bytes         In: Array of bytes
+	 * @param length        In: Length of array
+	 */
+	void app_log_print_bytes(int32_t level, uint8_t const *bytes, uint32_t length);
 
-/**
- * Set log level
- * @param level         In: Log level
- */
-void app_log_set_log_level (int32_t level);
+	/**
+	 * Set log level
+	 * @param level         In: Log level
+	 */
+	void app_log_set_log_level(int32_t level);
 
 #ifdef __cplusplus
 }
