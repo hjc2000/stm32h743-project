@@ -20,7 +20,6 @@
 #include <bsp/bsp.h>
 #include <bsp/sdram.h>
 #include <ff.h>
-#include <heap_4.h>
 #include <littlefs/LfsFlashPort.h>
 #include <memory>
 #include <stdexcept>
@@ -231,10 +230,15 @@ int main(void)
 				// };
 
 				// void *mem = heap4.Malloc(1024);
-				int a = 5;
-				DI_Console().WriteLine(&a);
-				std::cout << &a << std::endl;
-
+				while (true)
+				{
+					int a = 5;
+					DI_Console().Write(&a);
+					std::cout << std::endl;
+					std::cout << &a << std::endl;
+					std::cout << std::endl;
+					DI_Delayer().Delay(std::chrono::milliseconds{1000});
+				}
 				// TestFatFs();
 				// freertos_demo();
 				// p_net_sample_app_main();
