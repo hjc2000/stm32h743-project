@@ -187,11 +187,10 @@ int pnal_save_file(
 		if (fres != FR_OK || count != size_2)
 		{
 			ret = -1;
-			LOG_ERROR(
-				PF_PNAL_LOG,
-				"PNAL(%d): Failed to write file %s (second buffer)\n",
-				__LINE__,
-				fullpath);
+			LOG_ERROR(PF_PNAL_LOG,
+					  "PNAL(%d): Failed to write file %s (second buffer)\n",
+					  __LINE__,
+					  fullpath);
 		}
 	}
 

@@ -143,6 +143,10 @@ pnal_eth_handle_t *pnal_eth_init(char const *if_name,
 		return NULL;
 	}
 
+	/* 这里是预先定义了一个全局的 pnal_eth_handle_t 数组，每次调用本函数，需要返回一个句柄，
+	 * 就从全局的 pnal_eth_handle_t 数组中分配一个，然后本函数返回这个被分配的 pnal_eth_handle_t.
+	 * 因为是预定义的数组，一直调用本函数总会耗尽，所以就有下面这段代码。
+	 */
 	handle = pnal_eth_allocate_handle();
 	if (handle == NULL)
 	{
