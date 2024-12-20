@@ -161,7 +161,6 @@ app_data_t *app_init(pnet_cfg_t const *pnet_cfg, app_args_t const *app_args)
 static void main_timer_tick(os_timer_t *timer, void *arg)
 {
 	app_data_t *app = (app_data_t *)arg;
-
 	os_event_set(app->main_events, APP_EVENT_TIMER);
 }
 
@@ -179,11 +178,10 @@ int app_start(app_data_t *app, app_run_in_separate_task_t task_config)
 		return -1;
 	}
 
-	app->main_timer = os_timer_create(
-		APP_TICK_INTERVAL_US,
-		main_timer_tick,
-		(void *)app,
-		false);
+	app->main_timer = os_timer_create(APP_TICK_INTERVAL_US,
+									  main_timer_tick,
+									  (void *)app,
+									  false);
 
 	if (app->main_timer == NULL)
 	{
@@ -193,12 +191,11 @@ int app_start(app_data_t *app, app_run_in_separate_task_t task_config)
 
 	if (task_config == RUN_IN_SEPARATE_THREAD)
 	{
-		os_thread_create(
-			"p-net_sample_app",
-			APP_MAIN_THREAD_PRIORITY,
-			APP_MAIN_THREAD_STACKSIZE,
-			app_loop_forever,
-			(void *)app);
+		os_thread_create("p-net_sample_app",
+						 APP_MAIN_THREAD_PRIORITY,
+						 APP_MAIN_THREAD_STACKSIZE,
+						 app_loop_forever,
+						 (void *)app);
 	}
 
 	os_timer_start(app->main_timer);
@@ -216,11 +213,10 @@ static void app_set_outputs_default_value(void)
 
 /*********************************** Callbacks ********************************/
 
-static int app_connect_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	pnet_result_t *p_result)
+static int app_connect_ind(pnet_t *net,
+						   void *arg,
+						   uint32_t arep,
+						   pnet_result_t *p_result)
 {
 	APP_LOG_DEBUG("PLC connect indication. AREP: %u\n", arep);
 	/*
@@ -232,40 +228,34 @@ static int app_connect_ind(
 	return 0;
 }
 
-static int app_release_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	pnet_result_t *p_result)
+static int app_release_ind(pnet_t *net,
+						   void *arg,
+						   uint32_t arep,
+						   pnet_result_t *p_result)
 {
 	APP_LOG_DEBUG("PLC release (disconnect) indication. AREP: %u\n", arep);
-
 	app_set_outputs_default_value();
-
 	return 0;
 }
 
-static int app_dcontrol_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	pnet_control_command_t control_command,
-	pnet_result_t *p_result)
+static int app_dcontrol_ind(pnet_t *net,
+							void *arg,
+							uint32_t arep,
+							pnet_control_command_t control_command,
+							pnet_result_t *p_result)
 {
-	APP_LOG_DEBUG(
-		"PLC dcontrol message (The PLC is done with parameter writing). "
-		"AREP: %u  Command: %s\n",
-		arep,
-		app_utils_dcontrol_cmd_to_string(control_command));
+	APP_LOG_DEBUG("PLC dcontrol message (The PLC is done with parameter writing). "
+				  "AREP: %u  Command: %s\n",
+				  arep,
+				  app_utils_dcontrol_cmd_to_string(control_command));
 
 	return 0;
 }
 
-static int app_ccontrol_cnf(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	pnet_result_t *p_result)
+static int app_ccontrol_cnf(pnet_t *net,
+							void *arg,
+							uint32_t arep,
+							pnet_result_t *p_result)
 {
 	APP_LOG_DEBUG(
 		"PLC ccontrol message confirmation (The PLC has received our Application "
@@ -1347,51 +1337,53 @@ static void app_handle_demo_pnet_api(app_data_t *app)
 		break;
 
 	case APP_DEMO_STATE_DIAG_STD_ADD:
-		APP_LOG_INFO(
-			"Adding standard diagnosis. Slot %u subslot %u channel %u Errortype "
-			"%u\n",
-			diag_source.slot,
-			diag_source.subslot,
-			diag_source.ch,
-			APP_DIAG_CHANNEL_ERRORTYPE);
-		(void)pnet_diag_std_add(
-			app->net,
-			&diag_source,
-			APP_DIAG_CHANNEL_NUMBER_OF_BITS,
-			APP_DIAG_CHANNEL_SEVERITY,
-			APP_DIAG_CHANNEL_ERRORTYPE,
-			APP_DIAG_CHANNEL_EXTENDED_ERRORTYPE,
-			APP_DIAG_CHANNEL_ADDVALUE_A,
-			APP_DIAG_CHANNEL_QUAL_SEVERITY);
-		break;
+		{
+			APP_LOG_INFO("Adding standard diagnosis. Slot %u subslot %u channel %u Errortype "
+						 "%u\n",
+						 diag_source.slot,
+						 diag_source.subslot,
+						 diag_source.ch,
+						 APP_DIAG_CHANNEL_ERRORTYPE);
 
+			(void)pnet_diag_std_add(app->net,
+									&diag_source,
+									APP_DIAG_CHANNEL_NUMBER_OF_BITS,
+									APP_DIAG_CHANNEL_SEVERITY,
+									APP_DIAG_CHANNEL_ERRORTYPE,
+									APP_DIAG_CHANNEL_EXTENDED_ERRORTYPE,
+									APP_DIAG_CHANNEL_ADDVALUE_A,
+									APP_DIAG_CHANNEL_QUAL_SEVERITY);
+			break;
+		}
 	case APP_DEMO_STATE_DIAG_STD_UPDATE:
-		APP_LOG_INFO(
-			"Updating standard diagnosis. Slot %u subslot %u channel %u\n",
-			diag_source.slot,
-			diag_source.subslot,
-			diag_source.ch);
-		pnet_diag_std_update(
-			app->net,
-			&diag_source,
-			APP_DIAG_CHANNEL_ERRORTYPE,
-			APP_DIAG_CHANNEL_EXTENDED_ERRORTYPE,
-			APP_DIAG_CHANNEL_ADDVALUE_B);
-		break;
+		{
+			APP_LOG_INFO("Updating standard diagnosis. Slot %u subslot %u channel %u\n",
+						 diag_source.slot,
+						 diag_source.subslot,
+						 diag_source.ch);
 
+			pnet_diag_std_update(app->net,
+								 &diag_source,
+								 APP_DIAG_CHANNEL_ERRORTYPE,
+								 APP_DIAG_CHANNEL_EXTENDED_ERRORTYPE,
+								 APP_DIAG_CHANNEL_ADDVALUE_B);
+
+			break;
+		}
 	case APP_DEMO_STATE_DIAG_STD_REMOVE:
-		APP_LOG_INFO(
-			"Removing standard diagnosis. Slot %u subslot %u channel %u\n",
-			diag_source.slot,
-			diag_source.subslot,
-			diag_source.ch);
-		pnet_diag_std_remove(
-			app->net,
-			&diag_source,
-			APP_DIAG_CHANNEL_ERRORTYPE,
-			APP_DIAG_CHANNEL_EXTENDED_ERRORTYPE);
-		break;
+		{
+			APP_LOG_INFO("Removing standard diagnosis. Slot %u subslot %u channel %u\n",
+						 diag_source.slot,
+						 diag_source.subslot,
+						 diag_source.ch);
 
+			pnet_diag_std_remove(app->net,
+								 &diag_source,
+								 APP_DIAG_CHANNEL_ERRORTYPE,
+								 APP_DIAG_CHANNEL_EXTENDED_ERRORTYPE);
+
+			break;
+		}
 	case APP_DEMO_STATE_DIAG_USI_ADD:
 		APP_LOG_INFO(
 			"Adding USI diagnosis. Slot %u subslot %u\n",
