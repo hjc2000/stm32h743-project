@@ -133,36 +133,25 @@ int pnal_eth_get_status(char const *interface_name, pnal_eth_status_t *status)
 	return 0;
 }
 
-int pnal_save_file(
-	char const *fullpath,
-	void const *object_1,
-	size_t size_1,
-	void const *object_2,
-	size_t size_2)
+int pnal_save_file(char const *fullpath,
+				   void const *object_1,
+				   size_t size_1,
+				   void const *object_2,
+				   size_t size_2)
 {
 	FIL fil;
 	FRESULT fres;
 	UINT count;
 	int ret = 0; /* Assume everything goes well */
 
-	// if (!SDFatFSMounted)
-	// {
-	// 	LOG_ERROR(
-	// 		PF_PNAL_LOG,
-	// 		"PNAL(%d): SD-Card not mounted (%s)\n",
-	// 		__LINE__,
-	// 		fullpath);
-	// 	return -1;
-	// }
-
 	fres = f_open(&fil, fullpath, FA_WRITE | FA_OPEN_ALWAYS | FA_CREATE_ALWAYS);
 	if (fres != FR_OK)
 	{
-		LOG_ERROR(
-			PF_PNAL_LOG,
-			"PNAL(%d): Could not open file %s\n",
-			__LINE__,
-			fullpath);
+		LOG_ERROR(PF_PNAL_LOG,
+				  "PNAL(%d): Could not open file %s\n",
+				  __LINE__,
+				  fullpath);
+
 		return -1;
 	}
 
@@ -173,11 +162,10 @@ int pnal_save_file(
 		if (fres != FR_OK || count != size_1)
 		{
 			ret = -1;
-			LOG_ERROR(
-				PF_PNAL_LOG,
-				"PNAL(%d): Failed to write file %s\n",
-				__LINE__,
-				fullpath);
+			LOG_ERROR(PF_PNAL_LOG,
+					  "PNAL(%d): Failed to write file %s\n",
+					  __LINE__,
+					  fullpath);
 		}
 	}
 
@@ -200,50 +188,28 @@ int pnal_save_file(
 
 void pnal_clear_file(char const *fullpath)
 {
-	// if (!SDFatFSMounted)
-	// {
-	// 	LOG_ERROR(
-	// 		PF_PNAL_LOG,
-	// 		"PNAL(%d): SD-Card not mounted (%s)\n",
-	// 		__LINE__,
-	// 		fullpath);
-	// 	return;
-	// }
-
 	LOG_DEBUG(PF_PNAL_LOG, "PNAL(%d): Clearing file %s\n", __LINE__, fullpath);
 	f_unlink(fullpath);
 }
 
-int pnal_load_file(
-	char const *fullpath,
-	void *object_1,
-	size_t size_1,
-	void *object_2,
-	size_t size_2)
+int pnal_load_file(char const *fullpath,
+				   void *object_1,
+				   size_t size_1,
+				   void *object_2,
+				   size_t size_2)
 {
 	FIL fil;
 	FRESULT fres;
 	UINT count;
 	int ret = 0; /* Assume everything goes well */
 
-	// if (!SDFatFSMounted)
-	// {
-	// 	LOG_ERROR(
-	// 		PF_PNAL_LOG,
-	// 		"PNAL(%d): SD-Card not mounted (%s)\n",
-	// 		__LINE__,
-	// 		fullpath);
-	// 	return -1;
-	// }
-
 	fres = f_open(&fil, fullpath, FA_READ);
 	if (fres != FR_OK)
 	{
-		LOG_ERROR(
-			PF_PNAL_LOG,
-			"PNAL(%d): Could not yet open file %s\n",
-			__LINE__,
-			fullpath);
+		LOG_ERROR(PF_PNAL_LOG,
+				  "PNAL(%d): Could not yet open file %s\n",
+				  __LINE__,
+				  fullpath);
 
 		return -1;
 	}
@@ -255,11 +221,11 @@ int pnal_load_file(
 		if (fres != FR_OK || count != size_1)
 		{
 			ret = -1;
-			LOG_ERROR(
-				PF_PNAL_LOG,
-				"PNAL(%d): Failed to read file %s\n",
-				__LINE__,
-				fullpath);
+
+			LOG_ERROR(PF_PNAL_LOG,
+					  "PNAL(%d): Failed to read file %s\n",
+					  __LINE__,
+					  fullpath);
 		}
 	}
 
@@ -269,11 +235,11 @@ int pnal_load_file(
 		if (fres != FR_OK || count != size_2)
 		{
 			ret = -1;
-			LOG_ERROR(
-				PF_PNAL_LOG,
-				"PNAL(%d): Failed to read file %s (second buffer)\n",
-				__LINE__,
-				fullpath);
+
+			LOG_ERROR(PF_PNAL_LOG,
+					  "PNAL(%d): Failed to read file %s (second buffer)\n",
+					  __LINE__,
+					  fullpath);
 		}
 	}
 
