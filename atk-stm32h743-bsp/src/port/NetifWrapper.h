@@ -73,11 +73,13 @@ namespace lwip
 		bool DhcpSuppliedAddress();
 #pragma endregion
 
+#pragma region 线程函数
 		/// @brief 检测链接状态的线程函数。
 		void LinkStateDetectingThreadFunc();
 
 		/// @brief 负责将网口接收到的数据送给 lwip.
 		void InputThreadFunc();
+#pragma endregion
 
 		/// @brief 获取被包装对象的指针。
 		/// @return

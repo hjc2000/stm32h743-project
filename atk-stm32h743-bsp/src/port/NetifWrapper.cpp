@@ -131,6 +131,8 @@ bool lwip::NetifWrapper::DhcpSuppliedAddress()
 
 #pragma endregion
 
+#pragma region 线程函数
+
 void lwip::NetifWrapper::LinkStateDetectingThreadFunc()
 {
 	while (true)
@@ -213,6 +215,8 @@ void lwip::NetifWrapper::InputThreadFunc()
 		}
 	}
 }
+
+#pragma endregion
 
 netif *lwip::NetifWrapper::WrappedObj() const
 {
