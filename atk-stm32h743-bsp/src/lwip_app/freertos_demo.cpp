@@ -18,9 +18,6 @@
 #include <string.h>
 #include <task.h>
 
-/* 接收数据缓冲区 */
-uint8_t g_lwip_demo_recvbuf[200];
-
 void freertos_demo()
 {
 	lwip::NetifWrapper _netif_wrapper;
@@ -70,9 +67,10 @@ void freertos_demo()
 		},
 		512);
 
+	/* 接收数据缓冲区 */
+	std::unique_ptr<uint8_t[]> receiving_buffer{new uint8_t[200]{}};
 	while (true)
 	{
-		memset(g_lwip_demo_recvbuf, 0, sizeof(g_lwip_demo_recvbuf));
-		recv(sock_fd, (void *)g_lwip_demo_recvbuf, sizeof(g_lwip_demo_recvbuf), 0);
+		recv(sock_fd, receiving_buffer.get(), 200, 0);
 	}
 }
