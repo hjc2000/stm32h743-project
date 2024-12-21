@@ -69,38 +69,6 @@ void bsp::LwipEthernetInterface::InputThreadFunc()
 	}
 }
 
-void bsp::LwipEthernetInterface::LinkStateDetectingThreadFunc()
-{
-	while (true)
-	{
-		bool is_linked = _ethernet_port->IsLinked();
-		if (is_linked == netif_is_up(_netif_wrapper))
-		{
-			DI_Delayer().Delay(std::chrono::milliseconds{100});
-			continue;
-		}
-
-		if (is_linked)
-		{
-			// 开启以太网及虚拟网卡
-			DI_Console().WriteLine("检测到网线插入");
-			_ethernet_port->Restart();
-			netif_set_up(_netif_wrapper);
-			netif_set_link_up(_netif_wrapper);
-			_netif_wrapper.TryDHCP();
-		}
-		else
-		{
-			_netif_wrapper.StopDHCP();
-
-			/* LWIP_DHCP */
-			DI_Console().WriteLine("检测到网线断开。");
-			netif_set_down(_netif_wrapper);
-			netif_set_link_down(_netif_wrapper);
-		}
-	}
-}
-
 #pragma endregion
 
 bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
@@ -132,15 +100,6 @@ bsp::LwipEthernetInterface &bsp::LwipEthernetInterface::Instance()
 void bsp::LwipEthernetInterface::Open()
 {
 	_netif_wrapper.Open(_ethernet_port, ETH_MAX_PAYLOAD);
-	_netif_wrapper.SetAsDefaultNetInterface();
-
-	// 链接状态更新
-	DI_TaskManager().Create(
-		[this]()
-		{
-			LinkStateDetectingThreadFunc();
-		},
-		512);
 
 	/* create the task that handles the ETH_MAC */
 	DI_TaskManager().Create(

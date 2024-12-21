@@ -59,6 +59,23 @@ namespace lwip
 		/// @param p
 		void SendPbuf(pbuf *p);
 
+#pragma region DHCP
+		bool TryDHCP();
+
+		/// @brief 启动 DHCP.
+		void StartDHCP();
+
+		/// @brief 停止 DHCP.
+		void StopDHCP();
+
+		/// @brief 检查本次启动 DHCP 后 IP 地址是否被 DHCP 提供了。
+		/// @return 如果 DHCP 提供了 IP 地址，则返回 true, 否则返回 false.
+		bool DhcpSuppliedAddress();
+#pragma endregion
+
+		/// @brief 检测链接状态的线程函数。
+		void LinkStateDetectingThreadFunc();
+
 		/// @brief 获取被包装对象的指针。
 		/// @return
 		netif *WrappedObj() const override;
@@ -107,21 +124,11 @@ namespace lwip
 		void ClearAllAddress();
 #pragma endregion
 
-#pragma region DHCP
-		bool TryDHCP();
-
-		/// @brief 启动 DHCP.
-		void StartDHCP();
-
-		/// @brief 停止 DHCP.
-		void StopDHCP();
-
-		/// @brief 检查本次启动 DHCP 后 IP 地址是否被 DHCP 提供了。
-		/// @return 如果 DHCP 提供了 IP 地址，则返回 true, 否则返回 false.
-		bool DhcpSuppliedAddress();
-#pragma endregion
-
 		/// @brief 设置为默认网卡。
 		void SetAsDefaultNetInterface();
+
+		/// @brief 检查本网卡是否是默认网卡。
+		/// @return
+		bool IsDefaultNetInterface() const;
 	};
 } // namespace lwip

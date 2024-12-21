@@ -21,8 +21,6 @@ namespace bsp
 		/// @brief 负责将网口接收到的数据送给 lwip.
 		void InputThreadFunc();
 
-		/// @brief 检测链接状态的线程函数。
-		void LinkStateDetectingThreadFunc();
 #pragma endregion
 
 		lwip::NetifWrapper _netif_wrapper;
