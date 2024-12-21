@@ -18,18 +18,11 @@
 #include <string.h>
 #include <task.h>
 
-/* 需要自己设置远程IP地址 */
-#define IP_ADDR "192.168.1.203"
-
-#define LWIP_DEMO_RX_BUFSIZE 200                     /* 最大接收数据长度 */
-#define LWIP_DEMO_PORT 8080                          /* 连接的本地端口号 */
-#define LWIP_SEND_THREAD_PRIO (tskIDLE_PRIORITY + 3) /* 发送数据线程优先级 */
-
 /* 接收数据缓冲区 */
-uint8_t g_lwip_demo_recvbuf[LWIP_DEMO_RX_BUFSIZE];
+uint8_t g_lwip_demo_recvbuf[200];
 
 /* 发送数据内容 */
-char g_lwip_demo_sendbuf[] = "ALIENTEK UDP TEST\r\n";
+char g_lwip_demo_sendbuf[] = "UDP testing message";
 
 struct sockaddr_in local_info; /* 定义Socket地址信息结构体 */
 socklen_t sock_fd;             /* 定义一个Socket接口 */
@@ -55,7 +48,7 @@ void freertos_demo()
 	DI_TaskManager().Create(
 		[]()
 		{
-			local_info.sin_addr.s_addr = inet_addr(IP_ADDR); /* 需要发送的远程IP地址 */
+			local_info.sin_addr.s_addr = inet_addr("192.168.1.203"); /* 需要发送的远程IP地址 */
 			while (true)
 			{
 				sendto(sock_fd,                        /* scoket */
@@ -72,7 +65,7 @@ void freertos_demo()
 	memset(&local_info, 0, sizeof(struct sockaddr_in)); /* 将服务器地址清空 */
 	local_info.sin_len = sizeof(local_info);
 	local_info.sin_family = AF_INET;                /* IPv4地址 */
-	local_info.sin_port = htons(LWIP_DEMO_PORT);    /* 设置端口号 */
+	local_info.sin_port = htons(8080);              /* 设置端口号 */
 	local_info.sin_addr.s_addr = htons(INADDR_ANY); /* 设置本地IP地址 */
 
 	sock_fd = socket(AF_INET, SOCK_DGRAM, 0); /* 建立一个新的socket连接 */
