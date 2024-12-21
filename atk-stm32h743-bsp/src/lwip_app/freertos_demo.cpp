@@ -21,9 +21,6 @@
 /* 接收数据缓冲区 */
 uint8_t g_lwip_demo_recvbuf[200];
 
-/* 发送数据内容 */
-char g_lwip_demo_sendbuf[] = "UDP testing message";
-
 struct sockaddr_in local_info; /* 定义Socket地址信息结构体 */
 socklen_t sock_fd;             /* 定义一个Socket接口 */
 
@@ -49,13 +46,16 @@ void freertos_demo()
 		[]()
 		{
 			local_info.sin_addr.s_addr = inet_addr("192.168.1.203"); /* 需要发送的远程IP地址 */
+			std::string sending_message{"UDP testing message"};
+
 			while (true)
 			{
-				sendto(sock_fd,                        /* scoket */
-					   (char *)g_lwip_demo_sendbuf,    /* 发送的数据 */
-					   sizeof(g_lwip_demo_sendbuf), 0, /* 发送的数据大小 */
-					   (struct sockaddr *)&local_info, /* 接收端地址信息 */
-					   sizeof(local_info));            /* 接收端地址信息大小 */
+				sendto(sock_fd,
+					   sending_message.c_str(), // 发送的数据
+					   sending_message.size(),  // 发送的数据大小
+					   0,
+					   (sockaddr *)&local_info, // 接收端地址信息
+					   sizeof(local_info));     // 接收端地址信息大小
 
 				DI_Delayer().Delay(std::chrono::milliseconds{100});
 			}
