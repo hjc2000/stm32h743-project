@@ -76,6 +76,9 @@ namespace lwip
 		/// @brief 检测链接状态的线程函数。
 		void LinkStateDetectingThreadFunc();
 
+		/// @brief 负责将网口接收到的数据送给 lwip.
+		void InputThreadFunc();
+
 		/// @brief 获取被包装对象的指针。
 		/// @return
 		netif *WrappedObj() const override;

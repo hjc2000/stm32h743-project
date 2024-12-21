@@ -26,17 +26,21 @@
 #include "task.h"
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/interrupt.h>
+#include <hal.h>
 #include <lwip_demo.h>
-#include <LwipEthernetInterface.h>
+#include <NetifWrapper.h>
 
 void freertos_demo()
 {
+	lwip::NetifWrapper _netif_wrapper;
+
 	while (true)
 	{
 		try
 		{
-			bsp::LwipEthernetInterface::Instance().Open();
+			_netif_wrapper.Open(&DI_EthernetPort(), ETH_MAX_PAYLOAD);
 			break;
 		}
 		catch (std::exception const &e)
@@ -46,5 +50,5 @@ void freertos_demo()
 		}
 	}
 
-	lwip_demo(); /* lwip测试代码 */
+	lwip_demo();
 }
