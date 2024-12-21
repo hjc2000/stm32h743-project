@@ -21,8 +21,8 @@
 /* 接收数据缓冲区 */
 uint8_t g_lwip_demo_recvbuf[200];
 
-struct sockaddr_in local_info; /* 定义Socket地址信息结构体 */
-socklen_t sock_fd;             /* 定义一个Socket接口 */
+sockaddr_in local_info; /* 定义Socket地址信息结构体 */
+socklen_t sock_fd;      /* 定义一个Socket接口 */
 
 void freertos_demo()
 {
