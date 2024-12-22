@@ -1,4 +1,3 @@
-#include"UniversalTimerCompareOutputConfig.h"
+#include "UniversalTimerCompareOutputConfig.h"
 
 using namespace hal;
-

@@ -1,5 +1,5 @@
 #pragma once
-#include<hal.h>
+#include <hal.h>
 
 namespace hal
 {
@@ -13,4 +13,4 @@ namespace hal
 		Channel6 = TIM_CHANNEL_6,
 		All = TIM_CHANNEL_ALL,
 	};
-}
+} // namespace hal
