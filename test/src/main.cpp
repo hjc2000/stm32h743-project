@@ -3,13 +3,13 @@
 #include <base/string/ToHexString.h>
 #include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/console.h>
-#include <bsp-interface/di/core.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/eerom.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/led.h>
+#include <bsp-interface/di/reset_initialize.h>
 #include <bsp-interface/di/system_time.h>
 #include <bsp-interface/di/task.h>
 #include <bsp-interface/flash/RmaFlash.h>
