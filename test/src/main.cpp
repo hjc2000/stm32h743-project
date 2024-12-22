@@ -196,6 +196,53 @@ int main(void)
 	DI_TaskManager().Create(
 		[]()
 		{
+			DI_Serial().Open(*DICreate_ISerialOptions());
+			DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
+			SDRAM_Init();
+
+			// freertos::FreertosHeap4 heap4{
+			// 	reinterpret_cast<uint8_t *>(0xC0000000),
+			// 	32 * 1024 * 1024,
+			// };
+
+			// void *mem = heap4.Malloc(1024);
+			// while (true)
+			// {
+			// 	int a = 5;
+			// 	DI_Console().Write(&a);
+			// 	std::cout << std::endl;
+			// 	std::cout << &a << std::endl;
+			// 	std::cout << std::endl;
+			// 	DI_Delayer().Delay(std::chrono::milliseconds{1000});
+			// }
+			// TestFatFs();
+			freertos_demo();
+			// p_net_sample_app_main();
+			// TestLittleFs();
+
+			// while (true)
+			// {
+			//     DI_GreenDigitalLed().Toggle();
+			//     // std::cout << eerom->ReadUInt64(0) << std::endl;
+			//     // std::cout << lwip_localtime << std::endl;
+			//     // PrintAddresses();
+			//     // TestSDRAM();
+			//     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
+			//     DI_Delayer().Delay(std::chrono::seconds{1});
+			// }
+
+			// TestUniversalTimer1();
+			// bsp::TestFlash();
+			// TestExtiKey();
+			// bsp::TestSerial();
+			// bsp::TestKeyScanner();
+			// bsp::TestIndependentWatchDog();
+		},
+		1024);
+
+	DI_TaskManager().Create(
+		[]()
+		{
 			while (true)
 			{
 				DI_RedDigitalLed().Toggle();
@@ -214,64 +261,6 @@ int main(void)
 			}
 		},
 		512);
-
-	DI_TaskManager().Create(
-		[]()
-		{
-			try
-			{
-				DI_Serial().Open(*DICreate_ISerialOptions());
-				DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
-				SDRAM_Init();
-
-				// freertos::FreertosHeap4 heap4{
-				// 	reinterpret_cast<uint8_t *>(0xC0000000),
-				// 	32 * 1024 * 1024,
-				// };
-
-				// void *mem = heap4.Malloc(1024);
-				// while (true)
-				// {
-				// 	int a = 5;
-				// 	DI_Console().Write(&a);
-				// 	std::cout << std::endl;
-				// 	std::cout << &a << std::endl;
-				// 	std::cout << std::endl;
-				// 	DI_Delayer().Delay(std::chrono::milliseconds{1000});
-				// }
-				// TestFatFs();
-				freertos_demo();
-				// p_net_sample_app_main();
-				// TestLittleFs();
-
-				// while (true)
-				// {
-				//     DI_GreenDigitalLed().Toggle();
-				//     // std::cout << eerom->ReadUInt64(0) << std::endl;
-				//     // std::cout << lwip_localtime << std::endl;
-				//     // PrintAddresses();
-				//     // TestSDRAM();
-				//     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
-				//     DI_Delayer().Delay(std::chrono::seconds{1});
-				// }
-
-				// TestUniversalTimer1();
-				// bsp::TestFlash();
-				// TestExtiKey();
-				// bsp::TestSerial();
-				// bsp::TestKeyScanner();
-				// bsp::TestIndependentWatchDog();
-			}
-			catch (std::exception const &e)
-			{
-				DI_Console().WriteError(e.what());
-			}
-			catch (...)
-			{
-				DI_Console().WriteError("发生了未知的异常");
-			}
-		},
-		1024);
 
 	DI_TaskManager().StartScheduler();
 }
