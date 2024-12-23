@@ -166,20 +166,18 @@ extern "C"
 	 * @param err_cls_str    Out:   The error class string
 	 * @param err_code_str   Out:   The error code string
 	 */
-	void app_utils_get_error_code_strings(
-		uint16_t err_cls,
-		uint16_t err_code,
-		char const **err_cls_str,
-		char const **err_code_str);
+	void app_utils_get_error_code_strings(uint16_t err_cls,
+										  uint16_t err_code,
+										  char const **err_cls_str,
+										  char const **err_code_str);
 
 	/**
 	 * Copy an IP address (as an integer) to a struct
 	 * @param destination_struct  Out:   Destination
 	 * @param ip                  In:    IP address
 	 */
-	void app_utils_copy_ip_to_struct(
-		pnet_cfg_ip_addr_t *destination_struct,
-		pnal_ipaddr_t ip);
+	void app_utils_copy_ip_to_struct(pnet_cfg_ip_addr_t *destination_struct,
+									 pnal_ipaddr_t ip);
 
 	/**
 	 * Return a string representation of
@@ -187,8 +185,7 @@ extern "C"
 	 * @param event            In:    control_command
 	 * @return  A string representing the command
 	 */
-	char const *app_utils_dcontrol_cmd_to_string(
-		pnet_control_command_t control_command);
+	char const *app_utils_dcontrol_cmd_to_string(pnet_control_command_t control_command);
 
 	/**
 	 * Return a string representation of the given event.
@@ -210,11 +207,10 @@ extern "C"
 	 * @param if_cfg              Out: P-Net network configuration to be updated
 	 * @return 0 on success, -1 on error
 	 */
-	int app_utils_pnet_cfg_init_netifs(
-		char const *netif_list_str,
-		app_utils_netif_namelist_t *if_list,
-		uint16_t *number_of_ports,
-		pnet_if_cfg_t *if_cfg);
+	int app_utils_pnet_cfg_init_netifs(char const *netif_list_str,
+									   app_utils_netif_namelist_t *if_list,
+									   uint16_t *number_of_ports,
+									   pnet_if_cfg_t *if_cfg);
 
 	/**
 	 * Parse a comma separated list of network interfaces and check
@@ -244,11 +240,10 @@ extern "C"
 	 * @return  0  on success
 	 *         -1  on error
 	 */
-	int app_utils_get_netif_namelist(
-		char const *arg_str,
-		uint16_t max_port,
-		app_utils_netif_namelist_t *p_if_list,
-		uint16_t *p_num_ports);
+	int app_utils_get_netif_namelist(char const *arg_str,
+									 uint16_t max_port,
+									 app_utils_netif_namelist_t *p_if_list,
+									 uint16_t *p_num_ports);
 
 	/**
 	 * Print network configuration using APP_LOG_INFO().
@@ -256,9 +251,8 @@ extern "C"
 	 * @param if_cfg           In:   Network configuration
 	 * @param number_of_ports  In:   Number of used ports
 	 */
-	void app_utils_print_network_config(
-		pnet_if_cfg_t *if_cfg,
-		uint16_t number_of_ports);
+	void app_utils_print_network_config(pnet_if_cfg_t *if_cfg,
+										uint16_t number_of_ports);
 
 	/**
 	 * Print message if IOXS has changed.
@@ -270,11 +264,10 @@ extern "C"
 	 * @param ioxs_current     In: Current status
 	 * @param ioxs_new         In: New status
 	 */
-	void app_utils_print_ioxs_change(
-		app_subslot_t const *subslot,
-		char const *ioxs_str,
-		uint8_t ioxs_current,
-		uint8_t ioxs_new);
+	void app_utils_print_ioxs_change(app_subslot_t const *subslot,
+									 char const *ioxs_str,
+									 uint8_t ioxs_current,
+									 uint8_t ioxs_new);
 
 	/**
 	 * Init the p-net configuration to default values.
@@ -305,11 +298,10 @@ extern "C"
 	 * @param name             In:    Module name
 	 * @return 0 on success, -1 on error
 	 */
-	int app_utils_plug_module(
-		app_api_t *p_api,
-		uint16_t slot_nbr,
-		uint32_t id,
-		char const *name);
+	int app_utils_plug_module(app_api_t *p_api,
+							  uint16_t slot_nbr,
+							  uint32_t id,
+							  char const *name);
 
 	/**
 	 * Pull any application module in given slot.
@@ -344,15 +336,14 @@ extern "C"
 	 *         NULL if no free subslot is available. This should
 	 *         never happen if application is aligned with p-net state.
 	 */
-	app_subslot_t *app_utils_plug_submodule(
-		app_api_t *p_api,
-		uint16_t slot_nbr,
-		uint16_t subslot_nbr,
-		uint32_t submodule_id,
-		pnet_data_cfg_t const *p_data_cfg,
-		char const *submodule_name,
-		app_utils_cyclic_callback cyclic_callback,
-		void *tag);
+	app_subslot_t *app_utils_plug_submodule(app_api_t *p_api,
+											uint16_t slot_nbr,
+											uint16_t subslot_nbr,
+											uint32_t submodule_id,
+											pnet_data_cfg_t const *p_data_cfg,
+											char const *submodule_name,
+											app_utils_cyclic_callback cyclic_callback,
+											void *tag);
 
 	/**
 	 * Unplug any application submodule from given subslot.
@@ -365,10 +356,9 @@ extern "C"
 	 * @param subslot_nbr      In:    Subslot number
 	 * @return 0 on success, -1 on error.
 	 */
-	int app_utils_pull_submodule(
-		app_api_t *p_api,
-		uint16_t slot_nbr,
-		uint16_t subslot_nbr);
+	int app_utils_pull_submodule(app_api_t *p_api,
+								 uint16_t slot_nbr,
+								 uint16_t subslot_nbr);
 
 	/**
 	 * Trigger data callback for all plugged submodules in all slots.
@@ -388,10 +378,9 @@ extern "C"
 	 * @return Reference to application subslot,
 	 *         NULL if subslot is not found/plugged.
 	 */
-	app_subslot_t *app_utils_subslot_get(
-		app_api_t *p_api,
-		uint16_t slot_nbr,
-		uint16_t subslot_nbr);
+	app_subslot_t *app_utils_subslot_get(app_api_t *p_api,
+										 uint16_t slot_nbr,
+										 uint16_t subslot_nbr);
 
 	/**
 	 * Return true if subslot is input.
