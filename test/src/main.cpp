@@ -201,10 +201,12 @@ int main(void)
 	 * 不要在 main 函数中定义局部变量，然后创建任务的时候让 lambda 表达式通过引用的方式捕获，试图在
 	 * 任务函数中访问这些局部变量。根据网上的一个说法：freertos 启动调度后会覆盖掉 main 函数的栈，
 	 * 所以 main 函数的参数、局部变量全部会被破坏。
-	 * 		@li https://cloud.tencent.com/developer/information/%60main%60%E5%87%BD%E6%95%B0%E5%A0%86%E6%A0%88%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%9C%A8%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%BB%BB%E5%8A%A1%E8%BF%90%E8%A1%8C%E6%97%B6%E8%A2%AB%E8%A6%86%E7%9B%96%28FreeRTOS%29
-	 * 		@li https://www.freertos.org/FreeRTOS_Support_Forum_Archive/February_2005/freertos_Reusing_main_s_stack_an_ISR_only_stack_1229327.html
-	 *		@li https://stackoverflow.com/questions/60060627/object-in-stack-of-main-function-is-overwritten-when-first-task-runs-freertos
 	 *
+	 * @li https://cloud.tencent.com/developer/information/%60main%60%E5%87%BD%E6%95%B0%E5%A0%86%E6%A0%88%E4%B8%AD%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%9C%A8%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%BB%BB%E5%8A%A1%E8%BF%90%E8%A1%8C%E6%97%B6%E8%A2%AB%E8%A6%86%E7%9B%96%28FreeRTOS%29
+	 * @li https://www.freertos.org/FreeRTOS_Support_Forum_Archive/February_2005/freertos_Reusing_main_s_stack_an_ISR_only_stack_1229327.html
+	 * @li https://stackoverflow.com/questions/60060627/object-in-stack-of-main-function-is-overwritten-when-first-task-runs-freertos
+	 *
+	 * 据说 main 函数被认为是只执行一次后就应该被删除的初始任务，所以它的栈理应被挪作他用。
 	 */
 
 	DI_TaskManager().Create(
