@@ -86,6 +86,7 @@ namespace lwip
 		netif *WrappedObj() const override;
 
 	public:
+		/// @brief 构造函数。
 		NetifWrapper();
 
 #pragma region Open

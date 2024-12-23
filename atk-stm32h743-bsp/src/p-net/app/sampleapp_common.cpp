@@ -283,28 +283,28 @@ static int app_write_ind(pnet_t *net,
 	int result = 0;
 	app_data_t *app = (app_data_t *)arg;
 	app_subslot_t *subslot;
-	APP_LOG_DEBUG(
-		"PLC write record indication.\n"
-		"  AREP: %u API: %u Slot: %2u Subslot: %u Index: %u Sequence: %2u "
-		"Length: %u\n",
-		arep,
-		api,
-		slot_nbr,
-		subslot_nbr,
-		(unsigned)idx,
-		sequence_number,
-		write_length);
+
+	APP_LOG_DEBUG("PLC write record indication.\n"
+				  "  AREP: %u API: %u Slot: %2u Subslot: %u Index: %u Sequence: %2u "
+				  "Length: %u\n",
+				  arep,
+				  api,
+				  slot_nbr,
+				  subslot_nbr,
+				  (unsigned)idx,
+				  sequence_number,
+				  write_length);
 
 	subslot = app_utils_subslot_get(&app->main_api, slot_nbr, subslot_nbr);
 	if (subslot == NULL)
 	{
-		APP_LOG_WARNING(
-			"No submodule plugged in AREP: %u API: %u Slot: %2u Subslot: %u "
-			"Index will not be written.\n",
-			arep,
-			api,
-			slot_nbr,
-			subslot_nbr);
+		APP_LOG_WARNING("No submodule plugged in AREP: %u API: %u Slot: %2u Subslot: %u "
+						"Index will not be written.\n",
+						arep,
+						api,
+						slot_nbr,
+						subslot_nbr);
+
 		p_result->pnio_status.error_code = PNET_ERROR_CODE_WRITE;
 		p_result->pnio_status.error_decode = PNET_ERROR_DECODE_PNIORW;
 		p_result->pnio_status.error_code_1 = PNET_ERROR_CODE_1_APP_WRITE_ERROR;
@@ -339,18 +339,17 @@ static int app_write_ind(pnet_t *net,
 	return result;
 }
 
-static int app_read_ind(
-	pnet_t *net,
-	void *arg,
-	uint32_t arep,
-	uint32_t api,
-	uint16_t slot_nbr,
-	uint16_t subslot_nbr,
-	uint16_t idx,
-	uint16_t sequence_number,
-	uint8_t **pp_read_data,
-	uint16_t *p_read_length,
-	pnet_result_t *p_result)
+static int app_read_ind(pnet_t *net,
+						void *arg,
+						uint32_t arep,
+						uint32_t api,
+						uint16_t slot_nbr,
+						uint16_t subslot_nbr,
+						uint16_t idx,
+						uint16_t sequence_number,
+						uint8_t **pp_read_data,
+						uint16_t *p_read_length,
+						pnet_result_t *p_result)
 {
 	int result = 0;
 	app_data_t *app = (app_data_t *)arg;
@@ -540,7 +539,7 @@ static int app_exp_module_ind(pnet_t *net,
 		(void)app_utils_pull_module(&app->main_api, slot);
 	}
 
-	APP_LOG_DEBUG("  Plug module.        API: %u Slot: %2u Module ID: 0x%x \"%s\"\n",
+	APP_LOG_DEBUG("Plug module.        API: %u Slot: %2u Module ID: 0x%x \"%s\"\n",
 				  api,
 				  slot,
 				  (unsigned)module_ident,
