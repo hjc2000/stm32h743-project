@@ -1,5 +1,6 @@
 #include "NetifWrapper.h"
 #include <base/container/List.h>
+#include <base/string/define.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/task.h>

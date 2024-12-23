@@ -1,10 +1,12 @@
 #include <atomic>
 #include <base/RentedPtrFactory.h>
+#include <base/string/define.h>
 #include <base/string/ToHexString.h>
 #include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/eerom.h>
+#include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/iic.h>
@@ -22,6 +24,7 @@
 #include <ff.h>
 #include <littlefs/LfsFlashPort.h>
 #include <memory>
+#include <NetifWrapper.h>
 #include <stdexcept>
 #include <stdint.h>
 #include <TestExtiKey.h>
@@ -216,6 +219,8 @@ int main(void)
 			// 	DI_Delayer().Delay(std::chrono::milliseconds{1000});
 			// }
 			// TestFatFs();
+			lwip::NetifWrapper netif_wrapper;
+			netif_wrapper.Open(&DI_EthernetPort());
 			freertos_demo();
 			// p_net_sample_app_main();
 			// TestLittleFs();

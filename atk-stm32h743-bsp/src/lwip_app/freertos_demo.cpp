@@ -20,22 +20,6 @@
 
 void freertos_demo()
 {
-	lwip::NetifWrapper _netif_wrapper;
-
-	while (true)
-	{
-		try
-		{
-			_netif_wrapper.Open(&DI_EthernetPort(), ETH_MAX_PAYLOAD);
-			break;
-		}
-		catch (std::exception const &e)
-		{
-			DI_Console().WriteLine(e.what());
-			DI_Delayer().Delay(std::chrono::milliseconds{500});
-		}
-	}
-
 	socklen_t sock_fd{};                      /* 定义一个Socket接口 */
 	sock_fd = socket(AF_INET, SOCK_DGRAM, 0); /* 建立一个新的socket连接 */
 

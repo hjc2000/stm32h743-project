@@ -459,8 +459,7 @@ static void app_utils_print_mac_address(char const *netif_name)
 	}
 }
 
-void app_utils_print_network_config(pnet_if_cfg_t *if_cfg,
-									uint16_t number_of_ports)
+void app_utils_print_network_config(pnet_if_cfg_t *if_cfg, uint16_t number_of_ports)
 {
 	uint16_t i;
 	char hostname_string[PNAL_HOSTNAME_MAX_SIZE]; /* Terminated string */
