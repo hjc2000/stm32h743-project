@@ -264,6 +264,12 @@ lwip::NetifWrapper::NetifWrapper()
 	_cache = std::shared_ptr<lwip::NetifWrapper::Cache>{new Cache{}};
 }
 
+lwip::NetifWrapper::~NetifWrapper()
+{
+	// 析构后移除网卡。
+	netif_remove(_wrapped_obj.get());
+}
+
 #pragma region Open
 
 void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
