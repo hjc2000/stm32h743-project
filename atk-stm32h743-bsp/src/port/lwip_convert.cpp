@@ -24,8 +24,6 @@ ip_addr_t base::Convert(base::IPAddress const &o)
 	catch (std::exception const &e)
 	{
 		std::string message = std::string{CODE_POS_STR};
-		message += "sizeof(ip.addr) = " + std::to_string(sizeof(ip_addr_t::addr)) + " \n";
-		message += "o.AsReadOnlySpan().Size() = " + std::to_string(o.AsReadOnlySpan().Size()) + " \n";
 		throw std::runtime_error{message + e.what()};
 	}
 }
@@ -44,6 +42,7 @@ base::IPAddress base::Convert(ip_addr_t const &o)
 	}
 	catch (std::exception const &e)
 	{
-		throw std::runtime_error{std::string{CODE_POS_STR} + e.what()};
+		std::string message = std::string{CODE_POS_STR};
+		throw std::runtime_error{message + e.what()};
 	}
 }
