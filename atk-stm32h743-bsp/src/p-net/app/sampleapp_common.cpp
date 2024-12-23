@@ -578,7 +578,7 @@ static int app_exp_submodule_ind(pnet_t *net,
 {
 	int ret = -1;
 	int result = 0;
-	pnet_data_cfg_t data_cfg = {0};
+	pnet_data_cfg_t data_cfg = {};
 	app_data_t *app = (app_data_t *)arg;
 	app_gsdml_submodule_t const *submod_cfg;
 	char const *name = "Unsupported";
@@ -1101,7 +1101,7 @@ static int app_set_initial_data_and_ioxs(app_data_t *app)
 									  "%5u %9s size %3d \"%s\" \n",
 									  p_subslot->slot_nbr,
 									  p_subslot->subslot_nbr,
-									  app_utils_ioxs_to_string(indata_iops),
+									  app_utils_ioxs_to_string(static_cast<pnet_ioxs_values_t>(indata_iops)),
 									  p_subslot->data_cfg.insize,
 									  p_subslot->submodule_name);
 					}
@@ -1179,7 +1179,7 @@ static void app_handle_demo_pnet_api(app_data_t *app)
 	bool found_inputsubslot = false;
 	uint16_t subslot_ix = 0;
 	app_subslot_t const *p_subslot = NULL;
-	pnet_pnio_status_t pnio_status = {0};
+	pnet_pnio_status_t pnio_status = {};
 
 	pnet_diag_source_t diag_source = {
 		.api = APP_GSDML_API,
