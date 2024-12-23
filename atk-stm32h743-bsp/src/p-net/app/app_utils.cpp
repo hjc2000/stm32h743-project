@@ -481,8 +481,6 @@ void app_utils_print_network_config(pnet_if_cfg_t *if_cfg, uint16_t number_of_po
 		hostname_string[0] = '\0';
 	}
 
-	DI_Console().WriteLine("666666666666666666666666666666666666");
-
 	APP_LOG_INFO("Hostname:             %s\n", hostname_string);
 	APP_LOG_INFO("IP address:           %u.%u.%u.%u\n",
 				 if_cfg->ip_cfg.ip_addr.a,

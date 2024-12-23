@@ -110,11 +110,11 @@ pnet_t *pnet_init(pnet_cfg_t const *p_cfg)
 	if (net == NULL)
 	{
 		printf("sizeof (*net) = %zu\r\n", sizeof(*net));
-		LOG_ERROR(
-			PNET_LOG,
-			"API(%d): Failed to allocate memory for pnet_t (%zu bytes)\n",
-			__LINE__,
-			sizeof(*net));
+		LOG_ERROR(PNET_LOG,
+				  "API(%d): Failed to allocate memory for pnet_t (%zu bytes)\n",
+				  __LINE__,
+				  sizeof(*net));
+
 		return NULL;
 	}
 
@@ -133,18 +133,16 @@ void pnet_handle_periodic(pnet_t *net)
 	uint32_t start_time_us = os_get_current_time_us();
 	uint32_t end_time_us = 0;
 
-	if (pf_cmina_has_timed_out(
-			start_time_us,
-			net->timestamp_handle_periodic_us,
-			net->fspm_cfg.min_device_interval,
-			PNET_PERIODIC_WARNING_FACTOR))
+	if (pf_cmina_has_timed_out(start_time_us,
+							   net->timestamp_handle_periodic_us,
+							   net->fspm_cfg.min_device_interval,
+							   PNET_PERIODIC_WARNING_FACTOR))
 	{
-		LOG_DEBUG(
-			PNET_LOG,
-			"API(%d): Too long since pnet_handle_periodic() was called: %" PRIu32
-			" microseconds\n",
-			__LINE__,
-			start_time_us - net->timestamp_handle_periodic_us);
+		LOG_DEBUG(PNET_LOG,
+				  "API(%d): Too long since pnet_handle_periodic() was called: %" PRIu32
+				  " microseconds\n",
+				  __LINE__,
+				  start_time_us - net->timestamp_handle_periodic_us);
 	}
 #endif
 
@@ -164,12 +162,11 @@ void pnet_handle_periodic(pnet_t *net)
 			net->fspm_cfg.min_device_interval,
 			1))
 	{
-		LOG_DEBUG(
-			PNET_LOG,
-			"API(%d): pnet_handle_periodic() took too long: %" PRIu32
-			" microseconds\n",
-			__LINE__,
-			end_time_us - start_time_us);
+		LOG_DEBUG(PNET_LOG,
+				  "API(%d): pnet_handle_periodic() took too long: %" PRIu32
+				  " microseconds\n",
+				  __LINE__,
+				  end_time_us - start_time_us);
 	}
 	net->timestamp_handle_periodic_us = end_time_us;
 #endif
