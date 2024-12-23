@@ -1097,7 +1097,7 @@ static int app_set_initial_data_and_ioxs(app_data_t *app)
 					 */
 					if (ret == 0)
 					{
-						APP_LOG_DEBUG("  Set initial input data and IOPS for slot %2u subslot "
+						APP_LOG_DEBUG("Set initial input data and IOPS for slot %2u subslot "
 									  "%5u %9s size %3d \"%s\" \n",
 									  p_subslot->slot_nbr,
 									  p_subslot->subslot_nbr,
@@ -1117,7 +1117,7 @@ static int app_set_initial_data_and_ioxs(app_data_t *app)
 
 					if (ret == 0)
 					{
-						APP_LOG_DEBUG("  Set initial output         IOCS for slot %2u subslot "
+						APP_LOG_DEBUG("Set initial output         IOCS for slot %2u subslot "
 									  "%5u %9s          \"%s\"\n",
 									  p_subslot->slot_nbr,
 									  p_subslot->subslot_nbr,

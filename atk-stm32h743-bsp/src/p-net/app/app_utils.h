@@ -44,7 +44,7 @@ extern "C"
 
 	typedef struct app_utils_netif_namelist
 	{
-		app_utils_netif_name_t netif[PNET_MAX_PHYSICAL_PORTS + 1];
+		app_utils_netif_name_t netif_names[PNET_MAX_PHYSICAL_PORTS + 1];
 	} app_utils_netif_namelist_t;
 
 	/* Forward declaration */

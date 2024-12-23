@@ -330,17 +330,18 @@ int app_utils_get_netif_namelist(char const *arg_str,
 		{
 			if (if_index < if_list_size)
 			{
-				p_if_list->netif[if_index].name[j++] = c;
+				p_if_list->netif_names[if_index].name[j++] = c;
 			}
 		}
 		else
 		{
 			if (if_index < if_list_size)
 			{
-				p_if_list->netif[if_index].name[j++] = '\0';
+				p_if_list->netif_names[if_index].name[j++] = '\0';
 				j = 0;
 				if_index++;
 			}
+
 			number_of_given_names++;
 		}
 
@@ -360,25 +361,25 @@ int app_utils_get_netif_namelist(char const *arg_str,
 	}
 	if (number_of_given_names > max_port + 1)
 	{
-		printf(
-			"Error: You have given %u interface names, but max is %u as "
-			"PNET_MAX_PHYSICAL_PORTS is %u.\n",
-			number_of_given_names,
-			max_port + 1,
-			max_port);
+		printf("Error: You have given %u interface names, but max is %u as "
+			   "PNET_MAX_PHYSICAL_PORTS is %u.\n",
+			   number_of_given_names,
+			   max_port + 1,
+			   max_port);
+
 		return -1;
 	}
 
 	if (number_of_given_names == 1)
 	{
-		if (strlen(p_if_list->netif[0].name) == 0)
+		if (strlen(p_if_list->netif_names[0].name) == 0)
 		{
 			printf("Error: Zero length network interface name.\n");
 			return -1;
 		}
 		else
 		{
-			p_if_list->netif[1] = p_if_list->netif[0];
+			p_if_list->netif_names[1] = p_if_list->netif_names[0];
 			*p_num_ports = 1;
 		}
 	}
@@ -386,7 +387,7 @@ int app_utils_get_netif_namelist(char const *arg_str,
 	{
 		for (i = 0; i < number_of_given_names; i++)
 		{
-			if (strlen(p_if_list->netif[i].name) == 0)
+			if (strlen(p_if_list->netif_names[i].name) == 0)
 			{
 				printf("Error: Zero length network interface name (%d).\n", i);
 				return -1;
@@ -419,11 +420,11 @@ int app_utils_pnet_cfg_init_netifs(char const *netif_list_str,
 	{
 		return ret;
 	}
-	if_cfg->main_netif_name = if_list->netif[0].name;
 
+	if_cfg->main_netif_name = if_list->netif_names[0].name;
 	for (i = 1; i <= *number_of_ports; i++)
 	{
-		if_cfg->physical_ports[i - 1].netif_name = if_list->netif[i].name;
+		if_cfg->physical_ports[i - 1].netif_name = if_list->netif_names[i].name;
 		if_cfg->physical_ports[i - 1].default_mau_type = APP_GSDML_DEFAULT_MAUTYPE;
 	}
 
