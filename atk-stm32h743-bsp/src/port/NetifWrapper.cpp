@@ -307,10 +307,6 @@ void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port)
 	_ethernet_port->Open(_cache->_mac);
 	tcpip_init(nullptr, nullptr);
 
-	DI_Console().WriteLine(std::to_string(_cache->_ip_address.AsReadOnlySpan().Size()));
-	DI_Console().WriteLine(std::to_string(_cache->_netmask.AsReadOnlySpan().Size()));
-	DI_Console().WriteLine(std::to_string(_cache->_gateway.AsReadOnlySpan().Size()));
-
 	ip_addr_t ip_address = base::Convert<ip_addr_t, base::IPAddress>(_cache->_ip_address);
 	ip_addr_t netmask = base::Convert<ip_addr_t, base::IPAddress>(_cache->_netmask);
 	ip_addr_t gataway = base::Convert<ip_addr_t, base::IPAddress>(_cache->_gateway);
