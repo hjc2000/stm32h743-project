@@ -29,13 +29,12 @@
 #include <string.h>
 #include <string>
 
-int pnal_set_ip_suite(
-	char const *interface_name,
-	pnal_ipaddr_t const *p_ipaddr,
-	pnal_ipaddr_t const *p_netmask,
-	pnal_ipaddr_t const *p_gw,
-	char const *hostname,
-	bool permanent)
+int pnal_set_ip_suite(char const *interface_name,
+					  pnal_ipaddr_t const *p_ipaddr,
+					  pnal_ipaddr_t const *p_netmask,
+					  pnal_ipaddr_t const *p_gw,
+					  char const *hostname,
+					  bool permanent)
 {
 	ip_addr_t ip_addr;
 	ip_addr_t ip_mask;
@@ -85,12 +84,11 @@ int pnal_get_hostname(char *hostname)
 	return 0;
 }
 
-int pnal_get_ip_suite(
-	char const *interface_name,
-	pnal_ipaddr_t *p_ipaddr,
-	pnal_ipaddr_t *p_netmask,
-	pnal_ipaddr_t *p_gw,
-	char *hostname)
+int pnal_get_ip_suite(char const *interface_name,
+					  pnal_ipaddr_t *p_ipaddr,
+					  pnal_ipaddr_t *p_netmask,
+					  pnal_ipaddr_t *p_gw,
+					  char *hostname)
 {
 	int ret = -1;
 
@@ -102,9 +100,8 @@ int pnal_get_ip_suite(
 	return ret;
 }
 
-int pnal_get_port_statistics(
-	char const *interface_name,
-	pnal_port_stats_t *port_stats)
+int pnal_get_port_statistics(char const *interface_name,
+							 pnal_port_stats_t *port_stats)
 {
 	port_stats->if_in_octets = netif_default->mib2_counters.ifinoctets;
 	port_stats->if_in_errors = netif_default->mib2_counters.ifinerrors;

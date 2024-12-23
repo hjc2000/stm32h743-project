@@ -445,14 +445,13 @@ static void app_utils_print_mac_address(char const *netif_name)
 	pnal_ethaddr_t pnal_mac_addr;
 	if (pnal_get_macaddress(netif_name, &pnal_mac_addr) == 0)
 	{
-		APP_LOG_INFO(
-			"%02X:%02X:%02X:%02X:%02X:%02X\n",
-			pnal_mac_addr.addr[0],
-			pnal_mac_addr.addr[1],
-			pnal_mac_addr.addr[2],
-			pnal_mac_addr.addr[3],
-			pnal_mac_addr.addr[4],
-			pnal_mac_addr.addr[5]);
+		APP_LOG_INFO("%02X:%02X:%02X:%02X:%02X:%02X\n",
+					 pnal_mac_addr.addr[0],
+					 pnal_mac_addr.addr[1],
+					 pnal_mac_addr.addr[2],
+					 pnal_mac_addr.addr[3],
+					 pnal_mac_addr.addr[4],
+					 pnal_mac_addr.addr[5]);
 	}
 	else
 	{
