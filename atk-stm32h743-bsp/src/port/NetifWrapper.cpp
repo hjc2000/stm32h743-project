@@ -9,6 +9,40 @@
 #include <lwip/tcpip.h>
 #include <lwip_convert.h>
 
+struct lwip::NetifWrapper::Cache
+{
+	/// @brief 本机IP地址
+	base::IPAddress _ip_address{
+		std::endian::big,
+		base::Array<uint8_t, 4>{192, 168, 1, 30},
+	};
+
+	base::IPAddress _netmask{
+		std::endian::big,
+		base::Array<uint8_t, 4>{255, 255, 255, 0},
+	};
+
+	base::IPAddress _gateway{
+		std::endian::big,
+		base::Array<uint8_t, 4>{192, 168, 1, 1},
+	};
+
+	/// @brief 本网卡所使用的 MAC 地址。
+	base::Mac _mac{
+		std::endian::big,
+		base::Array<uint8_t, 6>{
+			0xB8,
+			0xAE,
+			0x1D,
+			0x00,
+			0x04,
+			0x00,
+		},
+	};
+
+	int32_t _mtu = 1500;
+};
+
 void lwip::NetifWrapper::InitializationCallbackFunc()
 {
 	_wrapped_obj->hostname = "lwip";
@@ -18,8 +52,8 @@ void lwip::NetifWrapper::InitializationCallbackFunc()
 	// 设置 MAC 地址长度，为 6 个字节
 	_wrapped_obj->hwaddr_len = ETHARP_HWADDR_LEN;
 
-	SetMac(_cache._mac);
-	_wrapped_obj->mtu = _cache._mtu;
+	SetMac(_cache->_mac);
+	_wrapped_obj->mtu = _cache->_mtu;
 
 	/* 网卡状态信息标志位，是很重要的控制字段，它包括网卡功能使能、广播
 	 * 使能、 ARP 使能等等重要控制位
@@ -94,9 +128,9 @@ bool lwip::NetifWrapper::TryDHCP()
 	if (!dhcp_result)
 	{
 		// 使用静态IP地址
-		SetIPAddress(_cache._ip_address);
-		SetNetmask(_cache._netmask);
-		SetGateway(_cache._gateway);
+		SetIPAddress(_cache->_ip_address);
+		SetNetmask(_cache->_netmask);
+		SetGateway(_cache->_gateway);
 		DI_Console().WriteLine("DHCP 超时：");
 		DI_Console().WriteLine("使用静态 IP 地址：" + IPAddress().ToString());
 		DI_Console().WriteLine("使用静态子网掩码：" + Netmask().ToString());
@@ -105,13 +139,13 @@ bool lwip::NetifWrapper::TryDHCP()
 	}
 
 	// DHCP 成功
-	_cache._ip_address = IPAddress();
-	_cache._netmask = Netmask();
-	_cache._gateway = Gateway();
+	_cache->_ip_address = IPAddress();
+	_cache->_netmask = Netmask();
+	_cache->_gateway = Gateway();
 	DI_Console().WriteLine("DHCP 成功：");
-	DI_Console().WriteLine("通过 DHCP 获取到 IP 地址：" + _cache._ip_address.ToString());
-	DI_Console().WriteLine("通过 DHCP 获取到子网掩码：" + _cache._netmask.ToString());
-	DI_Console().WriteLine("通过 DHCP 获取到的默认网关：" + _cache._gateway.ToString());
+	DI_Console().WriteLine("通过 DHCP 获取到 IP 地址：" + _cache->_ip_address.ToString());
+	DI_Console().WriteLine("通过 DHCP 获取到子网掩码：" + _cache->_netmask.ToString());
+	DI_Console().WriteLine("通过 DHCP 获取到的默认网关：" + _cache->_gateway.ToString());
 	return true;
 }
 
@@ -227,6 +261,7 @@ netif *lwip::NetifWrapper::WrappedObj() const
 lwip::NetifWrapper::NetifWrapper()
 {
 	_wrapped_obj->state = this;
+	_cache = std::shared_ptr<lwip::NetifWrapper::Cache>{new Cache{}};
 }
 
 #pragma region Open
@@ -238,10 +273,10 @@ void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
 							  base::IPAddress const &gateway,
 							  int32_t mtu)
 {
-	_cache._mac = mac;
-	_cache._ip_address = ip_address;
-	_cache._netmask = netmask;
-	_cache._gateway = gateway;
+	_cache->_mac = mac;
+	_cache->_ip_address = ip_address;
+	_cache->_netmask = netmask;
+	_cache->_gateway = gateway;
 
 	// 将参数赋值给字段赋值后，调用参数较少的 Open 重载版本。
 	Open(ethernet_port, mtu);
@@ -249,7 +284,7 @@ void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port,
 
 void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port, int32_t mtu)
 {
-	_cache._mtu = mtu;
+	_cache->_mtu = mtu;
 
 	// 将参数赋值给字段赋值后，调用参数较少的 Open 重载版本。
 	Open(ethernet_port);
@@ -263,12 +298,16 @@ void lwip::NetifWrapper::Open(bsp::IEthernetPort *ethernet_port)
 		throw std::runtime_error{"必须先调用 Open 方法传入一个 bsp::IEthernetPort 对象"};
 	}
 
-	_ethernet_port->Open(_cache._mac);
+	_ethernet_port->Open(_cache->_mac);
 	tcpip_init(nullptr, nullptr);
 
-	ip_addr_t ip_address = base::Convert<ip_addr_t, base::IPAddress>(_cache._ip_address);
-	ip_addr_t netmask = base::Convert<ip_addr_t, base::IPAddress>(_cache._netmask);
-	ip_addr_t gataway = base::Convert<ip_addr_t, base::IPAddress>(_cache._gateway);
+	DI_Console().WriteLine(std::to_string(_cache->_ip_address.AsReadOnlySpan().Size()));
+	DI_Console().WriteLine(std::to_string(_cache->_netmask.AsReadOnlySpan().Size()));
+	DI_Console().WriteLine(std::to_string(_cache->_gateway.AsReadOnlySpan().Size()));
+
+	ip_addr_t ip_address = base::Convert<ip_addr_t, base::IPAddress>(_cache->_ip_address);
+	ip_addr_t netmask = base::Convert<ip_addr_t, base::IPAddress>(_cache->_netmask);
+	ip_addr_t gataway = base::Convert<ip_addr_t, base::IPAddress>(_cache->_gateway);
 
 	auto initialization_callback = [](netif *p) -> err_t
 	{
