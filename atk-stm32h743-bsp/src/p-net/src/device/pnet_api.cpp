@@ -106,7 +106,7 @@ pnet_t *pnet_init(pnet_cfg_t const *p_cfg)
 
 	LOG_DEBUG(PNET_LOG, "API(%d): Application calls pnet_init()\n", __LINE__);
 
-	net = os_malloc(sizeof(*net));
+	net = reinterpret_cast<pnet_t *>(os_malloc(sizeof(*net)));
 	if (net == NULL)
 	{
 		printf("sizeof (*net) = %zu\r\n", sizeof(*net));

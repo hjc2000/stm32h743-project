@@ -2086,7 +2086,7 @@ static int pf_cmdev_get_exp_sub_data_descriptor(
 	{
 		if (
 			pf_cmdev_calculate_exp_sub_data_descriptor_direction(
-				p_exp_sub->submodule_properties.type,
+				static_cast<pnet_submodule_dir_t>(p_exp_sub->submodule_properties.type),
 				dir,
 				status_type,
 				&data_direction_to_look_for) == 0)
@@ -3495,7 +3495,7 @@ static int pf_cmdev_exp_submodule_configure(
 	pf_iocr_param_t *p_iocr_param;
 	pf_api_entry_t *p_iocr_api;
 	uint16_t i;
-	pnet_data_cfg_t exp_data = {0};
+	pnet_data_cfg_t exp_data{};
 
 	ret = 0; /* Assume all goes well */
 	for (sub_ix = 0; sub_ix < p_exp_mod->nbr_submodules; sub_ix++)
@@ -3512,15 +3512,13 @@ static int pf_cmdev_exp_submodule_configure(
 			{
 				if (p_exp_sub->data_descriptor[i].data_direction == PF_DIRECTION_INPUT)
 				{
-					exp_data.data_dir |= PNET_DIR_INPUT;
-					exp_data.insize =
-						p_exp_sub->data_descriptor[i].submodule_data_length;
+					reinterpret_cast<uint32_t &>(exp_data.data_dir) |= static_cast<uint32_t>(PNET_DIR_INPUT);
+					exp_data.insize = p_exp_sub->data_descriptor[i].submodule_data_length;
 				}
 				if (p_exp_sub->data_descriptor[i].data_direction == PF_DIRECTION_OUTPUT)
 				{
-					exp_data.data_dir |= PNET_DIR_OUTPUT;
-					exp_data.outsize =
-						p_exp_sub->data_descriptor[i].submodule_data_length;
+					reinterpret_cast<uint32_t &>(exp_data.data_dir) |= static_cast<uint32_t>(PNET_DIR_OUTPUT);
+					exp_data.outsize = p_exp_sub->data_descriptor[i].submodule_data_length;
 				}
 			}
 
