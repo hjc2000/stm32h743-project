@@ -26,7 +26,6 @@
 
 #include <string.h>
 
-#define APP_DEFAULT_ETHERNET_INTERFACE "st"
 #define APP_DEFAULT_FILE_DIRECTORY ""
 #define APP_LOG_LEVEL APP_LOG_LEVEL_ERROR
 
@@ -48,8 +47,6 @@ int p_net_sample_app_main()
 	pnet_if_cfg_t netif_cfg{};
 	uint16_t number_of_ports;
 
-	strcpy(app_args.eth_interfaces, APP_DEFAULT_ETHERNET_INTERFACE);
-
 	/* Note: station name is defined by app_gsdml.h */
 	strcpy(app_args.station_name, APP_GSDML_DEFAULT_STATION_NAME);
 	app_log_set_log_level(APP_DEFAULT_LOG_LEVEL);
@@ -59,15 +56,12 @@ int p_net_sample_app_main()
 	APP_LOG_INFO("P-net log level:      %u (DEBUG=0, FATAL=4)\n", LOG_LEVEL);
 	APP_LOG_INFO("App log level:        %u (DEBUG=0, FATAL=4)\n", APP_LOG_LEVEL);
 	APP_LOG_INFO("Max number of ports:  %u\n", PNET_MAX_PHYSICAL_PORTS);
-	APP_LOG_INFO("Network interfaces:   %s\n", app_args.eth_interfaces);
 	APP_LOG_INFO("Default station name: %s\n", app_args.station_name);
 
 	app_pnet_cfg_init_default(&pnet_cfg);
-
 	strcpy(pnet_cfg.file_directory, APP_DEFAULT_FILE_DIRECTORY);
 
-	ret = app_utils_pnet_cfg_init_netifs(app_args.eth_interfaces,
-										 &netif_name_list,
+	ret = app_utils_pnet_cfg_init_netifs(&netif_name_list,
 										 &number_of_ports,
 										 &netif_cfg);
 

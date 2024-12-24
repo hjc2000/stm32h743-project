@@ -303,105 +303,7 @@ int app_utils_pnet_cfg_init_default(pnet_cfg_t *cfg)
 	return 0;
 }
 
-int app_utils_get_netif_namelist(char const *arg_str,
-								 uint16_t max_port,
-								 app_utils_netif_namelist_t *p_if_list,
-								 uint16_t *p_num_ports)
-{
-	int ret = 0;
-	uint16_t i = 0;
-	uint16_t j = 0;
-	uint16_t if_index = 0;
-	uint16_t number_of_given_names = 1;
-	uint16_t if_list_size = max_port + 1;
-	char c;
-
-	if (max_port == 0)
-	{
-		printf("Error: max_port is 0.\n");
-		return -1;
-	}
-
-	memset(p_if_list, 0, sizeof(*p_if_list));
-	c = arg_str[i++];
-	while (c != '\0')
-	{
-		if (c != ',')
-		{
-			if (if_index < if_list_size)
-			{
-				p_if_list->netif_names[if_index].name[j++] = c;
-			}
-		}
-		else
-		{
-			if (if_index < if_list_size)
-			{
-				p_if_list->netif_names[if_index].name[j++] = '\0';
-				j = 0;
-				if_index++;
-			}
-
-			number_of_given_names++;
-		}
-
-		c = arg_str[i++];
-	}
-
-	if (max_port == 1 && number_of_given_names > 1)
-	{
-		printf("Error: Only 1 network interface expected as max_port is 1.\n");
-		return -1;
-	}
-	if (number_of_given_names == 2)
-	{
-		printf("Error: It is illegal to give 2 interface names. Use 1, or one "
-			   "more than the number of physical interfaces.\n");
-		return -1;
-	}
-	if (number_of_given_names > max_port + 1)
-	{
-		printf("Error: You have given %u interface names, but max is %u as "
-			   "PNET_MAX_PHYSICAL_PORTS is %u.\n",
-			   number_of_given_names,
-			   max_port + 1,
-			   max_port);
-
-		return -1;
-	}
-
-	if (number_of_given_names == 1)
-	{
-		if (strlen(p_if_list->netif_names[0].name) == 0)
-		{
-			printf("Error: Zero length network interface name.\n");
-			return -1;
-		}
-		else
-		{
-			p_if_list->netif_names[1] = p_if_list->netif_names[0];
-			*p_num_ports = 1;
-		}
-	}
-	else
-	{
-		for (i = 0; i < number_of_given_names; i++)
-		{
-			if (strlen(p_if_list->netif_names[i].name) == 0)
-			{
-				printf("Error: Zero length network interface name (%d).\n", i);
-				return -1;
-			}
-		}
-
-		*p_num_ports = number_of_given_names - 1;
-	}
-
-	return ret;
-}
-
-int app_utils_pnet_cfg_init_netifs(char const *netif_list_str,
-								   app_utils_netif_namelist_t *if_list,
+int app_utils_pnet_cfg_init_netifs(app_utils_netif_namelist_t *if_list,
 								   uint16_t *number_of_ports,
 								   pnet_if_cfg_t *if_cfg)
 {
@@ -409,11 +311,6 @@ int app_utils_pnet_cfg_init_netifs(char const *netif_list_str,
 	pnal_ipaddr_t ip;
 	pnal_ipaddr_t netmask;
 	pnal_ipaddr_t gateway;
-
-	ret = app_utils_get_netif_namelist(netif_list_str,
-									   PNET_MAX_PHYSICAL_PORTS,
-									   if_list,
-									   number_of_ports);
 
 	if (ret != 0)
 	{

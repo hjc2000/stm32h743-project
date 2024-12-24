@@ -207,43 +207,9 @@ extern "C"
 	 * @param if_cfg              Out: P-Net network configuration to be updated
 	 * @return 0 on success, -1 on error
 	 */
-	int app_utils_pnet_cfg_init_netifs(char const *netif_list_str,
-									   app_utils_netif_namelist_t *if_list,
+	int app_utils_pnet_cfg_init_netifs(app_utils_netif_namelist_t *if_list,
 									   uint16_t *number_of_ports,
 									   pnet_if_cfg_t *if_cfg);
-
-	/**
-	 * Parse a comma separated list of network interfaces and check
-	 * that the number of interfaces match the PNET_MAX_PHYSICAL_PORTS
-	 * configuration.
-	 *
-	 * For a single Ethernet interface, the \a arg_str should consist of
-	 * one name. For two Ethernet interfaces, the  \a arg_str should consist of
-	 * three names, as we also need a bridge interface.
-	 *
-	 * Does only consider the number of comma separated names. No check of the
-	 * names themselves are done.
-	 *
-	 * Examples:
-	 * arg_str                 num_ports
-	 * "eth0"                  1
-	 * "eth0,eth1"             error (We need a bridge as well)
-	 * "br0,eth0,eth1"         2
-	 *
-	 * @param arg_str      In:   Network interface list as comma separated,
-	 *                           terminated string. For example "eth0" or
-	 *                           "br0,eth0,eth1".
-	 * @param max_port     In:   PNET_MAX_PHYSICAL_PORTS, passed as argument to
-	 *                           allow test.
-	 * @param p_if_list    Out:  List of network interfaces
-	 * @param p_num_ports  Out:  Resulting number of physical ports
-	 * @return  0  on success
-	 *         -1  on error
-	 */
-	int app_utils_get_netif_namelist(char const *arg_str,
-									 uint16_t max_port,
-									 app_utils_netif_namelist_t *p_if_list,
-									 uint16_t *p_num_ports);
 
 	/**
 	 * Print network configuration using APP_LOG_INFO().
