@@ -238,11 +238,12 @@ int pf_cpm_activate_req(pnet_t *net, pf_ar_t *p_ar, uint32_t crep)
 			 (uint32_t)p_iocr->param.reduction_ratio * 1000U) /
 			32U; /* us */
 
-		for (ix = 0; ix < pf_port_get_number_of_ports(net); ix++)
+		for (ix = 0; ix < 1; ix++)
 		{
 			p_cpm->rxa[ix][0] = -1; /* "invalid" cycle counter */
 			p_cpm->rxa[ix][1] = -1;
 		}
+
 		p_cpm->cycle = -1; /* "invalid" */
 		p_cpm->new_data = false;
 

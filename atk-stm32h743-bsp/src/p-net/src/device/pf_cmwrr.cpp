@@ -176,38 +176,6 @@ static int pf_cmwrr_write(
 {
 	int ret = -1;
 
-	if (
-		(p_write_request->slot_number == PNET_SLOT_DAP_IDENT) &&
-		(pf_port_subslot_is_dap_port_id(net, p_write_request->subslot_number)))
-	{
-		LOG_INFO(
-			PNET_LOG,
-			"CMWRR(%d): PLC is writing slot %u subslot 0x%04X index 0x%04X "
-			"(local port %u) \"%s\" for AREP %u\n",
-			__LINE__,
-			p_write_request->slot_number,
-			p_write_request->subslot_number,
-			p_write_request->index,
-			pf_port_dap_subslot_to_local_port(
-				net,
-				p_write_request->subslot_number),
-			pf_index_to_logstring(p_write_request->index),
-			p_ar->arep);
-	}
-	else
-	{
-		LOG_INFO(
-			PNET_LOG,
-			"CMWRR(%d): PLC is writing slot %u subslot 0x%04X index 0x%04X "
-			"\"%s\" for AREP %u\n",
-			__LINE__,
-			p_write_request->slot_number,
-			p_write_request->subslot_number,
-			p_write_request->index,
-			pf_index_to_logstring(p_write_request->index),
-			p_ar->arep);
-	}
-
 	if (p_write_request->index <= PF_IDX_USER_MAX)
 	{
 		/* User defined indexes */
@@ -239,13 +207,6 @@ static int pf_cmwrr_write(
 		case PF_IDX_SUB_PDPORT_DATA_CHECK:
 		case PF_IDX_SUB_PDPORT_DATA_ADJ:
 		case PF_IDX_SUB_PDINTF_ADJUST:
-			ret = pf_pdport_write_req(
-				net,
-				p_ar,
-				p_write_request,
-				&p_req_buf[*p_req_pos],
-				data_length,
-				p_result);
 			break;
 		default:
 			break;

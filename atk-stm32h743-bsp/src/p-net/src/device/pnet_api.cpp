@@ -78,10 +78,6 @@ int pnet_init_only(pnet_t *net, pnet_cfg_t const *p_cfg)
 
 	pf_dcp_exit(net); /* Prepare for re-init. */
 	pf_dcp_init(net); /* Start DCP */
-	pf_port_init(net);
-	pf_port_main_interface_init(net);
-	pf_lldp_init(net);
-	pf_pdport_init(net);
 
 	/* Configure SNMP server if enabled */
 #if PNET_OPTION_SNMP
@@ -153,8 +149,6 @@ void pnet_handle_periodic(pnet_t *net)
 	/* Handle expired timeout events */
 	pf_scheduler_tick(net);
 
-	pf_pdport_periodic(net);
-
 #if LOG_DEBUG_ENABLED(PNET_LOG)
 	end_time_us = os_get_current_time_us();
 	if (pf_cmina_has_timed_out(
@@ -216,7 +210,6 @@ void pnet_show(pnet_t *net, unsigned level)
 		}
 		if (level & 0x0100)
 		{
-			pf_port_show(net);
 		}
 		if (level & 0x0080)
 		{

@@ -117,16 +117,12 @@ static void bg_worker_task(void *arg)
 			os_event_clr(
 				net->pf_bg_worker.events,
 				BG_JOB_EVENT_SAVE_PDPORT_NVM_DATA);
-
-			(void)pf_pdport_save_all(net);
 		}
 		if (flags & BG_JOB_EVENT_UPDATE_PORTS_STATUS)
 		{
 			os_event_clr(
 				net->pf_bg_worker.events,
 				BG_JOB_EVENT_UPDATE_PORTS_STATUS);
-
-			pf_pdport_update_eth_status(net);
 		}
 	}
 }

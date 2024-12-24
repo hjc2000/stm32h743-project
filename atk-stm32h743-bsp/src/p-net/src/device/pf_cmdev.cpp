@@ -1667,7 +1667,7 @@ int pf_cmdev_check_zero(uint8_t *p_start, uint16_t len)
  */
 static int pf_cmdev_check_pdev(pnet_t *net)
 {
-	return (pf_pdport_is_a_fast_port_in_use(net)) ? 0 : -1;
+	return 0;
 }
 
 /**
@@ -4838,7 +4838,6 @@ static int pf_cmdev_cm_connect_rsp_pos(
  */
 static void pf_cmdev_reset_observers(pnet_t *net)
 {
-	pf_pdport_reset_all(net);
 }
 
 /* ================================================
@@ -4859,7 +4858,6 @@ int pf_cmdev_rm_connect_ind(
 	if (pf_cmdev_check_apdu(net, p_ar, p_connect_result) == 0)
 	{
 		pf_cmdev_reset_observers(net);
-		pf_pdport_ar_connect_ind(net, p_ar);
 
 		if (pf_cmdev_generate_submodule_diff(net, p_ar) == 0)
 		{

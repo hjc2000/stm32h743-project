@@ -43,12 +43,11 @@ extern "C"
 #include "pf_dcp.h"
 #include "pf_eth.h"
 #include "pf_file.h"
-#include "pf_lldp.h"
 #include "pf_ppm.h"
 #include "pf_ppm_driver_sw.h"
 #include "pf_scheduler.h"
-#include "pf_snmp.h"
 #include "pf_udp.h"
+#include "pnal.h"
 
 /* device */
 #include "pf_cmdev.h"
@@ -64,8 +63,7 @@ extern "C"
 #include "pf_cmwrr.h"
 #include "pf_diag.h"
 #include "pf_fspm.h"
-#include "pf_pdport.h"
-#include "pf_port.h"
+#include <stddef.h>
 
 #ifdef __cplusplus
 }

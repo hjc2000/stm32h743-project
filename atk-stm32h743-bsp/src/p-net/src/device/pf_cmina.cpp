@@ -321,10 +321,6 @@ int pf_cmina_set_default_cfg(pnet_t *net, uint16_t reset_mode)
 
 			pf_file_clear(p_file_directory, PF_FILENAME_IP);
 			pf_file_clear(p_file_directory, PF_FILENAME_DIAGNOSTICS);
-#if PNET_OPTION_SNMP
-			pf_snmp_data_clear(net);
-#endif
-			pf_pdport_reset_all(net);
 		}
 
 		if (reset_mode > 0)
@@ -1277,10 +1273,6 @@ int pf_cmina_remove_all_data_files(char const *file_directory)
 	pf_file_clear(file_directory, PF_FILENAME_IM);
 	pf_file_clear(file_directory, PF_FILENAME_IP);
 	pf_file_clear(file_directory, PF_FILENAME_DIAGNOSTICS);
-#if PNET_OPTION_SNMP
-	pf_snmp_remove_data_files(file_directory);
-#endif
-	pf_pdport_remove_data_files(file_directory);
 
 	return 0;
 }
@@ -1348,65 +1340,6 @@ void pf_ip_address_show(uint32_t ip)
 
 	pf_cmina_ip_to_string(ip, ip_string);
 	printf("%s", ip_string);
-}
-
-void pf_cmina_port_statistics_show(pnet_t *net)
-{
-	int port;
-	pf_port_iterator_t port_iterator;
-	pnal_port_stats_t stats;
-	pf_port_t *p_port_data;
-
-	if (pnal_get_port_statistics(net->pf_interface.main_port.name, &stats) == 0)
-	{
-		printf(
-			"Main interface %10s  In: %" PRIu32 " bytes %" PRIu32
-			" errors %" PRIu32 " discards  Out: %" PRIu32 " bytes %" PRIu32
-			" errors %" PRIu32 " discards\n",
-			net->pf_interface.main_port.name,
-			stats.if_in_octets,
-			stats.if_in_errors,
-			stats.if_in_discards,
-			stats.if_out_octets,
-			stats.if_out_errors,
-			stats.if_out_discards);
-	}
-	else
-	{
-		printf(
-			"Did not find main interface %s\n",
-			net->pf_interface.main_port.name);
-	}
-
-	pf_port_init_iterator_over_ports(net, &port_iterator);
-	port = pf_port_get_next(&port_iterator);
-	while (port != 0)
-	{
-		p_port_data = pf_port_get_state(net, port);
-
-		if (pnal_get_port_statistics(p_port_data->netif.name, &stats) == 0)
-		{
-			printf(
-				"Port           %10s  In: %" PRIu32 " bytes %" PRIu32
-				" errors %" PRIu32 " discards  Out: %" PRIu32 " bytes %" PRIu32
-				" errors %" PRIu32 " discards\n",
-				p_port_data->netif.name,
-				stats.if_in_octets,
-				stats.if_in_errors,
-				stats.if_in_discards,
-				stats.if_out_octets,
-				stats.if_out_errors,
-				stats.if_out_discards);
-		}
-		else
-		{
-			printf(
-				"Did not find statistics for port %s\n",
-				p_port_data->netif.name);
-		}
-
-		port = pf_port_get_next(&port_iterator);
-	}
 }
 
 void pf_cmina_show(pnet_t *net)

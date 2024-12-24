@@ -770,34 +770,6 @@ extern "C"
 		uint16_t *p_pos);
 
 	/**
-	 * Insert PDport real data block into a buffer.
-	 *
-	 * Includes peer chassis ID, peer MAC address and peer MAU type.
-	 *
-	 * @param is_big_endian       In:    Endianness of the destination buffer.
-	 * @param subslot             In:    Subslot
-	 * @param p_peer_station_name In:    Peer station name
-	 * @param p_peer_port_name    In:    Peer port name
-	 * @param p_port_data         In:    Port data
-	 * @param media_type          In:    Media type
-	 * @param p_eth_status        In:    Ethernet status
-	 * @param res_len             In:    Size of destination buffer.
-	 * @param p_bytes             Out:   Destination buffer.
-	 * @param p_pos               InOut: Position in destination buffer.
-	 */
-	void pf_put_pdport_data_real(
-		bool is_big_endian,
-		uint16_t subslot,
-		pf_lldp_station_name_t const *p_peer_station_name,
-		pf_lldp_port_name_t const *p_peer_port_name,
-		pf_port_t const *p_port_data,
-		pf_mediatype_values_t media_type,
-		pnal_eth_status_t const *p_eth_status,
-		uint16_t res_len,
-		uint8_t *p_bytes,
-		uint16_t *p_pos);
-
-	/**
 	 * Insert PD port statistics block into a buffer.
 	 *
 	 * @param is_big_endian    In:    Endianness of the destination buffer.
@@ -836,36 +808,6 @@ extern "C"
 		pnal_ipaddr_t netmask,
 		pnal_ipaddr_t gateway,
 		char const *station_name,
-		uint16_t res_len,
-		uint8_t *p_bytes,
-		uint16_t *p_pos);
-
-	/**
-	 * Insert multiblock port and statistics for one port
-	 *
-	 * @param is_big_endian       In:    Endianness of the destination buffer.
-	 * @param api                 In:    API number
-	 * @param subslot             In:    DAP subslot for port
-	 * @param p_peer_station_name In:    Peer station name
-	 * @param p_peer_port_name    In:    Peer port name
-	 * @param p_port_data         In:    Port data
-	 * @param media_type          In:    Media type
-	 * @param p_eth_status        In:    Ethernet status
-	 * @param p_port_statistics   In:    Port statistics
-	 * @param res_len             In:    Size of destination buffer.
-	 * @param p_bytes             Out:   Destination buffer.
-	 * @param p_pos               InOut: Position in destination buffer.
-	 */
-	void pf_put_pd_multiblock_port_and_statistics(
-		bool is_big_endian,
-		uint32_t api,
-		uint16_t subslot,
-		pf_lldp_station_name_t const *p_peer_station_name,
-		pf_lldp_port_name_t const *p_peer_port_name,
-		pf_port_t const *p_port_data,
-		pf_mediatype_values_t media_type,
-		pnal_eth_status_t const *p_eth_status,
-		pnal_port_stats_t const *p_port_statistics,
 		uint16_t res_len,
 		uint8_t *p_bytes,
 		uint16_t *p_pos);

@@ -91,7 +91,6 @@ static int pf_eth_init_netif(pnet_t *net,
 int pf_eth_init(pnet_t *net, pnet_cfg_t const *p_cfg)
 {
 	int port;
-	pf_port_iterator_t port_iterator;
 	pf_port_t *p_port_data;
 	uint8_t number_of_ports = p_cfg->num_physical_ports;
 	pnet_port_cfg_t const *p_port_cfg;
@@ -108,55 +107,12 @@ int pf_eth_init(pnet_t *net, pnet_cfg_t const *p_cfg)
 		return -1;
 	}
 
-	/* Init physical ports */
-	pf_port_init_iterator_over_ports(net, &port_iterator);
-	port = pf_port_get_next(&port_iterator);
-	while (port != 0)
-	{
-		p_port_data = pf_port_get_state(net, port);
-
-		if (number_of_ports > 1)
-		{
-			p_port_cfg = pf_port_get_config(net, port);
-
-			if (pf_eth_init_netif(net,
-								  p_port_cfg->netif_name,
-								  PNAL_ETHTYPE_LLDP,
-								  &p_cfg->pnal_cfg,
-								  &p_port_data->netif) != 0)
-			{
-				return -1;
-			}
-		}
-		else
-		{
-			/* In single port configuration the managed port is also
-			   physical port 1 */
-			p_port_data->netif = net->pf_interface.main_port;
-		}
-
-		port = pf_port_get_next(&port_iterator);
-	}
-
 	return 0;
 }
 
-int pf_eth_send_on_physical_port(pnet_t *net,
-								 int loc_port_num,
-								 pnal_buf_t *buf)
+int pf_eth_send_on_physical_port(pnet_t *net, int loc_port_num, pnal_buf_t *buf)
 {
-	int sent_len = 0;
-	pf_port_t *p_port_data = pf_port_get_state(net, loc_port_num);
-
-	sent_len = pnal_eth_send(p_port_data->netif.handle, buf);
-	if (sent_len <= 0)
-	{
-		LOG_ERROR(PF_ETH_LOG,
-				  "ETH(%d): Error from pnal_eth_send_on_physical_port()\n",
-				  __LINE__);
-	}
-
-	return sent_len;
+	// TODO
 }
 
 int pf_eth_send_on_management_port(pnet_t *net, pnal_buf_t *buf)
@@ -225,8 +181,6 @@ int pf_eth_recv(pnal_eth_handle_t *eth_handle, void *arg, pnal_buf_t *p_buf)
 		}
 		break;
 	case PNAL_ETHTYPE_LLDP:
-		loc_port_num = pf_port_get_port_number(net, eth_handle);
-		ret = pf_lldp_recv(net, loc_port_num, p_buf, frame_pos);
 		break;
 	case PNAL_ETHTYPE_IP:
 		/* IP-packets (UDP) are also received via the UDP sockets. Do not count

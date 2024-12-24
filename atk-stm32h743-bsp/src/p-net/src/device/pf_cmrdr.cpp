@@ -59,34 +59,6 @@ int pf_cmrdr_rm_read_ind(
 	bool new_flag = false;
 	char station_name[PNET_STATION_NAME_MAX_SIZE]; /* Terminated*/
 
-	if (
-		(p_read_request->slot_number == PNET_SLOT_DAP_IDENT) &&
-		(pf_port_subslot_is_dap_port_id(net, p_read_request->subslot_number)))
-	{
-		LOG_INFO(
-			PNET_LOG,
-			"CMRDR(%d): PLC is reading slot %u subslot 0x%04X index 0x%04X "
-			"(local port %d) \"%s\"\n",
-			__LINE__,
-			p_read_request->slot_number,
-			p_read_request->subslot_number,
-			p_read_request->index,
-			pf_port_dap_subslot_to_local_port(net, p_read_request->subslot_number),
-			pf_index_to_logstring(p_read_request->index));
-	}
-	else
-	{
-		LOG_INFO(
-			PNET_LOG,
-			"CMRDR(%d): PLC is reading slot %u subslot 0x%04X index 0x%04X "
-			"\"%s\"\n",
-			__LINE__,
-			p_read_request->slot_number,
-			p_read_request->subslot_number,
-			p_read_request->index,
-			pf_index_to_logstring(p_read_request->index));
-	}
-
 	read_result.sequence_number = p_read_request->sequence_number;
 	read_result.ar_uuid = p_read_request->ar_uuid;
 	read_result.api = p_read_request->api;
@@ -846,14 +818,6 @@ int pf_cmrdr_rm_read_ind(
 		case PF_IDX_DEV_PDEXP_DATA:
 		case PF_IDX_SUB_PDPORT_STATISTIC:
 		case PF_IDX_SUB_PDINTF_ADJUST:
-			ret = pf_pdport_read_ind(
-				net,
-				p_ar,
-				p_read_request,
-				&read_result,
-				res_size,
-				p_res,
-				p_pos);
 			break;
 
 		case PF_IDX_SUB_PDINTF_REAL:

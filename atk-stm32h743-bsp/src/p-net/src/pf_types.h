@@ -26,8 +26,7 @@ extern "C"
 {
 #endif
 
-#include "pf_lldp.h"
-#include "pf_snmp.h"
+#include "pnal.h"
 #include <osal.h>
 
 #if PNET_USE_ATOMICS
@@ -2815,14 +2814,6 @@ static inline uint32_t atomic_fetch_sub(atomic_int *p, uint32_t v)
 
 	typedef struct pf_lldp_port
 	{
-		/* LLDP peer information
-		 *
-		 * The information may be changed anytime as incoming LLDP packet arrives.
-		 *
-		 * Protected by LLDP mutex.
-		 */
-		pf_lldp_peer_info_t peer_info;
-
 		/* Timestamp for when LLDP packet with new content was received.
 		 *
 		 * Value is system uptime, in units of 10 milliseconds.
@@ -2873,13 +2864,6 @@ static inline uint32_t atomic_fetch_sub(atomic_int *p, uint32_t v)
 		pf_lldp_port_t lldp;
 		pnal_eth_status_t eth_status; /* Updated by background task */
 	} pf_port_t;
-
-	typedef struct pf_snmp_data
-	{
-		pf_snmp_system_contact_t system_contact;
-		pf_snmp_system_name_t system_name;
-		pf_snmp_system_location_t system_location;
-	} pf_snmp_data_t;
 
 	struct pnet
 	{
@@ -3004,7 +2988,6 @@ static inline uint32_t atomic_fetch_sub(atomic_int *p, uint32_t v)
 			} name_of_device_mode;
 
 			pf_port_t port[PNET_MAX_PHYSICAL_PORTS];
-			pf_port_iterator_t link_monitor_iterator;
 
 			/* Mutex for protecting port data.
 			 * Common for all ports.
@@ -3025,8 +3008,6 @@ static inline uint32_t atomic_fetch_sub(atomic_int *p, uint32_t v)
 
 		/** Handle to HW offload driver. NULL if not used */
 		pf_drv_t *hwo_drv;
-
-		pf_snmp_data_t snmp_data;
 	};
 
 	/**

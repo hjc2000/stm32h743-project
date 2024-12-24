@@ -1117,9 +1117,6 @@ static int pf_dcp_get_set(
 		pf_cmina_dcp_set_commit(net);
 	}
 
-	/* Send LLDP _after_ the response in order to pass I/O-tester tests. */
-	pf_pdport_lldp_restart_transmission(net);
-
 out:
 	if (p_buf != NULL)
 	{
@@ -1875,18 +1872,6 @@ static int pf_dcp_identify_req(
 			{
 				memcpy(alias, &p_src[src_pos], src_block_len);
 				alias[src_block_len] = '\0';
-				if (pf_lldp_is_alias_matching(net, alias))
-				{
-					if (first == true)
-					{
-						p_req_alias_name = alias;
-						filter = true;
-					}
-				}
-				else
-				{
-					match = false;
-				}
 			}
 			else
 			{

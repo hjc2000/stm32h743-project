@@ -2005,7 +2005,6 @@ static int pf_cmrpc_rm_connect_ind(
 	}
 	else
 	{
-		pf_pdport_lldp_restart_transmission(net);
 	}
 
 	LOG_DEBUG(
