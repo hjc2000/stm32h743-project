@@ -100,8 +100,6 @@ static void pf_diag_update_station_problem_indicator(
 			pf_cmdev_get_diag_item(net, ix, &p_item);
 		}
 	}
-
-	pf_ppm_set_problem_indicator(net, p_ar, is_problem);
 }
 
 /**

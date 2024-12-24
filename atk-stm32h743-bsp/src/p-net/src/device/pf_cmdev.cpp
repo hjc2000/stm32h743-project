@@ -5131,66 +5131,6 @@ int pf_cmdev_cm_ccontrol_req(pnet_t *net, pf_ar_t *p_ar)
 					for (iy = 0; iy < p_ar->iocrs[ix].nbr_data_desc; iy++)
 					{
 						p_iodata = &p_ar->iocrs[ix].data_desc[iy];
-
-						/* The application is limited to setting data for a specific
-						   subslot. Check that it has tried to set the data.
-						   If some other AR owns the subslot, check that data is
-						   set for that AR.
-
-						   In the future we might implement reading inputdata from
-						   one subslot to several connections (different PLCs).
-
-						   Find owning AR, CR and descriptor */
-						if (
-							pf_ppm_get_ar_iocr_desc(
-								net,
-								p_iodata->api_id,
-								p_iodata->slot_nbr,
-								p_iodata->subslot_nbr,
-								&p_owning_ar,
-								&p_owning_iocr,
-								&p_owning_iodata,
-								&crep) == 0)
-						{
-							if (
-								p_owning_ar != p_ar ||
-								p_owning_iocr != &p_ar->iocrs[ix] ||
-								p_owning_iodata != p_iodata)
-							{
-								LOG_DEBUG(
-									PNET_LOG,
-									"CMDEV(%d): Slot %u subslot 0x%04x is owned by "
-									"AREP %u CREP %" PRIu32 " but AREP %u CREP %" PRIu32
-									" is asking to use it.\n",
-									__LINE__,
-									p_iodata->slot_nbr,
-									p_iodata->subslot_nbr,
-									p_owning_ar->arep,
-									p_owning_iocr->crep,
-									p_ar->arep,
-									p_ar->iocrs[ix].crep);
-							}
-
-							/* Member data_avail is set directly by the PPM. The value
-							   is true also if only the IOPS is set. */
-							if (
-								p_owning_iodata->iops_length > 0 &&
-								p_owning_iodata->data_avail == false)
-							{
-								data_avail = false;
-							}
-						}
-						else
-						{
-							LOG_DEBUG(
-								PNET_LOG,
-								"CMDEV(%d): Could not find owning AR for slot %u "
-								"subslot 0x%04x\n",
-								__LINE__,
-								p_iodata->slot_nbr,
-								p_iodata->subslot_nbr);
-							data_avail = false;
-						}
 					}
 				}
 			}

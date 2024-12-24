@@ -61,7 +61,6 @@ int pnet_init_only(pnet_t *net, pnet_cfg_t const *p_cfg)
 #endif
 
 	pf_cpm_init(net);
-	pf_ppm_init(net);
 	pf_alarm_init(net);
 
 	if (pf_eth_init(net, p_cfg) != 0)
@@ -244,17 +243,8 @@ int pnet_input_set_data_and_iops(
 	uint16_t data_len,
 	uint8_t iops)
 {
-	uint8_t iops_len = 1;
-
-	return pf_ppm_set_data_and_iops(
-		net,
-		api,
-		slot,
-		subslot,
-		p_data,
-		data_len,
-		&iops,
-		iops_len);
+	// TODO
+	return -1;
 }
 
 int pnet_input_get_iocs(
@@ -300,9 +290,8 @@ int pnet_output_set_iocs(
 	uint16_t subslot,
 	uint8_t iocs)
 {
-	uint8_t iocs_len = 1;
-
-	return pf_ppm_set_iocs(net, api, slot, subslot, &iocs, iocs_len);
+	// TODO
+	return -1;
 }
 
 int pnet_plug_module(
@@ -372,10 +361,6 @@ int pnet_set_primary_state(pnet_t *net, bool primary)
 		{
 			for (cr_ix = 0; cr_ix < p_ar->nbr_iocrs; cr_ix++)
 			{
-				if (pf_ppm_set_data_status_state(net, p_ar, cr_ix, primary) != 0)
-				{
-					ret = -1;
-				}
 			}
 		}
 	}
@@ -403,10 +388,6 @@ int pnet_set_redundancy_state(pnet_t *net, bool redundant)
 		{
 			for (cr_ix = 0; cr_ix < p_ar->nbr_iocrs; cr_ix++)
 			{
-				if (pf_ppm_set_data_status_redundancy(net, p_ar, cr_ix, redundant) != 0)
-				{
-					ret = -1;
-				}
 			}
 		}
 	}
@@ -434,10 +415,6 @@ int pnet_set_provider_state(pnet_t *net, bool run)
 		{
 			for (cr_ix = 0; cr_ix < p_ar->nbr_iocrs; cr_ix++)
 			{
-				if (pf_ppm_set_data_status_provider(net, p_ar, cr_ix, run) != 0)
-				{
-					ret = -1;
-				}
 			}
 		}
 	}

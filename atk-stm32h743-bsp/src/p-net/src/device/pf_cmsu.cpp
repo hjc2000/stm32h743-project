@@ -113,14 +113,6 @@ int pf_cmsu_cmdev_state_ind(
 			{
 				if (p_ar->iocrs[crep].param.iocr_type == PF_IOCR_TYPE_INPUT)
 				{
-					if (pf_ppm_activate_req(net, p_ar, crep) != 0)
-					{
-						LOG_ERROR(
-							PNET_LOG,
-							"CMSU(%d): Failed to activate_ppm for AREP %u.\n",
-							__LINE__,
-							p_ar->arep);
-					}
 				}
 			}
 		}
@@ -140,7 +132,6 @@ int pf_cmsu_cmdev_state_ind(
 			{
 				if (p_ar->iocrs[crep].param.iocr_type == PF_IOCR_TYPE_INPUT)
 				{
-					pf_ppm_close_req(net, p_ar, crep);
 				}
 				if (p_ar->iocrs[crep].param.iocr_type == PF_IOCR_TYPE_OUTPUT)
 				{
@@ -204,12 +195,6 @@ int pf_cmsu_start_req(pnet_t *net, pf_ar_t *p_ar, pnet_result_t *p_stat)
 			{
 				if (p_ar->iocrs[crep].param.iocr_type == PF_IOCR_TYPE_INPUT)
 				{
-					if (pf_ppm_create(net, p_ar, crep) != 0)
-					{
-						p_stat->pnio_status.error_code_2 =
-							PNET_ERROR_CODE_2_CMSU_AR_ADD_PROV_CONS_FAILED;
-						ret = -1;
-					}
 				}
 			}
 		}

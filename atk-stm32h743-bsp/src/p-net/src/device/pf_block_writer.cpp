@@ -871,7 +871,6 @@ static void pf_put_iocr(
 		(p_ar->iocrs[ix].param.iocr_type == PF_IOCR_TYPE_INPUT) ||
 		(p_ar->iocrs[ix].param.iocr_type == PF_IOCR_TYPE_MC_PROVIDER))
 	{
-		(void)pf_ppm_get_data_status(&p_ar->iocrs[ix].ppm, &data_status);
 	}
 	else
 	{

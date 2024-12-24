@@ -460,7 +460,6 @@ void pf_cmrpc_show(pnet_t *net, unsigned level)
 							(p_iocr->param.iocr_type == PF_IOCR_TYPE_INPUT) ||
 							(p_iocr->param.iocr_type == PF_IOCR_TYPE_MC_PROVIDER))
 						{
-							pf_ppm_show(&p_iocr->ppm);
 						}
 						else
 						{

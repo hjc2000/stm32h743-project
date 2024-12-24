@@ -341,24 +341,6 @@ int pf_cmrdr_rm_read_ind(
 			iops_len = sizeof(iops);
 			iocs_len = sizeof(iocs);
 			if (
-				pf_ppm_get_data_and_iops(
-					net,
-					p_read_request->api,
-					p_read_request->slot_number,
-					p_read_request->subslot_number,
-					subslot_data,
-					&data_len,
-					iops,
-					&iops_len) != 0)
-			{
-				LOG_DEBUG(
-					PNET_LOG,
-					"CMRDR(%d): Could not get PPM data and IOPS\n",
-					__LINE__);
-				data_len = 0;
-				iops_len = 0;
-			}
-			if (
 				pf_cpm_get_iocs(
 					net,
 					p_read_request->api,
@@ -413,21 +395,6 @@ int pf_cmrdr_rm_read_ind(
 					__LINE__);
 				data_len = 0;
 				iops_len = 0;
-			}
-			if (
-				pf_ppm_get_iocs(
-					net,
-					p_read_request->api,
-					p_read_request->slot_number,
-					p_read_request->subslot_number,
-					iocs,
-					&iocs_len) != 0)
-			{
-				LOG_DEBUG(
-					PNET_LOG,
-					"CMRDR(%d): Could not get PPM IOCS\n",
-					__LINE__);
-				iocs_len = 0;
 			}
 			if ((data_len + iops_len + iocs_len) > 0)
 			{

@@ -38,11 +38,10 @@
 #ifdef UNIT_TEST
 #endif
 
-#include <inttypes.h>
-#include <string.h>
-
 #include "pf_block_writer.h"
 #include "pf_includes.h"
+#include <inttypes.h>
+#include <string.h>
 
 /*
  * Various constants from the standard document.
