@@ -22,7 +22,8 @@
 #define PF_INCLUDES_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "options.h"
@@ -30,9 +31,9 @@ extern "C" {
 #include "osal_log.h"
 #include "pnal.h"
 
-#include "pnet_api.h"
 #include "pf_driver.h"
 #include "pf_types.h"
+#include "pnet_api.h"
 
 /* common */
 #include "pf_alarm.h"
@@ -45,7 +46,6 @@ extern "C" {
 #include "pf_lldp.h"
 #include "pf_ppm.h"
 #include "pf_ppm_driver_sw.h"
-#include "pf_ptcp.h"
 #include "pf_scheduler.h"
 #include "pf_snmp.h"
 #include "pf_udp.h"

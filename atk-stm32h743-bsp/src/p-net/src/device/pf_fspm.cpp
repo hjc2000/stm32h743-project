@@ -334,6 +334,7 @@ void pf_fspm_save_im(pnet_t *net)
 		&output_im,
 		&temporary_buffer,
 		sizeof(pf_im_nvm_t));
+
 	switch (res)
 	{
 	case 2:
