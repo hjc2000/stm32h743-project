@@ -64,9 +64,7 @@ extern "C"
 	 * @param net              In:    The p-net stack instance.
 	 * @param p_iterator       Out:   Port iterator.
 	 */
-	void pf_port_init_iterator_over_ports(
-		pnet_t const *net,
-		pf_port_iterator_t *p_iterator);
+	void pf_port_init_iterator_over_ports(pnet_t const *net, pf_port_iterator_t *p_iterator);
 
 	/**
 	 * Get next local port.
