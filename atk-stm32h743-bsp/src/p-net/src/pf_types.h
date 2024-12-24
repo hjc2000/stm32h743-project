@@ -472,7 +472,7 @@ static inline uint32_t atomic_fetch_sub(atomic_int *p, uint32_t v)
 
 	/************************** Block header *************************************/
 
-	typedef enum pf_block_type_values
+	enum pf_block_type_values_t
 	{
 		/* Reserved 0x0000 */
 		PF_BT_ALARM_NOTIFICATION_HIGH = 0x0001,
@@ -575,9 +575,9 @@ static inline uint32_t atomic_fetch_sub(atomic_int *p, uint32_t v)
 		PF_BT_APPRDY_RES = 0x8112,
 		PF_BT_APPRDY_PLUG_ALARM_RES = 0x8113,
 		PF_BT_RELEASE_BLOCK_RES = 0x8114,
-	} pf_block_type_values_t;
+	};
 
-	typedef enum pf_index_values
+	enum pf_index_values_t
 	{
 		PF_IDX_USER_MAX = 0x7fff,
 
@@ -744,7 +744,7 @@ static inline uint32_t atomic_fetch_sub(atomic_int *p, uint32_t v)
 		PF_IDX_TSN_STREAM_RENEW = 0xf8f3,
 
 		PF_IDX_DEV_CONN_MON_TRIGGER = 0xfbff,
-	} pf_index_values_t;
+	};
 
 	CC_PACKED_BEGIN
 
