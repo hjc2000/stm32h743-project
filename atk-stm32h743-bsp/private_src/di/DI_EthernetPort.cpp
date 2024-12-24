@@ -15,8 +15,8 @@ namespace
 		{
 			return std::unique_ptr<bsp::MutexEthernetPort>{
 				new bsp::MutexEthernetPort{
-					&bsp::AtkApolloV1EthernetPort::Instance(),
-					// &bsp::AtkApolloV2EthernetPort::Instance(),
+					// &bsp::AtkApolloV1EthernetPort::Instance(),
+					&bsp::AtkApolloV2EthernetPort::Instance(),
 				},
 			};
 		}
