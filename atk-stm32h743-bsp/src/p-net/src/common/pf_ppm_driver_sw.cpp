@@ -52,8 +52,7 @@ static void pf_ppm_drv_sw_send(pnet_t *net, void *arg, uint32_t current_time)
 			/* Schedule next execution */
 			p_arg->ppm.next_exec += p_arg->ppm.control_interval;
 			delay = p_arg->ppm.next_exec - current_time;
-			if (
-				pf_scheduler_add(
+			if (pf_scheduler_add(
 					net,
 					delay,
 					pf_ppm_drv_sw_send,

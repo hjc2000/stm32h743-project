@@ -251,8 +251,7 @@ extern "C"
 	 * @param if_cfg           In:   Network configuration
 	 * @param number_of_ports  In:   Number of used ports
 	 */
-	void app_utils_print_network_config(pnet_if_cfg_t *if_cfg,
-										uint16_t number_of_ports);
+	void app_utils_print_network_config(pnet_if_cfg_t *if_cfg, uint16_t number_of_ports);
 
 	/**
 	 * Print message if IOXS has changed.

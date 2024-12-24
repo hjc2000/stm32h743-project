@@ -1263,7 +1263,7 @@ extern "C"
 		/** IP Settings for main network interface */
 		pnet_ip_cfg_t ip_cfg;
 
-		pnet_port_cfg_t physical_ports[PNET_MAX_PHYSICAL_PORTS];
+		// pnet_port_cfg_t physical_ports[PNET_MAX_PHYSICAL_PORTS];
 	} pnet_if_cfg_t;
 
 	/**

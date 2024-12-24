@@ -209,7 +209,7 @@ char const *app_utils_event_to_string(pnet_event_values_t event)
 
 int app_utils_pnet_cfg_init_default(pnet_cfg_t *cfg)
 {
-	memset(cfg, 0, sizeof(pnet_cfg_t));
+	*cfg = pnet_cfg_t{};
 
 	cfg->tick_us = APP_TICK_INTERVAL_US;
 
@@ -406,7 +406,6 @@ int app_utils_pnet_cfg_init_netifs(char const *netif_list_str,
 								   pnet_if_cfg_t *if_cfg)
 {
 	int ret = 0;
-	int i = 0;
 	pnal_ipaddr_t ip;
 	pnal_ipaddr_t netmask;
 	pnal_ipaddr_t gateway;
@@ -422,11 +421,6 @@ int app_utils_pnet_cfg_init_netifs(char const *netif_list_str,
 	}
 
 	if_cfg->main_netif_name = if_list->netif_names[0].name;
-	for (i = 1; i <= *number_of_ports; i++)
-	{
-		if_cfg->physical_ports[i - 1].netif_name = if_list->netif_names[i].name;
-		if_cfg->physical_ports[i - 1].default_mau_type = APP_GSDML_DEFAULT_MAUTYPE;
-	}
 
 	/* Read IP, netmask, gateway from operating system */
 	ip = pnal_get_ip_address(if_cfg->main_netif_name);
@@ -461,20 +455,10 @@ static void app_utils_print_mac_address(char const *netif_name)
 
 void app_utils_print_network_config(pnet_if_cfg_t *if_cfg, uint16_t number_of_ports)
 {
-	uint16_t i;
 	char hostname_string[PNAL_HOSTNAME_MAX_SIZE]; /* Terminated string */
 
 	APP_LOG_INFO("Management port:      %s ", if_cfg->main_netif_name);
 	app_utils_print_mac_address(if_cfg->main_netif_name);
-
-	for (i = 1; i <= number_of_ports; i++)
-	{
-		APP_LOG_INFO("Physical port [%u]:    %s ",
-					 i,
-					 if_cfg->physical_ports[i - 1].netif_name);
-
-		app_utils_print_mac_address(if_cfg->physical_ports[i - 1].netif_name);
-	}
 
 	if (pnal_get_hostname(hostname_string) != 0)
 	{

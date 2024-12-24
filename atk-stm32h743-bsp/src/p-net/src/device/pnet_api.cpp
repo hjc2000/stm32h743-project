@@ -19,6 +19,8 @@
 #endif
 
 #include <inttypes.h>
+#include <new>
+#include <pf_types.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -37,7 +39,8 @@
 
 int pnet_init_only(pnet_t *net, pnet_cfg_t const *p_cfg)
 {
-	memset(net, 0, sizeof(*net));
+	// 原本使用的是 memset 将这段内存设置为 0.
+	new (net) pnet_t{};
 
 	/* Initialize configuration */
 	if (pf_fspm_init(net, p_cfg) != 0)
@@ -102,11 +105,9 @@ int pnet_init_only(pnet_t *net, pnet_cfg_t const *p_cfg)
 
 pnet_t *pnet_init(pnet_cfg_t const *p_cfg)
 {
-	pnet_t *net = NULL;
-
 	LOG_DEBUG(PNET_LOG, "API(%d): Application calls pnet_init()\n", __LINE__);
 
-	net = reinterpret_cast<pnet_t *>(os_malloc(sizeof(*net)));
+	pnet_t *net = new pnet_t{};
 	if (net == NULL)
 	{
 		printf("sizeof (*net) = %zu\r\n", sizeof(*net));
@@ -120,7 +121,7 @@ pnet_t *pnet_init(pnet_cfg_t const *p_cfg)
 
 	if (pnet_init_only(net, p_cfg) != 0)
 	{
-		free(net);
+		delete net;
 		return NULL;
 	}
 
