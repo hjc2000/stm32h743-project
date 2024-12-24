@@ -24,11 +24,14 @@
 #include <bsp/sdram.h>
 #include <ff.h>
 #include <littlefs/LfsFlashPort.h>
+#include <lwip-wrapper/NetifSlot.h>
+#include <lwip-wrapper/NetifWrapper.h>
 #include <memory>
-#include <NetifWrapper.h>
 #include <stdexcept>
 #include <stdint.h>
 #include <TestExtiKey.h>
+
+#pragma region 测试函数
 
 void TestLittleFs()
 {
@@ -192,6 +195,7 @@ inline void TestFatFs()
 
 void freertos_demo();
 int p_net_sample_app_main();
+#pragma endregion
 
 int main(void)
 {
@@ -232,8 +236,14 @@ int main(void)
 			// 	DI_Delayer().Delay(std::chrono::milliseconds{1000});
 			// }
 			// TestFatFs();
-			lwip::NetifWrapper netif_wrapper{};
-			netif_wrapper.Open(&DI_EthernetPort());
+
+			{
+				std::shared_ptr<lwip::NetifWrapper> netif_wrapper{new lwip::NetifWrapper{"netif"}};
+				lwip::NetifSlot::Instance().PlugIn(netif_wrapper);
+			}
+
+			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
+			netif_wrapper->Open(&DI_EthernetPort());
 			freertos_demo();
 			// p_net_sample_app_main();
 			// TestLittleFs();

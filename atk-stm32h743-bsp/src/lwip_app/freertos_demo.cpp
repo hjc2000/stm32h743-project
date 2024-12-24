@@ -5,12 +5,12 @@
 #include <bsp-interface/di/task.h>
 #include <FreeRTOS.h>
 #include <hal.h>
+#include <lwip-wrapper/NetifWrapper.h>
 #include <lwip/api.h>
 #include <lwip/opt.h>
 #include <lwip/sockets.h>
 #include <lwip/sys.h>
 #include <lwipopts.h>
-#include <NetifWrapper.h>
 #include <queue.h>
 #include <semphr.h>
 #include <stdint.h>
