@@ -285,9 +285,6 @@ int app_utils_pnet_cfg_init_default(pnet_cfg_t *cfg)
 	/* Timing */
 	cfg->min_device_interval = APP_GSDML_MIN_DEVICE_INTERVAL;
 
-	/* Should be set by application as part of network configuration. */
-	cfg->num_physical_ports = 1;
-
 	snprintf(cfg->station_name,
 			 sizeof(cfg->station_name),
 			 "%s",

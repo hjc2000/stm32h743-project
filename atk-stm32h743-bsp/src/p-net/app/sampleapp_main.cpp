@@ -71,7 +71,6 @@ int p_net_sample_app_main()
 	}
 
 	pnet_cfg.if_cfg = netif_cfg;
-	pnet_cfg.num_physical_ports = number_of_ports;
 
 	app_utils_print_network_config(&netif_cfg, number_of_ports);
 

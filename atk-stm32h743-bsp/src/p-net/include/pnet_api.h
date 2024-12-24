@@ -1333,12 +1333,6 @@ extern "C"
 		/** Send DCP HELLO message on startup if true. */
 		bool send_hello;
 
-		/** Number of physical ports. Should respect PNET_MAX_PHYSICAL_PORTS.
-			This parameter is useful when shipping a single compiled version of the
-			library, but there are several applications with different number of
-			ports. */
-		uint8_t num_physical_ports; // TODO int or uint16_t ?
-
 		/** Send diagnosis in the qualified format (otherwise extended format) */
 		bool use_qualified_diagnosis;
 

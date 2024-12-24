@@ -792,7 +792,7 @@ static int app_alarm_ack_cnf(pnet_t *net, void *arg, uint32_t arep, int res)
  * @param app              InOut:   Application handle
  * @param number_of_ports  In:      Number of active ports
  */
-static void app_plug_dap(app_data_t *app, uint16_t number_of_ports)
+static void app_plug_dap(app_data_t *app)
 {
 	pnet_data_cfg_t const cfg_dap_data = {
 		.data_dir = PNET_DIR_NO_IO,
@@ -834,42 +834,6 @@ static void app_plug_dap(app_data_t *app, uint16_t number_of_ports)
 						  PNET_MOD_DAP_IDENT,
 						  PNET_SUBMOD_DAP_INTERFACE_1_PORT_1_IDENT,
 						  &cfg_dap_data);
-
-	if (number_of_ports >= 2)
-	{
-		app_exp_submodule_ind(app->net,
-							  app,
-							  APP_GSDML_API,
-							  PNET_SLOT_DAP_IDENT,
-							  PNET_SUBSLOT_DAP_INTERFACE_1_PORT_2_IDENT,
-							  PNET_MOD_DAP_IDENT,
-							  PNET_SUBMOD_DAP_INTERFACE_1_PORT_2_IDENT,
-							  &cfg_dap_data);
-	}
-
-	if (number_of_ports >= 3)
-	{
-		app_exp_submodule_ind(app->net,
-							  app,
-							  APP_GSDML_API,
-							  PNET_SLOT_DAP_IDENT,
-							  PNET_SUBSLOT_DAP_INTERFACE_1_PORT_3_IDENT,
-							  PNET_MOD_DAP_IDENT,
-							  PNET_SUBMOD_DAP_INTERFACE_1_PORT_3_IDENT,
-							  &cfg_dap_data);
-	}
-
-	if (number_of_ports >= 4)
-	{
-		app_exp_submodule_ind(app->net,
-							  app,
-							  APP_GSDML_API,
-							  PNET_SLOT_DAP_IDENT,
-							  PNET_SUBSLOT_DAP_INTERFACE_1_PORT_4_IDENT,
-							  PNET_MOD_DAP_IDENT,
-							  PNET_SUBMOD_DAP_INTERFACE_1_PORT_4_IDENT,
-							  &cfg_dap_data);
-	}
 
 	APP_LOG_DEBUG("Done plugging DAP\n\n");
 }
@@ -1507,7 +1471,7 @@ void app_loop_forever(void *arg)
 	uint32_t flags = 0;
 	app->main_api.arep = UINT32_MAX;
 	app_set_led(APP_DATA_LED_ID, false);
-	app_plug_dap(app, app->pnet_cfg->num_physical_ports);
+	app_plug_dap(app);
 	APP_LOG_INFO("Waiting for PLC connect request\n\n");
 
 	/* Main event loop */

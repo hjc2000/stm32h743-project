@@ -92,15 +92,13 @@ int pf_eth_init(pnet_t *net, pnet_cfg_t const *p_cfg)
 {
 	int port;
 	pf_port_t *p_port_data;
-	uint8_t number_of_ports = p_cfg->num_physical_ports;
 	pnet_port_cfg_t const *p_port_cfg;
-	pnal_ethertype_t main_port_receive_type = (number_of_ports == 1) ? PNAL_ETHTYPE_ALL : PNAL_ETHTYPE_PROFINET;
 	memset(net->eth_id_map, 0, sizeof(net->eth_id_map));
 
 	/* Init management port */
 	if (pf_eth_init_netif(net,
 						  p_cfg->if_cfg.main_netif_name,
-						  main_port_receive_type,
+						  PNAL_ETHTYPE_ALL,
 						  &p_cfg->pnal_cfg,
 						  &net->pf_interface.main_port) != 0)
 	{

@@ -229,20 +229,6 @@ int pf_fspm_validate_configuration(pnet_cfg_t const *p_cfg)
 		return -1;
 	}
 
-	if (
-		p_cfg->num_physical_ports == 0 ||
-		p_cfg->num_physical_ports > PNET_MAX_PHYSICAL_PORTS)
-	{
-		LOG_ERROR(
-			PNET_LOG,
-			"FSPM(%d): The number of ports setting is wrong. Given: %d  "
-			"PNET_MAX_PHYSICAL_PORTS: %d\n",
-			__LINE__,
-			p_cfg->num_physical_ports,
-			PNET_MAX_PHYSICAL_PORTS);
-		return -1;
-	}
-
 	if (p_cfg->min_device_interval == 0)
 	{
 		LOG_ERROR(
