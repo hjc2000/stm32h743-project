@@ -95,7 +95,7 @@ static pnal_eth_handle_t *pnal_eth_allocate_handle(void)
  * @return ERR_OK if frame was processed and freed,
  *         ERR_IF if it was ignored.
  */
-static err_t pnal_eth_sys_recv(struct pbuf *p_buf, struct netif *netif)
+err_t pnal_eth_sys_recv(struct pbuf *p_buf, struct netif *netif)
 {
 	int processed;
 	pnal_eth_handle_t *handle;
@@ -118,11 +118,6 @@ static err_t pnal_eth_sys_recv(struct pbuf *p_buf, struct netif *netif)
 		/* Frame not handled */
 		return ERR_IF;
 	}
-}
-
-int lwip_hook_unknown_eth_protocol(struct pbuf *pbuf, struct netif *netif)
-{
-	return static_cast<err_enum_t>(pnal_eth_sys_recv(pbuf, netif));
 }
 
 pnal_eth_handle_t *pnal_eth_init(char const *if_name,
@@ -175,4 +170,9 @@ int pnal_eth_send(pnal_eth_handle_t *handle, pnal_buf_t *buf)
 	}
 
 	return ret;
+}
+
+int lwip_hook_unknown_eth_protocol(struct pbuf *pbuf, struct netif *netif)
+{
+	return static_cast<err_enum_t>(pnal_eth_sys_recv(pbuf, netif));
 }

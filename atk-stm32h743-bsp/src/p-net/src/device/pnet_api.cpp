@@ -66,10 +66,10 @@ int pnet_init_only(pnet_t *net, pnet_cfg_t const *p_cfg)
 
 	if (pf_eth_init(net, p_cfg) != 0)
 	{
-		LOG_ERROR(
-			PNET_LOG,
-			"API(%d): Failed to initialise network interfaces\n",
-			__LINE__);
+		LOG_ERROR(PNET_LOG,
+				  "API(%d): Failed to initialise network interfaces\n",
+				  __LINE__);
+
 		return -1;
 	}
 

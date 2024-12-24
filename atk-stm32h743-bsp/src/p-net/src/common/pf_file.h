@@ -108,11 +108,10 @@ extern "C"
 
 	/************ Internal functions, made available for unit testing ************/
 
-	int pf_file_join_directory_filename(
-		char const *directory,
-		char const *filename,
-		char *fullpath,
-		size_t size);
+	int pf_file_join_directory_filename(char const *directory,
+										char const *filename,
+										char *fullpath,
+										size_t size);
 
 #ifdef __cplusplus
 }
