@@ -38,11 +38,6 @@
  *
  */
 
-#ifdef UNIT_TEST
-#define os_get_current_time_us mock_os_get_current_time_us
-#define pf_generate_uuid mock_pf_generate_uuid
-#endif
-
 #include "pf_block_reader.h"
 #include "pf_block_writer.h"
 #include "pf_cmrpc_epm.h"
@@ -516,11 +511,11 @@ static int pf_session_allocate(pnet_t *net, pf_session_info_t **pp_sess)
 		pf_scheduler_init_handle(&p_sess->resend_timeout, "rpc");
 
 		/* Set activity UUID. Will be overwritten for incoming requests. */
-		pf_generate_uuid(
-			os_get_current_time_us(),
-			net->cmrpc_session_number,
-			*mac_address,
-			&p_sess->activity_uuid);
+		pf_generate_uuid(os_get_current_time_us(),
+						 net->cmrpc_session_number,
+						 *mac_address,
+						 &p_sess->activity_uuid);
+
 		net->cmrpc_session_number++;
 
 		*pp_sess = p_sess;
