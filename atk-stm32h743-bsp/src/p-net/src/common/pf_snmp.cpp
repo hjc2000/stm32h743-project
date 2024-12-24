@@ -22,19 +22,6 @@
  *
  */
 
-#ifdef UNIT_TEST
-#define pf_lldp_get_management_address mock_pf_lldp_get_management_address
-#define pf_lldp_get_peer_management_address \
-	mock_pf_lldp_get_peer_management_address
-#define pf_lldp_get_link_status mock_pf_lldp_get_link_status
-#define pf_lldp_get_peer_link_status mock_pf_lldp_get_peer_link_status
-#define pf_file_load mock_pf_file_load
-#define pf_file_save_if_modified mock_pf_file_save_if_modified
-#define pf_fspm_get_im_location mock_pf_fspm_get_im_location
-#define pf_fspm_save_im_location mock_pf_fspm_save_im_location
-#define pnal_get_hostname mock_pnal_get_hostname
-#endif
-
 #include "pf_includes.h"
 #include <string.h>
 
@@ -240,7 +227,6 @@ static void pf_snmp_encode_signal_delays(
 void pf_snmp_data_init(pnet_t *net)
 {
 	char const *directory = pf_cmina_get_file_directory(net);
-	pf_snmp_data_t *snmp = &net->snmp_data;
 	int error;
 	int result;
 
@@ -248,55 +234,55 @@ void pf_snmp_data_init(pnet_t *net)
 	//    sizeof (snmp->system_name.string) >= PNAL_HOSTNAME_MAX_SIZE);
 
 	/* sysContact */
-	error = pf_file_load(
-		directory,
-		PF_FILENAME_SNMP_SYSCONTACT,
-		&snmp->system_contact,
-		sizeof(snmp->system_contact));
+	error = pf_file_load(directory,
+						 PF_FILENAME_SNMP_SYSCONTACT,
+						 &net->snmp_data.system_contact,
+						 sizeof(net->snmp_data.system_contact));
+
 	if (error)
 	{
-		snmp->system_contact.string[0] = '\0';
+		net->snmp_data.system_contact.string[0] = '\0';
 	}
-	snmp->system_contact.string[sizeof(snmp->system_contact.string) - 1] = '\0';
+
+	net->snmp_data.system_contact.string[sizeof(net->snmp_data.system_contact.string) - 1] = '\0';
 	pf_snmp_log_loaded_variable(
 		error,
 		"sysContact",
-		snmp->system_contact.string);
+		net->snmp_data.system_contact.string);
 
 	/* sysName */
 	error = pf_file_load(
 		directory,
 		PF_FILENAME_SNMP_SYSNAME,
-		&snmp->system_name,
-		sizeof(snmp->system_name));
+		&net->snmp_data.system_name,
+		sizeof(net->snmp_data.system_name));
 	if (error)
 	{
-		result = pnal_get_hostname(snmp->system_name.string);
+		result = pnal_get_hostname(net->snmp_data.system_name.string);
 		if (result != 0)
 		{
-			snmp->system_name.string[0] = '\0';
+			net->snmp_data.system_name.string[0] = '\0';
 		}
 	}
-	snmp->system_name.string[sizeof(snmp->system_name.string) - 1] = '\0';
-	pf_snmp_log_loaded_variable(error, "sysName", snmp->system_name.string);
+
+	net->snmp_data.system_name.string[sizeof(net->snmp_data.system_name.string) - 1] = '\0';
+	pf_snmp_log_loaded_variable(error, "sysName", net->snmp_data.system_name.string);
 
 	/* sysLocation */
-	error = pf_file_load(
-		directory,
-		PF_FILENAME_SNMP_SYSLOCATION,
-		&snmp->system_location,
-		sizeof(snmp->system_location));
+	error = pf_file_load(directory,
+						 PF_FILENAME_SNMP_SYSLOCATION,
+						 &net->snmp_data.system_location,
+						 sizeof(net->snmp_data.system_location));
+
 	if (error)
 	{
 		/* Use "IM_Tag_Location" from I&M1 */
-		pf_fspm_get_im_location(net, snmp->system_location.string);
+		pf_fspm_get_im_location(net, net->snmp_data.system_location.string);
 	}
-	snmp->system_location.string[sizeof(snmp->system_location.string) - 1] =
-		'\0';
-	pf_snmp_log_loaded_variable(
-		error,
-		"sysLocation",
-		snmp->system_location.string);
+	net->snmp_data.system_location.string[sizeof(net->snmp_data.system_location.string) - 1] = '\0';
+	pf_snmp_log_loaded_variable(error,
+								"sysLocation",
+								net->snmp_data.system_location.string);
 }
 
 void pf_snmp_remove_data_files(char const *file_directory)
