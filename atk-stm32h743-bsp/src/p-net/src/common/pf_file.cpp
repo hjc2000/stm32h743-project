@@ -211,58 +211,6 @@ int pf_file_load(char const *directory,
 	return 0;
 }
 
-int pf_file_save(
-	char const *directory,
-	char const *filename,
-	void const *p_object,
-	size_t size)
-{
-	char path[PNET_MAX_FILE_FULLPATH_SIZE]; /**< Terminated string */
-	uint8_t versioning_buffer[8] = {0};     /**< Two uint32_t */
-	uint16_t pos = 0;
-	int ret = 0;
-	uint32_t start_time_us = 0;
-
-	if (
-		pf_file_join_directory_filename(
-			directory,
-			filename,
-			path,
-			PNET_MAX_FILE_FULLPATH_SIZE) != 0)
-	{
-		return -1;
-	}
-
-	pf_put_uint32(
-		true,
-		PF_FILE_MAGIC,
-		sizeof(versioning_buffer),
-		versioning_buffer,
-		&pos); /* Big endian */
-	pf_put_uint32(
-		true,
-		PF_FILE_VERSION,
-		sizeof(versioning_buffer),
-		versioning_buffer,
-		&pos); /* Big endian */
-
-	start_time_us = os_get_current_time_us();
-	ret = pnal_save_file(
-		path,
-		versioning_buffer,
-		sizeof(versioning_buffer),
-		p_object,
-		size);
-	LOG_DEBUG(
-		PNET_LOG,
-		"FILE(%d): Did save file %s Access time %" PRIu32 " ms.\n",
-		__LINE__,
-		path,
-		((os_get_current_time_us() - start_time_us) / 1000));
-
-	return ret;
-}
-
 int pf_file_save_if_modified(
 	char const *directory,
 	char const *filename,
@@ -270,34 +218,7 @@ int pf_file_save_if_modified(
 	void *p_tempobject,
 	size_t size)
 {
-	bool save = false;
-	int ret = 0; /* Assume no changes */
-
-	memset(p_tempobject, 0, size);
-
-	if (pf_file_load(directory, filename, p_tempobject, size) == 0)
-	{
-		if (memcmp(p_tempobject, p_object, size) != 0)
-		{
-			ret = 1;
-			save = true;
-		}
-	}
-	else
-	{
-		ret = 2;
-		save = true;
-	}
-
-	if (save == true)
-	{
-		if (pf_file_save(directory, filename, p_object, size) != 0)
-		{
-			ret = -1;
-		}
-	}
-
-	return ret;
+	return 0;
 }
 
 void pf_file_clear(char const *directory, char const *filename)

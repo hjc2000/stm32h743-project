@@ -53,24 +53,6 @@ extern "C"
 		size_t size);
 
 	/**
-	 * Save a binary file, and include version information.
-	 *
-	 * @param directory        In:    Directory for files. Terminated string. NULL
-	 *                                or empty string is interpreted as current
-	 *                                directory.
-	 * @param filename         In:    File name. Terminated string.
-	 * @param p_object         In:    Struct to save
-	 * @param size             In:    Size of struct to save
-	 * @return  0  if the operation succeeded.
-	 *          -1 if an error occurred.
-	 */
-	int pf_file_save(
-		char const *directory,
-		char const *filename,
-		void const *p_object,
-		size_t size);
-
-	/**
 	 * Save a binary file if modified, and include version information.
 	 *
 	 * No saving is done if the content would be the same. This reduces the flash
