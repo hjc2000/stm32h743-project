@@ -67,11 +67,10 @@
  * @return  0  if the operation succeeded.
  *          -1 if not found or an error occurred.
  */
-int pf_file_join_directory_filename(
-	char const *directory,
-	char const *filename,
-	char *fullpath,
-	size_t size)
+int pf_file_join_directory_filename(char const *directory,
+									char const *filename,
+									char *fullpath,
+									size_t size)
 {
 	bool use_directory = true;
 
@@ -137,11 +136,10 @@ int pf_file_join_directory_filename(
 	return 0;
 }
 
-int pf_file_load(
-	char const *directory,
-	char const *filename,
-	void *p_object,
-	size_t size)
+int pf_file_load(char const *directory,
+				 char const *filename,
+				 void *p_object,
+				 size_t size)
 {
 	uint8_t versioning_buffer[8] = {0}; /* Two uint32_t */
 	pf_get_info_t bufferinfo;
@@ -156,12 +154,10 @@ int pf_file_load(
 	bufferinfo.is_big_endian = true;
 	bufferinfo.result = PF_PARSE_OK;
 
-	if (
-		pf_file_join_directory_filename(
-			directory,
-			filename,
-			path,
-			PNET_MAX_FILE_FULLPATH_SIZE) != 0)
+	if (pf_file_join_directory_filename(directory,
+										filename,
+										path,
+										PNET_MAX_FILE_FULLPATH_SIZE) != 0)
 	{
 		return -1;
 	}
@@ -169,23 +165,20 @@ int pf_file_load(
 	/* Read file */
 	start_time_us = os_get_current_time_us();
 
-	if (
-		pnal_load_file(
-			path,
-			versioning_buffer,
-			sizeof(versioning_buffer),
-			p_object,
-			size) != 0)
+	if (pnal_load_file(path,
+					   versioning_buffer,
+					   sizeof(versioning_buffer),
+					   p_object,
+					   size) != 0)
 	{
 		return -1;
 	}
 
-	LOG_DEBUG(
-		PNET_LOG,
-		"FILE(%d): Did read file %s Access time %" PRIu32 " ms.\n",
-		__LINE__,
-		path,
-		((os_get_current_time_us() - start_time_us) / 1000));
+	LOG_DEBUG(PNET_LOG,
+			  "FILE(%d): Did read file %s Access time %" PRIu32 " ms.\n",
+			  __LINE__,
+			  path,
+			  ((os_get_current_time_us() - start_time_us) / 1000));
 
 	magic = pf_get_uint32(&bufferinfo, &pos);
 	version = pf_get_uint32(&bufferinfo, &pos);
@@ -193,11 +186,11 @@ int pf_file_load(
 	/* Check file magic bytes */
 	if (magic != PF_FILE_MAGIC)
 	{
-		LOG_ERROR(
-			PNET_LOG,
-			"FILE(%d): Wrong file magic bytes in file %s\n",
-			__LINE__,
-			path);
+		LOG_ERROR(PNET_LOG,
+				  "FILE(%d): Wrong file magic bytes in file %s\n",
+				  __LINE__,
+				  path);
+
 		return -1;
 	}
 

@@ -23,14 +23,6 @@
  * Reads and writes identification & maintenance (I&M) records.
  */
 
-#ifdef UNIT_TEST
-#define os_get_current_time_us mock_os_get_current_time_us
-#define pf_file_clear mock_pf_file_clear
-#define pf_file_load mock_pf_file_load
-#define pf_file_save_if_modified mock_pf_file_save_if_modified
-#define pf_bg_worker_start_job mock_pf_bg_worker_start_job
-#endif
-
 #include <inttypes.h>
 #include <string.h>
 

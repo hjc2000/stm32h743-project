@@ -98,12 +98,12 @@ void pf_cpm_set_state(pf_cpm_t *p_cpm, pf_cpm_state_values_t state)
 {
 	if (state != p_cpm->state)
 	{
-		LOG_DEBUG(
-			PF_CPM_LOG,
-			"CPM(%d): New state %s (was %s)\n",
-			__LINE__,
-			pf_cpm_state_to_string(state),
-			pf_cpm_state_to_string(p_cpm->state));
+		LOG_DEBUG(PF_CPM_LOG,
+				  "CPM(%d): New state %s (was %s)\n",
+				  __LINE__,
+				  pf_cpm_state_to_string(state),
+				  pf_cpm_state_to_string(p_cpm->state));
+
 		p_cpm->state = state;
 	}
 }
