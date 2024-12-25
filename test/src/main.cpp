@@ -242,8 +242,36 @@ int main(void)
 				lwip::NetifSlot::Instance().PlugIn(netif_wrapper);
 			}
 
+			base::IPAddress ip_address{"192.168.1.30"};
+
+			base::IPAddress netmask{"255.255.255.0"};
+
+			base::IPAddress gateway{"192.168.1.1"};
+
+			/// @brief 本网卡所使用的 MAC 地址。
+			base::Mac mac{
+				std::endian::big,
+				base::Array<uint8_t, 6>{
+					0xB8,
+					0xAE,
+					0x1D,
+					0x00,
+					0x04,
+					0x00,
+				},
+			};
+
 			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
-			netif_wrapper->Open(&DI_EthernetPort());
+
+			netif_wrapper->Open(&DI_EthernetPort(),
+								mac,
+								ip_address,
+								netmask,
+								gateway,
+								1500);
+
+			netif_wrapper->StartDHCP();
+			DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
 			freertos_demo();
 			// p_net_sample_app_main();
 			// TestLittleFs();
