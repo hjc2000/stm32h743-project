@@ -272,8 +272,8 @@ int main(void)
 
 			netif_wrapper->StartDHCP();
 			DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
-			freertos_demo();
-			// p_net_sample_app_main();
+			// freertos_demo();
+			p_net_sample_app_main();
 			// TestLittleFs();
 
 			// while (true)
