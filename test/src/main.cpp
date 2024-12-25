@@ -270,8 +270,13 @@ int main(void)
 								gateway,
 								1500);
 
-			netif_wrapper->StartDHCP();
 			DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
+			netif_wrapper->EnableDHCP();
+			while (!netif_wrapper->HasGotAddressesByDHCP())
+			{
+				// break;
+			}
+
 			// freertos_demo();
 			p_net_sample_app_main();
 			// TestLittleFs();
