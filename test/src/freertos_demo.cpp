@@ -4,7 +4,6 @@
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/task.h>
 #include <FreeRTOS.h>
-#include <hal.h>
 #include <lwip-wrapper/NetifWrapper.h>
 #include <lwip/api.h>
 #include <lwip/opt.h>

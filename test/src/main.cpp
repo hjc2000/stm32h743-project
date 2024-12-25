@@ -244,8 +244,8 @@ int main(void)
 
 			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
 			netif_wrapper->Open(&DI_EthernetPort());
-			// freertos_demo();
-			p_net_sample_app_main();
+			freertos_demo();
+			// p_net_sample_app_main();
 			// TestLittleFs();
 
 			// while (true)
