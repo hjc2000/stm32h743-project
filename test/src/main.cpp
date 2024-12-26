@@ -275,6 +275,19 @@ int main(void)
 				break;
 			}
 
+			// 创建一个线程，从以太网端口读取数据输入到 NetifWrapper.
+			DI_TaskManager().Create(
+				[]()
+				{
+					std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
+					while (true)
+					{
+						base::ReadOnlySpan span = DI_EthernetPort().Receive();
+						netif_wrapper->Input(span);
+					}
+				},
+				512);
+
 			freertos_demo();
 			// p_net_sample_app_main();
 			// TestLittleFs();
