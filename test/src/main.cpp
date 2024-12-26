@@ -243,9 +243,7 @@ int main(void)
 			}
 
 			base::IPAddress ip_address{"192.168.1.30"};
-
 			base::IPAddress netmask{"255.255.255.0"};
-
 			base::IPAddress gateway{"192.168.1.1"};
 
 			/// @brief 本网卡所使用的 MAC 地址。
@@ -274,7 +272,7 @@ int main(void)
 			netif_wrapper->EnableDHCP();
 			while (!netif_wrapper->HasGotAddressesByDHCP())
 			{
-				// break;
+				break;
 			}
 
 			// freertos_demo();
