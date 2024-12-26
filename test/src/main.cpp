@@ -239,10 +239,8 @@ int main(void)
 			// }
 			// TestFatFs();
 
-			{
-				std::shared_ptr<lwip::NetifWrapper> netif_wrapper{new lwip::NetifWrapper{"netif"}};
-				lwip::NetifSlot::Instance().PlugIn(netif_wrapper);
-			}
+			std::shared_ptr<lwip::NetifWrapper> netif_wrapper{new lwip::NetifWrapper{"netif"}};
+			lwip::NetifSlot::Instance().PlugIn(netif_wrapper);
 
 			base::IPAddress ip_address{"192.168.1.30"};
 			base::IPAddress netmask{"255.255.255.0"};
@@ -260,8 +258,6 @@ int main(void)
 					0x00,
 				},
 			};
-
-			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
 
 			netif_wrapper->Open(&DI_EthernetPort(),
 								mac,
@@ -289,6 +285,7 @@ int main(void)
 						DI_Console().WriteLine("收到以太网帧：");
 						DI_Console().WriteLine("目的 MAC 地址：" + frame.DestinationMac().ToString());
 						DI_Console().WriteLine("源 MAC 地址：" + frame.SourceMac().ToString());
+						DI_Console().WriteLine("TypeOrLength：" + base::ToString(frame.TypeOrLength()));
 						netif_wrapper->Input(span);
 					}
 				},
