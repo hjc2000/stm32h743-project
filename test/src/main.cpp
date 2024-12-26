@@ -286,6 +286,7 @@ int main(void)
 						DI_Console().WriteLine("目的 MAC 地址：" + frame.DestinationMac().ToString());
 						DI_Console().WriteLine("源 MAC 地址：" + frame.SourceMac().ToString());
 						DI_Console().WriteLine("TypeOrLength：" + base::ToString(frame.TypeOrLength()));
+						DI_Console().WriteLine("是否具有 VlangTag：" + std::to_string(frame.HasVlanTag()));
 						netif_wrapper->Input(span);
 					}
 				},
