@@ -266,14 +266,11 @@ int main(void)
 								gateway,
 								1500);
 
-			DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
-			netif_wrapper->EnableDHCP();
-			while (!netif_wrapper->HasGotAddressesByDHCP())
-			{
-				break;
-			}
-
-			// 创建一个线程，从以太网端口读取数据输入到 NetifWrapper.
+			/**
+			 * 创建一个线程，从以太网端口读取数据输入到 NetifWrapper.
+			 * 要先创建用来将以太网帧输入给网卡的线程后才能开始等待网卡 DHCP 成功。
+			 * 因为 DHCP 要接收响应。
+			 */
 			DI_TaskManager().Create(
 				[]()
 				{
@@ -289,8 +286,15 @@ int main(void)
 				},
 				512);
 
-			// freertos_demo();
-			p_net_sample_app_main();
+			DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
+			netif_wrapper->EnableDHCP();
+			while (!netif_wrapper->HasGotAddressesByDHCP())
+			{
+				// break;
+			}
+
+			freertos_demo();
+			// p_net_sample_app_main();
 			// TestLittleFs();
 
 			// while (true)
