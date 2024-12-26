@@ -1,4 +1,6 @@
 #include <atomic>
+#include <base/net/ethernet/EthernetFrame.h>
+#include <base/net/ethernet/ReadOnlyEthernetFrame.h>
 #include <base/RentedPtrFactory.h>
 #include <base/string/define.h>
 #include <base/string/ToHexString.h>
@@ -283,6 +285,10 @@ int main(void)
 					while (true)
 					{
 						base::ReadOnlySpan span = DI_EthernetPort().Receive();
+						base::ethernet::ReadOnlyEthernetFrame frame{span};
+						DI_Console().WriteLine("收到以太网帧：");
+						DI_Console().WriteLine("目的 MAC 地址：" + frame.DestinationMac().ToString());
+						DI_Console().WriteLine("源 MAC 地址：" + frame.SourceMac().ToString());
 						netif_wrapper->Input(span);
 					}
 				},
