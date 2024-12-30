@@ -95,6 +95,11 @@ void bsp::AtkApolloV2EthernetPort::Send(base::IEnumerable<base::ReadOnlySpan> co
 	_controller->Send(spans);
 }
 
+void bsp::AtkApolloV2EthernetPort::Send(base::ReadOnlySpan const &span)
+{
+	_controller->Send(span);
+}
+
 base::ReadOnlySpan bsp::AtkApolloV2EthernetPort::Receive()
 {
 	return _controller->Receive();

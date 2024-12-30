@@ -46,6 +46,10 @@ namespace bsp
 		/// @param spans
 		void Send(base::IEnumerable<base::ReadOnlySpan> const &spans) override;
 
+		/// @brief 发送单个 span.
+		/// @param span
+		void Send(base::ReadOnlySpan const &span) override;
+
 		/// @brief 接收。
 		/// @note 因为接收后需要解析，而解析需要数据完整且连续，所以必须接收一整个完整的以太网帧，
 		/// 放到一个 span 中。
