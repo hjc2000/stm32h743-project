@@ -304,7 +304,7 @@ int main(void)
 
 			while (true)
 			{
-				DI_EthernetPort().Send(base::Array<base::ReadOnlySpan, 1>{hello.ValidDataSpan()});
+				DI_EthernetPort().Send(hello.ValidDataSpan());
 				DI_Delayer().Delay(std::chrono::milliseconds{1000});
 			}
 
