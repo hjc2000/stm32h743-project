@@ -1,6 +1,7 @@
 #include <atomic>
 #include <base/net/ethernet/EthernetFrame.h>
 #include <base/net/ethernet/ReadOnlyEthernetFrame.h>
+#include <base/net/profinet/DcpHelloRequestPdu.h>
 #include <base/RentedPtrFactory.h>
 #include <base/string/define.h>
 #include <base/string/ToHexString.h>
@@ -293,8 +294,24 @@ int main(void)
 				break;
 			}
 
+			std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
+			base::Span buffer_span{buffer.get(), 1500};
+			base::profinet::DcpHelloRequestPdu hello{buffer_span};
+			hello.SetSourceMac(mac);
+			hello.SetXid(1);
+			hello.PutNameOfStationBlock("test_dev");
+
+			base::List<base::ReadOnlySpan> span_list;
+			span_list.Add(hello.ValidDataSpan());
+
+			while (true)
+			{
+				DI_EthernetPort().Send(span_list);
+				DI_Delayer().Delay(std::chrono::milliseconds{1000});
+			}
+
 			// freertos_demo();
-			p_net_sample_app_main();
+			// p_net_sample_app_main();
 			// TestLittleFs();
 
 			// while (true)
