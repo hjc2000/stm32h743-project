@@ -1,7 +1,7 @@
 #include <atomic>
 #include <base/net/ethernet/EthernetFrame.h>
 #include <base/net/ethernet/ReadOnlyEthernetFrame.h>
-#include <base/net/profinet/DcpHelloRequestPdu.h>
+#include <base/net/profinet/dcp/DcpHelloRequest.h>
 #include <base/RentedPtrFactory.h>
 #include <base/string/define.h>
 #include <base/string/ToHexString.h>
@@ -198,6 +198,7 @@ inline void TestFatFs()
 
 void freertos_demo();
 int p_net_sample_app_main();
+void EhternetInput(base::ReadOnlySpan const &span);
 #pragma endregion
 
 int main(void)
@@ -283,6 +284,7 @@ int main(void)
 						DI_Console().WriteLine("收到以太网帧：");
 						DI_Console().WriteLine(frame);
 						netif_wrapper->Input(span);
+						EhternetInput(span);
 					}
 				},
 				512);
@@ -291,25 +293,30 @@ int main(void)
 			netif_wrapper->EnableDHCP();
 			while (!netif_wrapper->HasGotAddressesByDHCP())
 			{
-				break;
-			}
-
-			std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
-			while (true)
-			{
-				base::Span buffer_span{buffer.get(), 1500};
-				base::profinet::DcpHelloRequestPdu hello{buffer_span};
-				hello.SetSourceMac(mac);
-				hello.SetXid(1);
-				hello.PutNameOfStationBlock("test_dev");
-				hello.PutIPAddressInfomationBlock(false, ip_address, gateway, netmask);
-				DI_EthernetPort().Send(hello.ValidDataSpan());
-				DI_Delayer().Delay(std::chrono::milliseconds{1000});
+				// break;
 			}
 
 			// freertos_demo();
 			// p_net_sample_app_main();
 			// TestLittleFs();
+
+			std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
+			while (true)
+			{
+				base::Span buffer_span{buffer.get(), 1500};
+				base::profinet::DcpHelloRequest hello{buffer_span};
+				hello.SetSourceMac(mac);
+				hello.SetXid(1);
+				hello.PutNameOfStationBlock("rt-labs-dev");
+
+				hello.PutIPAddressInfomationBlock(false,
+												  netif_wrapper->IPAddress(),
+												  netif_wrapper->Gateway(),
+												  netif_wrapper->Netmask());
+
+				DI_EthernetPort().Send(hello.ValidDataSpan());
+				DI_Delayer().Delay(std::chrono::milliseconds{1000});
+			}
 
 			// while (true)
 			// {
