@@ -302,12 +302,9 @@ int main(void)
 			hello.SetXid(1);
 			hello.PutNameOfStationBlock("test_dev");
 
-			base::List<base::ReadOnlySpan> span_list;
-			span_list.Add(hello.ValidDataSpan());
-
 			while (true)
 			{
-				DI_EthernetPort().Send(span_list);
+				DI_EthernetPort().Send(base::Array<base::ReadOnlySpan, 1>{hello.ValidDataSpan()});
 				DI_Delayer().Delay(std::chrono::milliseconds{1000});
 			}
 
