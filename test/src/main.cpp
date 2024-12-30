@@ -295,14 +295,14 @@ int main(void)
 			}
 
 			std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
-			base::Span buffer_span{buffer.get(), 1500};
-			base::profinet::DcpHelloRequestPdu hello{buffer_span};
-			hello.SetSourceMac(mac);
-			hello.SetXid(1);
-			hello.PutNameOfStationBlock("test_dev");
-
 			while (true)
 			{
+				base::Span buffer_span{buffer.get(), 1500};
+				base::profinet::DcpHelloRequestPdu hello{buffer_span};
+				hello.SetSourceMac(mac);
+				hello.SetXid(1);
+				hello.PutNameOfStationBlock("test_dev");
+				hello.PutIPAddressInfomationBlock(false, ip_address, gateway, netmask);
 				DI_EthernetPort().Send(hello.ValidDataSpan());
 				DI_Delayer().Delay(std::chrono::milliseconds{1000});
 			}
