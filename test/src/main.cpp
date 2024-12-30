@@ -297,7 +297,7 @@ int main(void)
 			}
 
 			// freertos_demo();
-			// p_net_sample_app_main();
+			p_net_sample_app_main();
 			// TestLittleFs();
 
 			std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
