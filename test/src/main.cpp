@@ -290,11 +290,11 @@ int main(void)
 			netif_wrapper->EnableDHCP();
 			while (!netif_wrapper->HasGotAddressesByDHCP())
 			{
-				// break;
+				break;
 			}
 
-			freertos_demo();
-			// p_net_sample_app_main();
+			// freertos_demo();
+			p_net_sample_app_main();
 			// TestLittleFs();
 
 			// while (true)
