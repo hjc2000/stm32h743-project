@@ -300,23 +300,23 @@ int main(void)
 			p_net_sample_app_main();
 			// TestLittleFs();
 
-			std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
-			while (true)
-			{
-				base::Span buffer_span{buffer.get(), 1500};
-				base::profinet::DcpHelloRequestWriter hello{buffer_span};
-				hello.SetSourceMac(mac);
-				hello.SetXid(1);
-				hello.PutNameOfStationBlock("rt-labs-dev");
+			// std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
+			// while (true)
+			// {
+			// 	base::Span buffer_span{buffer.get(), 1500};
+			// 	base::profinet::DcpHelloRequestWriter hello{buffer_span};
+			// 	hello.SetSourceMac(mac);
+			// 	hello.SetXid(1);
+			// 	hello.PutNameOfStationBlock("rt-labs-dev");
 
-				hello.PutIPAddressInfomationBlock(false,
-												  netif_wrapper->IPAddress(),
-												  netif_wrapper->Gateway(),
-												  netif_wrapper->Netmask());
+			// 	hello.PutIPAddressInfomationBlock(false,
+			// 									  netif_wrapper->IPAddress(),
+			// 									  netif_wrapper->Gateway(),
+			// 									  netif_wrapper->Netmask());
 
-				DI_EthernetPort().Send(hello.ValidDataSpan());
-				DI_Delayer().Delay(std::chrono::milliseconds{1000});
-			}
+			// 	DI_EthernetPort().Send(hello.ValidDataSpan());
+			// 	DI_Delayer().Delay(std::chrono::milliseconds{1000});
+			// }
 
 			// while (true)
 			// {
