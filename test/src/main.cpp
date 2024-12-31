@@ -1,6 +1,6 @@
 #include <atomic>
 #include <base/net/ethernet/EthernetFrame.h>
-#include <base/net/ethernet/ReadOnlyEthernetFrame.h>
+#include <base/net/ethernet/EthernetFrameReader.h>
 #include <base/net/profinet/dcp/DcpHelloRequest.h>
 #include <base/RentedPtrFactory.h>
 #include <base/string/define.h>
@@ -280,7 +280,7 @@ int main(void)
 					while (true)
 					{
 						base::ReadOnlySpan span = DI_EthernetPort().Receive();
-						base::ethernet::ReadOnlyEthernetFrame frame{span};
+						base::ethernet::EthernetFrameReader frame{span};
 						DI_Console().WriteLine("收到以太网帧：");
 						DI_Console().WriteLine(frame);
 						netif_wrapper->Input(span);
@@ -293,7 +293,7 @@ int main(void)
 			netif_wrapper->EnableDHCP();
 			while (!netif_wrapper->HasGotAddressesByDHCP())
 			{
-				// break;
+				break;
 			}
 
 			// freertos_demo();
