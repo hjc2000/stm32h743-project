@@ -1,7 +1,7 @@
 #include <atomic>
-#include <base/net/ethernet/EthernetFrame.h>
 #include <base/net/ethernet/EthernetFrameReader.h>
-#include <base/net/profinet/dcp/DcpHelloRequest.h>
+#include <base/net/ethernet/EthernetFrameWriter.h>
+#include <base/net/profinet/dcp/DcpHelloRequestWriter.h>
 #include <base/RentedPtrFactory.h>
 #include <base/string/define.h>
 #include <base/string/ToHexString.h>
@@ -304,7 +304,7 @@ int main(void)
 			while (true)
 			{
 				base::Span buffer_span{buffer.get(), 1500};
-				base::profinet::DcpHelloRequest hello{buffer_span};
+				base::profinet::DcpHelloRequestWriter hello{buffer_span};
 				hello.SetSourceMac(mac);
 				hello.SetXid(1);
 				hello.PutNameOfStationBlock("rt-labs-dev");
