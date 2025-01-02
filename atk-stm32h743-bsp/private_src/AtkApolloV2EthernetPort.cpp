@@ -8,6 +8,7 @@
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/system_time.h>
+#include <bsp-interface/di/task.h>
 
 bsp::AtkApolloV2EthernetPort &bsp::AtkApolloV2EthernetPort::Instance()
 {
@@ -54,6 +55,17 @@ void bsp::AtkApolloV2EthernetPort::Open(base::Mac const &mac)
 
 	// 启动以太网
 	_controller->Start(DuplexMode(), Speed());
+
+	DI_TaskManager().Create(
+		[this]()
+		{
+			while (true)
+			{
+				base::ReadOnlySpan span = Receive();
+				_receiving_ethernet_frame_event.Invoke(span);
+			}
+		},
+		1024);
 }
 
 uint32_t bsp::AtkApolloV2EthernetPort::ReadPHYRegister(uint32_t register_index)
@@ -103,4 +115,9 @@ void bsp::AtkApolloV2EthernetPort::Send(base::ReadOnlySpan const &span)
 base::ReadOnlySpan bsp::AtkApolloV2EthernetPort::Receive()
 {
 	return _controller->Receive();
+}
+
+base::IEvent<base::ReadOnlySpan> &bsp::AtkApolloV2EthernetPort::ReceivintEhternetFrameEvent()
+{
+	return _receiving_ethernet_frame_event;
 }

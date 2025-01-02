@@ -11,6 +11,7 @@ namespace bsp
 	{
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
+		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 
 	public:
 		static_function AtkApolloV1EthernetPort &Instance();
@@ -54,6 +55,11 @@ namespace bsp
 		/// @note 因为接收后需要解析，而解析需要数据完整且连续，所以必须接收一整个完整的以太网帧，
 		/// 放到一个 span 中。
 		/// @return
-		base::ReadOnlySpan Receive() override;
+		base::ReadOnlySpan Receive();
+
+		/// @brief 收到以太网帧会触发此事件。
+		/// @note 事件回调中会传入一个装有完整的以太网帧的 base::ReadOnlySpan.
+		/// @return
+		base::IEvent<base::ReadOnlySpan> &ReceivintEhternetFrameEvent() override;
 	};
 } // namespace bsp

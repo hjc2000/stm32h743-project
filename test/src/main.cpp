@@ -268,26 +268,15 @@ int main(void)
 								gateway,
 								1500);
 
-			/**
-			 * 创建一个线程，从以太网端口读取数据输入到 NetifWrapper.
-			 * 要先创建用来将以太网帧输入给网卡的线程后才能开始等待网卡 DHCP 成功。
-			 * 因为 DHCP 要接收响应。
-			 */
-			DI_TaskManager().Create(
-				[]()
+			DI_EthernetPort().ReceivintEhternetFrameEvent().Subscribe(
+				[](base::ReadOnlySpan span)
 				{
 					std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
-					while (true)
-					{
-						base::ReadOnlySpan span = DI_EthernetPort().Receive();
-						base::ethernet::EthernetFrameReader frame{span};
-						DI_Console().WriteLine("收到以太网帧：");
-						DI_Console().WriteLine(frame);
-						netif_wrapper->Input(span);
-						EhternetInput(span);
-					}
-				},
-				512);
+					base::ethernet::EthernetFrameReader frame{span};
+					DI_Console().WriteLine("收到以太网帧：");
+					DI_Console().WriteLine(frame);
+					// EhternetInput(span);
+				});
 
 			DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
 			netif_wrapper->EnableDHCP();
