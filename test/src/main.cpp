@@ -275,7 +275,7 @@ int main(void)
 					base::ethernet::EthernetFrameReader frame{span};
 					DI_Console().WriteLine("收到以太网帧：");
 					DI_Console().WriteLine(frame);
-					// EhternetInput(span);
+					EhternetInput(span);
 				});
 
 			DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
