@@ -293,7 +293,7 @@ int main(void)
 			netif_wrapper->EnableDHCP();
 			while (!netif_wrapper->HasGotAddressesByDHCP())
 			{
-				// break;
+				break;
 			}
 
 			// freertos_demo();

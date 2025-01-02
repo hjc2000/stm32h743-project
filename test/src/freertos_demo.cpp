@@ -19,8 +19,7 @@
 
 void freertos_demo()
 {
-	socklen_t sock_fd{};                      /* 定义一个Socket接口 */
-	sock_fd = socket(AF_INET, SOCK_DGRAM, 0); /* 建立一个新的socket连接 */
+	socklen_t sock_fd = socket(AF_INET, SOCK_DGRAM, 0); /* 建立一个新的socket连接 */
 
 	sockaddr_in local_info{}; /* 定义Socket地址信息结构体 */
 	local_info.sin_len = sizeof(local_info);
