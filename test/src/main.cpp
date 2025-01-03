@@ -275,7 +275,7 @@ int main(void)
 					base::ethernet::EthernetFrameReader frame{span};
 					DI_Console().WriteLine("收到以太网帧：");
 					DI_Console().WriteLine(frame);
-					EhternetInput(span);
+					// EhternetInput(span);
 				});
 
 			DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
@@ -286,26 +286,30 @@ int main(void)
 			}
 
 			// freertos_demo();
-			p_net_sample_app_main();
+			// p_net_sample_app_main();
 			// TestLittleFs();
 
-			// std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
-			// while (true)
-			// {
-			// 	base::Span buffer_span{buffer.get(), 1500};
-			// 	base::profinet::DcpHelloRequestWriter hello{buffer_span};
-			// 	hello.SetSourceMac(mac);
-			// 	hello.SetXid(1);
-			// 	hello.PutNameOfStationBlock("rt-labs-dev");
+			std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
+			while (true)
+			{
+				base::Span buffer_span{buffer.get(), 1500};
+				base::profinet::DcpHelloRequestWriter hello{buffer_span};
+				hello.SetSourceMac(mac);
+				hello.SetXid(1);
+				hello.PutNameOfStationBlock("rt-labs-dev");
 
-			// 	hello.PutIPAddressInfomationBlock(false,
-			// 									  netif_wrapper->IPAddress(),
-			// 									  netif_wrapper->Gateway(),
-			// 									  netif_wrapper->Netmask());
+				hello.PutIPAddressInfomationBlock(false,
+												  netif_wrapper->IPAddress(),
+												  netif_wrapper->Gateway(),
+												  netif_wrapper->Netmask());
 
-			// 	DI_EthernetPort().Send(hello.ValidDataSpan());
-			// 	DI_Delayer().Delay(std::chrono::milliseconds{1000});
-			// }
+				hello.PutIdBlock(0x0493, 0x0002);
+				hello.PutOemIdBlock(0xcafe, 0xee02);
+				hello.PutDeviceInitiativeBlock(true);
+
+				DI_EthernetPort().Send(hello.ValidDataSpan());
+				DI_Delayer().Delay(std::chrono::milliseconds{1000});
+			}
 
 			// while (true)
 			// {
