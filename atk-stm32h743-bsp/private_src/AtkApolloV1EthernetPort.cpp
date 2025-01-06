@@ -46,7 +46,7 @@ void bsp::AtkApolloV1EthernetPort::Open(base::Mac const &mac)
 	ResetPHY();
 
 	// 打开以太网控制器
-	_controller->Open(bsp::Ethernet_InterfaceType::RMII,
+	_controller->Open(bsp::EthernetInterfaceType::RMII,
 					  0,
 					  mac);
 
