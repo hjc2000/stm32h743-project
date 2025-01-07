@@ -2,7 +2,7 @@
 #include <AtkApolloV2PhyController.h>
 #include <base/define.h>
 #include <bsp-interface/di/ethernet.h>
-#include <bsp-interface/ethernet/phy/YU8512CPhyDriver.h>
+#include <bsp-interface/ethernet/phy/YT8512CPhyDriver.h>
 
 namespace bsp
 {
@@ -15,7 +15,7 @@ namespace bsp
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 		base::Delegate<> _connection_event;
 		base::Delegate<> _disconnection_event;
-		bsp::YU8512CPhyDriver _phy_driver{std::shared_ptr<bsp::IPhyController>{new AtkApolloV2PhyController{}}};
+		bsp::YT8512CPhyDriver _phy_driver{std::shared_ptr<bsp::IPhyController>{new AtkApolloV2PhyController{}}};
 
 	public:
 		static_function EthernetPort &Instance();
