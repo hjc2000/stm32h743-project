@@ -62,19 +62,50 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 			while (true)
 			{
 				base::ReadOnlySpan span = Receive();
-				_receiving_ethernet_frame_event.Invoke(span);
+				try
+				{
+					_receiving_ethernet_frame_event.Invoke(span);
+				}
+				catch (...)
+				{
+				}
 			}
 		},
 		1024);
-}
 
-void bsp::EthernetPort::Restart()
-{
-	_phy_driver.SoftwareReset();
-	_phy_driver.EnableAutoNegotiation();
+	DI_TaskManager().Create(
+		[this]()
+		{
+			bool last_loop_is_linked = false;
+			while (true)
+			{
+				bool is_linked = _phy_driver.IsLinked();
+				try
+				{
+					if (!last_loop_is_linked && is_linked)
+					{
+						_phy_driver.SoftwareReset();
+						_phy_driver.EnableAutoNegotiation();
 
-	// 启动以太网
-	_controller->Start(_phy_driver.DuplexMode(), _phy_driver.Speed());
+						// 启动以太网
+						_controller->Start(_phy_driver.DuplexMode(), _phy_driver.Speed());
+
+						_connection_event.Invoke();
+					}
+					else if (last_loop_is_linked && !is_linked)
+					{
+						_disconnection_event.Invoke();
+					}
+				}
+				catch (...)
+				{
+				}
+
+				last_loop_is_linked = is_linked;
+				DI_Delayer().Delay(std::chrono::milliseconds{200});
+			}
+		},
+		1024);
 }
 
 void bsp::EthernetPort::Send(base::IEnumerable<base::ReadOnlySpan> const &spans)
@@ -97,7 +128,12 @@ base::IEvent<base::ReadOnlySpan> &bsp::EthernetPort::ReceivintEhternetFrameEvent
 	return _receiving_ethernet_frame_event;
 }
 
-bool bsp::EthernetPort::IsLinked()
+base::IEvent<> &bsp::EthernetPort::ConnectionEvent()
 {
-	return _phy_driver.IsLinked();
+	return _connection_event;
+}
+
+base::IEvent<> &bsp::EthernetPort::DisconnectionEvent()
+{
+	return _disconnection_event;
 }

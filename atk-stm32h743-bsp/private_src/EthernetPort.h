@@ -13,6 +13,8 @@ namespace bsp
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
+		base::Delegate<> _connection_event;
+		base::Delegate<> _disconnection_event;
 		bsp::YU8512CPhyDriver _phy_driver{std::shared_ptr<bsp::IPhyController>{new AtkApolloV2PhyController{}}};
 
 	public:
@@ -25,12 +27,6 @@ namespace bsp
 		/// @brief 打开以太网端口。
 		/// @param mac MAC 地址。
 		void Open(base::Mac const &mac) override;
-
-		/// @brief 重启网口。
-		/// @note 会保留 MAC 地址等配置。
-		/// @note 会重新进行自动协商的过程。断线重连后可以调用本方法，防止 MAC 控制器
-		/// 所使用的速率、双工等配置与新插入的网线不符。
-		void Restart() override;
 
 		/// @brief 发送。
 		/// @param spans
@@ -51,8 +47,14 @@ namespace bsp
 		/// @return
 		base::IEvent<base::ReadOnlySpan> &ReceivintEhternetFrameEvent() override;
 
-		/// @brief 网线当前处于链接状态。
+		/// @brief 连接事件。
+		/// @note 链路层连接建立后会触发事件。
 		/// @return
-		virtual bool IsLinked() override;
+		virtual base::IEvent<> &ConnectionEvent() override;
+
+		/// @brief 断开连接事件。
+		/// @note 链路层连接断开后会触发事件。
+		/// @return
+		virtual base::IEvent<> &DisconnectionEvent() override;
 	};
 } // namespace bsp
