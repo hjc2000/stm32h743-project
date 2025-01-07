@@ -43,18 +43,18 @@ std::string bsp::EthernetPort::Name() const
 
 void bsp::EthernetPort::Open(base::Mac const &mac)
 {
-	ResetPHY();
+	_phy_driver.HardwareReset();
 
 	// 打开以太网控制器
 	_controller->Open(bsp::EthernetInterfaceType::RMII,
 					  0,
 					  mac);
 
-	SoftwareResetPHY();
-	EnableAutoNegotiation();
+	_phy_driver.SoftwareReset();
+	_phy_driver.EnableAutoNegotiation();
 
 	// 启动以太网
-	_controller->Start(DuplexMode(), Speed());
+	_controller->Start(_phy_driver.DuplexMode(), _phy_driver.Speed());
 
 	DI_TaskManager().Create(
 		[this]()
@@ -68,38 +68,13 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 		1024);
 }
 
-uint32_t bsp::EthernetPort::ReadPHYRegister(uint32_t register_index)
-{
-	return _controller->ReadPHYRegister(register_index);
-}
-
-void bsp::EthernetPort::WritePHYRegister(uint32_t register_index, uint32_t value)
-{
-	_controller->WritePHYRegister(register_index, value);
-}
-
 void bsp::EthernetPort::Restart()
 {
-	SoftwareResetPHY();
-	EnableAutoNegotiation();
+	_phy_driver.SoftwareReset();
+	_phy_driver.EnableAutoNegotiation();
 
 	// 启动以太网
-	_controller->Start(DuplexMode(), Speed());
-}
-
-void bsp::EthernetPort::ResetPHY()
-{
-	/* 公司的开发板是旧版的，复位需要先输出高电平，延时后输出低电平。
-	 * 家里的开发板是新版的，复位需要先输出低电平，延时后输出高电平。
-	 */
-
-	// 硬件复位
-	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0);
-	DI_Delayer().Delay(std::chrono::milliseconds{100});
-
-	// 复位结束
-	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
-	DI_Delayer().Delay(std::chrono::milliseconds{100});
+	_controller->Start(_phy_driver.DuplexMode(), _phy_driver.Speed());
 }
 
 void bsp::EthernetPort::Send(base::IEnumerable<base::ReadOnlySpan> const &spans)
@@ -120,4 +95,9 @@ base::ReadOnlySpan bsp::EthernetPort::Receive()
 base::IEvent<base::ReadOnlySpan> &bsp::EthernetPort::ReceivintEhternetFrameEvent()
 {
 	return _receiving_ethernet_frame_event;
+}
+
+bool bsp::EthernetPort::IsLinked()
+{
+	return _phy_driver.IsLinked();
 }

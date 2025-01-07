@@ -1,17 +1,19 @@
 #pragma once
+#include <AtkApolloV2PhyController.h>
 #include <base/define.h>
 #include <bsp-interface/di/ethernet.h>
-#include <bsp-interface/ethernet/phy/YT8512C_EthernetPort.h>
+#include <bsp-interface/ethernet/phy/YU8512CPhyDriver.h>
 
 namespace bsp
 {
 	/// @brief 以太网端口。
 	class EthernetPort :
-		public bsp::YT8512C_EthernetPort
+		public bsp::IEthernetPort
 	{
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
+		bsp::YU8512CPhyDriver _phy_driver{std::shared_ptr<bsp::IPhyController>{new AtkApolloV2PhyController{}}};
 
 	public:
 		static_function EthernetPort &Instance();
@@ -24,24 +26,11 @@ namespace bsp
 		/// @param mac MAC 地址。
 		void Open(base::Mac const &mac) override;
 
-		/// @brief 读 PHY 的寄存器
-		/// @param register_index 寄存器索引。
-		/// @return
-		uint32_t ReadPHYRegister(uint32_t register_index) override;
-
-		/// @brief 写 PHY 的寄存器。
-		/// @param register_index 寄存器索引。
-		/// @param value
-		void WritePHYRegister(uint32_t register_index, uint32_t value) override;
-
 		/// @brief 重启网口。
 		/// @note 会保留 MAC 地址等配置。
 		/// @note 会重新进行自动协商的过程。断线重连后可以调用本方法，防止 MAC 控制器
 		/// 所使用的速率、双工等配置与新插入的网线不符。
 		void Restart() override;
-
-		/// @brief 复位 PHY 芯片。
-		void ResetPHY() override;
 
 		/// @brief 发送。
 		/// @param spans
@@ -61,5 +50,9 @@ namespace bsp
 		/// @note 事件回调中会传入一个装有完整的以太网帧的 base::ReadOnlySpan.
 		/// @return
 		base::IEvent<base::ReadOnlySpan> &ReceivintEhternetFrameEvent() override;
+
+		/// @brief 网线当前处于链接状态。
+		/// @return
+		virtual bool IsLinked() override;
 	};
 } // namespace bsp
