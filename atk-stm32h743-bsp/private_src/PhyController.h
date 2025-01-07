@@ -4,7 +4,7 @@
 
 namespace bsp
 {
-	class AtkApolloV2PhyController :
+	class PhyController :
 		public bsp::IPhyController
 	{
 	private:
