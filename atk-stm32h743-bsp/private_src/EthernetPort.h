@@ -22,30 +22,24 @@ namespace bsp
 
 		/// @brief 以太网控制器的名称。
 		/// @return
-		std::string Name() const override;
+		virtual std::string Name() const override;
 
 		/// @brief 打开以太网端口。
 		/// @param mac MAC 地址。
-		void Open(base::Mac const &mac) override;
+		virtual void Open(base::Mac const &mac) override;
 
 		/// @brief 发送。
 		/// @param spans
-		void Send(base::IEnumerable<base::ReadOnlySpan> const &spans) override;
+		virtual void Send(base::IEnumerable<base::ReadOnlySpan> const &spans) override;
 
 		/// @brief 发送单个 span.
 		/// @param span
-		void Send(base::ReadOnlySpan const &span) override;
-
-		/// @brief 接收。
-		/// @note 因为接收后需要解析，而解析需要数据完整且连续，所以必须接收一整个完整的以太网帧，
-		/// 放到一个 span 中。
-		/// @return
-		base::ReadOnlySpan Receive();
+		virtual void Send(base::ReadOnlySpan const &span) override;
 
 		/// @brief 收到以太网帧会触发此事件。
 		/// @note 事件回调中会传入一个装有完整的以太网帧的 base::ReadOnlySpan.
 		/// @return
-		base::IEvent<base::ReadOnlySpan> &ReceivingEhternetFrameEvent() override;
+		virtual base::IEvent<base::ReadOnlySpan> &ReceivingEhternetFrameEvent() override;
 
 		/// @brief 连接事件。
 		/// @note 链路层连接建立后会触发事件。

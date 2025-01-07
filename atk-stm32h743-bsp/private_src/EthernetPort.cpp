@@ -56,7 +56,7 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 		{
 			while (true)
 			{
-				base::ReadOnlySpan span = Receive();
+				base::ReadOnlySpan span = _controller->Receive();
 				try
 				{
 					_receiving_ethernet_frame_event.Invoke(span);
@@ -121,11 +121,6 @@ void bsp::EthernetPort::Send(base::IEnumerable<base::ReadOnlySpan> const &spans)
 void bsp::EthernetPort::Send(base::ReadOnlySpan const &span)
 {
 	_controller->Send(span);
-}
-
-base::ReadOnlySpan bsp::EthernetPort::Receive()
-{
-	return _controller->Receive();
 }
 
 base::IEvent<base::ReadOnlySpan> &bsp::EthernetPort::ReceivingEhternetFrameEvent()
