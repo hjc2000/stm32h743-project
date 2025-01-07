@@ -123,7 +123,7 @@ base::ReadOnlySpan bsp::EthernetPort::Receive()
 	return _controller->Receive();
 }
 
-base::IEvent<base::ReadOnlySpan> &bsp::EthernetPort::ReceivintEhternetFrameEvent()
+base::IEvent<base::ReadOnlySpan> &bsp::EthernetPort::ReceivingEhternetFrameEvent()
 {
 	return _receiving_ethernet_frame_event;
 }

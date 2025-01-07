@@ -268,7 +268,7 @@ int main(void)
 								gateway,
 								1500);
 
-			DI_EthernetPort().ReceivintEhternetFrameEvent().Subscribe(
+			DI_EthernetPort().ReceivingEhternetFrameEvent().Subscribe(
 				[](base::ReadOnlySpan span)
 				{
 					std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");

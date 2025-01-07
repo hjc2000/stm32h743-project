@@ -45,7 +45,7 @@ namespace bsp
 		/// @brief 收到以太网帧会触发此事件。
 		/// @note 事件回调中会传入一个装有完整的以太网帧的 base::ReadOnlySpan.
 		/// @return
-		base::IEvent<base::ReadOnlySpan> &ReceivintEhternetFrameEvent() override;
+		base::IEvent<base::ReadOnlySpan> &ReceivingEhternetFrameEvent() override;
 
 		/// @brief 连接事件。
 		/// @note 链路层连接建立后会触发事件。
