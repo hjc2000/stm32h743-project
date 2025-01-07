@@ -1,9 +1,8 @@
-#include <AtkApolloV1EthernetPort.h>
-#include <AtkApolloV2EthernetPort.h>
 #include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/ethernet/MutexEthernetPort.h>
+#include <EthernetPort.h>
 
 namespace
 {
@@ -15,8 +14,7 @@ namespace
 		{
 			return std::unique_ptr<bsp::MutexEthernetPort>{
 				new bsp::MutexEthernetPort{
-					&bsp::AtkApolloV1EthernetPort::Instance(),
-					// &bsp::AtkApolloV2EthernetPort::Instance(),
+					&bsp::EthernetPort::Instance(),
 				},
 			};
 		}

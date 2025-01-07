@@ -1,20 +1,20 @@
 #pragma once
 #include <base/define.h>
 #include <bsp-interface/di/ethernet.h>
-#include <bsp-interface/ethernet/phy/LAN8720A_EthernetPort.h>
+#include <bsp-interface/ethernet/phy/YT8512C_EthernetPort.h>
 
 namespace bsp
 {
 	/// @brief 以太网端口。
-	class AtkApolloV1EthernetPort :
-		public bsp::LAN8720A_EthernetPort
+	class EthernetPort :
+		public bsp::YT8512C_EthernetPort
 	{
 	private:
 		bsp::IEthernetController *_controller = &DI_EthernetController();
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 
 	public:
-		static_function AtkApolloV1EthernetPort &Instance();
+		static_function EthernetPort &Instance();
 
 		/// @brief 以太网控制器的名称。
 		/// @return
