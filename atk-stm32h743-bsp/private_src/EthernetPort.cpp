@@ -1,6 +1,7 @@
 #include "EthernetPort.h"
 #include <base/container/Dictionary.h>
 #include <base/di/SingletonGetter.h>
+#include <base/string/define.h>
 #include <base/string/ToHexString.h>
 #include <base/unit/Mbps.h>
 #include <bsp-interface/di/console.h>
@@ -91,8 +92,13 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 						_disconnection_event.Invoke();
 					}
 				}
+				catch (std::exception const &e)
+				{
+					DI_Console().WriteError(CODE_POS_STR + e.what());
+				}
 				catch (...)
 				{
+					DI_Console().WriteError(CODE_POS_STR + "链路连接维护线程发生未知错误。");
 				}
 
 				last_loop_is_linked = is_linked;
