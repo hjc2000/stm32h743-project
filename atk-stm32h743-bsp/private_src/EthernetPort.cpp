@@ -61,8 +61,13 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 				{
 					_receiving_ethernet_frame_event.Invoke(span);
 				}
+				catch (std::exception const &e)
+				{
+					DI_Console().WriteError(CODE_POS_STR + e.what());
+				}
 				catch (...)
 				{
+					DI_Console().WriteError(CODE_POS_STR + "接收线程发生未知错误。");
 				}
 			}
 		},
