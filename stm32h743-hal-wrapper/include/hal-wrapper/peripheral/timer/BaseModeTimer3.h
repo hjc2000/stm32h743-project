@@ -40,11 +40,8 @@ namespace hal
 
 		void SetPeriodElapsedCallback(std::function<void()> func)
 		{
-			DI_DoGlobalCriticalWork(
-				[&]()
-				{
-					_period_elapsed_callback = func;
-				});
+			bsp::GlobalInterruptGuard g;
+			_period_elapsed_callback = func;
 		}
 
 		/// @brief 输入到分频器的时钟信号的频率
