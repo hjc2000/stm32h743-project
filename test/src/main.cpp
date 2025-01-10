@@ -12,6 +12,7 @@
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/gpio.h>
+#include <bsp-interface/di/heap.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/led.h>
@@ -201,6 +202,8 @@ int p_net_sample_app_main();
 void EhternetInput(base::ReadOnlySpan const &span);
 #pragma endregion
 
+uint8_t _buffer[10 * 1024];
+
 int main(void)
 {
 	DI_Initialize();
@@ -224,22 +227,8 @@ int main(void)
 			DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
 			SDRAM_Init();
 
-			// freertos::FreertosHeap4 heap4{
-			// 	reinterpret_cast<uint8_t *>(0xC0000000),
-			// 	32 * 1024 * 1024,
-			// };
-
-			// void *mem = heap4.Malloc(1024);
-			// while (true)
-			// {
-			// 	int a = 5;
-			// 	DI_Console().Write(&a);
-			// 	std::cout << std::endl;
-			// 	std::cout << &a << std::endl;
-			// 	std::cout << std::endl;
-			// 	DI_Delayer().Delay(std::chrono::milliseconds{1000});
-			// }
-			// TestFatFs();
+			DI_AddHeap(_buffer, sizeof(_buffer));
+			// DI_AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024);
 
 			std::shared_ptr<lwip::NetifWrapper> netif_wrapper{new lwip::NetifWrapper{"netif"}};
 			lwip::NetifSlot::Instance().PlugIn(netif_wrapper);
@@ -285,6 +274,7 @@ int main(void)
 				// break;
 			}
 
+			// TestFatFs();
 			// freertos_demo();
 			// p_net_sample_app_main();
 			// TestLittleFs();
