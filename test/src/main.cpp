@@ -224,9 +224,6 @@ int main(void)
 					  DI_Serial().Open(*DICreate_ISerialOptions());
 					  DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
 					  SDRAM_Init();
-
-					  base::Span span{reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024};
-					  span.FillWithZero();
 					  DI_AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
 
 					  std::shared_ptr<lwip::NetifWrapper> netif_wrapper{new lwip::NetifWrapper{"netif"}};
