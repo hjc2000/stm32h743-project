@@ -51,66 +51,64 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 					  0,
 					  mac);
 
-	DI_TaskManager().Create(
-		[this]()
-		{
-			while (true)
-			{
-				base::ReadOnlySpan span = _controller->Receive();
-				try
-				{
-					_receiving_ethernet_frame_event.Invoke(span);
-				}
-				catch (std::exception const &e)
-				{
-					DI_Console().WriteError(CODE_POS_STR + e.what());
-				}
-				catch (...)
-				{
-					DI_Console().WriteError(CODE_POS_STR + "接收线程发生未知错误。");
-				}
-			}
-		},
-		1024);
+	DI_CreateTask(1024,
+				  [this]()
+				  {
+					  while (true)
+					  {
+						  base::ReadOnlySpan span = _controller->Receive();
+						  try
+						  {
+							  _receiving_ethernet_frame_event.Invoke(span);
+						  }
+						  catch (std::exception const &e)
+						  {
+							  DI_Console().WriteError(CODE_POS_STR + e.what());
+						  }
+						  catch (...)
+						  {
+							  DI_Console().WriteError(CODE_POS_STR + "接收线程发生未知错误。");
+						  }
+					  }
+				  });
 
-	DI_TaskManager().Create(
-		[this]()
-		{
-			bool last_loop_is_linked = false;
-			while (true)
-			{
-				bool is_linked = _phy_driver.IsLinked();
-				try
-				{
-					if (!last_loop_is_linked && is_linked)
-					{
-						_phy_driver.SoftwareReset();
-						_phy_driver.EnableAutoNegotiation();
+	DI_CreateTask(1024,
+				  [this]()
+				  {
+					  bool last_loop_is_linked = false;
+					  while (true)
+					  {
+						  bool is_linked = _phy_driver.IsLinked();
+						  try
+						  {
+							  if (!last_loop_is_linked && is_linked)
+							  {
+								  _phy_driver.SoftwareReset();
+								  _phy_driver.EnableAutoNegotiation();
 
-						// 启动以太网
-						_controller->Start(_phy_driver.DuplexMode(), _phy_driver.Speed());
+								  // 启动以太网
+								  _controller->Start(_phy_driver.DuplexMode(), _phy_driver.Speed());
 
-						_connection_event.Invoke();
-					}
-					else if (last_loop_is_linked && !is_linked)
-					{
-						_disconnection_event.Invoke();
-					}
-				}
-				catch (std::exception const &e)
-				{
-					DI_Console().WriteError(CODE_POS_STR + e.what());
-				}
-				catch (...)
-				{
-					DI_Console().WriteError(CODE_POS_STR + "链路连接维护线程发生未知错误。");
-				}
+								  _connection_event.Invoke();
+							  }
+							  else if (last_loop_is_linked && !is_linked)
+							  {
+								  _disconnection_event.Invoke();
+							  }
+						  }
+						  catch (std::exception const &e)
+						  {
+							  DI_Console().WriteError(CODE_POS_STR + e.what());
+						  }
+						  catch (...)
+						  {
+							  DI_Console().WriteError(CODE_POS_STR + "链路连接维护线程发生未知错误。");
+						  }
 
-				last_loop_is_linked = is_linked;
-				DI_Delayer().Delay(std::chrono::milliseconds{200});
-			}
-		},
-		1024);
+						  last_loop_is_linked = is_linked;
+						  DI_Delayer().Delay(std::chrono::milliseconds{200});
+					  }
+				  });
 }
 
 void bsp::EthernetPort::Send(base::IEnumerable<base::ReadOnlySpan> const &spans)
