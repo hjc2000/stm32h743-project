@@ -5,7 +5,6 @@
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/systick.h>
-#include <bsp-interface/di/task.h>
 #include <bsp-interface/key/IEventDrivenKey.h>
 
 namespace bsp
@@ -23,13 +22,22 @@ namespace bsp
 	public:
 		static_function ExtiWakeUpKey &Instance()
 		{
-			class Getter :
-				public bsp::TaskSingletonGetter<ExtiWakeUpKey>
+			class Getter : public base::SingletonGetter<ExtiWakeUpKey>
 			{
 			public:
 				std::unique_ptr<ExtiWakeUpKey> Create() override
 				{
 					return std::unique_ptr<ExtiWakeUpKey>{new ExtiWakeUpKey{}};
+				}
+
+				void Lock() override
+				{
+					DI_DisableGlobalInterrupt();
+				}
+
+				void Unlock() override
+				{
+					DI_EnableGlobalInterrupt();
 				}
 			};
 

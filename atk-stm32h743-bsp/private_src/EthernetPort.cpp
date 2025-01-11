@@ -14,12 +14,22 @@
 bsp::EthernetPort &bsp::EthernetPort::Instance()
 {
 	class Getter :
-		public bsp::TaskSingletonGetter<EthernetPort>
+		public base::SingletonGetter<EthernetPort>
 	{
 	public:
 		std::unique_ptr<EthernetPort> Create() override
 		{
 			return std::unique_ptr<EthernetPort>{new EthernetPort{}};
+		}
+
+		void Lock() override
+		{
+			DI_DisableGlobalInterrupt();
+		}
+
+		void Unlock() override
+		{
+			DI_EnableGlobalInterrupt();
 		}
 	};
 

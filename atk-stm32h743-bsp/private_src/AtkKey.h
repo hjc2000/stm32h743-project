@@ -3,7 +3,6 @@
 #include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
-#include <bsp-interface/di/task.h>
 #include <bsp-interface/key/IKey.h>
 
 namespace bsp
@@ -19,13 +18,22 @@ namespace bsp
 
 		static_function Key0 &Instance()
 		{
-			class Getter :
-				public bsp::TaskSingletonGetter<Key0>
+			class Getter : public base::SingletonGetter<Key0>
 			{
 			public:
 				std::unique_ptr<Key0> Create() override
 				{
 					return std::unique_ptr<Key0>{new Key0{}};
+				}
+
+				void Lock() override
+				{
+					DI_DisableGlobalInterrupt();
+				}
+
+				void Unlock() override
+				{
+					DI_EnableGlobalInterrupt();
 				}
 			};
 
@@ -52,13 +60,22 @@ namespace bsp
 
 		static_function Key1 &Instance()
 		{
-			class Getter :
-				public bsp::TaskSingletonGetter<Key1>
+			class Getter : public base::SingletonGetter<Key1>
 			{
 			public:
 				std::unique_ptr<Key1> Create() override
 				{
 					return std::unique_ptr<Key1>{new Key1{}};
+				}
+
+				void Lock() override
+				{
+					DI_DisableGlobalInterrupt();
+				}
+
+				void Unlock() override
+				{
+					DI_EnableGlobalInterrupt();
 				}
 			};
 
