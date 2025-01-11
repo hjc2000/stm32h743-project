@@ -197,10 +197,130 @@ inline void TestFatFs()
 	f_mount(NULL, "", 0);
 }
 
+void TestDCP()
+{
+	std::shared_ptr<lwip::NetifWrapper> netif_wrapper{new lwip::NetifWrapper{"netif"}};
+	lwip::NetifSlot::Instance().PlugIn(netif_wrapper);
+
+	base::IPAddress ip_address{"192.168.1.30"};
+	base::IPAddress netmask{"255.255.255.0"};
+	base::IPAddress gateway{"192.168.1.1"};
+
+	/// @brief 本网卡所使用的 MAC 地址。
+	base::Mac mac{
+		std::endian::big,
+		base::Array<uint8_t, 6>{
+			0xB8,
+			0xAE,
+			0x1D,
+			0x00,
+			0x04,
+			0x00,
+		},
+	};
+
+	netif_wrapper->Open(&DI_EthernetPort(),
+						mac,
+						ip_address,
+						netmask,
+						gateway,
+						1500);
+
+	DI_EthernetPort().ReceivingEhternetFrameEvent().Subscribe(
+		[](base::ReadOnlySpan span)
+		{
+			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
+			base::ethernet::EthernetFrameReader frame{span};
+			DI_Console().WriteLine("收到以太网帧：");
+			DI_Console().WriteLine(frame);
+			// EhternetInput(span);
+		});
+
+	DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
+	netif_wrapper->EnableDHCP();
+	while (!netif_wrapper->HasGotAddressesByDHCP())
+	{
+		// break;
+	}
+
+	std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
+	while (true)
+	{
+		base::Span buffer_span{buffer.get(), 1500};
+		base::profinet::DcpHelloRequestWriter hello{buffer_span};
+		hello.SetSourceMac(mac);
+		hello.SetXid(1);
+		hello.PutNameOfStationBlock("rt-labs-dev");
+
+		hello.PutIPAddressInfomationBlock(false,
+										  netif_wrapper->IPAddress(),
+										  netif_wrapper->Gateway(),
+										  netif_wrapper->Netmask());
+
+		hello.PutIdBlock(0x0493, 0x0002);
+		hello.PutOemIdBlock(0xcafe, 0xee02);
+		hello.PutDeviceInitiativeBlock(true);
+
+		DI_EthernetPort().Send(hello.ValidDataSpan());
+		DI_Delayer().Delay(std::chrono::milliseconds{1000});
+	}
+}
+
 void freertos_demo();
 int p_net_sample_app_main();
 void EhternetInput(base::ReadOnlySpan const &span);
 #pragma endregion
+
+void StartTask()
+{
+	DI_Serial().Open(*DICreate_ISerialOptions());
+	DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
+	SDRAM_Init();
+	DI_AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
+
+	DI_CreateTask(512,
+				  []()
+				  {
+					  while (true)
+					  {
+						  DI_RedDigitalLed().Toggle();
+						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
+					  }
+				  });
+
+	DI_CreateTask(512,
+				  []()
+				  {
+					  while (true)
+					  {
+						  DI_GreenDigitalLed().Toggle();
+						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
+					  }
+				  });
+
+	// while (true)
+	// {
+	//     DI_GreenDigitalLed().Toggle();
+	//     // std::cout << eerom->ReadUInt64(0) << std::endl;
+	//     // std::cout << lwip_localtime << std::endl;
+	//     // PrintAddresses();
+	//     // TestSDRAM();
+	//     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
+	//     DI_Delayer().Delay(std::chrono::seconds{1});
+	// }
+
+	// TestFatFs();
+	// freertos_demo();
+	// p_net_sample_app_main();
+	// TestLittleFs();
+	TestDCP();
+	// TestUniversalTimer1();
+	// bsp::TestFlash();
+	// TestExtiKey();
+	//   bsp::TestSerial();
+	// bsp::TestKeyScanner();
+	// bsp::TestIndependentWatchDog();
+}
 
 int main(void)
 {
@@ -221,119 +341,7 @@ int main(void)
 	DI_CreateTask(1024,
 				  []()
 				  {
-					  DI_Serial().Open(*DICreate_ISerialOptions());
-					  DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
-					  SDRAM_Init();
-					  DI_AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
-
-					  std::shared_ptr<lwip::NetifWrapper> netif_wrapper{new lwip::NetifWrapper{"netif"}};
-					  lwip::NetifSlot::Instance().PlugIn(netif_wrapper);
-
-					  base::IPAddress ip_address{"192.168.1.30"};
-					  base::IPAddress netmask{"255.255.255.0"};
-					  base::IPAddress gateway{"192.168.1.1"};
-
-					  /// @brief 本网卡所使用的 MAC 地址。
-					  base::Mac mac{
-						  std::endian::big,
-						  base::Array<uint8_t, 6>{
-							  0xB8,
-							  0xAE,
-							  0x1D,
-							  0x00,
-							  0x04,
-							  0x00,
-						  },
-					  };
-
-					  netif_wrapper->Open(&DI_EthernetPort(),
-										  mac,
-										  ip_address,
-										  netmask,
-										  gateway,
-										  1500);
-
-					  DI_EthernetPort().ReceivingEhternetFrameEvent().Subscribe(
-						  [](base::ReadOnlySpan span)
-						  {
-							  std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
-							  base::ethernet::EthernetFrameReader frame{span};
-							  DI_Console().WriteLine("收到以太网帧：");
-							  DI_Console().WriteLine(frame);
-							  // EhternetInput(span);
-						  });
-
-					  DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
-					  netif_wrapper->EnableDHCP();
-					  while (!netif_wrapper->HasGotAddressesByDHCP())
-					  {
-						  // break;
-					  }
-
-					  // TestFatFs();
-					  // freertos_demo();
-					  // p_net_sample_app_main();
-					  // TestLittleFs();
-
-					  std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
-					  while (true)
-					  {
-						  base::Span buffer_span{buffer.get(), 1500};
-						  base::profinet::DcpHelloRequestWriter hello{buffer_span};
-						  hello.SetSourceMac(mac);
-						  hello.SetXid(1);
-						  hello.PutNameOfStationBlock("rt-labs-dev");
-
-						  hello.PutIPAddressInfomationBlock(false,
-															netif_wrapper->IPAddress(),
-															netif_wrapper->Gateway(),
-															netif_wrapper->Netmask());
-
-						  hello.PutIdBlock(0x0493, 0x0002);
-						  hello.PutOemIdBlock(0xcafe, 0xee02);
-						  hello.PutDeviceInitiativeBlock(true);
-
-						  DI_EthernetPort().Send(hello.ValidDataSpan());
-						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
-					  }
-
-					  // while (true)
-					  // {
-					  //     DI_GreenDigitalLed().Toggle();
-					  //     // std::cout << eerom->ReadUInt64(0) << std::endl;
-					  //     // std::cout << lwip_localtime << std::endl;
-					  //     // PrintAddresses();
-					  //     // TestSDRAM();
-					  //     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
-					  //     DI_Delayer().Delay(std::chrono::seconds{1});
-					  // }
-
-					  // TestUniversalTimer1();
-					  // bsp::TestFlash();
-					  // TestExtiKey();
-					  // bsp::TestSerial();
-					  // bsp::TestKeyScanner();
-					  // bsp::TestIndependentWatchDog();
-				  });
-
-	DI_CreateTask(512,
-				  []()
-				  {
-					  while (true)
-					  {
-						  DI_RedDigitalLed().Toggle();
-						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
-					  }
-				  });
-
-	DI_CreateTask(512,
-				  []()
-				  {
-					  while (true)
-					  {
-						  DI_GreenDigitalLed().Toggle();
-						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
-					  }
+					  StartTask();
 				  });
 
 	DI_StartScheduler();

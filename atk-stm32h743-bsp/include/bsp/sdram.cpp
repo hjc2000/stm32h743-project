@@ -6,7 +6,7 @@ SDRAM_HandleTypeDef SDRAM_Handler{}; // SDRAM句柄
 
 uint8_t mpu_set_protection(uint32_t baseaddr, uint32_t size, uint32_t rnum, uint8_t de, uint8_t ap, uint8_t sen, uint8_t cen, uint8_t ben)
 {
-	MPU_Region_InitTypeDef mpu_region_init_handle;
+	MPU_Region_InitTypeDef mpu_region_init_handle{};
 
 	HAL_MPU_Disable(); /* 配置MPU之前先关闭MPU,配置完成以后在使能MPU */
 
@@ -84,8 +84,8 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 	// COUNT=SDRAM刷新周期/行数-20=SDRAM刷新周期(us)*SDCLK频率(Mhz)/行数
 	// 我们使用的SDRAM刷新周期为64ms,SDCLK=200/2=100Mhz,行数为8192(2^13).
 	// 所以,COUNT=64*1000*100/8192-20=761
-	int const period = 64 * 1000 * 240 / 2 / 8192 - 20;
-	HAL_SDRAM_ProgramRefreshRate(&SDRAM_Handler, period);
+	// int const period = 64 * 1000 * 240 / 2 / 8192 - 20;
+	HAL_SDRAM_ProgramRefreshRate(&SDRAM_Handler, 839);
 }
 
 // SDRAM初始化
@@ -105,13 +105,13 @@ void SDRAM_Init(void)
 	SDRAM_Handler.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE;
 	SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
 	SDRAM_Handler.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;
-	SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;
+	SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_1;
 	SDRAM_Handler.MspInitCallback = HAL_SDRAM_MspInit;
 
 	SDRAM_Timing.LoadToActiveDelay = 2;
 	SDRAM_Timing.ExitSelfRefreshDelay = 8;
-	SDRAM_Timing.SelfRefreshTime = 6;
-	SDRAM_Timing.RowCycleDelay = 6;
+	SDRAM_Timing.SelfRefreshTime = 7;
+	SDRAM_Timing.RowCycleDelay = 7;
 	SDRAM_Timing.WriteRecoveryTime = 2;
 	SDRAM_Timing.RPDelay = 2;
 	SDRAM_Timing.RCDDelay = 2;
