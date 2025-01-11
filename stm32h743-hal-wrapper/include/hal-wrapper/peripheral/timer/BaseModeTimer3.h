@@ -40,7 +40,7 @@ namespace hal
 
 		void SetPeriodElapsedCallback(std::function<void()> func)
 		{
-			bsp::GlobalInterruptGuard g;
+			// bsp::GlobalInterruptGuard g;
 			_period_elapsed_callback = func;
 		}
 
