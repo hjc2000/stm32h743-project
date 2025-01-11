@@ -299,17 +299,6 @@ void InitialTask()
 					  }
 				  });
 
-	// while (true)
-	// {
-	//     DI_GreenDigitalLed().Toggle();
-	//     // std::cout << eerom->ReadUInt64(0) << std::endl;
-	//     // std::cout << lwip_localtime << std::endl;
-	//     // PrintAddresses();
-	//     // TestSDRAM();
-	//     // DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
-	//     DI_Delayer().Delay(std::chrono::seconds{1});
-	// }
-
 	// TestFatFs();
 	// freertos_demo();
 	// p_net_sample_app_main();
