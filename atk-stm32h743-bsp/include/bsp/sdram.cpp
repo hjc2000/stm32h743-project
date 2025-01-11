@@ -105,7 +105,7 @@ void SDRAM_Init(void)
 	SDRAM_Handler.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE;
 	SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
 	SDRAM_Handler.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;
-	SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_1;
+	SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;
 	SDRAM_Handler.MspInitCallback = HAL_SDRAM_MspInit;
 
 	SDRAM_Timing.LoadToActiveDelay = 2;
