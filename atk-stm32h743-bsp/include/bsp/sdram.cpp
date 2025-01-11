@@ -4,6 +4,40 @@
 
 SDRAM_HandleTypeDef SDRAM_Handler{}; // SDRAM句柄
 
+uint8_t mpu_set_protection(uint32_t baseaddr, uint32_t size, uint32_t rnum, uint8_t de, uint8_t ap, uint8_t sen, uint8_t cen, uint8_t ben)
+{
+	MPU_Region_InitTypeDef mpu_region_init_handle;
+
+	HAL_MPU_Disable(); /* 配置MPU之前先关闭MPU,配置完成以后在使能MPU */
+
+	mpu_region_init_handle.Enable = MPU_REGION_ENABLE;     /* 使能该保护区域 */
+	mpu_region_init_handle.Number = rnum;                  /* 设置保护区域 */
+	mpu_region_init_handle.BaseAddress = baseaddr;         /* 设置基址 */
+	mpu_region_init_handle.DisableExec = de;               /* 是否允许指令访问 */
+	mpu_region_init_handle.Size = size;                    /* 设置保护区域大小 */
+	mpu_region_init_handle.SubRegionDisable = 0X00;        /* 禁止子区域 */
+	mpu_region_init_handle.TypeExtField = MPU_TEX_LEVEL0;  /* 设置类型扩展域为level0 */
+	mpu_region_init_handle.AccessPermission = (uint8_t)ap; /* 设置访问权限, */
+	mpu_region_init_handle.IsShareable = sen;              /* 是否共用? */
+	mpu_region_init_handle.IsCacheable = cen;              /* 是否cache? */
+	mpu_region_init_handle.IsBufferable = ben;             /* 是否缓冲? */
+	HAL_MPU_ConfigRegion(&mpu_region_init_handle);         /* 配置MPU */
+	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);                /* 开启MPU */
+	return 0;
+}
+
+void SDRAM_MPU_Config()
+{
+	/* 保护SDRAM区域,共32M字节 */
+	mpu_set_protection(0xC0000000,               /* 基地址 */
+					   MPU_REGION_SIZE_32MB,     /* 长度 */
+					   MPU_REGION_NUMBER6, 0,    /* NUMER6,允许指令访问 */
+					   MPU_REGION_FULL_ACCESS,   /* 全访问 */
+					   MPU_ACCESS_NOT_SHAREABLE, /* 禁止共用 */
+					   MPU_ACCESS_CACHEABLE,     /* 允许cache */
+					   MPU_ACCESS_BUFFERABLE);   /* 允许缓冲 */
+}
+
 void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
 {
 	__HAL_RCC_FMC_CLK_ENABLE();
@@ -57,6 +91,8 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 // SDRAM初始化
 void SDRAM_Init(void)
 {
+	SDRAM_MPU_Config();
+
 	FMC_SDRAM_TimingTypeDef SDRAM_Timing;
 
 	SDRAM_Handler.Instance = FMC_SDRAM_DEVICE;

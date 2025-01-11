@@ -202,8 +202,6 @@ int p_net_sample_app_main();
 void EhternetInput(base::ReadOnlySpan const &span);
 #pragma endregion
 
-uint8_t _buffer[10 * 1024];
-
 int main(void)
 {
 	DI_Initialize();
@@ -227,8 +225,9 @@ int main(void)
 					  DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
 					  SDRAM_Init();
 
-					  DI_AddHeap(_buffer, sizeof(_buffer));
-					  // DI_AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024);
+					  base::Span span{reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024};
+					  span.FillWithZero();
+					  DI_AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
 
 					  std::shared_ptr<lwip::NetifWrapper> netif_wrapper{new lwip::NetifWrapper{"netif"}};
 					  lwip::NetifSlot::Instance().PlugIn(netif_wrapper);
