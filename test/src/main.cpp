@@ -271,7 +271,8 @@ int p_net_sample_app_main();
 void EhternetInput(base::ReadOnlySpan const &span);
 #pragma endregion
 
-void StartTask()
+/// @brief 起始任务。
+void InitialTask()
 {
 	DI_Serial().Open(*DICreate_ISerialOptions());
 	DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
@@ -341,7 +342,7 @@ int main(void)
 	DI_CreateTask(1024,
 				  []()
 				  {
-					  StartTask();
+					  InitialTask();
 				  });
 
 	DI_StartScheduler();
