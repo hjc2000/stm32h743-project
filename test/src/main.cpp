@@ -298,7 +298,7 @@ void InitialTask()
 	// TestUniversalTimer1();
 	// bsp::TestFlash();
 	// TestExtiKey();
-	//   bsp::TestSerial();
+	// bsp::TestSerial();
 	// bsp::TestKeyScanner();
 	// bsp::TestIndependentWatchDog();
 }
