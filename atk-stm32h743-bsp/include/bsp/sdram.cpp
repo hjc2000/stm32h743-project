@@ -101,7 +101,7 @@ void SDRAM_Init(void)
 {
 	SDRAM_MPU_Config();
 
-	FMC_SDRAM_TimingTypeDef SDRAM_Timing;
+	FMC_SDRAM_TimingTypeDef SDRAM_Timing{};
 
 	SDRAM_Handler.Instance = FMC_SDRAM_DEVICE;
 	SDRAM_Handler.Init.SDBank = FMC_SDRAM_BANK1;
