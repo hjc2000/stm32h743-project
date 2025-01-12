@@ -1,13 +1,13 @@
-#include <base/di/SingletonGetter.h>
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/ethernet/MutexEthernetPort.h>
+#include <bsp-interface/TaskSingletonGetter.h>
 #include <EthernetPort.h>
 
 namespace
 {
 	class Getter :
-		public base::SingletonGetter<bsp::MutexEthernetPort>
+		public bsp::TaskSingletonGetter<bsp::MutexEthernetPort>
 	{
 	public:
 		std::unique_ptr<bsp::MutexEthernetPort> Create() override
@@ -17,16 +17,6 @@ namespace
 					&bsp::EthernetPort::Instance(),
 				},
 			};
-		}
-
-		void Lock() override
-		{
-			DI_DisableGlobalInterrupt();
-		}
-
-		void Unlock() override
-		{
-			DI_EnableGlobalInterrupt();
 		}
 	};
 
