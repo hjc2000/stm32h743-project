@@ -4,7 +4,14 @@
 
 SDRAM_HandleTypeDef SDRAM_Handler{}; // SDRAM句柄
 
-uint8_t mpu_set_protection(uint32_t baseaddr, uint32_t size, uint32_t rnum, uint8_t de, uint8_t ap, uint8_t sen, uint8_t cen, uint8_t ben)
+uint8_t mpu_set_protection(uint32_t baseaddr,
+						   uint32_t size,
+						   uint32_t rnum,
+						   uint8_t de,
+						   uint8_t ap,
+						   uint8_t sen,
+						   uint8_t cen,
+						   uint8_t ben)
 {
 	MPU_Region_InitTypeDef mpu_region_init_handle{};
 
@@ -80,11 +87,12 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 
 	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_LOAD_MODE, 1, temp); // 设置SDRAM的模式寄存器
 
-	// 刷新频率计数器(以SDCLK频率计数),计算方法:
-	// COUNT=SDRAM刷新周期/行数-20=SDRAM刷新周期(us)*SDCLK频率(Mhz)/行数
-	// 我们使用的SDRAM刷新周期为64ms,SDCLK=200/2=100Mhz,行数为8192(2^13).
-	// 所以,COUNT=64*1000*100/8192-20=761
-	// int const period = 64 * 1000 * 240 / 2 / 8192 - 20;
+	/**
+	 * 刷新频率计数器(以SDCLK频率计数),计算方法:
+	 * COUNT=SDRAM刷新周期/行数-20=SDRAM刷新周期(us)*SDCLK频率(Mhz)/行数
+	 * 我们使用的SDRAM刷新周期为64ms,SDCLK=220/2=110Mhz,行数为8192(2^13).
+	 * 所以,COUNT=64*1000*110/8192-20=839
+	 */
 	HAL_SDRAM_ProgramRefreshRate(&SDRAM_Handler, 839);
 }
 
@@ -108,12 +116,25 @@ void SDRAM_Init(void)
 	SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;
 	SDRAM_Handler.MspInitCallback = HAL_SDRAM_MspInit;
 
+	// 加载模式寄存器到激活时间的延迟为2个时钟周期
 	SDRAM_Timing.LoadToActiveDelay = 2;
+
+	// 退出自刷新延迟为8个时钟周期
 	SDRAM_Timing.ExitSelfRefreshDelay = 8;
+
+	// 自刷新时间为7个时钟周期
 	SDRAM_Timing.SelfRefreshTime = 7;
+
+	// 行循环延迟为7个时钟周期
 	SDRAM_Timing.RowCycleDelay = 7;
+
+	// 恢复延迟为2个时钟周期
 	SDRAM_Timing.WriteRecoveryTime = 2;
+
+	// 行预充电延迟为2个时钟周期
 	SDRAM_Timing.RPDelay = 2;
+
+	// 行到列延迟为2个时钟周期
 	SDRAM_Timing.RCDDelay = 2;
 	HAL_SDRAM_Init(&SDRAM_Handler, &SDRAM_Timing);
 
