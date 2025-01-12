@@ -1,6 +1,5 @@
 #include "EthernetPort.h"
 #include <base/container/Dictionary.h>
-#include <base/di/SingletonGetter.h>
 #include <base/string/define.h>
 #include <base/string/ToHexString.h>
 #include <base/unit/Mbps.h>
@@ -10,26 +9,17 @@
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/system_time.h>
 #include <bsp-interface/di/task.h>
+#include <bsp-interface/TaskSingletonGetter.h>
 
 bsp::EthernetPort &bsp::EthernetPort::Instance()
 {
 	class Getter :
-		public base::SingletonGetter<EthernetPort>
+		public bsp::TaskSingletonGetter<EthernetPort>
 	{
 	public:
 		std::unique_ptr<EthernetPort> Create() override
 		{
 			return std::unique_ptr<EthernetPort>{new EthernetPort{}};
-		}
-
-		void Lock() override
-		{
-			DI_DisableGlobalInterrupt();
-		}
-
-		void Unlock() override
-		{
-			DI_EnableGlobalInterrupt();
 		}
 	};
 
