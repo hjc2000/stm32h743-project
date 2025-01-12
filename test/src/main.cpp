@@ -284,16 +284,6 @@ void InitialTask()
 				  {
 					  while (true)
 					  {
-						  DI_RedDigitalLed().Toggle();
-						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
-					  }
-				  });
-
-	DI_CreateTask(512,
-				  []()
-				  {
-					  while (true)
-					  {
 						  DI_GreenDigitalLed().Toggle();
 						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
 					  }
