@@ -282,6 +282,7 @@ void InitialTask()
 	DI_CreateTask(512,
 				  []()
 				  {
+					  DI_RedDigitalLed().TurnOff();
 					  while (true)
 					  {
 						  DI_GreenDigitalLed().Toggle();
