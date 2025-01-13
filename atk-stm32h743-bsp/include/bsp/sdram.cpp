@@ -68,8 +68,6 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
 // 发送SDRAM初始化序列
 void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 {
-	uint32_t temp = 0;
-
 	// SDRAM控制器初始化完成以后还需要按照如下顺序初始化SDRAM
 	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_CLK_ENABLE, 1, 0);
 	DI_Delayer().Delay(std::chrono::microseconds{500});
@@ -79,13 +77,14 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 	// 配置模式寄存器,SDRAM的bit0~bit2为指定突发访问的长度，
 	// bit3为指定突发访问的类型，bit4~bit6为CAS值，bit7和bit8为运行模式
 	// bit9为指定的写突发模式，bit10和bit11位保留位
-	temp = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_1 | // 设置突发长度:1(可以是1/2/4/8)
-		   SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL |    // 设置突发类型:连续(可以是连续/交错)
-		   SDRAM_MODEREG_CAS_LATENCY_3 |            // 设置CAS值:3(可以是2/3)
-		   SDRAM_MODEREG_OPERATING_MODE_STANDARD |  // 设置操作模式:0,标准模式
-		   SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;    // 设置突发写模式:1,单点访问
+	uint32_t sdram_mod_register = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_1 | // 设置突发长度:1(可以是1/2/4/8)
+								  SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL |    // 设置突发类型:连续(可以是连续/交错)
+								  SDRAM_MODEREG_CAS_LATENCY_3 |            // 设置CAS值:3(可以是2/3)
+								  SDRAM_MODEREG_OPERATING_MODE_STANDARD |  // 设置操作模式:0,标准模式
+								  SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;    // 设置突发写模式:1,单点访问
 
-	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_LOAD_MODE, 1, temp); // 设置SDRAM的模式寄存器
+	// 设置SDRAM的模式寄存器
+	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_LOAD_MODE, 1, sdram_mod_register);
 
 	/**
 	 * 刷新频率计数器(以SDCLK频率计数),计算方法:
@@ -101,8 +100,6 @@ void SDRAM_Init(void)
 {
 	SDRAM_MPU_Config();
 
-	FMC_SDRAM_TimingTypeDef SDRAM_Timing{};
-
 	SDRAM_Handler.Instance = FMC_SDRAM_DEVICE;
 	SDRAM_Handler.Init.SDBank = FMC_SDRAM_BANK1;
 	SDRAM_Handler.Init.ColumnBitsNumber = FMC_SDRAM_COLUMN_BITS_NUM_9;
@@ -115,6 +112,8 @@ void SDRAM_Init(void)
 	SDRAM_Handler.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;
 	SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;
 	SDRAM_Handler.MspInitCallback = HAL_SDRAM_MspInit;
+
+	FMC_SDRAM_TimingTypeDef SDRAM_Timing{};
 
 	// 加载模式寄存器到激活时间的延迟为2个时钟周期
 	SDRAM_Timing.LoadToActiveDelay = 2;
