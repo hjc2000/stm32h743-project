@@ -155,6 +155,10 @@ uint8_t SDRAM_Send_Cmd(uint8_t bankx, uint8_t cmd, uint8_t refresh, uint16_t reg
 
 	if (bankx == 0)
 	{
+		/**
+		 * 这里的 BAKN1 不是指 SDRAM 中的 4 个 BANK 中的 BANK1，而是指 STM32 内部的 FMC 接口
+		 * 的 BANK1.
+		 */
 		target_bank = FMC_SDRAM_CMD_TARGET_BANK1;
 	}
 	else if (bankx == 1)
