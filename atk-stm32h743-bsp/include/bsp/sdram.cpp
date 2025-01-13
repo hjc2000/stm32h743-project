@@ -83,9 +83,12 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 	// 发送自动刷新命令。刷新 8 次。
 	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_AUTOREFRESH_MODE, 8, 0);
 
-	// 配置模式寄存器,SDRAM的bit0~bit2为指定突发访问的长度，
-	// bit3为指定突发访问的类型，bit4~bit6为CAS值，bit7和bit8为运行模式
-	// bit9为指定的写突发模式，bit10和bit11位保留位
+	/**
+	 * 发送 “加载模式寄存器” 命令。
+	 * 		@li 配置模式寄存器,SDRAM的bit0~bit2为指定突发访问的长度
+	 * 		@li bit3为指定突发访问的类型，bit4~bit6为CAS值，bit7和bit8为运行模式
+	 * 		@li bit9为指定的写突发模式，bit10和bit11位保留位
+	 */
 	uint32_t sdram_mod_register = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_1 | // 设置突发长度:1(可以是1/2/4/8)
 								  SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL |    // 设置突发类型:连续(可以是连续/交错)
 								  SDRAM_MODEREG_CAS_LATENCY_3 |            // 设置CAS值:3(可以是2/3)
