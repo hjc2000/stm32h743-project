@@ -137,13 +137,18 @@ void SDRAM_Init(void)
 	// 退出自刷新延迟为8个时钟周期
 	SDRAM_Timing.ExitSelfRefreshDelay = 8;
 
-	// 自刷新时间为7个时钟周期
+	// 自刷新时间为 7 个时钟周期。
 	SDRAM_Timing.SelfRefreshTime = 7;
 
-	// 行循环延迟为7个时钟周期
+	/**
+	 * 行循环延迟为7个时钟周期。
+	 * 即 2 次行激活之间的延迟或 2 个自动刷新命令之间的延迟。
+	 */
 	SDRAM_Timing.RowCycleDelay = 7;
 
-	// 恢复延迟为2个时钟周期
+	/**
+	 * 写恢复延迟为2个时钟周期。
+	 */
 	SDRAM_Timing.WriteRecoveryTime = 2;
 
 	/**
