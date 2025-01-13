@@ -69,9 +69,18 @@ void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
 void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 {
 	// SDRAM控制器初始化完成以后还需要按照如下顺序初始化SDRAM
+
+	/**
+	 * 上电并提供稳定的时钟，并且发送空操作命令。
+	 * @note 空操作命令其实就是让 SDRAM 不做任何工作的命令，让它不要乱动，因为 CLK 还在初始化。
+	 */
 	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_CLK_ENABLE, 1, 0);
 	DI_Delayer().Delay(std::chrono::microseconds{500});
+
+	// 发送 "对所有 BANK 进行预充电" 的命令。
 	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_PALL, 1, 0);
+
+	// 发送自动刷新命令。刷新 8 次。
 	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_AUTOREFRESH_MODE, 8, 0);
 
 	// 配置模式寄存器,SDRAM的bit0~bit2为指定突发访问的长度，
