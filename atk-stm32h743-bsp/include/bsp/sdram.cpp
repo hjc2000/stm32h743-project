@@ -128,6 +128,14 @@ void SDRAM_Init(void)
 	FMC_SDRAM_TimingTypeDef SDRAM_Timing{};
 
 	/**
+	 * HCLK 的频率是 SYSCLK / 2 = 480 / 2 = 240MHz
+	 * FMC 给 SDRAM 的时钟通过 SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
+	 * 又设置成 2 分频了。所以 SDRAM 的 CLK 频率是 120MHz.
+	 *
+	 * 1/ 120MHz 大概是 8 纳秒。
+	 */
+
+	/**
 	 * 加载模式寄存器到激活时间的延迟为2个时钟周期。
 	 * 设置完 SDRAM 的模式寄存器后，至少需要延迟 LoadToActiveDelay 才能发送激活命令。
 	 * 激活命令就是通过 RAS# 进行行选通，激活 BANK.
