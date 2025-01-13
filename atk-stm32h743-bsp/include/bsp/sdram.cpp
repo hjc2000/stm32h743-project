@@ -127,7 +127,11 @@ void SDRAM_Init(void)
 
 	FMC_SDRAM_TimingTypeDef SDRAM_Timing{};
 
-	// 加载模式寄存器到激活时间的延迟为2个时钟周期
+	/**
+	 * 加载模式寄存器到激活时间的延迟为2个时钟周期。
+	 * 设置完 SDRAM 的模式寄存器后，至少需要延迟 LoadToActiveDelay 才能发送激活命令。
+	 * 激活命令就是通过 RAS# 进行行选通，激活 BANK.
+	 */
 	SDRAM_Timing.LoadToActiveDelay = 2;
 
 	// 退出自刷新延迟为8个时钟周期
@@ -142,10 +146,17 @@ void SDRAM_Init(void)
 	// 恢复延迟为2个时钟周期
 	SDRAM_Timing.WriteRecoveryTime = 2;
 
-	// 行预充电延迟为2个时钟周期
+	/**
+	 * 预充电延迟为2个时钟周期。
+	 * 预充电后要至少延迟 RPDelay 个时钟周期后才能发送其他命令。
+	 */
 	SDRAM_Timing.RPDelay = 2;
 
-	// 行到列延迟为2个时钟周期
+	/**
+	 * 行到列延迟为2个时钟周期。
+	 * HAL 库注释中的 “Activate Command” 是指 BANK 激活命令。BANK 靠 RAS# 引脚激活。
+	 * 读写靠列选通信号 CAS# 激活。RCDDelay 定义的是行选通到列选通之间的延迟。
+	 */
 	SDRAM_Timing.RCDDelay = 2;
 	HAL_SDRAM_Init(&SDRAM_Handler, &SDRAM_Timing);
 
