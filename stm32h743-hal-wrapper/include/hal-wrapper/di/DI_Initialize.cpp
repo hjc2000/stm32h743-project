@@ -9,7 +9,7 @@ namespace
 
 	void InitializeClock()
 	{
-		DI_ClockSourceCollection().Get("hse")->Open(25);
+		DI_ClockSourceCollection().Get("hse")->Open(base::MHz{25});
 
 		{
 			base::Dictionary<std::string, int> factors;
