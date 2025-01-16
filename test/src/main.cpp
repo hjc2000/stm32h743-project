@@ -286,7 +286,7 @@ void InitialTask()
 					  while (true)
 					  {
 						  DI_GreenDigitalLed().Toggle();
-						  DI_Console().WriteLine(DI_ClockSourceCollection().Get("hse")->Frequency());
+						  DI_Console().WriteLine(DI_ClockSignalCollection().Get("hclk")->Frequency());
 						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
 					  }
 				  });
