@@ -49,7 +49,7 @@ namespace hal
 		uint32_t PrescalerInputClockSignalFrequency()
 		{
 			// hal::ClockSignalConfig config = hal::ClockSignal::GetConfig();
-			uint32_t pclk1_freq = static_cast<int64_t>(DI_ClockSignalCollection().Get("pclk1")->Frequency());
+			uint32_t pclk1_freq = static_cast<int64_t>(bsp::di::clock::ClockSignalCollection().Get("pclk1")->Frequency());
 			// if (config._system_clk_config._hclk_config._apb1clk_config._input_divider == hal::Apb1ClkConfig::InputDivider::DIV1)
 			// {
 			//     return pclk1_freq;
