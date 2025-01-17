@@ -29,24 +29,24 @@ void freertos_demo()
 
 	bind(sock_fd, (sockaddr *)&local_info, sizeof(sockaddr_in));
 
-	DI_CreateTask(512,
-				  [&]()
-				  {
-					  local_info.sin_addr.s_addr = inet_addr("192.168.1.203"); /* 需要发送的远程IP地址 */
-					  std::string sending_message{"UDP testing message"};
+	bsp::di::task::CreateTask(512,
+							  [&]()
+							  {
+								  local_info.sin_addr.s_addr = inet_addr("192.168.1.203"); /* 需要发送的远程IP地址 */
+								  std::string sending_message{"UDP testing message"};
 
-					  while (true)
-					  {
-						  sendto(sock_fd,
-								 sending_message.c_str(), // 发送的数据
-								 sending_message.size(),  // 发送的数据大小
-								 0,
-								 (sockaddr *)&local_info, // 接收端地址信息
-								 sizeof(local_info));     // 接收端地址信息大小
+								  while (true)
+								  {
+									  sendto(sock_fd,
+											 sending_message.c_str(), // 发送的数据
+											 sending_message.size(),  // 发送的数据大小
+											 0,
+											 (sockaddr *)&local_info, // 接收端地址信息
+											 sizeof(local_info));     // 接收端地址信息大小
 
-						  DI_Delayer().Delay(std::chrono::milliseconds{100});
-					  }
-				  });
+									  DI_Delayer().Delay(std::chrono::milliseconds{100});
+								  }
+							  });
 
 	/* 接收数据缓冲区 */
 	std::unique_ptr<uint8_t[]> receiving_buffer{new uint8_t[200]{}};

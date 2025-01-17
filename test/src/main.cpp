@@ -279,17 +279,17 @@ void InitialTask()
 	SDRAM_Init();
 	DI_AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
 
-	DI_CreateTask(512,
-				  []()
-				  {
-					  DI_RedDigitalLed().TurnOff();
-					  while (true)
-					  {
-						  DI_GreenDigitalLed().Toggle();
-						  bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
-						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
-					  }
-				  });
+	bsp::di::task::CreateTask(512,
+							  []()
+							  {
+								  DI_RedDigitalLed().TurnOff();
+								  while (true)
+								  {
+									  DI_GreenDigitalLed().Toggle();
+									  bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
+									  DI_Delayer().Delay(std::chrono::milliseconds{1000});
+								  }
+							  });
 
 	// TestFatFs();
 	// freertos_demo();
@@ -320,11 +320,11 @@ int main(void)
 	 * 据说 main 函数被认为是只执行一次后就应该被删除的初始任务，所以它的栈理应被挪作他用。
 	 */
 
-	DI_CreateTask(1024,
-				  []()
-				  {
-					  InitialTask();
-				  });
+	bsp::di::task::CreateTask(1024,
+							  []()
+							  {
+								  InitialTask();
+							  });
 
-	DI_StartScheduler();
+	bsp::di::task::StartScheduler();
 }
