@@ -5,6 +5,8 @@
 #include <base/RentedPtrFactory.h>
 #include <base/string/define.h>
 #include <base/string/ToHexString.h>
+#include <base/unit/Hz.h>
+#include <base/unit/MHz.h>
 #include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/delayer.h>
@@ -20,6 +22,7 @@
 #include <bsp-interface/di/system_time.h>
 #include <bsp-interface/di/task.h>
 #include <bsp-interface/flash/RmaFlash.h>
+#include <bsp-interface/sdram/chip/W9825G6KH_6_Timing.h>
 #include <bsp-interface/test/TestFlash.h>
 #include <bsp-interface/test/TestIndependentWatchDog.h>
 #include <bsp-interface/test/TestKeyScanner.h>
@@ -279,7 +282,7 @@ void InitialTask()
 	SDRAM_Init();
 	bsp::di::heap::AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
 
-	bsp::di::task::CreateTask(512,
+	bsp::di::task::CreateTask(1024,
 							  []()
 							  {
 								  bsp::di::led::RedDigitalLed().TurnOff();
@@ -287,6 +290,8 @@ void InitialTask()
 								  {
 									  bsp::di::led::GreenDigitalLed().Toggle();
 									  bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
+									  bsp::W9825G6KH_6_Timing timing{base::Nanoseconds{base::Hz{base::MHz{240 / 2}}}};
+									  bsp::di::Console().WriteLine(timing);
 									  bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
 								  }
 							  });

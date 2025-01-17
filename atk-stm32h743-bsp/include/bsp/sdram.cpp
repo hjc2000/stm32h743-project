@@ -1,5 +1,9 @@
 #include "sdram.h"
+#include <base/unit/Hz.h>
+#include <base/unit/MHz.h>
+#include <bsp-interface/di/console.h>
 #include <bsp-interface/di/gpio.h>
+#include <bsp-interface/sdram/chip/W9825G6KH_6_Timing.h>
 #include <hal.h>
 
 SDRAM_HandleTypeDef SDRAM_Handler{}; // SDRAM句柄
