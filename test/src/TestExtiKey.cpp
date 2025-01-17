@@ -4,13 +4,13 @@
 
 void TestExtiKey()
 {
-	DI_RedDigitalLed().TurnOn();
+	bsp::di::led::RedDigitalLed().TurnOn();
 	while (1)
 	{
 		if (bsp::ExtiWakeUpKey::Instance().IsPressed())
 		{
-			DI_RedDigitalLed().Toggle();
-			DI_GreenDigitalLed().Toggle();
+			bsp::di::led::RedDigitalLed().Toggle();
+			bsp::di::led::GreenDigitalLed().Toggle();
 			bsp::ExtiWakeUpKey::Instance().ClearPressedFlag();
 		}
 	}

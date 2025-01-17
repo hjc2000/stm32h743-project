@@ -282,10 +282,10 @@ void InitialTask()
 	bsp::di::task::CreateTask(512,
 							  []()
 							  {
-								  DI_RedDigitalLed().TurnOff();
+								  bsp::di::led::RedDigitalLed().TurnOff();
 								  while (true)
 								  {
-									  DI_GreenDigitalLed().Toggle();
+									  bsp::di::led::GreenDigitalLed().Toggle();
 									  bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
 									  DI_Delayer().Delay(std::chrono::milliseconds{1000});
 								  }

@@ -32,18 +32,18 @@ namespace
 
 /// @brief 数字 LED 灯集合。
 /// @return
-base::IDictionary<std::string, bsp::IDigitalLed *> const &DI_DigitalLedCollection()
+base::IDictionary<std::string, bsp::IDigitalLed *> const &bsp::di::led::DigitalLedCollection()
 {
 	Getter g;
 	return g.Instance()._dic;
 }
 
-bsp::IDigitalLed &DI_RedDigitalLed()
+bsp::IDigitalLed &bsp::di::led::RedDigitalLed()
 {
 	return bsp::RedDigitalLed::Instance();
 }
 
-bsp::IDigitalLed &DI_GreenDigitalLed()
+bsp::IDigitalLed &bsp::di::led::GreenDigitalLed()
 {
 	return bsp::GreenDigitalLed::Instance();
 }
