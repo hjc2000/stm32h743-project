@@ -282,7 +282,7 @@ void InitialTask()
 	SDRAM_Init();
 	bsp::di::heap::AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
 
-	bsp::di::task::CreateTask(1024,
+	bsp::di::task::CreateTask(2048,
 							  []()
 							  {
 								  bsp::di::led::RedDigitalLed().TurnOff();
@@ -296,17 +296,21 @@ void InitialTask()
 								  }
 							  });
 
-	// TestFatFs();
-	// freertos_demo();
-	// p_net_sample_app_main();
-	// TestLittleFs();
-	// TestDCP();
-	// TestUniversalTimer1();
-	// bsp::TestFlash();
-	// TestExtiKey();
-	bsp::TestSerial();
-	// bsp::TestKeyScanner();
-	// bsp::TestIndependentWatchDog();
+	bsp::di::task::CreateTask(2048,
+							  []()
+							  {
+								  // TestFatFs();
+								  // freertos_demo();
+								  // p_net_sample_app_main();
+								  // TestLittleFs();
+								  TestDCP();
+								  // TestUniversalTimer1();
+								  // bsp::TestFlash();
+								  // TestExtiKey();
+								  // bsp::TestSerial();
+								  // bsp::TestKeyScanner();
+								  // bsp::TestIndependentWatchDog();
+							  });
 }
 
 int main(void)
@@ -325,7 +329,7 @@ int main(void)
 	 * 据说 main 函数被认为是只执行一次后就应该被删除的初始任务，所以它的栈理应被挪作他用。
 	 */
 
-	bsp::di::task::CreateTask(1024,
+	bsp::di::task::CreateTask(2048,
 							  []()
 							  {
 								  InitialTask();
