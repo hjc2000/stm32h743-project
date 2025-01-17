@@ -6,12 +6,13 @@ void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
 
-	DI_EnableInterrupt(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), 10);
-	DI_IsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn),
-						   []()
-						   {
-							   HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance()._handle);
-						   });
+	bsp::di::interrupt::EnableInterrupt(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), 10);
+
+	bsp::di::interrupt::IsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn),
+											[]()
+											{
+												HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance()._handle);
+											});
 
 	auto pin = DI_GpioPinCollection().Get("PB1");
 	pin->OpenAsAlternateFunctionMode("timer3",
