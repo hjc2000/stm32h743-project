@@ -34,7 +34,7 @@ void TestUniversalTimer1()
 	uint32_t value = 500 / 2;
 	while (true)
 	{
-		DI_Delayer().Delay(std::chrono::milliseconds{1000});
+		bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
 		value += config.Period() + config.Period() / 4;
 		value %= config.Period();
 		compare_output_config.SetPulse(value);

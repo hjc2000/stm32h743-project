@@ -96,7 +96,7 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 									  }
 
 									  last_loop_is_linked = is_linked;
-									  DI_Delayer().Delay(std::chrono::milliseconds{200});
+									  bsp::di::Delayer().Delay(std::chrono::milliseconds{200});
 								  }
 							  });
 }

@@ -75,7 +75,7 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 	 * @note 空操作命令其实就是让 SDRAM 不做任何工作的命令，让它不要乱动，因为 CLK 还在初始化。
 	 */
 	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_CLK_ENABLE, 1, 0);
-	DI_Delayer().Delay(std::chrono::microseconds{500});
+	bsp::di::Delayer().Delay(std::chrono::microseconds{500});
 
 	// 发送 "对所有 BANK 进行预充电" 的命令。
 	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_PALL, 1, 0);

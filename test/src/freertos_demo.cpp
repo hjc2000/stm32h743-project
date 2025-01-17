@@ -44,7 +44,7 @@ void freertos_demo()
 											 (sockaddr *)&local_info, // 接收端地址信息
 											 sizeof(local_info));     // 接收端地址信息大小
 
-									  DI_Delayer().Delay(std::chrono::milliseconds{100});
+									  bsp::di::Delayer().Delay(std::chrono::milliseconds{100});
 								  }
 							  });
 

@@ -262,7 +262,7 @@ void TestDCP()
 		hello.PutDeviceInitiativeBlock(true);
 
 		bsp::di::ethernet::EthernetPort().Send(hello.ValidDataSpan());
-		DI_Delayer().Delay(std::chrono::milliseconds{1000});
+		bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
 	}
 }
 
@@ -287,7 +287,7 @@ void InitialTask()
 								  {
 									  bsp::di::led::GreenDigitalLed().Toggle();
 									  bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
-									  DI_Delayer().Delay(std::chrono::milliseconds{1000});
+									  bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
 								  }
 							  });
 
