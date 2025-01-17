@@ -56,12 +56,12 @@ void TestSDRAM()
 	{
 		if (buffer[i] != i)
 		{
-			DI_Console().WriteLine("SDRAM error detected.");
+			bsp::di::Console().WriteLine("SDRAM error detected.");
 			return;
 		}
 	}
 
-	DI_Console().WriteLine("No SDRAM error detected.");
+	bsp::di::Console().WriteLine("No SDRAM error detected.");
 }
 
 void TestEthernet()

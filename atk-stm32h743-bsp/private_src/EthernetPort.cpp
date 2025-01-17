@@ -53,11 +53,11 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 						  }
 						  catch (std::exception const &e)
 						  {
-							  DI_Console().WriteError(CODE_POS_STR + e.what());
+							  bsp::di::Console().WriteError(CODE_POS_STR + e.what());
 						  }
 						  catch (...)
 						  {
-							  DI_Console().WriteError(CODE_POS_STR + "接收线程发生未知错误。");
+							  bsp::di::Console().WriteError(CODE_POS_STR + "接收线程发生未知错误。");
 						  }
 					  }
 				  });
@@ -88,11 +88,11 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 						  }
 						  catch (std::exception const &e)
 						  {
-							  DI_Console().WriteError(CODE_POS_STR + e.what());
+							  bsp::di::Console().WriteError(CODE_POS_STR + e.what());
 						  }
 						  catch (...)
 						  {
-							  DI_Console().WriteError(CODE_POS_STR + "链路连接维护线程发生未知错误。");
+							  bsp::di::Console().WriteError(CODE_POS_STR + "链路连接维护线程发生未知错误。");
 						  }
 
 						  last_loop_is_linked = is_linked;

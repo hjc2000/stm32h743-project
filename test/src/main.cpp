@@ -46,13 +46,13 @@ void TestLittleFs()
 	int res = lfs_format(&lfs, &port.Port()); // 格式化文件系统
 	if (res)
 	{
-		DI_Console().WriteLine("format failed: " + std::to_string(res));
+		bsp::di::Console().WriteLine("format failed: " + std::to_string(res));
 	}
 
 	res = lfs_mount(&lfs, &port.Port()); // 挂载文件系统
 	if (res)
 	{
-		DI_Console().WriteLine("mount failed: " + std::to_string(res));
+		bsp::di::Console().WriteLine("mount failed: " + std::to_string(res));
 	}
 
 	// 创建文件并写入数据
@@ -63,13 +63,13 @@ void TestLittleFs()
 	res = lfs_file_open(&lfs, &file, filename, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
 	if (res)
 	{
-		DI_Console().WriteLine("open failed: " + std::to_string(res));
+		bsp::di::Console().WriteLine("open failed: " + std::to_string(res));
 	}
 
 	res = lfs_file_write(&lfs, &file, str, strlen(str));
 	if (res < 0)
 	{
-		DI_Console().WriteLine("write failed: " + std::to_string(res));
+		bsp::di::Console().WriteLine("write failed: " + std::to_string(res));
 	}
 
 	lfs_file_close(&lfs, &file);
@@ -78,18 +78,18 @@ void TestLittleFs()
 	res = lfs_file_open(&lfs, &file, filename, LFS_O_RDONLY);
 	if (res)
 	{
-		DI_Console().WriteLine("open failed: " + std::to_string(res));
+		bsp::di::Console().WriteLine("open failed: " + std::to_string(res));
 	}
 
 	char buffer[128] = {0};
 	res = lfs_file_read(&lfs, &file, buffer, sizeof(buffer) - 1);
 	if (res < 0)
 	{
-		DI_Console().WriteLine("read failed: " + std::to_string(res));
+		bsp::di::Console().WriteLine("read failed: " + std::to_string(res));
 	}
 
-	DI_Console().WriteLine("have read: " + std::to_string(res));
-	DI_Console().WriteLine(buffer);
+	bsp::di::Console().WriteLine("have read: " + std::to_string(res));
+	bsp::di::Console().WriteLine(buffer);
 
 	lfs_file_close(&lfs, &file);
 
@@ -107,7 +107,7 @@ inline void TestFatFs()
 	res = f_mount(&fatfs, "", 0); // 卸载任何已挂载的卷
 	if (res != FR_OK)
 	{
-		DI_Console().WriteLine("f_mount error: " + std::to_string(res));
+		bsp::di::Console().WriteLine("f_mount error: " + std::to_string(res));
 	}
 
 	// 创建格式化参数结构体
@@ -122,14 +122,14 @@ inline void TestFatFs()
 	res = f_mkfs("", &mkfs_parm, work, sizeof(work));
 	if (res != FR_OK)
 	{
-		DI_Console().WriteLine("f_mkfs error: " + std::to_string(res));
+		bsp::di::Console().WriteLine("f_mkfs error: " + std::to_string(res));
 	}
 
 	// 重新挂载文件系统
 	res = f_mount(&fatfs, "", 1); // 挂载文件系统
 	if (res != FR_OK)
 	{
-		DI_Console().WriteLine("f_mount error: " + std::to_string(res));
+		bsp::di::Console().WriteLine("f_mount error: " + std::to_string(res));
 	}
 
 	FIL file{};
@@ -145,13 +145,13 @@ inline void TestFatFs()
 		res = f_write(&file, str, strlen(str), &bytesWritten);
 		if (res != FR_OK || bytesWritten != strlen(str))
 		{
-			DI_Console().WriteLine("write failed: " + std::to_string(res));
+			bsp::di::Console().WriteLine("write failed: " + std::to_string(res));
 		}
 		else
 		{
-			DI_Console().WriteLine("write " +
-								   std::to_string(bytesWritten) +
-								   " bytes to the file successfully");
+			bsp::di::Console().WriteLine("write " +
+										 std::to_string(bytesWritten) +
+										 " bytes to the file successfully");
 		}
 
 		// 关闭文件
@@ -159,7 +159,7 @@ inline void TestFatFs()
 	}
 	else
 	{
-		DI_Console().WriteLine("open file failed: " + std::to_string(res));
+		bsp::di::Console().WriteLine("open file failed: " + std::to_string(res));
 	}
 
 	// 重新打开文件以读取
@@ -174,15 +174,15 @@ inline void TestFatFs()
 		res = f_read(&file, buffer, sizeof(buffer) - 1, &bytesRead);
 		if (res != FR_OK)
 		{
-			DI_Console().WriteLine("read file failed: " + std::to_string(res));
+			bsp::di::Console().WriteLine("read file failed: " + std::to_string(res));
 		}
 		else
 		{
-			DI_Console().WriteLine("read file successfully, have read " +
-								   std::to_string(bytesRead) +
-								   " bytes");
+			bsp::di::Console().WriteLine("read file successfully, have read " +
+										 std::to_string(bytesRead) +
+										 " bytes");
 
-			DI_Console().WriteLine(buffer);
+			bsp::di::Console().WriteLine(buffer);
 		}
 
 		// 关闭文件
@@ -190,7 +190,7 @@ inline void TestFatFs()
 	}
 	else
 	{
-		DI_Console().WriteLine("open file failed: " + std::to_string(res));
+		bsp::di::Console().WriteLine("open file failed: " + std::to_string(res));
 	}
 
 	// 卸载文件系统
@@ -231,12 +231,12 @@ void TestDCP()
 		{
 			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
 			base::ethernet::EthernetFrameReader frame{span};
-			DI_Console().WriteLine("收到以太网帧：");
-			DI_Console().WriteLine(frame);
+			bsp::di::Console().WriteLine("收到以太网帧：");
+			bsp::di::Console().WriteLine(frame);
 			// EhternetInput(span);
 		});
 
-	DI_Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
+	bsp::di::Console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
 	netif_wrapper->EnableDHCP();
 	while (!netif_wrapper->HasGotAddressesByDHCP())
 	{
@@ -275,7 +275,7 @@ void EhternetInput(base::ReadOnlySpan const &span);
 void InitialTask()
 {
 	DI_Serial().Open(*DICreate_ISerialOptions());
-	DI_Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
+	bsp::di::Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
 	SDRAM_Init();
 	DI_AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
 
@@ -286,7 +286,7 @@ void InitialTask()
 					  while (true)
 					  {
 						  DI_GreenDigitalLed().Toggle();
-						  DI_Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
+						  bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
 						  DI_Delayer().Delay(std::chrono::milliseconds{1000});
 					  }
 				  });
