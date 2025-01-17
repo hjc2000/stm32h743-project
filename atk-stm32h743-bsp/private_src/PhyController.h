@@ -8,7 +8,7 @@ namespace bsp
 		public bsp::IPhyController
 	{
 	private:
-		bsp::IEthernetController *_controller = &DI_EthernetController();
+		bsp::IEthernetController *_controller = &bsp::di::ethernet::EthernetController();
 
 	public:
 		/// @brief 读 PHY 的寄存器

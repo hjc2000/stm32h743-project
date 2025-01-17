@@ -24,7 +24,7 @@ namespace
 
 /// @brief 以太网端口。
 /// @return
-bsp::IEthernetPort &DI_EthernetPort()
+bsp::IEthernetPort &bsp::di::ethernet::EthernetPort()
 {
 	Getter g;
 	return g.Instance();

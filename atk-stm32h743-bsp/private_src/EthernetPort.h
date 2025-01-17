@@ -11,7 +11,7 @@ namespace bsp
 		public bsp::IEthernetPort
 	{
 	private:
-		bsp::IEthernetController *_controller = &DI_EthernetController();
+		bsp::IEthernetController *_controller = &bsp::di::ethernet::EthernetController();
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 		base::Delegate<> _connection_event;
 		base::Delegate<> _disconnection_event;

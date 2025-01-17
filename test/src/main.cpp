@@ -219,14 +219,14 @@ void TestDCP()
 		},
 	};
 
-	netif_wrapper->Open(&DI_EthernetPort(),
+	netif_wrapper->Open(&bsp::di::ethernet::EthernetPort(),
 						mac,
 						ip_address,
 						netmask,
 						gateway,
 						1500);
 
-	DI_EthernetPort().ReceivingEhternetFrameEvent().Subscribe(
+	bsp::di::ethernet::EthernetPort().ReceivingEhternetFrameEvent().Subscribe(
 		[](base::ReadOnlySpan span)
 		{
 			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
@@ -261,7 +261,7 @@ void TestDCP()
 		hello.PutOemIdBlock(0xcafe, 0xee02);
 		hello.PutDeviceInitiativeBlock(true);
 
-		DI_EthernetPort().Send(hello.ValidDataSpan());
+		bsp::di::ethernet::EthernetPort().Send(hello.ValidDataSpan());
 		DI_Delayer().Delay(std::chrono::milliseconds{1000});
 	}
 }
