@@ -282,35 +282,37 @@ void InitialTask()
 	SDRAM_Init();
 	bsp::di::heap::AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
 
-	bsp::di::task::CreateTask(2048,
-							  []()
-							  {
-								  bsp::di::led::RedDigitalLed().TurnOff();
-								  while (true)
-								  {
-									  bsp::di::led::GreenDigitalLed().Toggle();
-									  bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
-									  bsp::W9825G6KH_6_Timing timing{base::Nanoseconds{base::Hz{base::MHz{240 / 2}}}};
-									  bsp::di::Console().WriteLine(timing);
-									  bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
-								  }
-							  });
+	bsp::di::task::CreateTask(
+		2048,
+		[]()
+		{
+			bsp::di::led::RedDigitalLed().TurnOff();
+			while (true)
+			{
+				bsp::di::led::GreenDigitalLed().Toggle();
+				bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
+				bsp::W9825G6KH_6_Timing timing{base::Nanoseconds{base::Hz{base::MHz{240 / 2}}}};
+				bsp::di::Console().WriteLine(timing);
+				bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
+			}
+		});
 
-	bsp::di::task::CreateTask(2048,
-							  []()
-							  {
-								  // TestFatFs();
-								  // freertos_demo();
-								  // p_net_sample_app_main();
-								  // TestLittleFs();
-								  TestDCP();
-								  // TestUniversalTimer1();
-								  // bsp::TestFlash();
-								  // TestExtiKey();
-								  // bsp::TestSerial();
-								  // bsp::TestKeyScanner();
-								  // bsp::TestIndependentWatchDog();
-							  });
+	bsp::di::task::CreateTask(
+		2048,
+		[]()
+		{
+			// TestFatFs();
+			// freertos_demo();
+			// p_net_sample_app_main();
+			// TestLittleFs();
+			TestDCP();
+			// TestUniversalTimer1();
+			// bsp::TestFlash();
+			// TestExtiKey();
+			// bsp::TestSerial();
+			// bsp::TestKeyScanner();
+			// bsp::TestIndependentWatchDog();
+		});
 }
 
 int main(void)
