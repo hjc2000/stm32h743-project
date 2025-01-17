@@ -283,7 +283,7 @@ void InitialTask()
 	bsp::di::heap::AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
 
 	bsp::di::task::CreateTask(
-		2048,
+		1024 * 2,
 		[]()
 		{
 			bsp::di::led::RedDigitalLed().TurnOff();
@@ -298,7 +298,7 @@ void InitialTask()
 		});
 
 	bsp::di::task::CreateTask(
-		2048,
+		1024 * 2,
 		[]()
 		{
 			// TestFatFs();
