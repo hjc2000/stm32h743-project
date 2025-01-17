@@ -34,7 +34,7 @@ namespace
 	};
 } // namespace
 
-base::IDictionary<std::string, bsp::IKey *> const &DI_KeyCollection()
+base::IDictionary<std::string, bsp::IKey *> const &bsp::di::key::KeyCollection()
 {
 	Getter g;
 	return g.Instance()._collection;

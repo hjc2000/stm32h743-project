@@ -295,12 +295,12 @@ void InitialTask()
 	// freertos_demo();
 	// p_net_sample_app_main();
 	// TestLittleFs();
-	TestDCP();
+	// TestDCP();
 	// TestUniversalTimer1();
 	// bsp::TestFlash();
 	// TestExtiKey();
 	// bsp::TestSerial();
-	// bsp::TestKeyScanner();
+	bsp::TestKeyScanner();
 	// bsp::TestIndependentWatchDog();
 }
 
