@@ -280,7 +280,7 @@ void InitialTask()
 	SDRAM_Init();
 	bsp::di::heap::AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
 
-	DI_Serial().Open(*DICreate_ISerialOptions());
+	DI_Serial().Open();
 	bsp::di::Console().SetOutStream(base::RentedPtrFactory::Create(&DI_Serial()));
 
 	bsp::di::task::CreateTask(
