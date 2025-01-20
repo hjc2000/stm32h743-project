@@ -2,14 +2,15 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "ninja-release-install",
+			"label": "stflash-release-download",
 			"type": "shell",
-			"command": "ninja",
+			"command": "pwsh",
 			"args": [
-				"install"
+				"./stflash-release-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}/out/build/gcc-release"
+				// "cwd": "${workspaceFolder}/out/build/gcc-release"
+				"cwd": "${workspaceFolder}/test"
 			},
 			"problemMatcher": []
 		},
