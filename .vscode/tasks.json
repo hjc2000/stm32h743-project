@@ -15,14 +15,14 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "ninja-debug-install",
+			"label": "stflash-debug-download",
 			"type": "shell",
-			"command": "ninja",
+			"command": "pwsh",
 			"args": [
-				"install"
+				"./stflash-debug-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}/out/build/gcc-debug"
+				"cwd": "${workspaceFolder}/test"
 			},
 			"problemMatcher": []
 		}
