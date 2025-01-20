@@ -5,6 +5,21 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "ST-Link Debug",
+			"preLaunchTask": "stflash-debug-download",
+			"cwd": "${workspaceFolder}/out/install/gcc-debug/bin/",
+			"executable": "${workspaceFolder}/out/install/gcc-debug/bin/test.elf",
+			"request": "launch",
+			"type": "cortex-debug",
+			"runToEntryPoint": "main",
+			"servertype": "stlink",
+			"showDevDebugOutput": "raw",
+			"liveWatch": {
+				"enabled": true,
+				"samplesPerSecond": 4
+			},
+		},
+		{
 			// "preLaunchTask": "stflash-debug-download",
 			"name": "JLink Debug",
 			"cwd": "${workspaceFolder}/out/install/gcc-debug/bin/",
