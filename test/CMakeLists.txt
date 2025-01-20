@@ -37,19 +37,3 @@ add_custom_command(TARGET ${ProjectName} POST_BUILD
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${ProjectName}.bin"
     	DESTINATION bin)
-
-# 安装时自动尝试将 bin 文件下载到单片机
-install(CODE "
-    message(STATUS \"正在将 ${ProjectName}.bin 下载到单片机\")
-
-    execute_process(
-        COMMAND st-flash --reset write \"${CMAKE_INSTALL_PREFIX}/bin/${ProjectName}.bin\" 0x8000000
-        RESULT_VARIABLE cmd_result
-    )
-
-    if(\${cmd_result} STREQUAL \"0\")
-        message(STATUS \"将 ${ProjectName}.bin 下载到单片机成功 \")
-    else()
-        message(STATUS \"尝试将 ${ProjectName}.bin 下载到单片机失败: \${cmd_result}\")
-    endif()
-")
