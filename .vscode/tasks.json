@@ -25,6 +25,30 @@
 				"cwd": "${workspaceFolder}/test"
 			},
 			"problemMatcher": []
-		}
-	]
+		},
+		{
+			"label": "jlink-debug-download",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"./jlink-debug-download.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/test"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "jlink-release-download",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"./jlink-release-download.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/test"
+			},
+			"problemMatcher": []
+		},
+	],
 }

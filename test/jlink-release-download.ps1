@@ -2,8 +2,8 @@
 $project_name = "test"
 $project_path = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 $workspace_path = Split-Path $project_path -Parent
-$build_path = "$workspace_path/out/build/gcc-debug"
-$install_path = "$workspace_path/out/install/gcc-debug"
+$build_path = "$workspace_path/out/build/gcc-release"
+$install_path = "$workspace_path/out/install/gcc-release"
 
 # 开始操作
 Push-Location $build_path

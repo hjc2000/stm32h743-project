@@ -16,7 +16,7 @@ namespace bsp
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 		base::Delegate<> _connection_event;
 		base::Delegate<> _disconnection_event;
-		bsp::LAN8720APhyDriver _phy_driver{std::shared_ptr<bsp::IPhyController>{new PhyController{}}};
+		bsp::YT8512CPhyDriver _phy_driver{std::shared_ptr<bsp::IPhyController>{new PhyController{}}};
 
 	public:
 		static_function EthernetPort &Instance();

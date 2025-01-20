@@ -20,8 +20,8 @@
 			},
 		},
 		{
-			// "preLaunchTask": "stflash-debug-download",
 			"name": "JLink Debug",
+			"preLaunchTask": "jlink-debug-download",
 			"cwd": "${workspaceFolder}/out/install/gcc-debug/bin/",
 			"executable": "${workspaceFolder}/out/install/gcc-debug/bin/test.elf",
 			"request": "launch",

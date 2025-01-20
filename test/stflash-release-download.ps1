@@ -19,8 +19,11 @@ finally
 Push-Location $install_path
 try
 {
-	arm-none-eabi-objcopy -O binary "$install_path/bin/${project_name}.elf" "$install_path/bin/${project_name}.bin"
-	st-flash --reset write ${install_path}/bin/${project_name}.bin 0x8000000
+	arm-none-eabi-objcopy -O binary `
+		"$install_path/bin/${project_name}.elf" `
+		"$install_path/bin/${project_name}.bin"
+
+	st-flash --reset write "${install_path}/bin/${project_name}.bin" 0x8000000
 	if ($LASTEXITCODE)
 	{
 		throw "将 ${project_name}.bin 下载到单片机失败。"
