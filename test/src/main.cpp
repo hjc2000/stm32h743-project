@@ -243,7 +243,7 @@ void TestDCP()
 	netif_wrapper->EnableDHCP();
 	while (!netif_wrapper->HasGotAddressesByDHCP())
 	{
-		// break;
+		break;
 	}
 
 	std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
