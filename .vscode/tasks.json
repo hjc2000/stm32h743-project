@@ -9,7 +9,6 @@
 				"./stflash-release-download.ps1"
 			],
 			"options": {
-				// "cwd": "${workspaceFolder}/out/build/gcc-release"
 				"cwd": "${workspaceFolder}/test"
 			},
 			"problemMatcher": []
