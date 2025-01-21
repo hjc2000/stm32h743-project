@@ -306,11 +306,11 @@ void InitialTask()
 			// freertos_demo();
 			// p_net_sample_app_main();
 			// TestLittleFs();
-			TestDCP();
+			// TestDCP();
 			// TestUniversalTimer1();
 			// bsp::TestFlash();
 			// TestExtiKey();
-			// bsp::TestSerial();
+			bsp::TestSerial();
 			// bsp::TestKeyScanner();
 			// bsp::TestIndependentWatchDog();
 		});
