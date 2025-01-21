@@ -3,7 +3,8 @@
 #include <bsp-interface/di/sdram.h>
 #include <stdint.h>
 
-#define Bank5_SDRAM_ADDR ((uint32_t)(0XC0000000)) // SDRAM开始地址
+// SDRAM开始地址
+#define Bank5_SDRAM_ADDR ((uint32_t)(0XC0000000))
 
 // SDRAM配置参数
 #define SDRAM_MODEREG_BURST_LENGTH_1 ((uint16_t)0x0000)
