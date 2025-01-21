@@ -28,7 +28,7 @@
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
 #include <bsp/bsp.h>
-#include <bsp/sdram.h>
+#include <bsp/SDRAMControler.h>
 #include <ff.h>
 #include <littlefs/LfsFlashPort.h>
 #include <lwip-wrapper/NetifSlot.h>
@@ -306,11 +306,11 @@ void InitialTask()
 			// freertos_demo();
 			// p_net_sample_app_main();
 			// TestLittleFs();
-			// TestDCP();
+			TestDCP();
 			// TestUniversalTimer1();
 			// bsp::TestFlash();
 			// TestExtiKey();
-			bsp::TestSerial();
+			// bsp::TestSerial();
 			// bsp::TestKeyScanner();
 			// bsp::TestIndependentWatchDog();
 		});
