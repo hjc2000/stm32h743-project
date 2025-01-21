@@ -13,7 +13,7 @@
 			"type": "cortex-debug",
 			"runToEntryPoint": "main",
 			"servertype": "stlink",
-			"showDevDebugOutput": "raw",
+			"showDevDebugOutput": "vscode",
 			"liveWatch": {
 				"enabled": true,
 				"samplesPerSecond": 4
@@ -28,7 +28,7 @@
 			"type": "cortex-debug",
 			"runToEntryPoint": "main",
 			"servertype": "jlink",
-			"showDevDebugOutput": "raw",
+			"showDevDebugOutput": "vscode",
 			"device": "STM32H743II",
 			"liveWatch": {
 				"enabled": true,
