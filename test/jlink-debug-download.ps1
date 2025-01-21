@@ -38,7 +38,8 @@ try
 	# 试试打开工程文件，把 start application 勾上
 	Start-Process -FilePath "JFlash.exe" `
 		-ArgumentList $jflash_arg `
-		-WindowStyle Normal
+		-WindowStyle Normal `
+		-Wait
 
 	if ($LASTEXITCODE)
 	{
