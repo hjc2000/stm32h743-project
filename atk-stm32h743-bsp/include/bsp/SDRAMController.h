@@ -1,5 +1,6 @@
 #pragma once
 #include <bsp-interface/di/delayer.h>
+#include <bsp-interface/di/sdram.h>
 #include <stdint.h>
 
 #define Bank5_SDRAM_ADDR ((uint32_t)(0XC0000000)) // SDRAM开始地址
