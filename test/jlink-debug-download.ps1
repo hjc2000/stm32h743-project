@@ -51,7 +51,6 @@ try
 	$jflash_arg = $jflash_arg.Trim()
 	Write-Host $jflash_arg
 
-	# 试试打开工程文件，把 start application 勾上
 	Start-Process -FilePath "JFlash.exe" `
 		-ArgumentList $jflash_arg `
 		-WindowStyle Normal `
