@@ -16,13 +16,13 @@ try
 
 	if ($LASTEXITCODE)
 	{
-		throw "$source_path 配置失败"
+		throw "$project_name 配置失败"
 	}
 
 	ninja -j12
 	if ($LASTEXITCODE)
 	{
-		throw "$source_path 编译失败"
+		throw "$project_name 编译失败"
 	}
 
 	ninja install
