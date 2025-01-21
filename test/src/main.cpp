@@ -291,6 +291,7 @@ void InitialTask()
 			while (true)
 			{
 				bsp::di::led::GreenDigitalLed().Toggle();
+				bsp::di::led::RedDigitalLed().Toggle();
 				bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
 				bsp::W9825G6KH_6_Timing timing{base::Nanoseconds{base::MHz{240 / 2}}};
 				bsp::di::Console().WriteLine(timing);

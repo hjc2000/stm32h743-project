@@ -24,7 +24,6 @@ try
 		"$install_path/bin/${project_name}.bin"
 
 	$jflash_arg_array = @(
-		"-hide",
 		"-openprj${workspace_path}/jflash-project.jflash",
 		"-open${install_path}/bin/${project_name}.bin,0x8000000",
 		"-auto",
@@ -39,7 +38,7 @@ try
 	# 试试打开工程文件，把 start application 勾上
 	Start-Process -FilePath "JFlash.exe" `
 		-ArgumentList $jflash_arg `
-		-WindowStyle Minimized
+		-WindowStyle Normal
 
 	if ($LASTEXITCODE)
 	{
