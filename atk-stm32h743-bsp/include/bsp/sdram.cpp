@@ -1,4 +1,4 @@
-#include "SDRAMController.h"
+#include "sdram.h"
 #include <base/unit/Hz.h>
 #include <base/unit/MHz.h>
 #include <bsp-interface/di/console.h>

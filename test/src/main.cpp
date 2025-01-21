@@ -28,7 +28,7 @@
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
 #include <bsp/bsp.h>
-#include <bsp/SDRAMController.h>
+#include <bsp/sdram.h>
 #include <ff.h>
 #include <littlefs/LfsFlashPort.h>
 #include <lwip-wrapper/NetifSlot.h>
