@@ -1,14 +1,30 @@
 # 项目参数
 $project_name = "test"
+$cmake_config = "gcc-debug"
 $project_path = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 $workspace_path = Split-Path $project_path -Parent
-$build_path = "$workspace_path/out/build/gcc-debug"
-$install_path = "$workspace_path/out/install/gcc-debug"
+$build_path = "$workspace_path/out/build/$cmake_config"
+$install_path = "$workspace_path/out/install/$cmake_config"
 
 # 开始操作
+New-Item -Path $build_path -ItemType Directory -Force
 Push-Location $build_path
 try
 {
+	cmake -G "Ninja" $workspace_path `
+		--preset "$cmake_config"
+
+	if ($LASTEXITCODE)
+	{
+		throw "$source_path 配置失败"
+	}
+
+	ninja -j12
+	if ($LASTEXITCODE)
+	{
+		throw "$source_path 编译失败"
+	}
+
 	ninja install
 }
 finally
