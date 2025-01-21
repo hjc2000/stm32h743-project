@@ -29,3 +29,6 @@ target_import_stm32h743iit6_p_net(${ProjectName} PUBLIC)
 # target_import_stm32h743iit6_sdram(${ProjectName} PUBLIC)
 target_link_libraries(${ProjectName} PUBLIC c m atk-stm32h743-bsp)
 target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
+
+add_custom_command(TARGET ${ProjectName} POST_BUILD
+				   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${ProjectName}>)
