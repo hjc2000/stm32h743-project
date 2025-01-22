@@ -22,7 +22,6 @@
 #include <bsp-interface/di/system_time.h>
 #include <bsp-interface/di/task.h>
 #include <bsp-interface/flash/RmaFlash.h>
-#include <bsp-interface/sdram/chip/W9825G6KH_6_Timing.h>
 #include <bsp-interface/test/TestFlash.h>
 #include <bsp-interface/test/TestIndependentWatchDog.h>
 #include <bsp-interface/test/TestKeyScanner.h>
