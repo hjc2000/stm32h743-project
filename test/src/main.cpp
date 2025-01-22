@@ -19,15 +19,16 @@
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/led.h>
 #include <bsp-interface/di/reset_initialize.h>
+#include <bsp-interface/di/sdram.h>
 #include <bsp-interface/di/system_time.h>
 #include <bsp-interface/di/task.h>
 #include <bsp-interface/flash/RmaFlash.h>
+#include <bsp-interface/sdram/chip/W9825G6KH_6.h>
 #include <bsp-interface/test/TestFlash.h>
 #include <bsp-interface/test/TestIndependentWatchDog.h>
 #include <bsp-interface/test/TestKeyScanner.h>
 #include <bsp-interface/test/TestSerial.h>
 #include <bsp/bsp.h>
-#include <bsp/sdram.h>
 #include <ff.h>
 #include <littlefs/LfsFlashPort.h>
 #include <lwip-wrapper/NetifSlot.h>
@@ -276,8 +277,9 @@ void EhternetInput(base::ReadOnlySpan const &span);
 /// @brief 起始任务。
 void InitialTask()
 {
-	SDRAM_Init();
-	bsp::di::heap::AddHeap(reinterpret_cast<uint8_t *>(0xC0000000), 32 * 1024 * 1024);
+	bsp::sdram::chip::W9825G6KH_6 sdram{bsp::di::sdram::SDRAMController()};
+	sdram.Open();
+	bsp::di::heap::AddHeap(sdram.Span());
 
 	bsp::di::serial::Serial().Open();
 	bsp::di::Console().SetOutStream(base::RentedPtrFactory::Create(&bsp::di::serial::Serial()));
@@ -290,7 +292,6 @@ void InitialTask()
 			while (true)
 			{
 				bsp::di::led::GreenDigitalLed().Toggle();
-				bsp::di::led::RedDigitalLed().Toggle();
 				bsp::di::Console().WriteLine(bsp::di::sdram::SDRAMController().Timing());
 				bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
 			}
