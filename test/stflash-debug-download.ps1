@@ -3,11 +3,11 @@ $project_name = "test"
 $cmake_config = "gcc-debug"
 $project_path = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 $workspace_path = Split-Path $project_path -Parent
-$build_path = "$workspace_path/out/build/$cmake_config"
-$install_path = "$workspace_path/out/install/$cmake_config"
-$objcopy_out_path = "$workspace_path/out"
+$build_path = "$workspace_path/out/build"
+$install_path = "$workspace_path/out/install"
 
 # 开始操作
+New-Item -Path $build_path -ItemType Directory -Force
 Push-Location $build_path
 try
 {
@@ -35,18 +35,19 @@ finally
 Push-Location $install_path
 try
 {
-	$is_newer = is-file-newer-than-reference.ps1 -TargetFilePath "$objcopy_out_path/${project_name}.bin" `
-		-ReferenceFilePath "$install_path/bin/${project_name}.elf"
+	$is_newer = is-file-newer-than-reference.ps1 `
+		-TargetFilePath "$install_path/bin/${project_name}.elf" `
+		-ReferenceFilePath "$install_path/bin/${project_name}.bin"
 
 	if (-not $is_newer)
 	{
-		Write-Host "已经是最新的，不需要下载"
+		Write-Host "此 elf 已经是最新的，不需要下载。"
 		return
 	}
 
 	arm-none-eabi-objcopy -O binary `
 		"$install_path/bin/${project_name}.elf" `
-		"$objcopy_out_path/${project_name}.bin"
+		"$install_path/bin/${project_name}.bin"
 
 	st-flash --reset write "${install_path}/bin/${project_name}.bin" 0x8000000
 	if ($LASTEXITCODE)

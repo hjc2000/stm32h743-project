@@ -7,8 +7,8 @@
 		{
 			"name": "ST-Link Debug",
 			"preLaunchTask": "stflash-debug-download",
-			"cwd": "${workspaceFolder}/out/install/gcc-debug/bin/",
-			"executable": "${workspaceFolder}/out/install/gcc-debug/bin/test.elf",
+			"cwd": "${workspaceFolder}/out/install/bin/",
+			"executable": "${workspaceFolder}/out/install/bin/test.elf",
 			"request": "launch",
 			"type": "cortex-debug",
 			"runToEntryPoint": "main",
@@ -22,8 +22,8 @@
 		{
 			"name": "JLink Debug",
 			"preLaunchTask": "jlink-debug-download",
-			"cwd": "${workspaceFolder}/out/install/gcc-debug/bin/",
-			"executable": "${workspaceFolder}/out/install/gcc-debug/bin/test.elf",
+			"cwd": "${workspaceFolder}/out/install/bin/",
+			"executable": "${workspaceFolder}/out/install/bin/test.elf",
 			"request": "launch",
 			"type": "cortex-debug",
 			"runToEntryPoint": "main",
