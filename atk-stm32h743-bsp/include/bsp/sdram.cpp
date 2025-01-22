@@ -12,6 +12,7 @@
 void SDRAM_Init(void)
 {
 	bsp::di::sdram::SDRAMController().OpenAsReadBurstMode(bsp::sdram::chip::W9825G6KH_6_TimingProvider{},
+														  bsp::sdram::property::BankCount{4},
 														  bsp::sdram::property::RowBitCount{13},
 														  bsp::sdram::property::ColumnBitCount{9},
 														  bsp::sdram::property::DataWidth{16},
@@ -34,7 +35,7 @@ void SDRAM_Init(void)
 	 */
 	uint32_t sdram_mod_register = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_8 | // 设置突发长度:1(可以是1/2/4/8)
 								  SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL |    // 设置突发类型:连续(可以是连续/交错)
-								  SDRAM_MODEREG_CAS_LATENCY_3 |            // 设置CAS值:3(可以是2/3)
+								  SDRAM_MODEREG_CAS_LATENCY_2 |            // 设置CAS值:3(可以是2/3)
 								  SDRAM_MODEREG_OPERATING_MODE_STANDARD |  // 设置操作模式:0,标准模式
 								  SDRAM_MODEREG_WRITEBURST_MODE_SINGLE;    // 设置突发写模式:1,单点访问
 
