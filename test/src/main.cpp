@@ -292,7 +292,6 @@ void InitialTask()
 			while (true)
 			{
 				bsp::di::led::GreenDigitalLed().Toggle();
-				bsp::di::led::RedDigitalLed().Toggle();
 				bsp::di::Console().WriteLine(bsp::di::sdram::SDRAMController().Timing());
 				bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
 			}

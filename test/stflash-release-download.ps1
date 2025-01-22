@@ -19,14 +19,7 @@ try
 		throw "配置失败"
 	}
 
-	$build_out_str = ninja -j12
-	Write-Host $build_out_str
-	if ($build_out_str.Contains("ninja: no work to do"))
-	{
-		Write-Host "已经是最新的，不需要下载。"
-		return
-	}
-
+	ninja -j12
 	if ($LASTEXITCODE)
 	{
 		throw "编译失败"
@@ -42,6 +35,15 @@ finally
 Push-Location $install_path
 try
 {
+	$is_newer = is-file-newer-than-reference.ps1 -TargetFilePath "$install_path/bin/${project_name}.elf" `
+		-ReferenceFilePath "$install_path/bin/${project_name}.bin"
+
+	if (-not $is_newer)
+	{
+		Write-Host "已经是最新的，不需要下载"
+		return
+	}
+
 	arm-none-eabi-objcopy -O binary `
 		"$install_path/bin/${project_name}.elf" `
 		"$install_path/bin/${project_name}.bin"
