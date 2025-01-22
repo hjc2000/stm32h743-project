@@ -43,12 +43,7 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 	// 设置SDRAM的模式寄存器
 	SDRAM_Send_Cmd(0, FMC_SDRAM_CMD_LOAD_MODE, 1, sdram_mod_register);
 
-	bsp::sdram::chip::W9825G6KH_6_Timing timing{
-		base::Nanoseconds{
-			base::MHz{bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency() / 2},
-		},
-	};
-
+	bsp::sdram::chip::W9825G6KH_6_Timing timing{base::MHz{bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency() / 2}};
 	int refresh_count = timing.T_AutoRefreshCommand_CLK_Count() - 50;
 	if (refresh_count < 50)
 	{
@@ -61,12 +56,7 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 // SDRAM初始化
 void SDRAM_Init(void)
 {
-	bsp::sdram::chip::W9825G6KH_6_Timing timing{
-		base::Nanoseconds{
-			base::MHz{bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency() / 2},
-		},
-	};
-
+	bsp::sdram::chip::W9825G6KH_6_Timing timing{base::MHz{bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency() / 2}};
 	bsp::di::sdram::SDRAMController().Open(timing);
 
 	SDRAM_Handler.Instance = FMC_SDRAM_DEVICE;

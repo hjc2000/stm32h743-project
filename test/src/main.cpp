@@ -292,13 +292,7 @@ void InitialTask()
 			{
 				bsp::di::led::GreenDigitalLed().Toggle();
 				bsp::di::Console().WriteLine(bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency());
-
-				bsp::sdram::chip::W9825G6KH_6_Timing timing{
-					base::Nanoseconds{
-						base::MHz{bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency() / 2},
-					},
-				};
-
+				bsp::sdram::chip::W9825G6KH_6_Timing timing{base::MHz{bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency() / 2}};
 				bsp::di::Console().WriteLine(timing);
 				bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
 			}
