@@ -5,6 +5,7 @@ $project_path = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 $workspace_path = Split-Path $project_path -Parent
 $build_path = "$workspace_path/out/build/$cmake_config"
 $install_path = "$workspace_path/out/install/$cmake_config"
+$objcopy_out_path = "$workspace_path/out"
 
 # 开始操作
 New-Item -Path $build_path -ItemType Directory -Force
@@ -35,8 +36,9 @@ finally
 Push-Location $install_path
 try
 {
-	$is_newer = is-file-newer-than-reference.ps1 -TargetFilePath "$install_path/bin/${project_name}.elf" `
-		-ReferenceFilePath "$install_path/bin/${project_name}.bin"
+	# bin 文件存在，则只有 bin 文件不够新时才需要重新 objcopy 输出 bin 文件并下载。
+	$is_newer = is-file-newer-than-reference.ps1 -TargetFilePath "$objcopy_out_path/${project_name}.bin" `
+		-ReferenceFilePath "$install_path/bin/${project_name}.elf"
 
 	if (-not $is_newer)
 	{
@@ -44,9 +46,10 @@ try
 		return
 	}
 
+
 	arm-none-eabi-objcopy -O binary `
 		"$install_path/bin/${project_name}.elf" `
-		"$install_path/bin/${project_name}.bin"
+		"$objcopy_out_path/${project_name}.bin"
 
 	$jflash_arg_array = @(
 		"-openprj${workspace_path}/jflash-project.jflash",
