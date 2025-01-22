@@ -19,18 +19,20 @@ try
 		throw "配置失败"
 	}
 
-	ninja -j12
+	$build_out_str = ninja -j12
+	Write-Host $build_out_str
+	if ($build_out_str.Contains("ninja: no work to do"))
+	{
+		Write-Host "已经是最新的，不需要下载。"
+		return
+	}
+
 	if ($LASTEXITCODE)
 	{
 		throw "编译失败"
 	}
 
-	$install_out_str = ninja install
-	if (-not $install_out_str.Contains("Installing"))
-	{
-		Write-Host "已经是最新的，不需要下载。"
-		return
-	}
+	ninja install
 }
 finally
 {
