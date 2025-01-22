@@ -34,7 +34,7 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 	 * 		@li bit3为指定突发访问的类型，bit4~bit6为CAS值，bit7和bit8为运行模式
 	 * 		@li bit9为指定的写突发模式，bit10和bit11位保留位
 	 */
-	uint32_t sdram_mod_register = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_1 | // 设置突发长度:1(可以是1/2/4/8)
+	uint32_t sdram_mod_register = (uint32_t)SDRAM_MODEREG_BURST_LENGTH_8 | // 设置突发长度:1(可以是1/2/4/8)
 								  SDRAM_MODEREG_BURST_TYPE_SEQUENTIAL |    // 设置突发类型:连续(可以是连续/交错)
 								  SDRAM_MODEREG_CAS_LATENCY_3 |            // 设置CAS值:3(可以是2/3)
 								  SDRAM_MODEREG_OPERATING_MODE_STANDARD |  // 设置操作模式:0,标准模式
@@ -57,7 +57,13 @@ void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 void SDRAM_Init(void)
 {
 	bsp::sdram::chip::W9825G6KH_6_Timing timing{base::MHz{bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency() / 2}};
-	bsp::di::sdram::SDRAMController().Open(timing);
+
+	bsp::di::sdram::SDRAMController().OpenAsReadBurstMode(
+		timing,
+		bsp::sdram::property::RowBitCount{13},
+		bsp::sdram::property::ColumnBitCount{9},
+		bsp::sdram::property::DataWidth{16},
+		bsp::sdram::property::ReadBurstLength{8});
 
 	SDRAM_Handler.Instance = FMC_SDRAM_DEVICE;
 	SDRAM_Handler.Init.SDBank = FMC_SDRAM_BANK1;
@@ -72,53 +78,14 @@ void SDRAM_Init(void)
 	SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;
 
 	FMC_SDRAM_TimingTypeDef SDRAM_Timing{};
-
-	/**
-	 * HCLK 的频率是 SYSCLK / 2 = 480 / 2 = 240MHz
-	 * FMC 给 SDRAM 的时钟通过 SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
-	 * 又设置成 2 分频了。所以 SDRAM 的 CLK 频率是 120MHz.
-	 *
-	 * 1/ 120MHz 大概是 8 纳秒。
-	 */
-
-	/**
-	 * 加载模式寄存器到激活时间的延迟为2个时钟周期。
-	 * 设置完 SDRAM 的模式寄存器后，至少需要延迟 LoadToActiveDelay 才能发送激活命令。
-	 * 激活命令就是通过 RAS# 进行行选通，激活 BANK.
-	 */
 	SDRAM_Timing.LoadToActiveDelay = timing.T_RSC_CLK_Count();
-
-	// 退出自刷新延迟
 	SDRAM_Timing.ExitSelfRefreshDelay = timing.T_XSR_CLK_Count();
-
-	// 自刷新时间。
 	SDRAM_Timing.SelfRefreshTime = timing.T_RAS_CLK_Count();
-
-	/**
-	 * 行循环延迟。
-	 * 即 2 次行激活之间的延迟或 2 个自动刷新命令之间的延迟。
-	 */
 	SDRAM_Timing.RowCycleDelay = timing.T_RC_CLK_Count();
-
-	/**
-	 * 写恢复延迟为2个时钟周期。
-	 */
 	SDRAM_Timing.WriteRecoveryTime = timing.T_WR_CLK_Count();
-
-	/**
-	 * 预充电延迟为2个时钟周期。
-	 * 预充电后要至少延迟 RPDelay 个时钟周期后才能发送其他命令。
-	 */
 	SDRAM_Timing.RPDelay = timing.T_RP_CLK_Count();
-
-	/**
-	 * 行到列延迟为2个时钟周期。
-	 * HAL 库注释中的 “Activate Command” 是指 BANK 激活命令。BANK 靠 RAS# 引脚激活。
-	 * 读写靠列选通信号 CAS# 激活。RCDDelay 定义的是行选通到列选通之间的延迟。
-	 */
 	SDRAM_Timing.RCDDelay = timing.T_RCD_CLK_Count();
 	HAL_SDRAM_Init(&SDRAM_Handler, &SDRAM_Timing);
-
 	SDRAM_Initialization_Sequence(&SDRAM_Handler); // 发送SDRAM初始化序列
 }
 
