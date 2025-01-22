@@ -5,15 +5,13 @@
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/sdram.h>
-#include <bsp-interface/sdram/chip/W9825G6KH_6_Timing.h>
+#include <bsp-interface/sdram/chip/W9825G6KH_6_TimingProvider.h>
 #include <hal.h>
 
 // SDRAM初始化
 void SDRAM_Init(void)
 {
-	bsp::sdram::chip::W9825G6KH_6_Timing timing{base::MHz{bsp::di::clock::ClockSignalCollection().Get("hclk")->Frequency() / 2}};
-
-	bsp::di::sdram::SDRAMController().OpenAsReadBurstMode(timing,
+	bsp::di::sdram::SDRAMController().OpenAsReadBurstMode(bsp::sdram::chip::W9825G6KH_6_TimingProvider{},
 														  bsp::sdram::property::RowBitCount{13},
 														  bsp::sdram::property::ColumnBitCount{9},
 														  bsp::sdram::property::DataWidth{16},
