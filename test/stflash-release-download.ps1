@@ -25,7 +25,12 @@ try
 		throw "编译失败"
 	}
 
-	ninja install
+	$install_out_str = ninja install
+	if (-not $install_out_str.Contains("Installing"))
+	{
+		Write-Host "已经是最新的，不需要下载。"
+		return
+	}
 }
 finally
 {
