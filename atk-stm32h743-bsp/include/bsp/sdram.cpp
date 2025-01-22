@@ -21,11 +21,7 @@ void SDRAM_Init(void)
 	// SDRAM控制器初始化完成以后还需要按照如下顺序初始化SDRAM
 	bsp::di::Delayer().Delay(std::chrono::microseconds{500});
 	bsp::di::sdram::SDRAMController().PrechargeAll();
-
-	for (int i = 0; i < 8; i++)
-	{
-		bsp::di::sdram::SDRAMController().AutoRefresh();
-	}
+	bsp::di::sdram::SDRAMController().AutoRefresh(8);
 
 	/**
 	 * 发送 “加载模式寄存器” 命令。
