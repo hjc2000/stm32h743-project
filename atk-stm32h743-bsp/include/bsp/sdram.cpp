@@ -10,26 +10,6 @@
 
 SDRAM_HandleTypeDef SDRAM_Handler{}; // SDRAM句柄
 
-void HAL_SDRAM_MspInit(SDRAM_HandleTypeDef *hsdram)
-{
-	__HAL_RCC_FMC_CLK_ENABLE();
-
-	char const *pin_names[] = {
-		"PC0", "PC2", "PC3",
-		"PD0", "PD1", "PD8", "PD9", "PD10", "PD14", "PD15",
-		"PE0", "PE1", "PE7", "PE8", "PE9", "PE10", "PE11", "PE12", "PE13", "PE14", "PE15",
-		"PF0", "PF1", "PF2", "PF3", "PF4", "PF5", "PF11", "PF12", "PF13", "PF14", "PF15",
-		"PG0", "PG1", "PG2", "PG4", "PG5", "PG8", "PG15"};
-
-	for (char const *pin_name : pin_names)
-	{
-		bsp::IGpioPin *pin = DI_GpioPinCollection().Get(pin_name);
-		pin->OpenAsAlternateFunctionMode("fmc",
-										 bsp::IGpioPinPullMode::PullUp,
-										 bsp::IGpioPinDriver::PushPull);
-	}
-}
-
 // 发送SDRAM初始化序列
 void SDRAM_Initialization_Sequence(SDRAM_HandleTypeDef *hsdram)
 {
@@ -89,6 +69,23 @@ void SDRAM_Init(void)
 
 	bsp::di::sdram::SDRAMController().Open(timing);
 
+	__HAL_RCC_FMC_CLK_ENABLE();
+
+	char const *pin_names[] = {
+		"PC0", "PC2", "PC3",
+		"PD0", "PD1", "PD8", "PD9", "PD10", "PD14", "PD15",
+		"PE0", "PE1", "PE7", "PE8", "PE9", "PE10", "PE11", "PE12", "PE13", "PE14", "PE15",
+		"PF0", "PF1", "PF2", "PF3", "PF4", "PF5", "PF11", "PF12", "PF13", "PF14", "PF15",
+		"PG0", "PG1", "PG2", "PG4", "PG5", "PG8", "PG15"};
+
+	for (char const *pin_name : pin_names)
+	{
+		bsp::IGpioPin *pin = DI_GpioPinCollection().Get(pin_name);
+		pin->OpenAsAlternateFunctionMode("fmc",
+										 bsp::IGpioPinPullMode::PullUp,
+										 bsp::IGpioPinDriver::PushPull);
+	}
+
 	SDRAM_Handler.Instance = FMC_SDRAM_DEVICE;
 	SDRAM_Handler.Init.SDBank = FMC_SDRAM_BANK1;
 	SDRAM_Handler.Init.ColumnBitsNumber = FMC_SDRAM_COLUMN_BITS_NUM_9;
@@ -100,7 +97,6 @@ void SDRAM_Init(void)
 	SDRAM_Handler.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
 	SDRAM_Handler.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;
 	SDRAM_Handler.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_2;
-	SDRAM_Handler.MspInitCallback = HAL_SDRAM_MspInit;
 
 	FMC_SDRAM_TimingTypeDef SDRAM_Timing{};
 
