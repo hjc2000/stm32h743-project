@@ -1,3 +1,5 @@
+$ErrorActionPreference = "Stop"
+
 # 项目参数
 $project_name = "test"
 $cmake_config = "gcc-debug"
