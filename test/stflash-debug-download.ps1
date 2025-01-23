@@ -37,14 +37,20 @@ finally
 Push-Location $install_path
 try
 {
-	$is_newer = is-file-newer-than-reference.ps1 `
-		-TargetFilePath "$install_path/bin/${project_name}.elf" `
-		-ReferenceFilePath "$install_path/bin/${project_name}.bin"
-
-	if (-not $is_newer)
+	if (Test-Path -Path "$install_path/bin/${project_name}.bin")
 	{
-		Write-Host "此 elf 已经是最新的，不需要下载。"
-		return
+		# bin 文件存在
+		$is_newer = is-file-newer-than-reference.ps1 `
+			-TargetFilePath "$install_path/bin/${project_name}.elf" `
+			-ReferenceFilePath "$install_path/bin/${project_name}.bin"
+
+		if (-not $is_newer)
+		{
+			# bin 文件存在，则只有 elf 比 bin 更新时才需要重新生成 bin 并下载。
+			# 所以直接返回。
+			Write-Host "此 elf 已经是最新的，不需要下载。"
+			return
+		}
 	}
 
 	arm-none-eabi-objcopy -O binary `
