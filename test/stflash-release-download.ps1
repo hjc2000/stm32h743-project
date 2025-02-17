@@ -2,11 +2,12 @@ $ErrorActionPreference = "Stop"
 
 # 项目参数
 $project_name = "test"
-$cmake_config = "gcc-release"
+$cmake_config = "arm-none-eabi-cortex-m7-release"
+$platform = "arm-none-eabi-cortex-m7"
 $project_path = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
 $workspace_path = Split-Path $project_path -Parent
-$build_path = "$workspace_path/out/build"
-$install_path = "$workspace_path/out/install"
+$build_path = "$workspace_path/jc_build"
+$install_path = "$env:cpp_lib_build_scripts_path/${platform}/.libs/${project_name}"
 
 # 开始操作
 New-Item -Path $build_path -ItemType Directory -Force
