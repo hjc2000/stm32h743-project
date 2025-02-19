@@ -1,4 +1,3 @@
-#include <atomic>
 #include <base/net/ethernet/EthernetFrameReader.h>
 #include <base/net/ethernet/EthernetFrameWriter.h>
 #include <base/net/profinet/dcp/DcpHelloRequestWriter.h>
@@ -34,11 +33,8 @@
 #include <lwip-wrapper/NetifSlot.h>
 #include <lwip-wrapper/NetifWrapper.h>
 #include <memory>
-#include <stdexcept>
 #include <stdint.h>
 #include <TestExtiKey.h>
-
-#pragma region 测试函数
 
 void TestLittleFs()
 {
@@ -272,7 +268,6 @@ void TestDCP()
 void freertos_demo();
 int p_net_sample_app_main();
 void EhternetInput(base::ReadOnlySpan const &span);
-#pragma endregion
 
 /// @brief 起始任务。
 void InitialTask()
