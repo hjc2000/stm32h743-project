@@ -247,20 +247,20 @@ void TestDCP()
 	{
 		base::Span buffer_span{buffer.get(), 1500};
 		base::profinet::DcpHelloRequestWriter hello{buffer_span};
-		hello.SetSourceMac(mac);
-		hello.SetXid(1);
-		hello.PutNameOfStationBlock("rt-labs-dev");
+		hello.WriteSourceMac(mac);
+		hello.WriteXid(1);
+		hello.WriteNameOfStationBlock("rt-labs-dev");
 
-		hello.PutIPAddressInfomationBlock(false,
-										  netif_wrapper->IPAddress(),
-										  netif_wrapper->Gateway(),
-										  netif_wrapper->Netmask());
+		hello.WriteIPAddressInfomationBlock(false,
+											netif_wrapper->IPAddress(),
+											netif_wrapper->Gateway(),
+											netif_wrapper->Netmask());
 
-		hello.PutIdBlock(0x0493, 0x0002);
-		hello.PutOemIdBlock(0xcafe, 0xee02);
-		hello.PutDeviceInitiativeBlock(true);
+		hello.WriteIdBlock(0x0493, 0x0002);
+		hello.WriteOemIdBlock(0xcafe, 0xee02);
+		hello.WriteDeviceInitiativeBlock(true);
 
-		bsp::di::ethernet::EthernetPort().Send(hello.ValidDataSpan());
+		bsp::di::ethernet::EthernetPort().Send(hello.SpanForSending());
 		bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
 	}
 }
