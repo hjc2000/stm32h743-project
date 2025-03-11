@@ -36,6 +36,8 @@
 #include <stdint.h>
 #include <TestExtiKey.h>
 
+/* #region 测试函数 */
+
 void TestLittleFs()
 {
 	Lfs::LfsFlashPort port{DI_FlashCollection().Get("internal-flash")};
@@ -269,7 +271,12 @@ void freertos_demo();
 int p_net_sample_app_main();
 void EhternetInput(base::ReadOnlySpan const &span);
 
+/* #endregion */
+
+///
 /// @brief 起始任务。
+///
+///
 void InitialTask()
 {
 	bsp::sdram::chip::W9825G6KH_6 sdram{bsp::di::sdram::SDRAMController()};
