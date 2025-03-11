@@ -54,19 +54,23 @@ try
 		}
 	}
 
-	arm-none-eabi-objcopy -O binary `
-		"$install_path/bin/${project_name}.elf" `
+	$objcopy_cmd = @(
+		"$env:cpp_lib_build_scripts_path/.toolchain/arm-none-eabi-14.2/bin/arm-none-eabi-objcopy"
+		"-O binary"
+		"$install_path/bin/${project_name}.elf"
 		"$install_path/bin/${project_name}.bin"
+	)
+	$objcopy_cmd = $objcopy_cmd -join " "
+	Invoke-Expression $objcopy_cmd
 
-	$jflash_arg_array = @(
-		"-openprj${workspace_path}/jflash-project.jflash",
-		"-open${install_path}/bin/${project_name}.bin,0x8000000",
+	$jflash_arg = @(
+		"-openprj${workspace_path} / jflash-project.jflash",
+		"-open${install_path}/bin/${project_name}.bin, 0x8000000",
 		"-auto",
 		"-startapp",
 		"-exit"
 	)
-
-	$jflash_arg = $jflash_arg_array -join " "
+	$jflash_arg = $jflash_arg -join " "
 	$jflash_arg = $jflash_arg.Trim()
 	Write-Host $jflash_arg
 
