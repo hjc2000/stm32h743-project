@@ -1,21 +1,6 @@
-#include <bsp-interface/di/console.h>
-#include <bsp-interface/di/delayer.h>
-#include <bsp-interface/di/ethernet.h>
-#include <bsp-interface/di/interrupt.h>
-#include <bsp-interface/di/task.h>
-#include <FreeRTOS.h>
-#include <lwip-wrapper/NetifWrapper.h>
-#include <lwip/api.h>
-#include <lwip/opt.h>
-#include <lwip/sockets.h>
-#include <lwip/sys.h>
-#include <lwipopts.h>
-#include <queue.h>
-#include <semphr.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <task.h>
+#include "bsp-interface/di/delayer.h"
+#include "bsp-interface/di/task.h"
+#include "lwip/sockets.h"
 
 void freertos_demo()
 {
