@@ -15,8 +15,6 @@
 #include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
-#include "memory"
-#include "stdint.h"
 
 /* #region 测试函数 */
 
