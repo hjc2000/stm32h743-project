@@ -1,8 +1,8 @@
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
 #include "base/RentedPtrFactory.h"
+#include "base/task/delay.h"
 #include "bsp-interface/di/console.h"
-#include "bsp-interface/di/delayer.h"
 #include "bsp-interface/di/ethernet.h"
 #include "bsp-interface/di/heap.h"
 #include "bsp-interface/di/led.h"
@@ -243,7 +243,7 @@ void TestDCP()
 		hello.WriteDeviceInitiativeBlock(true);
 
 		bsp::di::ethernet::EthernetPort().Send(hello.SpanForSending());
-		bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
+		base::Delay(std::chrono::milliseconds{1000});
 	}
 }
 
@@ -275,7 +275,7 @@ void InitialTask()
 			{
 				bsp::di::led::GreenDigitalLed().Toggle();
 				bsp::di::Console().WriteLine(bsp::di::sdram::SDRAMController().Timing());
-				bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
+				base::Delay(std::chrono::milliseconds{1000});
 			}
 		});
 

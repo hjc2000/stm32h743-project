@@ -1,4 +1,4 @@
-#include "bsp-interface/di/delayer.h"
+#include "base/task/delay.h"
 #include "bsp-interface/di/task.h"
 #include "lwip/sockets.h"
 
@@ -29,7 +29,7 @@ void freertos_demo()
 											 (sockaddr *)&local_info, // 接收端地址信息
 											 sizeof(local_info));     // 接收端地址信息大小
 
-									  bsp::di::Delayer().Delay(std::chrono::milliseconds{100});
+									  base::Delay(std::chrono::milliseconds{100});
 								  }
 							  });
 

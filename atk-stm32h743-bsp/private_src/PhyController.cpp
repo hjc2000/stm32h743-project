@@ -1,5 +1,5 @@
 #include "PhyController.h"
-#include <bsp-interface/di/delayer.h>
+#include "base/task/delay.h"
 #include <bsp-interface/di/expanded_io.h>
 
 uint32_t bsp::PhyController::ReadRegister(uint32_t register_index)
@@ -20,9 +20,9 @@ void bsp::PhyController::HardwareReset()
 
 	// 硬件复位
 	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0);
-	bsp::di::Delayer().Delay(std::chrono::milliseconds{100});
+	base::Delay(std::chrono::milliseconds{100});
 
 	// 复位结束
 	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
-	bsp::di::Delayer().Delay(std::chrono::milliseconds{100});
+	base::Delay(std::chrono::milliseconds{100});
 }

@@ -1,10 +1,10 @@
 #include "EthernetPort.h"
+#include "base/task/delay.h"
 #include <base/container/Dictionary.h>
 #include <base/string/define.h>
 #include <base/string/ToHexString.h>
 #include <base/unit/Mbps.h>
 #include <bsp-interface/di/console.h>
-#include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/system_time.h>
@@ -96,7 +96,7 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 									  }
 
 									  last_loop_is_linked = is_linked;
-									  bsp::di::Delayer().Delay(std::chrono::milliseconds{200});
+									  base::Delay(std::chrono::milliseconds{200});
 								  }
 							  });
 }

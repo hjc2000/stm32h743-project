@@ -1,10 +1,10 @@
 #include "bsp.h"
+#include "base/task/delay.h"
 #include <atomic>
 #include <base/container/Dictionary.h>
 #include <base/string/ToHexString.h>
 #include <bsp-interface/di/clock.h>
 #include <bsp-interface/di/console.h>
-#include <bsp-interface/di/delayer.h>
 #include <bsp-interface/di/flash.h>
 #include <bsp-interface/di/key.h>
 #include <bsp-interface/di/led.h>
@@ -34,7 +34,7 @@ void TestUniversalTimer1()
 	uint32_t value = 500 / 2;
 	while (true)
 	{
-		bsp::di::Delayer().Delay(std::chrono::milliseconds{1000});
+		base::Delay(std::chrono::milliseconds{1000});
 		value += config.Period() + config.Period() / 4;
 		value %= config.Period();
 		compare_output_config.SetPulse(value);
