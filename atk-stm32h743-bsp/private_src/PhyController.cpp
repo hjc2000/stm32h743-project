@@ -20,9 +20,9 @@ void bsp::PhyController::HardwareReset()
 
 	// 硬件复位
 	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 0);
-	base::Delay(std::chrono::milliseconds{100});
+	base::task::Delay(std::chrono::milliseconds{100});
 
 	// 复位结束
 	DI_ExpandedIoPortCollection().Get("ex_io")->WriteBit(7, 1);
-	base::Delay(std::chrono::milliseconds{100});
+	base::task::Delay(std::chrono::milliseconds{100});
 }

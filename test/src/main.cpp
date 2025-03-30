@@ -1,5 +1,6 @@
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
+#include "base/peripheral/ISerial.h"
 #include "base/RentedPtrFactory.h"
 #include "base/task/delay.h"
 #include "bsp-interface/di/console.h"
@@ -8,7 +9,6 @@
 #include "bsp-interface/di/led.h"
 #include "bsp-interface/di/reset_initialize.h"
 #include "bsp-interface/di/sdram.h"
-#include "bsp-interface/di/serial.h"
 #include "bsp-interface/di/task.h"
 #include "bsp-interface/sdram/chip/W9825G6KH_6.h"
 #include "ff.h"
@@ -243,7 +243,7 @@ void TestDCP()
 		hello.WriteDeviceInitiativeBlock(true);
 
 		bsp::di::ethernet::EthernetPort().Send(hello.SpanForSending());
-		base::Delay(std::chrono::milliseconds{1000});
+		base::task::Delay(std::chrono::milliseconds{1000});
 	}
 }
 
@@ -263,8 +263,8 @@ void InitialTask()
 	sdram.Open();
 	bsp::di::heap::AddHeap(sdram.Span());
 
-	bsp::di::serial::Serial().Open();
-	bsp::di::Console().SetOutStream(base::RentedPtrFactory::Create(&bsp::di::serial::Serial()));
+	base::serial::MainSerial().Open();
+	bsp::di::Console().SetOutStream(base::RentedPtrFactory::Create(&base::serial::MainSerial()));
 
 	bsp::di::task::CreateTask(
 		1024 * 2,
@@ -275,7 +275,7 @@ void InitialTask()
 			{
 				bsp::di::led::GreenDigitalLed().Toggle();
 				bsp::di::Console().WriteLine(bsp::di::sdram::SDRAMController().Timing());
-				base::Delay(std::chrono::milliseconds{1000});
+				base::task::Delay(std::chrono::milliseconds{1000});
 			}
 		});
 
