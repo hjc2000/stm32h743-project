@@ -13,6 +13,4 @@ if(1)
 endif()
 
 # 包含子项目
-add_subdirectory(${CMAKE_SOURCE_DIR}/stm32h743-hal-wrapper)
-add_subdirectory(${CMAKE_SOURCE_DIR}/atk-stm32h743-bsp)
 add_subdirectory(${CMAKE_SOURCE_DIR}/test)

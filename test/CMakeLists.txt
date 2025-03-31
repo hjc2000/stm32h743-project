@@ -13,27 +13,30 @@ if(1)
 endif()
 
 
-include(target_import_freertos)
-include(target_import_task)
-include(target_import_FatFs)
 include(target_import_littlefs)
 include(target_import_system_call)
 include(target_import_lwip)
 include(target_import_stm32h743iit6_p_net)
-
+include(target_import_FatFs)
+include(target_import_lwip)
+include(target_import_lwip_wrapper)
+include(target_import_task)
+include(target_import_stm32h743iit6_hal)
 
 add_executable(${ProjectName})
 target_import_src(${ProjectName})
 
 target_link_libraries(${ProjectName} PUBLIC -Wl,--start-group)
-target_import_freertos(${ProjectName} PUBLIC)
-target_import_task(${ProjectName} PUBLIC)
-target_import_FatFs(${ProjectName} PUBLIC)
 target_import_littlefs(${ProjectName} PUBLIC)
 target_import_system_call(${ProjectName} PUBLIC)
 target_import_lwip(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_p_net(${ProjectName} PUBLIC)
-target_link_libraries(${ProjectName} PUBLIC c m atk-stm32h743-bsp)
+target_import_FatFs(${ProjectName} PUBLIC)
+target_import_lwip(${ProjectName} PUBLIC)
+target_import_lwip_wrapper(${ProjectName} PUBLIC)
+target_import_task(${ProjectName} PUBLIC)
+target_import_stm32h743iit6_hal(${ProjectName} PUBLIC)
+target_link_libraries(${ProjectName} PUBLIC c m)
 target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
 
 add_custom_command(TARGET ${ProjectName} POST_BUILD
