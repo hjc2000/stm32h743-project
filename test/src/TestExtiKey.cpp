@@ -1,16 +1,16 @@
 #include "TestExtiKey.h"
-#include <bsp-interface/di/led.h>
+#include "base/peripheral/IDigitalLed.h"
 #include <ExtiWakeUpKey.h>
 
 void TestExtiKey()
 {
-	bsp::di::led::RedDigitalLed().TurnOn();
+	base::led::RedDigitalLed().TurnOn();
 	while (1)
 	{
 		if (bsp::ExtiWakeUpKey::Instance().IsPressed())
 		{
-			bsp::di::led::RedDigitalLed().Toggle();
-			bsp::di::led::GreenDigitalLed().Toggle();
+			base::led::RedDigitalLed().Toggle();
+			base::led::GreenDigitalLed().Toggle();
 			bsp::ExtiWakeUpKey::Instance().ClearPressedFlag();
 		}
 	}

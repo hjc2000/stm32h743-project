@@ -1,6 +1,6 @@
+#include "base/peripheral/IDigitalLed.h"
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/interrupt.h>
-#include <bsp-interface/di/led.h>
 #include <bsp-interface/TaskSingletonGetter.h>
 #include <DigitalLed.h>
 
@@ -15,7 +15,7 @@ namespace
 			_dic.Add("green_led", &bsp::GreenDigitalLed::Instance());
 		}
 
-		base::Dictionary<std::string, bsp::IDigitalLed *> _dic;
+		base::Dictionary<std::string, base::led::IDigitalLed *> _dic;
 	};
 
 	/// @brief 单例获取器
@@ -32,18 +32,18 @@ namespace
 
 /// @brief 数字 LED 灯集合。
 /// @return
-base::IDictionary<std::string, bsp::IDigitalLed *> const &bsp::di::led::DigitalLedCollection()
+base::IDictionary<std::string, base::led::IDigitalLed *> const &base::led::DigitalLedCollection()
 {
 	Getter g;
 	return g.Instance()._dic;
 }
 
-bsp::IDigitalLed &bsp::di::led::RedDigitalLed()
+base::led::IDigitalLed &base::led::RedDigitalLed()
 {
 	return bsp::RedDigitalLed::Instance();
 }
 
-bsp::IDigitalLed &bsp::di::led::GreenDigitalLed()
+base::led::IDigitalLed &base::led::GreenDigitalLed()
 {
 	return bsp::GreenDigitalLed::Instance();
 }

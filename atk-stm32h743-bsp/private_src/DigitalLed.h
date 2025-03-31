@@ -1,15 +1,15 @@
 #pragma once
+#include "base/peripheral/IDigitalLed.h"
 #include <base/define.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
-#include <bsp-interface/IDigitalLed.h>
 #include <bsp-interface/TaskSingletonGetter.h>
 
 namespace bsp
 {
 	/// @brief 红色 LED
 	class RedDigitalLed :
-		public bsp::IDigitalLed
+		public base::led::IDigitalLed
 	{
 	private:
 		RedDigitalLed()
@@ -38,13 +38,35 @@ namespace bsp
 			return g.Instance();
 		}
 
-		void TurnOn() override;
-		void TurnOff() override;
-		void Toggle() override;
+		///
+		/// @brief 打开 LED.
+		///
+		///
+		virtual void TurnOn() override;
+
+		///
+		/// @brief 关闭 LED.
+		///
+		///
+		virtual void TurnOff() override;
+
+		///
+		/// @brief 翻转 LED.
+		///
+		///
+		virtual void Toggle() override;
+
+		///
+		/// @brief LED 灯的状态。
+		///
+		/// @return base::led::State
+		///
+		virtual base::led::State State() override;
 	};
 
 	/// @brief 绿色 LED
-	class GreenDigitalLed : public bsp::IDigitalLed
+	class GreenDigitalLed :
+		public base::led::IDigitalLed
 	{
 	private:
 		GreenDigitalLed()
@@ -73,8 +95,29 @@ namespace bsp
 			return g.Instance();
 		}
 
-		void TurnOn() override;
-		void TurnOff() override;
-		void Toggle() override;
+		///
+		/// @brief 打开 LED.
+		///
+		///
+		virtual void TurnOn() override;
+
+		///
+		/// @brief 关闭 LED.
+		///
+		///
+		virtual void TurnOff() override;
+
+		///
+		/// @brief 翻转 LED.
+		///
+		///
+		virtual void Toggle() override;
+
+		///
+		/// @brief LED 灯的状态。
+		///
+		/// @return base::led::State
+		///
+		virtual base::led::State State() override;
 	};
 } // namespace bsp

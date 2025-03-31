@@ -1,12 +1,12 @@
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
+#include "base/peripheral/IDigitalLed.h"
 #include "base/peripheral/ISerial.h"
 #include "base/RentedPtrFactory.h"
 #include "base/task/delay.h"
 #include "bsp-interface/di/console.h"
 #include "bsp-interface/di/ethernet.h"
 #include "bsp-interface/di/heap.h"
-#include "bsp-interface/di/led.h"
 #include "bsp-interface/di/reset_initialize.h"
 #include "bsp-interface/di/sdram.h"
 #include "bsp-interface/di/task.h"
@@ -270,10 +270,10 @@ void InitialTask()
 		1024 * 2,
 		[]()
 		{
-			bsp::di::led::RedDigitalLed().TurnOff();
+			base::led::RedDigitalLed().TurnOff();
 			while (true)
 			{
-				bsp::di::led::GreenDigitalLed().Toggle();
+				base::led::GreenDigitalLed().Toggle();
 				bsp::di::Console().WriteLine(bsp::di::sdram::SDRAMController().Timing());
 				base::task::Delay(std::chrono::milliseconds{1000});
 			}
