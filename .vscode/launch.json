@@ -7,13 +7,14 @@
 		{
 			"name": "ST-Link Debug",
 			"preLaunchTask": "stflash-debug-download",
-			"cwd": "${workspaceFolder}/out/install/bin/",
-			"executable": "${workspaceFolder}/out/install/bin/test.elf",
+			"cwd": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/test/bin",
+			"executable": "test.elf",
 			"request": "launch",
 			"type": "cortex-debug",
 			"runToEntryPoint": "main",
 			"servertype": "stlink",
 			"showDevDebugOutput": "vscode",
+			"armToolchainPath": "${env:cpp_lib_build_scripts_path}/.toolchain/arm-none-eabi-14.2/bin",
 			"liveWatch": {
 				"enabled": true,
 				"samplesPerSecond": 4
@@ -22,14 +23,15 @@
 		{
 			"name": "JLink Debug",
 			"preLaunchTask": "jlink-debug-download",
-			"cwd": "${workspaceFolder}/out/install/bin/",
-			"executable": "${workspaceFolder}/out/install/bin/test.elf",
+			"cwd": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/test/bin",
+			"executable": "test.elf",
 			"request": "launch",
 			"type": "cortex-debug",
 			"runToEntryPoint": "main",
 			"servertype": "jlink",
 			"showDevDebugOutput": "vscode",
 			"device": "STM32H743II",
+			"armToolchainPath": "${env:cpp_lib_build_scripts_path}/.toolchain/arm-none-eabi-14.2/bin",
 			"liveWatch": {
 				"enabled": true,
 				"samplesPerSecond": 4

@@ -313,11 +313,14 @@ int main(void)
 	 * 据说 main 函数被认为是只执行一次后就应该被删除的初始任务，所以它的栈理应被挪作他用。
 	 */
 
-	bsp::di::task::CreateTask(1024 * 2,
+	bsp::di::task::CreateTask(512,
 							  []()
 							  {
-								  InitialTask();
+								  //   InitialTask();
 							  });
+
+	base::led::GreenDigitalLed().TurnOn();
+	base::led::RedDigitalLed().TurnOn();
 
 	bsp::di::task::StartScheduler();
 }
