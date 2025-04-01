@@ -14,8 +14,6 @@ endif()
 
 
 include(target_import_stm32h743iit6_hal)
-include(target_import_stm32h743iit6_interrupt)
-include(target_import_stm32h743iit6_flash)
 include(target_import_stm32h743iit6_peripherals)
 include(target_import_bsp_interface)
 include(target_import_freertos)
@@ -27,8 +25,6 @@ add_library(${ProjectName})
 target_import_src(${ProjectName})
 
 target_import_stm32h743iit6_hal(${ProjectName} PUBLIC)
-target_import_stm32h743iit6_interrupt(${ProjectName} PUBLIC)
-target_import_stm32h743iit6_flash(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_peripherals(${ProjectName} PUBLIC)
 target_import_bsp_interface(${ProjectName} PUBLIC)
 target_import_freertos(${ProjectName} PUBLIC)
