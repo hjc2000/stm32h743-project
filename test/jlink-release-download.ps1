@@ -1,10 +1,11 @@
 $ErrorActionPreference = "Stop"
 
 # 项目参数
-$project_name = "stm32h743-project"
+$project_name = "test"
 $cmake_config = "arm-none-eabi-cortex-m7-release"
 $platform = "arm-none-eabi-cortex-m7"
-$workspace_path = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$project_path = Split-Path -Path $MyInvocation.MyCommand.Definition -Parent
+$workspace_path = Split-Path $project_path -Parent
 $build_path = "$workspace_path/jc_build"
 $install_path = "$env:cpp_lib_build_scripts_path/${platform}/.libs/${project_name}"
 

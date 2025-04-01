@@ -2,18 +2,6 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "ninja-install",
-			"type": "shell",
-			"command": "ninja",
-			"args": [
-				"install"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/jc_build"
-			},
-			"problemMatcher": []
-		},
-		{
 			"label": "stflash-release-download",
 			"type": "shell",
 			"command": "pwsh",
@@ -21,7 +9,7 @@
 				"./stflash-release-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}"
+				"cwd": "${workspaceFolder}/test"
 			},
 			"problemMatcher": []
 		},
@@ -33,7 +21,7 @@
 				"./stflash-debug-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}"
+				"cwd": "${workspaceFolder}/test"
 			},
 			"problemMatcher": []
 		},
@@ -45,7 +33,7 @@
 				"./jlink-debug-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}"
+				"cwd": "${workspaceFolder}/test"
 			},
 			"problemMatcher": []
 		},
@@ -57,7 +45,7 @@
 				"./jlink-release-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}"
+				"cwd": "${workspaceFolder}/test"
 			},
 			"problemMatcher": []
 		},
