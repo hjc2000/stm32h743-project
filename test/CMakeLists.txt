@@ -34,6 +34,7 @@ target_import_system_call(${ProjectName} PUBLIC)
 target_import_lwip(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_p_net(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_hal(${ProjectName} PUBLIC)
+target_link_libraries(${ProjectName} PUBLIC c stdc++)
 target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
 target_link_libraries(${ProjectName} PUBLIC atk-stm32h743-bsp)
 
