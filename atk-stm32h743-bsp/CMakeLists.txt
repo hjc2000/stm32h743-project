@@ -22,7 +22,6 @@ include(target_import_FatFs)
 include(target_import_stm32h743iit6_ethternet)
 include(target_import_lwip)
 include(target_import_lwip_wrapper)
-include(target_import_stm32h743iit6_sdram)
 
 
 add_library(${ProjectName})
@@ -36,5 +35,4 @@ target_import_FatFs(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_ethternet(${ProjectName} PUBLIC)
 target_import_lwip(${ProjectName} PUBLIC)
 target_import_lwip_wrapper(${ProjectName} PUBLIC)
-target_import_stm32h743iit6_sdram(${ProjectName} PUBLIC)
 target_link_libraries(${ProjectName} PRIVATE stm32h743-hal-wrapper)
