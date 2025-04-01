@@ -33,7 +33,7 @@ target_import_littlefs(${ProjectName} PUBLIC)
 target_import_system_call(${ProjectName} PUBLIC)
 target_import_lwip(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_p_net(${ProjectName} PUBLIC)
-target_link_libraries(${ProjectName} PUBLIC c m atk-stm32h743-bsp)
+target_link_libraries(${ProjectName} PUBLIC atk-stm32h743-bsp)
 target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
 
 add_custom_command(TARGET ${ProjectName} POST_BUILD
