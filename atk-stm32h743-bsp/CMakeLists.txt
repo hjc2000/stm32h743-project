@@ -13,6 +13,7 @@ if(1)
 endif()
 
 
+include(target_import_stm32h743iit6_isr)
 include(target_import_bsp_interface)
 include(target_import_freertos)
 include(target_import_freertos_osal)
@@ -26,6 +27,7 @@ include(target_import_lwip_wrapper)
 
 add_library(${ProjectName})
 target_import_src(${ProjectName})
+target_import_stm32h743iit6_isr(${ProjectName} PUBLIC)
 target_import_bsp_interface(${ProjectName} PUBLIC)
 target_import_freertos(${ProjectName} PUBLIC)
 target_import_freertos_osal(${ProjectName} PUBLIC)
