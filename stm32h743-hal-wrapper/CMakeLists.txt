@@ -13,14 +13,6 @@ if(1)
 endif()
 
 
-include(target_import_stm32h743iit6_hal)
-include(target_import_stm32h743iit6_peripherals)
-include(target_import_bsp_interface)
-include(target_import_freertos)
-include(target_import_base)
-include(target_import_task)
-include(target_import_freertos_osal)
-
 add_library(${ProjectName})
 target_import_src(${ProjectName})
 

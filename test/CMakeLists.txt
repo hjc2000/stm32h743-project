@@ -13,16 +13,6 @@ if(1)
 endif()
 
 
-include(target_import_freertos)
-include(target_import_task)
-include(target_import_FatFs)
-include(target_import_littlefs)
-include(target_import_system_call)
-include(target_import_lwip)
-include(target_import_stm32h743iit6_p_net)
-include(target_import_stm32h743iit6_isr)
-
-
 add_executable(${ProjectName})
 target_import_src(${ProjectName})
 
