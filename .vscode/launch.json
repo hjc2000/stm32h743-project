@@ -14,6 +14,7 @@
 			"runToEntryPoint": "main",
 			"servertype": "stlink",
 			"showDevDebugOutput": "vscode",
+			"armToolchainPath": "${env:cpp_lib_build_scripts_path}/.toolchain/arm-none-eabi-14.2/bin",
 			"liveWatch": {
 				"enabled": true,
 				"samplesPerSecond": 4
@@ -30,6 +31,7 @@
 			"servertype": "jlink",
 			"showDevDebugOutput": "vscode",
 			"device": "STM32H743II",
+			"armToolchainPath": "${env:cpp_lib_build_scripts_path}/.toolchain/arm-none-eabi-14.2/bin",
 			"liveWatch": {
 				"enabled": true,
 				"samplesPerSecond": 4
