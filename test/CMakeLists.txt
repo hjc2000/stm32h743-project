@@ -31,14 +31,4 @@ target_link_libraries(${ProjectName} PUBLIC c stdc++)
 target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
 target_link_libraries(${ProjectName} PUBLIC atk-stm32h743-bsp)
 
-# region 测量 elf 的各个段的大小
-
-if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/${ProjectName}.elf")
-	execute_process(COMMAND ${CMAKE_SIZE} "${CMAKE_CURRENT_BINARY_DIR}/${ProjectName}.elf"
-					WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
-endif()
-
-add_custom_command(TARGET ${ProjectName} POST_BUILD
-				   COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${ProjectName}>)
-
-# endregion
+target_obj_size(${ProjectName})
