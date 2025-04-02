@@ -30,5 +30,3 @@ target_import_reload_new(${ProjectName} PUBLIC)
 target_link_libraries(${ProjectName} PUBLIC c stdc++)
 target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
 target_link_libraries(${ProjectName} PUBLIC atk-stm32h743-bsp)
-
-target_obj_size(${ProjectName})
