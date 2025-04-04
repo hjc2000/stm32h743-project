@@ -48,7 +48,7 @@ try
 		{
 			# bin 文件存在，则只有 elf 比 bin 更新时才需要重新生成 bin 并下载。
 			# 所以直接返回。
-			Write-Host "此 elf 已经是最新的，不需要下载。"
+			Write-Host "不需要下载。"
 			return
 		}
 	}
