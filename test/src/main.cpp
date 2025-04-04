@@ -11,7 +11,6 @@
 #include "bsp-interface/di/sdram.h"
 #include "bsp-interface/di/task.h"
 #include "bsp-interface/sdram/chip/W9825G6KH_6.h"
-#include "bsp-interface/test/TestSerial.h"
 #include "ff.h"
 #include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
