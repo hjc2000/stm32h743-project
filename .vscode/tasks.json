@@ -6,10 +6,10 @@
 			"type": "shell",
 			"command": "pwsh",
 			"args": [
-				"./stflash-release-download.ps1"
+				"script/stflash-release-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}/test"
+				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": []
 		},
@@ -18,10 +18,10 @@
 			"type": "shell",
 			"command": "pwsh",
 			"args": [
-				"./stflash-debug-download.ps1"
+				"script/stflash-debug-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}/test"
+				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": []
 		},
@@ -30,10 +30,10 @@
 			"type": "shell",
 			"command": "pwsh",
 			"args": [
-				"./jlink-debug-download.ps1"
+				"script/jlink-debug-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}/test"
+				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": []
 		},
@@ -42,10 +42,10 @@
 			"type": "shell",
 			"command": "pwsh",
 			"args": [
-				"./jlink-release-download.ps1"
+				"script/jlink-release-download.ps1"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}/test"
+				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": []
 		},
