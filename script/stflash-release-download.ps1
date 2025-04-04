@@ -71,6 +71,7 @@ try
 	st-flash --reset write "${install_path}/bin/${project_name}.bin" 0x8000000
 	if ($LASTEXITCODE)
 	{
+		try-remove-items.exe --paths "$install_path/bin/${project_name}.bin"
 		throw "将 ${project_name}.bin 下载到单片机失败。"
 	}
 
