@@ -15,6 +15,7 @@ endif()
 
 add_executable(${ProjectName})
 target_import_src(${ProjectName})
+
 target_import_reload_new(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_isr(${ProjectName} PUBLIC)
 target_import_system_call(${ProjectName} PUBLIC)
