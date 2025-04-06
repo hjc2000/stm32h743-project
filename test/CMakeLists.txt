@@ -24,13 +24,10 @@ target_import_FatFs(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_p_net(${ProjectName} PUBLIC)
 target_import_lwip(${ProjectName} PUBLIC)
 target_import_lwip_wrapper(${ProjectName} PUBLIC)
-
-target_link_libraries(${ProjectName} PUBLIC -Wl,--start-group)
 target_import_freertos(${ProjectName} PUBLIC)
 target_import_littlefs(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_hal(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_peripherals(${ProjectName} PUBLIC)
-target_link_libraries(${ProjectName} PUBLIC -Wl,--end-group)
 target_link_libraries(${ProjectName} PUBLIC atk-stm32h743-bsp)
 target_link_libraries(${ProjectName} PUBLIC c stdc++)
 
