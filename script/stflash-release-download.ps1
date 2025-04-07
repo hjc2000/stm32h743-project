@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 # region 项目参数
 
-$project_name = "test"
+$project_name = "stm32h743-project"
 $cmake_config = "arm-none-eabi-cortex-m7-release"
 $platform = "arm-none-eabi-cortex-m7"
 $workspace_path = Get-Location

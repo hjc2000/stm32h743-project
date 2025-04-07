@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.8)
 
 if(1)
 	get_filename_component(CURRENT_DIR_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
@@ -12,5 +12,24 @@ if(1)
 	set(CMAKE_C_STANDARD 17)
 endif()
 
-# 包含子项目
-add_subdirectory(${CMAKE_SOURCE_DIR}/test)
+set(CMAKE_EXECUTABLE_SUFFIX ".elf")
+set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")
+
+add_executable(${ProjectName})
+target_import_src(${ProjectName})
+
+target_import_reload_new(${ProjectName} PUBLIC)
+target_import_stm32h743iit6_isr(${ProjectName} PUBLIC)
+target_import_system_call(${ProjectName} PUBLIC)
+target_import_task(${ProjectName} PUBLIC)
+target_import_FatFs(${ProjectName} PUBLIC)
+target_import_stm32h743iit6_p_net(${ProjectName} PUBLIC)
+target_import_lwip(${ProjectName} PUBLIC)
+target_import_lwip_wrapper(${ProjectName} PUBLIC)
+target_import_freertos(${ProjectName} PUBLIC)
+target_import_littlefs(${ProjectName} PUBLIC)
+target_import_stm32h743iit6_hal(${ProjectName} PUBLIC)
+target_import_stm32h743iit6_peripherals(${ProjectName} PUBLIC)
+target_link_libraries(${ProjectName} PUBLIC c stdc++)
+
+target_obj_size(${ProjectName})
