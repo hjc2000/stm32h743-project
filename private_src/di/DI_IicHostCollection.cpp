@@ -1,13 +1,13 @@
+#include "base/define.h"
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/iic/GpioSoftwareIicHost.h>
 #include <bsp-interface/iic/MutexIicHost.h>
-#include <bsp-interface/TaskSingletonGetter.h>
 
 namespace
 {
-	class Initializer
+	class DictionaryProvider
 	{
 	private:
 		/// @brief 连接着 EEROM 芯片和 PCF8574T 芯片的 GPIO 模拟 IIC 主机接口。
@@ -20,7 +20,7 @@ namespace
 		}
 
 	public:
-		Initializer()
+		DictionaryProvider()
 		{
 			Add(_mutex_gpio_iic_host);
 		}
@@ -28,19 +28,12 @@ namespace
 		base::Dictionary<std::string, bsp::IIicHost *> _dic;
 	};
 
-	class Getter :
-		public bsp::TaskSingletonGetter<Initializer>
-	{
-	public:
-		std::unique_ptr<Initializer> Create() override
-		{
-			return std::unique_ptr<Initializer>{new Initializer{}};
-		}
-	};
 } // namespace
+
+PREINIT(DI_IicHostCollection)
 
 base::IDictionary<std::string, bsp::IIicHost *> const &DI_IicHostCollection()
 {
-	Getter o;
-	return o.Instance()._dic;
+	static DictionaryProvider o;
+	return o._dic;
 }
