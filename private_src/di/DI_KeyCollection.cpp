@@ -1,15 +1,15 @@
+#include "base/define.h"
 #include <AtkKey.h>
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/key.h>
-#include <bsp-interface/TaskSingletonGetter.h>
 
 namespace
 {
-	class Initializer
+	class DictionaryProvider
 	{
 	public:
-		Initializer()
+		DictionaryProvider()
 		{
 			AddKey(&bsp::Key0::Instance());
 			AddKey(&bsp::Key1::Instance());
@@ -17,25 +17,18 @@ namespace
 
 		void AddKey(bsp::IKey *key)
 		{
-			_collection.Add(key->KeyName(), key);
+			_dic.Add(key->KeyName(), key);
 		}
 
-		base::Dictionary<std::string, bsp::IKey *> _collection;
+		base::Dictionary<std::string, bsp::IKey *> _dic;
 	};
 
-	class Getter :
-		public bsp::TaskSingletonGetter<Initializer>
-	{
-	public:
-		std::unique_ptr<Initializer> Create() override
-		{
-			return std::unique_ptr<Initializer>{new Initializer{}};
-		}
-	};
 } // namespace
+
+PREINIT(bsp::di::key::KeyCollection)
 
 base::IDictionary<std::string, bsp::IKey *> const &bsp::di::key::KeyCollection()
 {
-	Getter g;
-	return g.Instance()._collection;
+	static DictionaryProvider o;
+	return o._dic;
 }
