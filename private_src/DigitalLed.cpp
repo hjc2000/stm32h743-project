@@ -1,4 +1,5 @@
 #include "DigitalLed.h"
+#include "base/define.h"
 #include "base/peripheral/IDigitalLed.h"
 
 using namespace bsp;
@@ -63,4 +64,20 @@ base::led::State bsp::GreenDigitalLed::State()
 	}
 
 	return base::led::State::Off;
+}
+
+PREINIT(bsp::RedDigitalLed::Instance)
+
+bsp::RedDigitalLed &bsp::RedDigitalLed::Instance()
+{
+	static RedDigitalLed o{};
+	return o;
+}
+
+PREINIT(bsp::GreenDigitalLed::Instance)
+
+bsp::GreenDigitalLed &bsp::GreenDigitalLed::Instance()
+{
+	static GreenDigitalLed o;
+	return o;
 }

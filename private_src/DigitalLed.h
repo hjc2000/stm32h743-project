@@ -3,7 +3,6 @@
 #include <base/define.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
-#include <bsp-interface/TaskSingletonGetter.h>
 
 namespace bsp
 {
@@ -22,21 +21,7 @@ namespace bsp
 		bsp::IGpioPin *_pin = nullptr;
 
 	public:
-		static_function RedDigitalLed &Instance()
-		{
-			class Getter :
-				public bsp::TaskSingletonGetter<RedDigitalLed>
-			{
-			public:
-				std::unique_ptr<RedDigitalLed> Create() override
-				{
-					return std::unique_ptr<RedDigitalLed>{new RedDigitalLed{}};
-				}
-			};
-
-			Getter g;
-			return g.Instance();
-		}
+		static_function RedDigitalLed &Instance();
 
 		///
 		/// @brief 打开 LED.
@@ -79,21 +64,7 @@ namespace bsp
 		bsp::IGpioPin *_pin = nullptr;
 
 	public:
-		static_function GreenDigitalLed &Instance()
-		{
-			class Getter :
-				public bsp::TaskSingletonGetter<GreenDigitalLed>
-			{
-			public:
-				std::unique_ptr<GreenDigitalLed> Create() override
-				{
-					return std::unique_ptr<GreenDigitalLed>{new GreenDigitalLed{}};
-				}
-			};
-
-			Getter g;
-			return g.Instance();
-		}
+		static_function GreenDigitalLed &Instance();
 
 		///
 		/// @brief 打开 LED.
