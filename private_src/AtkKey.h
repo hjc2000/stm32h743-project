@@ -3,7 +3,6 @@
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/key/IKey.h>
-#include <bsp-interface/TaskSingletonGetter.h>
 
 namespace bsp
 {
@@ -16,21 +15,7 @@ namespace bsp
 	public:
 		Key0();
 
-		static_function Key0 &Instance()
-		{
-			class Getter :
-				public bsp::TaskSingletonGetter<Key0>
-			{
-			public:
-				std::unique_ptr<Key0> Create() override
-				{
-					return std::unique_ptr<Key0>{new Key0{}};
-				}
-			};
-
-			Getter g;
-			return g.Instance();
-		}
+		static_function Key0 &Instance();
 
 		std::string KeyName() override
 		{
@@ -49,21 +34,7 @@ namespace bsp
 	public:
 		Key1();
 
-		static_function Key1 &Instance()
-		{
-			class Getter :
-				public bsp::TaskSingletonGetter<Key1>
-			{
-			public:
-				std::unique_ptr<Key1> Create() override
-				{
-					return std::unique_ptr<Key1>{new Key1{}};
-				}
-			};
-
-			Getter g;
-			return g.Instance();
-		}
+		static_function Key1 &Instance();
 
 		std::string KeyName() override
 		{

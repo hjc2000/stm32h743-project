@@ -1,4 +1,5 @@
 #include "AtkKey.h"
+#include "base/define.h"
 
 #pragma region Key0
 
@@ -31,3 +32,19 @@ bool bsp::Key1::KeyIsDown()
 }
 
 #pragma endregion
+
+PREINIT(bsp::Key0::Instance)
+
+bsp::Key0 &bsp::Key0::Instance()
+{
+	static Key0 o{};
+	return o;
+}
+
+PREINIT(bsp::Key1::Instance)
+
+bsp::Key1 &bsp::Key1::Instance()
+{
+	static Key1 o{};
+	return o;
+}
