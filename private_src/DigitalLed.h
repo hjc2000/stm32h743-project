@@ -14,7 +14,10 @@ namespace bsp
 		RedDigitalLed()
 		{
 			_pin = DI_GpioPinCollection().Get("PB1");
-			_pin->OpenAsOutputMode(bsp::IGpioPinPullMode::PullUp, bsp::IGpioPinDriver::PushPull);
+
+			_pin->OpenAsOutputMode(bsp::IGpioPinPullMode::PullUp,
+								   bsp::IGpioPinDriver::PushPull);
+
 			TurnOff();
 		}
 
