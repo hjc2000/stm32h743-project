@@ -16,3 +16,19 @@ ExtiWakeUpKey::ExtiWakeUpKey()
 			_is_pressed = _pin->ReadPin();
 		});
 }
+
+bsp::ExtiWakeUpKey &bsp::ExtiWakeUpKey::Instance()
+{
+	class Getter :
+		public bsp::TaskSingletonGetter<ExtiWakeUpKey>
+	{
+	public:
+		std::unique_ptr<ExtiWakeUpKey> Create() override
+		{
+			return std::unique_ptr<ExtiWakeUpKey>{new ExtiWakeUpKey{}};
+		}
+	};
+
+	Getter g;
+	return g.Instance();
+}

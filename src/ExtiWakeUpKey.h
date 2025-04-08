@@ -10,7 +10,8 @@
 namespace bsp
 {
 	/// @brief 外部中断驱动的按钮，按钮的丝印是 wake up。
-	class ExtiWakeUpKey : public bsp::IEventDrivenKey
+	class ExtiWakeUpKey :
+		public bsp::IEventDrivenKey
 	{
 	private:
 		ExtiWakeUpKey();
@@ -20,21 +21,7 @@ namespace bsp
 		bsp::IGpioPin *_pin = nullptr;
 
 	public:
-		static_function ExtiWakeUpKey &Instance()
-		{
-			class Getter :
-				public bsp::TaskSingletonGetter<ExtiWakeUpKey>
-			{
-			public:
-				std::unique_ptr<ExtiWakeUpKey> Create() override
-				{
-					return std::unique_ptr<ExtiWakeUpKey>{new ExtiWakeUpKey{}};
-				}
-			};
-
-			Getter g;
-			return g.Instance();
-		}
+		static_function ExtiWakeUpKey &Instance();
 
 		bool IsPressed() override
 		{
