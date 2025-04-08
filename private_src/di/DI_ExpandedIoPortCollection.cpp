@@ -1,10 +1,10 @@
+#include "base/define.h"
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/expanded_io/PCF8574.h>
-#include <bsp-interface/TaskSingletonGetter.h>
 
 namespace
 {
@@ -36,7 +36,7 @@ namespace
 		ETH_RESET_IO = 7,
 	};
 
-	class Initializer
+	class DictionaryProvider
 	{
 	private:
 		bsp::PCF8574 _ex_io{
@@ -52,7 +52,7 @@ namespace
 		}
 
 	public:
-		Initializer()
+		DictionaryProvider()
 		{
 			Add(_ex_io);
 		}
@@ -60,19 +60,12 @@ namespace
 		base::Dictionary<std::string, bsp::IExpandedIoPort *> _dic;
 	};
 
-	class Getter :
-		public bsp::TaskSingletonGetter<Initializer>
-	{
-	public:
-		std::unique_ptr<Initializer> Create() override
-		{
-			return std::unique_ptr<Initializer>{new Initializer{}};
-		}
-	};
 } // namespace
+
+// PREINIT(DI_ExpandedIoPortCollection)
 
 base::IDictionary<std::string, bsp::IExpandedIoPort *> const &DI_ExpandedIoPortCollection()
 {
-	Getter o;
-	return o.Instance()._dic;
+	static DictionaryProvider o;
+	return o._dic;
 }
