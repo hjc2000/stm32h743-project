@@ -1,13 +1,13 @@
+#include "base/define.h"
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/eerom.h>
 #include <bsp-interface/di/iic.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/eerom/AT24C02_EEROM.h>
-#include <bsp-interface/TaskSingletonGetter.h>
 
 namespace
 {
-	class Initializer
+	class DictionaryProvider
 	{
 	private:
 		bsp::AT24C02_EEROM _at24c02{"at24c02", DI_IicHostCollection().Get("gpio_iic_host")};
@@ -18,7 +18,7 @@ namespace
 		}
 
 	public:
-		Initializer()
+		DictionaryProvider()
 		{
 			Add(&_at24c02);
 		}
@@ -26,21 +26,12 @@ namespace
 		base::Dictionary<std::string, bsp::IEEROM *> _dic;
 	};
 
-	class Getter :
-		public bsp::TaskSingletonGetter<Initializer>
-	{
-	public:
-		std::unique_ptr<Initializer> Create() override
-		{
-			return std::unique_ptr<Initializer>{new Initializer{}};
-		}
-	};
 } // namespace
 
-/// @brief EEROM 储存器集合。
-/// @return
+PREINIT(DI_EEROMCollection)
+
 base::IDictionary<std::string, bsp::IEEROM *> const &DI_EEROMCollection()
 {
-	Getter o;
-	return o.Instance()._dic;
+	static DictionaryProvider o;
+	return o._dic;
 }
