@@ -1,10 +1,6 @@
-#include "DigitalLed.h"
+#include "RedDigitalLed.h"
 #include "base/define.h"
 #include "base/peripheral/IDigitalLed.h"
-
-using namespace bsp;
-
-/* #region 红色 LED */
 
 bsp::RedDigitalLed::RedDigitalLed()
 {
@@ -50,5 +46,3 @@ base::led::State bsp::RedDigitalLed::State() const
 
 	return base::led::State::Off;
 }
-
-/* #endregion */

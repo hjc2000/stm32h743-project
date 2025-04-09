@@ -3,7 +3,7 @@
 #include "GreenDigitalLed.h"
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/interrupt.h>
-#include <DigitalLed.h>
+#include <RedDigitalLed.h>
 
 namespace
 {

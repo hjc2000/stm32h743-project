@@ -8,7 +8,6 @@
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/flash.h>
 #include <bsp-interface/di/key.h>
-#include <DigitalLed.h>
 #include <functional>
 #include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
 #include <hal.h>
