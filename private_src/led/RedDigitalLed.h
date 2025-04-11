@@ -1,8 +1,8 @@
 #pragma once
+#include "base/define.h"
+#include "base/peripheral/gpio_parameter.h"
+#include "base/peripheral/GpioPin.h"
 #include "base/peripheral/IDigitalLed.h"
-#include <base/define.h>
-#include <bsp-interface/di/gpio.h>
-#include <bsp-interface/di/interrupt.h>
 
 namespace bsp
 {
@@ -16,7 +16,7 @@ namespace bsp
 	private:
 		RedDigitalLed();
 
-		bsp::IGpioPin *_pin = nullptr;
+		base::gpio::GpioPin _pin{base::gpio::PortEnum::PortB, 1};
 
 	public:
 		static_function RedDigitalLed &Instance();
