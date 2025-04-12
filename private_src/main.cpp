@@ -1,8 +1,7 @@
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
 #include "base/peripheral/led/IDigitalLed.h"
-#include "base/peripheral/serial/ISerial.h"
-#include "base/RentedPtrFactory.h"
+#include "base/peripheral/serial/Serial.h"
 #include "base/task/delay.h"
 #include "bsp-interface/di/console.h"
 #include "bsp-interface/di/ethernet.h"
@@ -15,6 +14,7 @@
 #include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
+#include <memory>
 
 /* #region 测试函数 */
 
@@ -263,8 +263,9 @@ void InitialTask()
 	sdram.Open();
 	bsp::di::heap::AddHeap(sdram.Span());
 
-	base::serial::MainSerial().Start();
-	bsp::di::Console().SetOutStream(base::RentedPtrFactory::Create(&base::serial::MainSerial()));
+	std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
+	serial->Start();
+	bsp::di::Console().SetOutStream(serial);
 
 	bsp::di::task::CreateTask(
 		1024 * 2,
