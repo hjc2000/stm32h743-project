@@ -1,6 +1,6 @@
 #include "RedDigitalLed.h"
 #include "base/define.h"
-#include "base/peripheral/IDigitalLed.h"
+#include "base/peripheral/led/IDigitalLed.h"
 
 bsp::RedDigitalLed::RedDigitalLed()
 {

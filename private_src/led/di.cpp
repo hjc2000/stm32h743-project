@@ -1,5 +1,5 @@
 #include "base/define.h"
-#include "base/peripheral/IDigitalLed.h"
+#include "base/peripheral/led/IDigitalLed.h"
 #include "GreenDigitalLed.h"
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/interrupt.h>
