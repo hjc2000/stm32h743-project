@@ -1,7 +1,7 @@
 #pragma once
 #include "base/define.h"
-#include "base/peripheral/gpio_parameter.h"
-#include "base/peripheral/GpioPin.h"
+#include "base/peripheral/gpio/gpio_parameter.h"
+#include "base/peripheral/gpio/GpioPin.h"
 #include "base/peripheral/IDigitalLed.h"
 
 namespace bsp
