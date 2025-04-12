@@ -263,7 +263,7 @@ void InitialTask()
 	sdram.Open();
 	bsp::di::heap::AddHeap(sdram.Span());
 
-	base::serial::MainSerial().Open();
+	base::serial::MainSerial().Start();
 	bsp::di::Console().SetOutStream(base::RentedPtrFactory::Create(&base::serial::MainSerial()));
 
 	bsp::di::task::CreateTask(
