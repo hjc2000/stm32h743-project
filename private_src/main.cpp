@@ -1,7 +1,7 @@
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
 #include "base/peripheral/IDigitalLed.h"
-#include "base/peripheral/ISerial.h"
+#include "base/peripheral/serial/ISerial.h"
 #include "base/RentedPtrFactory.h"
 #include "base/task/delay.h"
 #include "bsp-interface/di/console.h"
