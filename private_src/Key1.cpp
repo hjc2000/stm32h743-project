@@ -1,14 +1,11 @@
 #include "Key1.h"
-#include "base/define.h"
 #include "base/peripheral/gpio/gpio_parameter.h"
+#include "base/UsageStateManager.h"
 
-bsp::Key1 &bsp::Key1::Instance()
+namespace
 {
-	static Key1 o{};
-	return o;
+	base::UsageStateManager _usage_state_manager;
 }
-
-PREINIT(bsp::Key1::Instance)
 
 bsp::Key1::Key1()
 {

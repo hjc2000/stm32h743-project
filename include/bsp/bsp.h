@@ -3,7 +3,6 @@
 #include "base/task/delay.h"
 #include <base/define.h>
 #include <bsp-interface/key/IEventDrivenKey.h>
-#include <bsp-interface/key/IKeyScanner.h>
 
 enum class KeyIndex : uint16_t
 {

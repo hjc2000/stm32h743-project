@@ -1,12 +1,10 @@
 #include "Key0.h"
+#include "base/UsageStateManager.h"
 
-bsp::Key0 &bsp::Key0::Instance()
+namespace
 {
-	static Key0 o{};
-	return o;
+	base::UsageStateManager _usage_state_manager;
 }
-
-PREINIT(bsp::Key0::Instance)
 
 bsp::Key0::Key0()
 {

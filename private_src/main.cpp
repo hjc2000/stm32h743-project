@@ -1,5 +1,6 @@
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
+#include "base/peripheral/key/Key.h"
 #include "base/peripheral/key/KeyScanner.h"
 #include "base/peripheral/led/IDigitalLed.h"
 #include "base/peripheral/serial/Serial.h"
@@ -16,6 +17,7 @@
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
 #include <memory>
+#include <string>
 
 /* #region 测试函数 */
 
@@ -302,7 +304,24 @@ void InitialTask()
 		1024 * 2,
 		[]()
 		{
-			// base::key::KeyScanner scanner{};
+			base::key::KeyScanner scanner{
+				base::key::Key{0},
+				base::key::Key{1},
+			};
+
+			while (true)
+			{
+				scanner.ScanKeys();
+				if (scanner.HasKeyDownEvent(0))
+				{
+					base::led::GreenDigitalLed().Toggle();
+				}
+
+				if (scanner.HasKeyDownEvent(1))
+				{
+					base::led::RedDigitalLed().Toggle();
+				}
+			}
 		});
 }
 
