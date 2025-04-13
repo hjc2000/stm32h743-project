@@ -10,6 +10,7 @@
 #include "bsp-interface/di/sdram.h"
 #include "bsp-interface/di/task.h"
 #include "bsp-interface/sdram/chip/W9825G6KH_6.h"
+#include "bsp-interface/test/TestKeyScanner.h"
 #include "ff.h"
 #include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
@@ -288,12 +289,12 @@ void InitialTask()
 			// freertos_demo();
 			// p_net_sample_app_main();
 			// TestLittleFs();
-			TestDCP();
+			// TestDCP();
 			// TestUniversalTimer1();
 			// bsp::TestFlash();
 			// TestExtiKey();
 			// bsp::TestSerial();
-			// bsp::TestKeyScanner();
+			bsp::TestKeyScanner();
 			// bsp::TestIndependentWatchDog();
 		});
 }

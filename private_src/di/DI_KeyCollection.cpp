@@ -1,5 +1,6 @@
 #include "base/define.h"
-#include <AtkKey.h>
+#include "Key0.h"
+#include "Key1.h"
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/di/key.h>
