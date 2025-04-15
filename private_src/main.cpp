@@ -3,13 +3,13 @@
 #include "base/peripheral/key/Key.h"
 #include "base/peripheral/key/KeyScanner.h"
 #include "base/peripheral/led/IDigitalLed.h"
+#include "base/peripheral/sdram/SdramController.h"
 #include "base/peripheral/serial/Serial.h"
 #include "base/task/delay.h"
 #include "bsp-interface/di/console.h"
 #include "bsp-interface/di/ethernet.h"
 #include "bsp-interface/di/heap.h"
 #include "bsp-interface/di/reset_initialize.h"
-#include "bsp-interface/di/sdram.h"
 #include "bsp-interface/di/task.h"
 #include "bsp-interface/sdram/chip/W9825G6KH_6.h"
 #include "ff.h"
@@ -262,7 +262,8 @@ void EhternetInput(base::ReadOnlySpan const &span);
 ///
 void InitialTask()
 {
-	bsp::sdram::chip::W9825G6KH_6 sdram{bsp::di::sdram::SDRAMController()};
+	base::sdram::SdramController sdram_controller{};
+	bsp::sdram::chip::W9825G6KH_6 sdram{sdram_controller};
 	sdram.Open();
 	bsp::di::heap::AddHeap(sdram.Span());
 
@@ -272,13 +273,13 @@ void InitialTask()
 
 	bsp::di::task::CreateTask(
 		1024 * 2,
-		[]()
+		[sdram_controller]()
 		{
 			base::led::RedDigitalLed().TurnOff();
 			while (true)
 			{
 				base::led::GreenDigitalLed().Toggle();
-				bsp::di::Console().WriteLine(bsp::di::sdram::SDRAMController().Timing());
+				bsp::di::Console().WriteLine(sdram_controller.Timing());
 				base::task::Delay(std::chrono::milliseconds{1000});
 			}
 		});
