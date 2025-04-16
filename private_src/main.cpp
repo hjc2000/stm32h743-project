@@ -3,6 +3,7 @@
 #include "base/peripheral/key/Key.h"
 #include "base/peripheral/key/KeyScanner.h"
 #include "base/peripheral/led/IDigitalLed.h"
+#include "base/peripheral/sdram/chip/W9825G6KH_6.h"
 #include "base/peripheral/sdram/SdramController.h"
 #include "base/peripheral/serial/Serial.h"
 #include "base/task/delay.h"
@@ -11,7 +12,6 @@
 #include "bsp-interface/di/heap.h"
 #include "bsp-interface/di/reset_initialize.h"
 #include "bsp-interface/di/task.h"
-#include "bsp-interface/sdram/chip/W9825G6KH_6.h"
 #include "ff.h"
 #include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
@@ -263,7 +263,7 @@ void EhternetInput(base::ReadOnlySpan const &span);
 void InitialTask()
 {
 	base::sdram::SdramController sdram_controller{};
-	bsp::sdram::chip::W9825G6KH_6 sdram{sdram_controller};
+	base::sdram::chip::W9825G6KH_6 sdram{sdram_controller};
 	sdram.Open();
 	bsp::di::heap::AddHeap(sdram.Span());
 
