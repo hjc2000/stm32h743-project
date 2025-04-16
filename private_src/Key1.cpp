@@ -1,11 +1,5 @@
 #include "Key1.h"
 #include "base/peripheral/gpio/gpio_parameter.h"
-#include "base/UsageStateManager.h"
-
-namespace
-{
-	base::UsageStateManager _usage_state_manager;
-}
 
 bsp::Key1::Key1()
 {

@@ -1,10 +1,4 @@
 #include "Key0.h"
-#include "base/UsageStateManager.h"
-
-namespace
-{
-	base::UsageStateManager _usage_state_manager;
-}
 
 bsp::Key0::Key0()
 {

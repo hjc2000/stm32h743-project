@@ -1,6 +1,7 @@
 #pragma once
 #include "base/peripheral/gpio/gpio_parameter.h"
 #include "base/peripheral/gpio/GpioPin.h"
+#include "base/UsageStateManager.h"
 #include "key_handle.h"
 
 namespace bsp
@@ -10,6 +11,7 @@ namespace bsp
 		public base::key::key_handle
 	{
 	private:
+		base::UsageStateManager<Key1> _usage_state_manager{};
 		base::gpio::GpioPin _pin{base::gpio::PortEnum::PortH, 2};
 
 	public:
