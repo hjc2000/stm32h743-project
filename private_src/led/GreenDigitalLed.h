@@ -3,6 +3,7 @@
 #include "base/peripheral/gpio/gpio_parameter.h"
 #include "base/peripheral/gpio/GpioPin.h"
 #include "base/peripheral/led/IDigitalLed.h"
+#include "led_handle.h"
 
 namespace bsp
 {
@@ -11,14 +12,15 @@ namespace bsp
 	///
 	///
 	class GreenDigitalLed :
-		public base::led::IDigitalLed
+		public base::led::IDigitalLed,
+		public base::led::led_handle
 	{
 	private:
-		GreenDigitalLed();
-
 		base::gpio::GpioPin _pin{base::gpio::PortEnum::PortB, 0};
 
 	public:
+		GreenDigitalLed();
+
 		static_function GreenDigitalLed &Instance();
 
 		///
