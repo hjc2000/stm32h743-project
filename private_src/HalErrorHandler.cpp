@@ -1,4 +1,4 @@
-#include "base/peripheral/led/IDigitalLed.h"
+#include "base/peripheral/led/led_handle.h"
 
 extern "C"
 {
@@ -18,7 +18,7 @@ extern "C"
 	 */
 	void HardFault_Handler()
 	{
-		base::led::RedDigitalLed().TurnOn();
+		base::led::turn_on_error_led();
 
 		/* Go to infinite loop when Hard Fault exception occurs */
 		while (1)
@@ -33,7 +33,7 @@ extern "C"
 	 */
 	void MemManage_Handler()
 	{
-		base::led::RedDigitalLed().TurnOn();
+		base::led::turn_on_error_led();
 
 		/* Go to infinite loop when Memory Manage exception occurs */
 		while (1)
@@ -48,7 +48,7 @@ extern "C"
 	 */
 	void BusFault_Handler()
 	{
-		base::led::RedDigitalLed().TurnOn();
+		base::led::turn_on_error_led();
 
 		/* Go to infinite loop when Bus Fault exception occurs */
 		while (1)
@@ -63,7 +63,7 @@ extern "C"
 	 */
 	void UsageFault_Handler()
 	{
-		base::led::RedDigitalLed().TurnOn();
+		base::led::turn_on_error_led();
 
 		/* Go to infinite loop when Usage Fault exception occurs */
 		while (1)

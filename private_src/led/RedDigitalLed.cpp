@@ -1,6 +1,5 @@
 #include "RedDigitalLed.h"
 #include "base/define.h"
-#include "base/peripheral/led/IDigitalLed.h"
 
 bsp::RedDigitalLed::RedDigitalLed()
 {
@@ -8,14 +7,6 @@ bsp::RedDigitalLed::RedDigitalLed()
 								base::gpio::DriveMode::PushPull);
 
 	TurnOff();
-}
-
-PREINIT(bsp::RedDigitalLed::Instance)
-
-bsp::RedDigitalLed &bsp::RedDigitalLed::Instance()
-{
-	static RedDigitalLed o{};
-	return o;
 }
 
 void bsp::RedDigitalLed::TurnOn()

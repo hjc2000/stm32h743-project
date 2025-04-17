@@ -2,7 +2,8 @@
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
 #include "base/peripheral/key/Key.h"
 #include "base/peripheral/key/KeyScanner.h"
-#include "base/peripheral/led/IDigitalLed.h"
+#include "base/peripheral/led/Led.h"
+#include "base/peripheral/led/LedBar.h"
 #include "base/peripheral/sdram/chip/w9825g6kh_6/W9825G6KH_6.h"
 #include "base/peripheral/sdram/SdramController.h"
 #include "base/peripheral/serial/Serial.h"
@@ -18,6 +19,7 @@
 #include "lwip-wrapper/NetifWrapper.h"
 #include <memory>
 #include <string>
+#include <vector>
 
 /* #region 测试函数 */
 
@@ -267,6 +269,11 @@ void InitialTask()
 	sdram.Open();
 	bsp::di::heap::AddHeap(sdram.Span());
 
+	base::led::GlobalLedBar().Add(std::vector<base::led::Led>{
+		base::led::Led{0},
+		base::led::Led{1},
+	});
+
 	std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
 	serial->Start();
 	bsp::di::Console().SetOutStream(serial);
@@ -275,10 +282,10 @@ void InitialTask()
 		1024 * 2,
 		[sdram_controller]()
 		{
-			base::led::RedDigitalLed().TurnOff();
+			base::led::GlobalLedBar()[0].TurnOff();
 			while (true)
 			{
-				base::led::GreenDigitalLed().Toggle();
+				base::led::GlobalLedBar()[1].Toggle();
 				bsp::di::Console().WriteLine(sdram_controller.Timing());
 				base::task::Delay(std::chrono::milliseconds{1000});
 			}
@@ -315,12 +322,12 @@ void InitialTask()
 				scanner.ScanKeys();
 				if (scanner.HasKeyDownEvent(0))
 				{
-					base::led::GreenDigitalLed().Toggle();
+					base::led::GlobalLedBar()[0].Toggle();
 				}
 
 				if (scanner.HasKeyDownEvent(1))
 				{
-					base::led::RedDigitalLed().Toggle();
+					base::led::GlobalLedBar()[1].Toggle();
 				}
 			}
 		});

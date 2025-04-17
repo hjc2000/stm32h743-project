@@ -1,5 +1,4 @@
 #include "bsp.h"
-#include "base/peripheral/led/IDigitalLed.h"
 #include "base/task/delay.h"
 #include <atomic>
 #include <base/container/Dictionary.h>

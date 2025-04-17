@@ -1,3 +1,4 @@
+#include "base/peripheral/led/LedBar.h"
 #include "base/string/define.h"
 #include "GreenDigitalLed.h"
 #include "led_handle.h"
@@ -84,4 +85,12 @@ void base::led::toggle(base::led::led_handle &h)
 base::led::State base::led::state(base::led::led_handle &h)
 {
 	return h.State();
+}
+
+void base::led::turn_on_error_led()
+{
+	if (base::led::GlobalLedBar().Count() > 0)
+	{
+		base::led::GlobalLedBar()[0].TurnOn();
+	}
 }

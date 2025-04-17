@@ -8,14 +8,6 @@ bsp::GreenDigitalLed::GreenDigitalLed()
 	TurnOff();
 }
 
-PREINIT(bsp::GreenDigitalLed::Instance)
-
-bsp::GreenDigitalLed &bsp::GreenDigitalLed::Instance()
-{
-	static GreenDigitalLed o;
-	return o;
-}
-
 void bsp::GreenDigitalLed::TurnOn()
 {
 	// GPIO 引脚连接着 LED 的阴极，所以写 0 是打开
