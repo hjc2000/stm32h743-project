@@ -1,5 +1,4 @@
 #include "RedDigitalLed.h"
-#include "base/define.h"
 
 bsp::RedDigitalLed::RedDigitalLed()
 {

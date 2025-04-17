@@ -1,7 +1,7 @@
 #pragma once
-#include "base/define.h"
 #include "base/peripheral/gpio/gpio_parameter.h"
 #include "base/peripheral/gpio/GpioPin.h"
+#include "base/UsageStateManager.h"
 #include "led_handle.h"
 
 namespace bsp
@@ -14,6 +14,7 @@ namespace bsp
 		public base::led::led_handle
 	{
 	private:
+		base::UsageStateManager<GreenDigitalLed> _usage_state_manager{};
 		base::gpio::GpioPin _pin{base::gpio::PortEnum::PortB, 0};
 
 	public:
