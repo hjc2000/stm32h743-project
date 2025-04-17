@@ -269,6 +269,7 @@ void InitialTask()
 	sdram.Open();
 	bsp::di::heap::AddHeap(sdram.Span());
 
+	// 初始化 LED 灯条。
 	base::led::GlobalLedBar().Add(std::vector<base::led::Led>{
 		base::led::Led{0},
 		base::led::Led{1},
