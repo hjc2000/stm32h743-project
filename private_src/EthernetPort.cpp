@@ -69,7 +69,7 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 											  _phy_driver.EnableAutoNegotiation();
 
 											  // 启动以太网
-											  _controller->Start(_phy_driver.DuplexMode(), _phy_driver.Speed());
+											  _controller->Start(_phy_driver.DuplexMode(), base::Mbps{_phy_driver.Speed()});
 
 											  _connection_event.Invoke();
 										  }
