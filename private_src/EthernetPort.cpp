@@ -29,7 +29,7 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 	_phy_driver.HardwareReset();
 
 	// 打开以太网控制器
-	_controller->Open(bsp::EthernetInterfaceType::RMII,
+	_controller->Open(base::ethernet::InterfaceType::RMII,
 					  0,
 					  mac);
 
