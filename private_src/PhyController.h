@@ -1,4 +1,5 @@
 #pragma once
+#include "base/peripheral/ethernet/EthernetController.h"
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/ethernet/phy/IPhyController.h>
 
@@ -8,7 +9,7 @@ namespace bsp
 		public bsp::IPhyController
 	{
 	private:
-		bsp::IEthernetController *_controller = &bsp::di::ethernet::EthernetController();
+		base::ethernet::EthernetController _controller{1};
 
 	public:
 		/// @brief 读 PHY 的寄存器

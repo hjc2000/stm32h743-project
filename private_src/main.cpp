@@ -264,7 +264,7 @@ void EhternetInput(base::ReadOnlySpan const &span);
 ///
 void InitialTask()
 {
-	base::sdram::SdramController sdram_controller{};
+	base::sdram::SdramController sdram_controller{1};
 	base::sdram::chip::w9825g6kh_6::W9825G6KH_6 sdram{sdram_controller};
 	sdram.Open();
 	bsp::di::heap::AddHeap(sdram.Span());

@@ -4,12 +4,12 @@
 
 uint32_t bsp::PhyController::ReadRegister(uint32_t register_index)
 {
-	return _controller->ReadPHYRegister(register_index);
+	return _controller.ReadPhyRegister(register_index);
 }
 
 void bsp::PhyController::WriteRegister(uint32_t register_index, uint32_t value)
 {
-	_controller->WritePHYRegister(register_index, value);
+	_controller.WritePhyRegister(register_index, value);
 }
 
 void bsp::PhyController::HardwareReset()
