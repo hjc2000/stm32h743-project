@@ -9,9 +9,14 @@ namespace bsp
 		public bsp::IPhyController
 	{
 	private:
-		base::ethernet::EthernetController _controller{1};
+		base::ethernet::EthernetController _controller;
 
 	public:
+		PhyController(base::ethernet::EthernetController const &controller)
+			: _controller(controller)
+		{
+		}
+
 		/// @brief 读 PHY 的寄存器
 		/// @param register_index 寄存器索引。
 		/// @return

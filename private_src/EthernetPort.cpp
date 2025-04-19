@@ -29,16 +29,16 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 	_phy_driver.HardwareReset();
 
 	// 打开以太网控制器
-	_controller->Open(base::ethernet::InterfaceType::RMII,
-					  0,
-					  mac);
+	_controller.Initialize(base::ethernet::InterfaceType::RMII,
+						   0,
+						   mac);
 
 	bsp::di::task::CreateTask(1024,
 							  [this]()
 							  {
 								  while (true)
 								  {
-									  base::ReadOnlySpan span = _controller->Receive();
+									  base::ReadOnlySpan span = _controller.Receive();
 									  try
 									  {
 										  _receiving_ethernet_frame_event.Invoke(span);
@@ -69,7 +69,7 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 											  _phy_driver.EnableAutoNegotiation();
 
 											  // 启动以太网
-											  _controller->Start(_phy_driver.DuplexMode(), base::Mbps{_phy_driver.Speed()});
+											  _controller.Start(_phy_driver.DuplexMode(), base::Mbps{_phy_driver.Speed()});
 
 											  _connection_event.Invoke();
 										  }
@@ -93,14 +93,14 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 							  });
 }
 
-void bsp::EthernetPort::Send(base::IEnumerable<base::ReadOnlySpan> const &spans)
+void bsp::EthernetPort::Send(std::vector<base::ReadOnlySpan> const &spans)
 {
-	_controller->Send(spans);
+	_controller.Send(spans);
 }
 
 void bsp::EthernetPort::Send(base::ReadOnlySpan const &span)
 {
-	_controller->Send(span);
+	_controller.Send(span);
 }
 
 base::IEvent<base::ReadOnlySpan> &bsp::EthernetPort::ReceivingEhternetFrameEvent()

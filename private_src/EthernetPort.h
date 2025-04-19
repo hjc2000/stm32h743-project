@@ -1,4 +1,5 @@
 #pragma once
+#include "base/peripheral/ethernet/EthernetController.h"
 #include <base/define.h>
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/ethernet/phy/LAN8720APhyDriver.h>
@@ -12,11 +13,11 @@ namespace bsp
 		public bsp::IEthernetPort
 	{
 	private:
-		bsp::IEthernetController *_controller = &bsp::di::ethernet::EthernetController();
+		base::ethernet::EthernetController _controller{1};
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 		base::Delegate<> _connection_event;
 		base::Delegate<> _disconnection_event;
-		bsp::YT8512CPhyDriver _phy_driver{std::shared_ptr<bsp::IPhyController>{new PhyController{}}};
+		bsp::YT8512CPhyDriver _phy_driver{std::shared_ptr<bsp::IPhyController>{new PhyController{_controller}}};
 
 	public:
 		static_function EthernetPort &Instance();
@@ -31,7 +32,7 @@ namespace bsp
 
 		/// @brief 发送。
 		/// @param spans
-		virtual void Send(base::IEnumerable<base::ReadOnlySpan> const &spans) override;
+		virtual void Send(std::vector<base::ReadOnlySpan> const &spans) override;
 
 		/// @brief 发送单个 span.
 		/// @param span
