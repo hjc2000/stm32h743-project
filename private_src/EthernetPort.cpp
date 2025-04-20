@@ -1,8 +1,6 @@
 #include "EthernetPort.h"
-#include "base/string/define.h"
 #include "base/task/delay.h"
 #include "base/unit/Mbps.h"
-#include "bsp-interface/di/console.h"
 #include "bsp-interface/di/task.h"
 
 void bsp::EthernetPort::Open(base::Mac const &mac)
@@ -20,18 +18,7 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 								  while (true)
 								  {
 									  base::ReadOnlySpan span = _controller.Receive();
-									  try
-									  {
-										  _receiving_ethernet_frame_event.Invoke(span);
-									  }
-									  catch (std::exception const &e)
-									  {
-										  bsp::di::Console().WriteError(CODE_POS_STR + e.what());
-									  }
-									  catch (...)
-									  {
-										  bsp::di::Console().WriteError(CODE_POS_STR + "接收线程发生未知错误。");
-									  }
+									  _receiving_ethernet_frame_event.Invoke(span);
 								  }
 							  });
 
@@ -42,30 +29,19 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 								  while (true)
 								  {
 									  bool is_linked = _phy_driver.IsLinked();
-									  try
+									  if (!last_loop_is_linked && is_linked)
 									  {
-										  if (!last_loop_is_linked && is_linked)
-										  {
-											  _phy_driver.SoftwareReset();
-											  _phy_driver.EnableAutoNegotiation();
+										  _phy_driver.SoftwareReset();
+										  _phy_driver.EnableAutoNegotiation();
 
-											  // 启动以太网
-											  _controller.Start(_phy_driver.DuplexMode(), base::Mbps{_phy_driver.Speed()});
+										  // 启动以太网
+										  _controller.Start(_phy_driver.DuplexMode(), base::Mbps{_phy_driver.Speed()});
 
-											  _connected_event.Invoke();
-										  }
-										  else if (last_loop_is_linked && !is_linked)
-										  {
-											  _disconnected_event.Invoke();
-										  }
+										  _connected_event.Invoke();
 									  }
-									  catch (std::exception const &e)
+									  else if (last_loop_is_linked && !is_linked)
 									  {
-										  bsp::di::Console().WriteError(CODE_POS_STR + e.what());
-									  }
-									  catch (...)
-									  {
-										  bsp::di::Console().WriteError(CODE_POS_STR + "链路连接维护线程发生未知错误。");
+										  _disconnected_event.Invoke();
 									  }
 
 									  last_loop_is_linked = is_linked;
