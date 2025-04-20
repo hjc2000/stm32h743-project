@@ -18,10 +18,6 @@ namespace bsp
 		base::ethernet::YT8512CPhyDriver _phy_driver{_controller};
 
 	public:
-		/// @brief 以太网控制器的名称。
-		/// @return
-		virtual std::string Name() const override;
-
 		/// @brief 打开以太网端口。
 		/// @param mac MAC 地址。
 		virtual void Open(base::Mac const &mac) override;

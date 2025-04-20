@@ -5,11 +5,6 @@
 #include "bsp-interface/di/console.h"
 #include "bsp-interface/di/task.h"
 
-std::string bsp::EthernetPort::Name() const
-{
-	return "eth";
-}
-
 void bsp::EthernetPort::Open(base::Mac const &mac)
 {
 	_phy_driver.HardwareReset();
