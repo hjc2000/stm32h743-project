@@ -1,5 +1,4 @@
 #include "EthernetPort.h"
-#include "base/define.h"
 #include "base/task/delay.h"
 #include <base/container/Dictionary.h>
 #include <base/string/define.h>
