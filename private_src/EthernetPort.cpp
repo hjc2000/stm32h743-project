@@ -89,12 +89,12 @@ base::IEvent<base::ReadOnlySpan> &bsp::EthernetPort::ReceivingEhternetFrameEvent
 	return _receiving_ethernet_frame_event;
 }
 
-base::IEvent<> &bsp::EthernetPort::ConnectionEvent()
+base::IEvent<> &bsp::EthernetPort::ConnectedEvent()
 {
 	return _connection_event;
 }
 
-base::IEvent<> &bsp::EthernetPort::DisconnectionEvent()
+base::IEvent<> &bsp::EthernetPort::DisconnectedEvent()
 {
 	return _disconnection_event;
 }

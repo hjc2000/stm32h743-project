@@ -38,11 +38,11 @@ namespace bsp
 		/// @brief 连接事件。
 		/// @note 链路层连接建立后会触发事件。
 		/// @return
-		virtual base::IEvent<> &ConnectionEvent() override;
+		virtual base::IEvent<> &ConnectedEvent() override;
 
 		/// @brief 断开连接事件。
 		/// @note 链路层连接断开后会触发事件。
 		/// @return
-		virtual base::IEvent<> &DisconnectionEvent() override;
+		virtual base::IEvent<> &DisconnectedEvent() override;
 	};
 } // namespace bsp
