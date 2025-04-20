@@ -1,8 +1,8 @@
 #pragma once
 #include "base/peripheral/ethernet/EthernetController.h"
 #include "base/peripheral/ethernet/phy/YT8512CPhyDriver.h"
+#include "bsp-interface/ethernet/IEthernetPort.h"
 #include <base/define.h>
-#include <bsp-interface/di/ethernet.h>
 
 namespace bsp
 {
@@ -18,8 +18,6 @@ namespace bsp
 		base::ethernet::YT8512CPhyDriver _phy_driver{_controller};
 
 	public:
-		static_function EthernetPort &Instance();
-
 		/// @brief 以太网控制器的名称。
 		/// @return
 		virtual std::string Name() const override;

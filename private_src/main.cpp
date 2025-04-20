@@ -9,10 +9,11 @@
 #include "base/peripheral/serial/Serial.h"
 #include "base/task/delay.h"
 #include "bsp-interface/di/console.h"
-#include "bsp-interface/di/ethernet.h"
 #include "bsp-interface/di/heap.h"
 #include "bsp-interface/di/reset_initialize.h"
 #include "bsp-interface/di/task.h"
+#include "bsp-interface/ethernet/MutexEthernetPort.h"
+#include "EthernetPort.h"
 #include "ff.h"
 #include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
@@ -205,14 +206,17 @@ void TestDCP()
 		},
 	};
 
-	netif_wrapper->Open(&bsp::di::ethernet::EthernetPort(),
+	bsp::EthernetPort port{};
+	bsp::MutexEthernetPort mutex_port{&port};
+
+	netif_wrapper->Open(&mutex_port,
 						mac,
 						ip_address,
 						netmask,
 						gateway,
 						1500);
 
-	bsp::di::ethernet::EthernetPort().ReceivingEhternetFrameEvent().Subscribe(
+	mutex_port.ReceivingEhternetFrameEvent().Subscribe(
 		[](base::ReadOnlySpan span)
 		{
 			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
@@ -247,7 +251,7 @@ void TestDCP()
 		hello.WriteOemIdBlock(0xcafe, 0xee02);
 		hello.WriteDeviceInitiativeBlock(true);
 
-		bsp::di::ethernet::EthernetPort().Send(hello.SpanForSending());
+		mutex_port.Send(hello.SpanForSending());
 		base::task::Delay(std::chrono::milliseconds{1000});
 	}
 }

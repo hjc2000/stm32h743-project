@@ -11,14 +11,6 @@
 #include <bsp-interface/di/system_time.h>
 #include <bsp-interface/di/task.h>
 
-PREINIT(bsp::EthernetPort::Instance)
-
-bsp::EthernetPort &bsp::EthernetPort::Instance()
-{
-	static EthernetPort o;
-	return o;
-}
-
 std::string bsp::EthernetPort::Name() const
 {
 	return "eth";
