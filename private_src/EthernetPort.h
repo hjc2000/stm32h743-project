@@ -4,7 +4,6 @@
 #include <bsp-interface/di/ethernet.h>
 #include <bsp-interface/ethernet/phy/LAN8720APhyDriver.h>
 #include <bsp-interface/ethernet/phy/YT8512CPhyDriver.h>
-#include <PhyController.h>
 
 namespace bsp
 {
@@ -17,7 +16,7 @@ namespace bsp
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 		base::Delegate<> _connection_event;
 		base::Delegate<> _disconnection_event;
-		bsp::YT8512CPhyDriver _phy_driver{std::shared_ptr<bsp::IPhyController>{new PhyController{_controller}}};
+		bsp::YT8512CPhyDriver _phy_driver{_controller};
 
 	public:
 		static_function EthernetPort &Instance();
