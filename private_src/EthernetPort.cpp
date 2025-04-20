@@ -1,14 +1,9 @@
 #include "EthernetPort.h"
+#include "base/string/define.h"
 #include "base/task/delay.h"
-#include <base/container/Dictionary.h>
-#include <base/string/define.h>
-#include <base/string/ToHexString.h>
-#include <base/unit/Mbps.h>
-#include <bsp-interface/di/console.h>
-#include <bsp-interface/di/expanded_io.h>
-#include <bsp-interface/di/interrupt.h>
-#include <bsp-interface/di/system_time.h>
-#include <bsp-interface/di/task.h>
+#include "base/unit/Mbps.h"
+#include "bsp-interface/di/console.h"
+#include "bsp-interface/di/task.h"
 
 std::string bsp::EthernetPort::Name() const
 {
