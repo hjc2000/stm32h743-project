@@ -1,9 +1,8 @@
 #pragma once
 #include "base/peripheral/ethernet/EthernetController.h"
+#include "base/peripheral/ethernet/phy/YT8512CPhyDriver.h"
 #include <base/define.h>
 #include <bsp-interface/di/ethernet.h>
-#include <bsp-interface/ethernet/phy/LAN8720APhyDriver.h>
-#include <bsp-interface/ethernet/phy/YT8512CPhyDriver.h>
 
 namespace bsp
 {
@@ -16,7 +15,7 @@ namespace bsp
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 		base::Delegate<> _connection_event;
 		base::Delegate<> _disconnection_event;
-		bsp::YT8512CPhyDriver _phy_driver{_controller};
+		base::ethernet::YT8512CPhyDriver _phy_driver{_controller};
 
 	public:
 		static_function EthernetPort &Instance();
