@@ -1,6 +1,5 @@
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
-#include "base/peripheral/ethernet/MutexEthernetPort.h"
 #include "base/peripheral/key/Key.h"
 #include "base/peripheral/key/KeyScanner.h"
 #include "base/peripheral/led/Led.h"
@@ -207,16 +206,15 @@ void TestDCP()
 	};
 
 	bsp::EthernetPort port{};
-	base::ethernet::MutexEthernetPort mutex_port{&port};
 
-	netif_wrapper->Open(&mutex_port,
+	netif_wrapper->Open(&port,
 						mac,
 						ip_address,
 						netmask,
 						gateway,
 						1500);
 
-	mutex_port.ReceivingEhternetFrameEvent().Subscribe(
+	port.ReceivingEhternetFrameEvent().Subscribe(
 		[](base::ReadOnlySpan span)
 		{
 			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
@@ -251,7 +249,7 @@ void TestDCP()
 		hello.WriteOemIdBlock(0xcafe, 0xee02);
 		hello.WriteDeviceInitiativeBlock(true);
 
-		mutex_port.Send(hello.SpanForSending());
+		port.Send(hello.SpanForSending());
 		base::task::Delay(std::chrono::milliseconds{1000});
 	}
 }

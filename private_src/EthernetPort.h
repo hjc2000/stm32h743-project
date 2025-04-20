@@ -12,6 +12,21 @@ namespace bsp
 	{
 	private:
 		base::ethernet::EthernetController _controller{1};
+
+		///
+		/// @brief 接收用的锁。
+		///
+		/// @note 以太网是双工的，接收和发送不能使用同一个锁。
+		///
+		std::shared_ptr<base::IMutex> _receiving_lock = base::CreateIMutex();
+
+		///
+		/// @brief 发送用的锁。
+		///
+		/// @note 以太网是双工的，接收和发送不能使用同一个锁。
+		///
+		std::shared_ptr<base::IMutex> _sending_lock = base::CreateIMutex();
+
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 		base::Delegate<> _connection_event;
 		base::Delegate<> _disconnection_event;
