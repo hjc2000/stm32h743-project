@@ -1,14 +1,14 @@
 #pragma once
 #include "base/delegate/Delegate.h"
 #include "base/peripheral/ethernet/EthernetController.h"
+#include "base/peripheral/ethernet/IEthernetPort.h"
 #include "base/peripheral/ethernet/phy/YT8512CPhyDriver.h"
-#include "bsp-interface/ethernet/IEthernetPort.h"
 
 namespace bsp
 {
 	/// @brief 以太网端口。
 	class EthernetPort :
-		public bsp::IEthernetPort
+		public base::ethernet::IEthernetPort
 	{
 	private:
 		base::ethernet::EthernetController _controller{1};

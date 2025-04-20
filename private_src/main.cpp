@@ -1,5 +1,6 @@
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
+#include "base/peripheral/ethernet/MutexEthernetPort.h"
 #include "base/peripheral/key/Key.h"
 #include "base/peripheral/key/KeyScanner.h"
 #include "base/peripheral/led/Led.h"
@@ -12,7 +13,6 @@
 #include "bsp-interface/di/heap.h"
 #include "bsp-interface/di/reset_initialize.h"
 #include "bsp-interface/di/task.h"
-#include "bsp-interface/ethernet/MutexEthernetPort.h"
 #include "EthernetPort.h"
 #include "ff.h"
 #include "littlefs/LfsFlashPort.h"
@@ -207,7 +207,7 @@ void TestDCP()
 	};
 
 	bsp::EthernetPort port{};
-	bsp::MutexEthernetPort mutex_port{&port};
+	base::ethernet::MutexEthernetPort mutex_port{&port};
 
 	netif_wrapper->Open(&mutex_port,
 						mac,
