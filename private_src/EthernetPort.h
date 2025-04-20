@@ -3,6 +3,7 @@
 #include "base/peripheral/ethernet/EthernetController.h"
 #include "base/peripheral/ethernet/IEthernetPort.h"
 #include "base/peripheral/ethernet/phy/YT8512CPhyDriver.h"
+#include "base/task/Mutex.h"
 
 namespace bsp
 {
@@ -14,14 +15,7 @@ namespace bsp
 	{
 	private:
 		base::ethernet::EthernetController _controller{1};
-
-		///
-		/// @brief 发送用的锁。
-		///
-		/// @note 以太网是双工的，接收和发送不能使用同一个锁。
-		///
-		std::shared_ptr<base::IMutex> _sending_lock = base::CreateIMutex();
-
+		base::task::Mutex _sending_lock{};
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
 		base::Delegate<> _connected_event;
 		base::Delegate<> _disconnected_event;

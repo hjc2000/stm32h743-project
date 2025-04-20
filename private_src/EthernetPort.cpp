@@ -1,5 +1,6 @@
 #include "EthernetPort.h"
 #include "base/task/delay.h"
+#include "base/task/Mutex.h"
 #include "base/unit/Mbps.h"
 #include "bsp-interface/di/task.h"
 
@@ -52,13 +53,13 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 
 void bsp::EthernetPort::Send(std::vector<base::ReadOnlySpan> const &spans)
 {
-	base::LockGuard l{*_sending_lock};
+	base::task::MutexGuard l{_sending_lock};
 	_controller.Send(spans);
 }
 
 void bsp::EthernetPort::Send(base::ReadOnlySpan const &span)
 {
-	base::LockGuard l{*_sending_lock};
+	base::task::MutexGuard l{_sending_lock};
 	_controller.Send(span);
 }
 
