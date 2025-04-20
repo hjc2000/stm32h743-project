@@ -52,11 +52,11 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 											  // 启动以太网
 											  _controller.Start(_phy_driver.DuplexMode(), base::Mbps{_phy_driver.Speed()});
 
-											  _connection_event.Invoke();
+											  _connected_event.Invoke();
 										  }
 										  else if (last_loop_is_linked && !is_linked)
 										  {
-											  _disconnection_event.Invoke();
+											  _disconnected_event.Invoke();
 										  }
 									  }
 									  catch (std::exception const &e)
@@ -93,10 +93,10 @@ base::IEvent<base::ReadOnlySpan> &bsp::EthernetPort::ReceivingEhternetFrameEvent
 
 base::IEvent<> &bsp::EthernetPort::ConnectedEvent()
 {
-	return _connection_event;
+	return _connected_event;
 }
 
 base::IEvent<> &bsp::EthernetPort::DisconnectedEvent()
 {
-	return _disconnection_event;
+	return _disconnected_event;
 }

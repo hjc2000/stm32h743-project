@@ -30,8 +30,8 @@ namespace bsp
 		std::shared_ptr<base::IMutex> _sending_lock = base::CreateIMutex();
 
 		base::Delegate<base::ReadOnlySpan> _receiving_ethernet_frame_event;
-		base::Delegate<> _connection_event;
-		base::Delegate<> _disconnection_event;
+		base::Delegate<> _connected_event;
+		base::Delegate<> _disconnected_event;
 		base::ethernet::YT8512CPhyDriver _phy_driver{_controller};
 
 	public:
