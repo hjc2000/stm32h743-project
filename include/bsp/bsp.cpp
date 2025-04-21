@@ -1,10 +1,10 @@
 #include "bsp.h"
+#include "base/Console.h"
 #include "base/task/delay.h"
 #include <atomic>
 #include <base/container/Dictionary.h>
 #include <base/string/ToHexString.h>
 #include <bsp-interface/di/clock.h>
-#include <bsp-interface/di/console.h>
 #include <bsp-interface/di/flash.h>
 #include <functional>
 #include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
@@ -53,12 +53,12 @@ void TestSDRAM()
 	{
 		if (buffer[i] != i)
 		{
-			bsp::di::Console().WriteLine("SDRAM error detected.");
+			base::console.WriteLine("SDRAM error detected.");
 			return;
 		}
 	}
 
-	bsp::di::Console().WriteLine("No SDRAM error detected.");
+	base::console.WriteLine("No SDRAM error detected.");
 }
 
 void TestEthernet()
