@@ -63,7 +63,7 @@ try
 	Invoke-Expression $objcopy_cmd
 
 	$jflash_arg = @(
-		"-openprj${workspace_path} / jflash-project.jflash",
+		"-openprj${workspace_path}/jflash-project.jflash",
 		"-open${install_path}/bin/${project_name}.bin, 0x8000000",
 		"-auto",
 		"-startapp",
