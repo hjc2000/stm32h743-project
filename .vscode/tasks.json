@@ -49,5 +49,17 @@
 			},
 			"problemMatcher": []
 		},
+		{
+			"label": "ninja-install",
+			"type": "shell",
+			"command": "ninja",
+			"args": [
+				"install"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/jc_build"
+			},
+			"problemMatcher": []
+		},
 	],
 }
