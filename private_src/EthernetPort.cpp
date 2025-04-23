@@ -1,8 +1,8 @@
 #include "EthernetPort.h"
 #include "base/task/delay.h"
 #include "base/task/Mutex.h"
+#include "base/task/task.h"
 #include "base/unit/Mbps.h"
-#include "bsp-interface/di/task.h"
 
 void bsp::EthernetPort::Open(base::Mac const &mac)
 {
@@ -13,42 +13,46 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 						   0,
 						   mac);
 
-	bsp::di::task::CreateTask(1024,
-							  [this]()
-							  {
-								  while (true)
-								  {
-									  base::ReadOnlySpan span = _controller.Receive();
-									  _receiving_ethernet_frame_event.Invoke(span);
-								  }
-							  });
+	base::task::run("",
+					1,
+					1024 * 8,
+					[this]()
+					{
+						while (true)
+						{
+							base::ReadOnlySpan span = _controller.Receive();
+							_receiving_ethernet_frame_event.Invoke(span);
+						}
+					});
 
-	bsp::di::task::CreateTask(1024,
-							  [this]()
-							  {
-								  bool last_loop_is_linked = false;
-								  while (true)
-								  {
-									  bool is_linked = _phy_driver.IsLinked();
-									  if (!last_loop_is_linked && is_linked)
-									  {
-										  _phy_driver.SoftwareReset();
-										  _phy_driver.EnableAutoNegotiation();
+	base::task::run("",
+					1,
+					1024 * 8,
+					[this]()
+					{
+						bool last_loop_is_linked = false;
+						while (true)
+						{
+							bool is_linked = _phy_driver.IsLinked();
+							if (!last_loop_is_linked && is_linked)
+							{
+								_phy_driver.SoftwareReset();
+								_phy_driver.EnableAutoNegotiation();
 
-										  // 启动以太网
-										  _controller.Start(_phy_driver.DuplexMode(), base::Mbps{_phy_driver.Speed()});
+								// 启动以太网
+								_controller.Start(_phy_driver.DuplexMode(), base::Mbps{_phy_driver.Speed()});
 
-										  _connected_event.Invoke();
-									  }
-									  else if (last_loop_is_linked && !is_linked)
-									  {
-										  _disconnected_event.Invoke();
-									  }
+								_connected_event.Invoke();
+							}
+							else if (last_loop_is_linked && !is_linked)
+							{
+								_disconnected_event.Invoke();
+							}
 
-									  last_loop_is_linked = is_linked;
-									  base::task::Delay(std::chrono::milliseconds{200});
-								  }
-							  });
+							last_loop_is_linked = is_linked;
+							base::task::Delay(std::chrono::milliseconds{200});
+						}
+					});
 }
 
 void bsp::EthernetPort::Send(std::vector<base::ReadOnlySpan> const &spans)
