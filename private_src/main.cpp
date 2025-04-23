@@ -13,7 +13,6 @@
 #include "base/task/task.h"
 #include "bsp-interface/di/heap.h"
 #include "bsp-interface/di/reset_initialize.h"
-#include "bsp-interface/di/task.h"
 #include "EthernetPort.h"
 #include "ff.h"
 #include "littlefs/LfsFlashPort.h"
@@ -283,59 +282,62 @@ void InitialTask()
 	serial->Start();
 	base::console.SetOutputWriter(std::shared_ptr<base::StreamWriter>{new base::StreamWriter{serial}});
 
-	bsp::di::task::CreateTask(
-		1024 * 2,
-		[sdram_controller]()
-		{
-			base::led::led_bar[0].TurnOff();
-			while (true)
-			{
-				base::led::led_bar[1].Toggle();
-				base::console.WriteLine(sdram_controller.Timing());
-				base::task::Delay(std::chrono::milliseconds{1000});
-			}
-		});
+	base::task::run("led",
+					1,
+					1024 * 10,
+					[sdram_controller]()
+					{
+						base::led::led_bar[0].TurnOff();
+						while (true)
+						{
+							base::led::led_bar[1].Toggle();
+							base::console.WriteLine(sdram_controller.Timing());
+							base::task::Delay(std::chrono::milliseconds{1000});
+						}
+					});
 
-	bsp::di::task::CreateTask(
-		1024 * 2,
-		[]()
-		{
-			// TestFatFs();
-			// freertos_demo();
-			// p_net_sample_app_main();
-			// TestLittleFs();
-			TestDCP();
-			// TestUniversalTimer1();
-			// bsp::TestFlash();
-			// TestExtiKey();
-			// bsp::TestSerial();
-			// bsp::TestKeyScanner();
-			// bsp::TestIndependentWatchDog();
-		});
+	base::task::run("test",
+					1,
+					1024 * 10,
+					[]()
+					{
+						// TestFatFs();
+						// freertos_demo();
+						// p_net_sample_app_main();
+						// TestLittleFs();
+						TestDCP();
+						// TestUniversalTimer1();
+						// bsp::TestFlash();
+						// TestExtiKey();
+						// bsp::TestSerial();
+						// bsp::TestKeyScanner();
+						// bsp::TestIndependentWatchDog();
+					});
 
-	bsp::di::task::CreateTask(
-		1024 * 2,
-		[]()
-		{
-			base::key::KeyScanner scanner{
-				base::key::Key{0},
-				base::key::Key{1},
-			};
+	base::task::run("key scanner",
+					1,
+					1024 * 10,
+					[]()
+					{
+						base::key::KeyScanner scanner{
+							base::key::Key{0},
+							base::key::Key{1},
+						};
 
-			while (true)
-			{
-				scanner.ScanKeys();
-				if (scanner.HasKeyDownEvent(0))
-				{
-					base::led::led_bar[0].Toggle();
-				}
+						while (true)
+						{
+							scanner.ScanKeys();
+							if (scanner.HasKeyDownEvent(0))
+							{
+								base::led::led_bar[0].Toggle();
+							}
 
-				if (scanner.HasKeyDownEvent(1))
-				{
-					base::led::led_bar[1].Toggle();
-				}
-			}
-		});
+							if (scanner.HasKeyDownEvent(1))
+							{
+								base::led::led_bar[1].Toggle();
+							}
+						}
+					});
 }
 
 int main(void)
@@ -354,11 +356,13 @@ int main(void)
 	 * 据说 main 函数被认为是只执行一次后就应该被删除的初始任务，所以它的栈理应被挪作他用。
 	 */
 
-	bsp::di::task::CreateTask(1024 * 2,
-							  []()
-							  {
-								  InitialTask();
-							  });
+	base::task::run("initial",
+					1,
+					1024 * 4,
+					[]()
+					{
+						InitialTask();
+					});
 
 	base::task::start_scheduler();
 }
