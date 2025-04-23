@@ -8,6 +8,7 @@
 #include "base/peripheral/sdram/chip/w9825g6kh_6/W9825G6KH_6.h"
 #include "base/peripheral/sdram/SdramController.h"
 #include "base/peripheral/serial/Serial.h"
+#include "base/stream/StreamWriter.h"
 #include "base/task/delay.h"
 #include "bsp-interface/di/heap.h"
 #include "bsp-interface/di/reset_initialize.h"
@@ -279,7 +280,7 @@ void InitialTask()
 
 	std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
 	serial->Start();
-	base::console.SetOutputStream(serial);
+	base::console.SetOutputWriter(std::shared_ptr<base::StreamWriter>{new base::StreamWriter{serial}});
 
 	bsp::di::task::CreateTask(
 		1024 * 2,
