@@ -10,6 +10,7 @@
 #include "base/peripheral/serial/Serial.h"
 #include "base/stream/StreamWriter.h"
 #include "base/task/delay.h"
+#include "base/task/task.h"
 #include "bsp-interface/di/heap.h"
 #include "bsp-interface/di/reset_initialize.h"
 #include "bsp-interface/di/task.h"
@@ -359,5 +360,5 @@ int main(void)
 								  InitialTask();
 							  });
 
-	bsp::di::task::StartScheduler();
+	base::task::start_scheduler();
 }
