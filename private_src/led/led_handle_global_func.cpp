@@ -89,8 +89,8 @@ base::led::State base::led::state(base::led::led_handle &h)
 
 void base::led::turn_on_error_led()
 {
-	if (base::led::GlobalLedBar().Count() > 0)
+	if (base::led::led_bar.Count() > 0)
 	{
-		base::led::GlobalLedBar()[0].TurnOn();
+		base::led::led_bar[0].TurnOn();
 	}
 }

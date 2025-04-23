@@ -273,7 +273,7 @@ void InitialTask()
 	bsp::di::heap::AddHeap(sdram.Span());
 
 	// 初始化 LED 灯条。
-	base::led::GlobalLedBar().Add(std::vector<base::led::Led>{
+	base::led::led_bar.Add(std::vector<base::led::Led>{
 		base::led::Led{0},
 		base::led::Led{1},
 	});
@@ -286,10 +286,10 @@ void InitialTask()
 		1024 * 2,
 		[sdram_controller]()
 		{
-			base::led::GlobalLedBar()[0].TurnOff();
+			base::led::led_bar[0].TurnOff();
 			while (true)
 			{
-				base::led::GlobalLedBar()[1].Toggle();
+				base::led::led_bar[1].Toggle();
 				base::console.WriteLine(sdram_controller.Timing());
 				base::task::Delay(std::chrono::milliseconds{1000});
 			}
@@ -326,12 +326,12 @@ void InitialTask()
 				scanner.ScanKeys();
 				if (scanner.HasKeyDownEvent(0))
 				{
-					base::led::GlobalLedBar()[0].Toggle();
+					base::led::led_bar[0].Toggle();
 				}
 
 				if (scanner.HasKeyDownEvent(1))
 				{
-					base::led::GlobalLedBar()[1].Toggle();
+					base::led::led_bar[1].Toggle();
 				}
 			}
 		});
