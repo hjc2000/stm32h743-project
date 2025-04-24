@@ -1,6 +1,7 @@
 #include "base/Console.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
+#include "base/peripheral/heap/heap.h"
 #include "base/peripheral/key/Key.h"
 #include "base/peripheral/key/KeyScanner.h"
 #include "base/peripheral/led/Led.h"
@@ -12,7 +13,6 @@
 #include "base/stream/StreamWriter.h"
 #include "base/task/delay.h"
 #include "base/task/task.h"
-#include "bsp-interface/di/heap.h"
 #include "bsp-interface/di/reset_initialize.h"
 #include "EthernetPort.h"
 #include "ff.h"
@@ -272,7 +272,7 @@ void InitialTask()
 	base::sdram::SdramController sdram_controller{1};
 	base::sdram::chip::w9825g6kh_6::W9825G6KH_6 sdram{sdram_controller};
 	sdram.Open();
-	bsp::di::heap::AddHeap(sdram.Span());
+	base::heap::AddHeap(sdram.Span());
 
 	// 初始化 LED 灯条。
 	base::led::led_bar.Add(std::vector<base::led::Led>{
