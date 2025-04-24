@@ -1,13 +1,10 @@
 #pragma once
-#include <base/define.h>
-#include <bsp-interface/di/clock.h>
-#include <bsp-interface/di/interrupt.h>
+#include "base/define.h"
+#include "bsp-interface/di/clock.h"
+#include "bsp-interface/di/interrupt.h"
+#include "hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h"
+#include "hal.h"
 #include <functional>
-#include <hal-wrapper/peripheral/timer/TimerChannelEnum.h>
-#include <hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h>
-#include <hal-wrapper/peripheral/timer/UniversalTimerCompareOutputConfig.h>
-#include <hal.h>
-#include <stdexcept>
 
 namespace hal
 {
