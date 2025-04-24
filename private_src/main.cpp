@@ -8,6 +8,7 @@
 #include "base/peripheral/sdram/chip/w9825g6kh_6/W9825G6KH_6.h"
 #include "base/peripheral/sdram/SdramController.h"
 #include "base/peripheral/serial/Serial.h"
+#include "base/peripheral/systick/systick.h"
 #include "base/stream/StreamWriter.h"
 #include "base/task/delay.h"
 #include "base/task/task.h"
@@ -18,6 +19,7 @@
 #include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
+#include <chrono>
 #include <memory>
 #include <string>
 #include <vector>
@@ -292,6 +294,11 @@ void InitialTask()
 						{
 							base::led::led_bar[1].Toggle();
 							base::console.WriteLine(sdram_controller.Timing());
+							base::console.WriteLine(base::systick::frequency());
+							base::console.WriteLine(std::to_string(static_cast<std::chrono::nanoseconds>(base::systick::system_time_stamp()).count()) + "ns");
+							base::console.WriteLine(std::to_string(static_cast<std::chrono::microseconds>(base::systick::system_time_stamp()).count()) + "us");
+							base::console.WriteLine(std::to_string(static_cast<std::chrono::milliseconds>(base::systick::system_time_stamp()).count()) + "ms");
+							base::console.WriteLine(std::to_string(static_cast<std::chrono::seconds>(base::systick::system_time_stamp()).count()) + "s");
 							base::task::Delay(std::chrono::milliseconds{1000});
 						}
 					});
