@@ -1,15 +1,8 @@
 #include "bsp.h"
 #include "base/Console.h"
 #include "base/task/delay.h"
-#include <atomic>
-#include <base/container/Dictionary.h>
-#include <base/string/ToHexString.h>
-#include <bsp-interface/di/clock.h>
-#include <bsp-interface/di/flash.h>
-#include <functional>
-#include <hal-wrapper/peripheral/timer/PwmModeTimer3.h>
-#include <hal.h>
-#include <stdint.h>
+#include "hal-wrapper/peripheral/timer/PwmModeTimer3.h"
+#include <cstdint>
 
 using namespace bsp;
 
