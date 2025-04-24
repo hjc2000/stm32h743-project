@@ -1,7 +1,6 @@
 #pragma once
 #include "base/task/delay.h"
 #include <base/define.h>
-#include <bsp-interface/key/IEventDrivenKey.h>
 
 enum class KeyIndex : uint16_t
 {

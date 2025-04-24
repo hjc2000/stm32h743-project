@@ -364,5 +364,6 @@ int main(void)
 						InitialTask();
 					});
 
+	// 启动调度后 freertos 会使能 systick 中断，配置 systick 的重装载值和分频系数。
 	base::task::start_scheduler();
 }
