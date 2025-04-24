@@ -1,5 +1,5 @@
 #pragma once
-#include "base/peripheral/gpio/GpioPin.h"
+#include "base/embedded/gpio/GpioPin.h"
 #include "base/UsageStateManager.h"
 #include "key_handle.h"
 

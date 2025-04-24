@@ -1,5 +1,5 @@
 #pragma once
-#include "base/peripheral/key/key_handle.h"
+#include "base/embedded/key/key_handle.h"
 
 class base::key::key_handle
 {

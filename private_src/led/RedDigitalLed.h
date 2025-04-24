@@ -1,6 +1,6 @@
 #pragma once
-#include "base/peripheral/gpio/gpio_parameter.h"
-#include "base/peripheral/gpio/GpioPin.h"
+#include "base/embedded/gpio/gpio_parameter.h"
+#include "base/embedded/gpio/GpioPin.h"
 #include "base/UsageStateManager.h"
 #include "led_handle.h"
 

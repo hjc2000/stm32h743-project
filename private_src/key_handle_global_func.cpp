@@ -1,4 +1,4 @@
-#include "base/peripheral/key/key_handle.h"
+#include "base/embedded/key/key_handle.h"
 #include "base/string/define.h"
 #include "Key0.h"
 #include "Key1.h"

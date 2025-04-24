@@ -1,8 +1,8 @@
 #pragma once
 #include "base/delegate/Delegate.h"
-#include "base/peripheral/ethernet/EthernetController.h"
-#include "base/peripheral/ethernet/IEthernetPort.h"
-#include "base/peripheral/ethernet/phy/YT8512CPhyDriver.h"
+#include "base/embedded/ethernet/EthernetController.h"
+#include "base/embedded/ethernet/IEthernetPort.h"
+#include "base/embedded/ethernet/phy/YT8512CPhyDriver.h"
 #include "base/task/Mutex.h"
 
 namespace bsp

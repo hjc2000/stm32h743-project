@@ -1,4 +1,4 @@
-#include "base/peripheral/ethernet/ethernet_controller_handle.h"
+#include "base/embedded/ethernet/ethernet_controller_handle.h"
 #include "base/task/delay.h"
 #include "bsp-interface/di/expanded_io.h"
 #include <chrono>

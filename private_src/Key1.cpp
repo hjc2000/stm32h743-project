@@ -1,5 +1,5 @@
 #include "Key1.h"
-#include "base/peripheral/gpio/gpio_parameter.h"
+#include "base/embedded/gpio/gpio_parameter.h"
 
 bsp::Key1::Key1()
 {
