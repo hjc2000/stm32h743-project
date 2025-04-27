@@ -1,4 +1,3 @@
-#include "base/define.h"
 #include "base/embedded/gpio/gpio_parameter.h"
 #include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/iic/SoftwareIicHostPinDriver.h"

@@ -1,4 +1,3 @@
-#include "base/define.h"
 #include <base/container/Dictionary.h>
 #include <bsp-interface/di/expanded_io.h>
 #include <bsp-interface/di/gpio.h>
