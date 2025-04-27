@@ -1,11 +1,10 @@
+#include "base/container/Dictionary.h"
 #include "base/embedded/gpio/gpio_parameter.h"
 #include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/iic/SoftwareIicHostPinDriver.h"
-#include <base/container/Dictionary.h>
-#include <bsp-interface/di/iic.h>
-#include <bsp-interface/di/interrupt.h>
-#include <bsp-interface/iic/GpioSoftwareIicHost.h>
-#include <bsp-interface/iic/MutexIicHost.h>
+#include "bsp-interface/di/iic.h"
+#include "bsp-interface/iic/GpioSoftwareIicHost.h"
+#include "bsp-interface/iic/MutexIicHost.h"
 #include <memory>
 
 namespace
