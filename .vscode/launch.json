@@ -7,8 +7,8 @@
 		{
 			"name": "ST-Link Debug",
 			"preLaunchTask": "stflash-debug-download",
-			"cwd": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/stm32h743-project/bin",
-			"executable": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/stm32h743-project/bin/stm32h743-project.elf",
+			"cwd": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/${workspaceFolderBasename}/bin",
+			"executable": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/${workspaceFolderBasename}/bin/${workspaceFolderBasename}.elf",
 			"request": "launch",
 			"type": "cortex-debug",
 			"runToEntryPoint": "main",
@@ -23,8 +23,8 @@
 		{
 			"name": "JLink Debug",
 			"preLaunchTask": "jlink-debug-download",
-			"cwd": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/stm32h743-project/bin",
-			"executable": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/stm32h743-project/bin/stm32h743-project.elf",
+			"cwd": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/${workspaceFolderBasename}/bin",
+			"executable": "${env:cpp_lib_build_scripts_path}/arm-none-eabi-cortex-m7/.libs/${workspaceFolderBasename}/bin/${workspaceFolderBasename}.elf",
 			"request": "launch",
 			"type": "cortex-debug",
 			"runToEntryPoint": "main",
