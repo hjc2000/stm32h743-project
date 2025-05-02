@@ -4,7 +4,6 @@ set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")
 add_executable(${ProjectName})
 target_import_src(${ProjectName})
 
-target_import_system_call(${ProjectName} PUBLIC)
 target_import_task(${ProjectName} PUBLIC)
 target_import_FatFs(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_p_net(${ProjectName} PUBLIC)
