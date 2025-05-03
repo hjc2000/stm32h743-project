@@ -49,6 +49,5 @@ void DI_Initialize()
 
 	_initialized = true;
 
-	DI_InitializeCPU();
 	InitializeClock();
 }
