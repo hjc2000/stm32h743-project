@@ -1,4 +1,5 @@
 #include "base/Console.h"
+#include "base/embedded/core.h"
 #include "base/embedded/heap/heap.h"
 #include "base/embedded/key/Key.h"
 #include "base/embedded/key/KeyScanner.h"
@@ -348,6 +349,8 @@ void InitialTask()
 
 int main(void)
 {
+	base::core::initialize();
+
 	/**
 	 * 不要在 main 函数中定义局部变量，然后创建任务的时候让 lambda 表达式通过引用的方式捕获，试图在
 	 * 任务函数中访问这些局部变量。根据网上的一个说法：freertos 启动调度后会覆盖掉 main 函数的栈，
