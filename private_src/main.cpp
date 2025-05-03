@@ -13,7 +13,6 @@
 #include "base/stream/StreamWriter.h"
 #include "base/task/delay.h"
 #include "base/task/task.h"
-#include "bsp-interface/di/reset_initialize.h"
 #include "EthernetPort.h"
 #include "ff.h"
 #include "littlefs/LfsFlashPort.h"
@@ -349,8 +348,6 @@ void InitialTask()
 
 int main(void)
 {
-	DI_Initialize();
-
 	/**
 	 * 不要在 main 函数中定义局部变量，然后创建任务的时候让 lambda 表达式通过引用的方式捕获，试图在
 	 * 任务函数中访问这些局部变量。根据网上的一个说法：freertos 启动调度后会覆盖掉 main 函数的栈，
