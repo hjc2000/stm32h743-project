@@ -16,6 +16,7 @@
 #include "base/task/task.h"
 #include "EthernetPort.h"
 #include "ff.h"
+#include "initialize_clock.h"
 #include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
@@ -350,6 +351,7 @@ void InitialTask()
 int main(void)
 {
 	base::core::initialize();
+	bsp::initialize_clock();
 
 	/**
 	 * 不要在 main 函数中定义局部变量，然后创建任务的时候让 lambda 表达式通过引用的方式捕获，试图在
