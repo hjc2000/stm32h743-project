@@ -4,8 +4,6 @@
 #include "hal-wrapper/peripheral/timer/PwmModeTimer3.h"
 #include <cstdint>
 
-using namespace bsp;
-
 void TestUniversalTimer1()
 {
 	hal::UniversalTimerBaseConfig config;
