@@ -267,6 +267,7 @@ void EhternetInput(base::ReadOnlySpan const &span);
 void InitialTask()
 {
 	bsp::initialize_sdram_heap();
+	bsp::initialize_iic_host();
 	bsp::initialize_led();
 
 	std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
