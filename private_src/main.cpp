@@ -1,12 +1,9 @@
 #include "base/Console.h"
 #include "base/embedded/core.h"
-#include "base/embedded/heap/heap.h"
 #include "base/embedded/key/Key.h"
 #include "base/embedded/key/KeyScanner.h"
 #include "base/embedded/led/Led.h"
 #include "base/embedded/led/LedBar.h"
-#include "base/embedded/sdram/chip/w9825g6kh_6/W9825G6KH_6.h"
-#include "base/embedded/sdram/SdramController.h"
 #include "base/embedded/serial/Serial.h"
 #include "base/embedded/systick/systick.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
@@ -16,7 +13,7 @@
 #include "base/task/task.h"
 #include "EthernetPort.h"
 #include "ff.h"
-#include "initialize_clock.h"
+#include "initialize.h"
 #include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
@@ -270,10 +267,7 @@ void EhternetInput(base::ReadOnlySpan const &span);
 ///
 void InitialTask()
 {
-	base::sdram::SdramController sdram_controller{1};
-	base::sdram::chip::w9825g6kh_6::W9825G6KH_6 sdram{sdram_controller};
-	sdram.Open();
-	base::heap::AddHeap(sdram.Span());
+	bsp::initialize_sdram_heap();
 
 	// 初始化 LED 灯条。
 	base::led::led_bar.Add(std::vector<base::led::Led>{
@@ -288,13 +282,12 @@ void InitialTask()
 	base::task::run("led",
 					1,
 					1024 * 10,
-					[sdram_controller]()
+					[]()
 					{
 						base::led::led_bar[0].TurnOff();
 						while (true)
 						{
 							base::led::led_bar[1].Toggle();
-							base::console.WriteLine(sdram_controller.Timing());
 							base::console.WriteLine(base::systick::frequency());
 							base::console.WriteLine(std::to_string(static_cast<std::chrono::nanoseconds>(base::systick::system_time_stamp()).count()) + "ns");
 							base::console.WriteLine(std::to_string(static_cast<std::chrono::microseconds>(base::systick::system_time_stamp()).count()) + "us");

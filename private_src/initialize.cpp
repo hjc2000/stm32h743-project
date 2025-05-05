@@ -1,5 +1,10 @@
-#include "initialize_clock.h"
+#include "initialize.h"
 #include "base/embedded/clock/ClockSource.h"
+#include "base/embedded/heap/heap.h"
+#include "base/embedded/iic/IicHost.h"
+#include "base/embedded/iic/SoftwareIicHostPinDriver.h"
+#include "base/embedded/sdram/chip/w9825g6kh_6/W9825G6KH_6.h"
+#include "base/embedded/sdram/SdramController.h"
 #include <cstdint>
 
 void bsp::initialize_clock()
@@ -107,4 +112,24 @@ void bsp::initialize_clock()
 		sysclk.Configure("pll", factors);
 	}
 	/* #endregion */
+}
+
+void bsp::initialize_sdram_heap()
+{
+	base::sdram::SdramController sdram_controller{1};
+	base::sdram::chip::w9825g6kh_6::W9825G6KH_6 sdram{sdram_controller};
+	sdram.Open();
+	base::heap::AddHeap(sdram.Span());
+}
+
+void bsp::initialize_iic_host()
+{
+	/// @brief 连接着 EEROM 芯片和 PCF8574T 芯片的 GPIO 模拟 IIC 主机接口。
+	std::shared_ptr<base::iic::SoftwareIicHostPinDriver<base::gpio::GpioPin>> pin_driver{new base::iic::SoftwareIicHostPinDriver<base::gpio::GpioPin>{
+		base::gpio::GpioPin{base::gpio::PortEnum::PortH, 4},
+		base::gpio::GpioPin{base::gpio::PortEnum::PortH, 5},
+	}};
+
+	std::shared_ptr<base::iic::IicHost> iic_host{new base::iic::IicHost{pin_driver}};
+	base::iic::iic_host_slot.push_back(iic_host);
 }
