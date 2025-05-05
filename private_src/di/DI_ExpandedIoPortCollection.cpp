@@ -1,7 +1,8 @@
 #include "base/container/Dictionary.h"
+#include "base/embedded/gpio/gpio_parameter.h"
+#include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/iic/IicHost.h"
 #include "bsp-interface/di/expanded_io.h"
-#include "bsp-interface/di/gpio.h"
 #include "bsp-interface/expanded_io/PCF8574.h"
 
 namespace
@@ -39,7 +40,7 @@ namespace
 	private:
 		bsp::PCF8574 _ex_io{
 			"ex_io",
-			DI_GpioPinCollection().Get("PB12"),
+			base::gpio::GpioPin{base::gpio::PortEnum::PortB, 12},
 			base::iic::iic_host_slot[0],
 			0,
 		};
