@@ -269,6 +269,7 @@ void InitialTask()
 	bsp::initialize_sdram_heap();
 	bsp::initialize_iic_host();
 	bsp::initialize_led();
+	bsp::initialize_pcf8574();
 
 	std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
 	serial->Start();

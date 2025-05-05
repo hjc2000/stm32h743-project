@@ -37,21 +37,17 @@ namespace
 
 void base::ethernet::hardware_reset_phy(base::ethernet::ethernet_controller_handle &h)
 {
-	base::extended_io::PCF8574 ex_io{
-		base::gpio::GpioPin{base::gpio::PortEnum::PortB, 12},
-		base::iic::iic_host_slot[0],
-		0,
-	};
+	std::shared_ptr<base::extended_io::PCF8574> pcf8574 = base::extended_io::pcf8574_slot[0];
 
 	/* 公司的开发板是旧版的，复位需要先输出高电平，延时后输出低电平。
 	 * 家里的开发板是新版的，复位需要先输出低电平，延时后输出高电平。
 	 */
 
 	// 硬件复位
-	ex_io.WriteBit(7, 0);
+	pcf8574->WriteBit(7, 0);
 	base::task::Delay(std::chrono::milliseconds{100});
 
 	// 复位结束
-	ex_io.WriteBit(7, 1);
+	pcf8574->WriteBit(7, 1);
 	base::task::Delay(std::chrono::milliseconds{100});
 }

@@ -9,4 +9,6 @@ namespace bsp
 	void initialize_iic_host();
 
 	void initialize_led();
+
+	void initialize_pcf8574();
 } // namespace bsp

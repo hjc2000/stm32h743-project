@@ -1,5 +1,6 @@
 #include "initialize.h"
 #include "base/embedded/clock/ClockSource.h"
+#include "base/embedded/extended-io/PCF8574.h"
 #include "base/embedded/heap/heap.h"
 #include "base/embedded/iic/IicHost.h"
 #include "base/embedded/iic/SoftwareIicHostPinDriver.h"
@@ -8,6 +9,7 @@
 #include "base/embedded/sdram/chip/w9825g6kh_6/W9825G6KH_6.h"
 #include "base/embedded/sdram/SdramController.h"
 #include <cstdint>
+#include <memory>
 
 void bsp::initialize_clock()
 {
@@ -143,4 +145,16 @@ void bsp::initialize_led()
 		base::led::Led{0},
 		base::led::Led{1},
 	});
+}
+
+void bsp::initialize_pcf8574()
+{
+	std::shared_ptr<base::extended_io::PCF8574> pcf8574{new base::extended_io::PCF8574{
+		base::gpio::GpioPin{base::gpio::PortEnum::PortB, 12},
+		base::iic::iic_host_slot[0],
+		0,
+
+	}};
+
+	base::extended_io::pcf8574_slot.Add(pcf8574);
 }
