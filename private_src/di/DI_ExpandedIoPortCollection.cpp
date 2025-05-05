@@ -1,8 +1,9 @@
 #include "base/container/Dictionary.h"
+#include "base/embedded/iic/IicHost.h"
 #include "bsp-interface/di/expanded_io.h"
 #include "bsp-interface/di/gpio.h"
-#include "bsp-interface/di/iic.h"
 #include "bsp-interface/expanded_io/PCF8574.h"
+#include <memory>
 
 namespace
 {
@@ -37,10 +38,16 @@ namespace
 	class DictionaryProvider
 	{
 	private:
+		/// @brief 连接着 EEROM 芯片和 PCF8574T 芯片的 GPIO 模拟 IIC 主机接口。
+		std::shared_ptr<base::iic::SoftwareIicHostPinDriver<base::gpio::GpioPin>> _pin_driver{new base::iic::SoftwareIicHostPinDriver<base::gpio::GpioPin>{
+			base::gpio::GpioPin{base::gpio::PortEnum::PortH, 4},
+			base::gpio::GpioPin{base::gpio::PortEnum::PortH, 5},
+		}};
+
 		bsp::PCF8574 _ex_io{
 			"ex_io",
 			DI_GpioPinCollection().Get("PB12"),
-			DI_IicHostCollection().Get("gpio_iic_host"),
+			std::shared_ptr<base::iic::IicHost>{new base::iic::IicHost{_pin_driver}},
 			0,
 		};
 
