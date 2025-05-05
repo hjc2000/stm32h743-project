@@ -1,5 +1,4 @@
 #include "PwmModeTimer3.h"
-#include <bsp-interface/di/gpio.h>
 #include <bsp-interface/di/interrupt.h>
 
 void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
@@ -14,10 +13,10 @@ void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 												HAL_TIM_IRQHandler(&hal::PwmModeTimer3::Instance()._handle);
 											});
 
-	auto pin = DI_GpioPinCollection().Get("PB1");
-	pin->OpenAsAlternateFunctionMode("timer3",
-									 bsp::IGpioPinPullMode::PullUp,
-									 bsp::IGpioPinDriver::PushPull);
+	// auto pin = DI_GpioPinCollection().Get("PB1");
+	// pin->OpenAsAlternateFunctionMode("timer3",
+	// 								 bsp::IGpioPinPullMode::PullUp,
+	// 								 bsp::IGpioPinDriver::PushPull);
 }
 
 void hal::PwmModeTimer3::PwmInitialize(hal::UniversalTimerBaseConfig &config)
