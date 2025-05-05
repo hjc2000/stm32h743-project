@@ -20,7 +20,6 @@
 #include <chrono>
 #include <memory>
 #include <string>
-#include <vector>
 
 /* #region 测试函数 */
 
@@ -268,12 +267,7 @@ void EhternetInput(base::ReadOnlySpan const &span);
 void InitialTask()
 {
 	bsp::initialize_sdram_heap();
-
-	// 初始化 LED 灯条。
-	base::led::led_bar.Add(std::vector<base::led::Led>{
-		base::led::Led{0},
-		base::led::Led{1},
-	});
+	bsp::initialize_led();
 
 	std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
 	serial->Start();

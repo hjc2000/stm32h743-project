@@ -3,6 +3,8 @@
 #include "base/embedded/heap/heap.h"
 #include "base/embedded/iic/IicHost.h"
 #include "base/embedded/iic/SoftwareIicHostPinDriver.h"
+#include "base/embedded/led/Led.h"
+#include "base/embedded/led/LedBar.h"
 #include "base/embedded/sdram/chip/w9825g6kh_6/W9825G6KH_6.h"
 #include "base/embedded/sdram/SdramController.h"
 #include <cstdint>
@@ -132,4 +134,13 @@ void bsp::initialize_iic_host()
 
 	std::shared_ptr<base::iic::IicHost> iic_host{new base::iic::IicHost{pin_driver}};
 	base::iic::iic_host_slot.push_back(iic_host);
+}
+
+void bsp::initialize_led()
+{
+	// 初始化 LED 灯条。
+	base::led::led_bar.Add(std::vector<base::led::Led>{
+		base::led::Led{0},
+		base::led::Led{1},
+	});
 }

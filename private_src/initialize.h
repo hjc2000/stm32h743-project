@@ -7,4 +7,6 @@ namespace bsp
 	void initialize_sdram_heap();
 
 	void initialize_iic_host();
+
+	void initialize_led();
 } // namespace bsp
