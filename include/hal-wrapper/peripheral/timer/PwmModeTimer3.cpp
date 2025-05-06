@@ -1,11 +1,12 @@
 #include "PwmModeTimer3.h"
-#include <bsp-interface/di/interrupt.h>
+#include "base/embedded/interrupt/interrupt.h"
+#include "bsp-interface/di/interrupt.h"
 
 void hal::PwmModeTimer3::OnPwmMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
 
-	bsp::di::interrupt::EnableInterrupt(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), 10);
+	base::interrupt::enable_interrupt(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), 10);
 
 	bsp::di::interrupt::IsrManager().AddIsr(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn),
 											[]()

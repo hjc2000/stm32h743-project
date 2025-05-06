@@ -1,7 +1,7 @@
 #pragma once
 #include "base/define.h"
 #include "base/embedded/clock/ClockSource.h"
-#include "bsp-interface/di/interrupt.h"
+#include "base/embedded/interrupt/interrupt.h"
 #include "hal-wrapper/peripheral/timer/UniversalTimerBaseConfig.h"
 #include "hal.h"
 #include <functional>
@@ -37,7 +37,7 @@ namespace hal
 
 		void SetPeriodElapsedCallback(std::function<void()> func)
 		{
-			bsp::di::interrupt::GlobalInterruptGuard g;
+			base::interrupt::GlobalInterruptionGuard g;
 			_period_elapsed_callback = func;
 		}
 

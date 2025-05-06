@@ -1,11 +1,11 @@
 #include "BaseModeTimer3.h"
-#include <bsp-interface/di/interrupt.h>
-#include <hal.h>
+#include "base/embedded/interrupt/interrupt.h"
+#include "hal.h"
 
 void hal::BaseModeTimer3::OnBaseMspInitCallback(TIM_HandleTypeDef *handle)
 {
 	__HAL_RCC_TIM3_CLK_ENABLE();
-	bsp::di::interrupt::EnableInterrupt(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), 10);
+	base::interrupt::enable_interrupt(static_cast<uint32_t>(IRQn_Type::TIM3_IRQn), 10);
 }
 
 void hal::BaseModeTimer3::OnPeriodElapsed(TIM_HandleTypeDef *handle)
