@@ -2,6 +2,7 @@
 #include "base/string/define.h"
 #include "Key0.h"
 #include "Key1.h"
+#include "Key2.h"
 #include "key_handle.h" // IWYU pragma: keep
 #include <stdexcept>
 
@@ -16,6 +17,10 @@ base::key::sp_key_handle base::key::open(int key_id)
 	case 1:
 		{
 			return base::key::sp_key_handle{new bsp::Key1{}};
+		}
+	case 2:
+		{
+			return base::key::sp_key_handle{new bsp::Key2{}};
 		}
 	default:
 		{

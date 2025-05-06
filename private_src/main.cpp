@@ -319,6 +319,7 @@ void InitialTask()
 						base::key::KeyScanner scanner{
 							base::key::Key{0},
 							base::key::Key{1},
+							base::key::Key{2},
 						};
 
 						while (true)
@@ -330,6 +331,11 @@ void InitialTask()
 							}
 
 							if (scanner.HasKeyDownEvent(1))
+							{
+								base::led::led_bar[1].Toggle();
+							}
+
+							if (scanner.HasKeyPressedEvent(2))
 							{
 								base::led::led_bar[1].Toggle();
 							}
