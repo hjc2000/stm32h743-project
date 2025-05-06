@@ -1,7 +1,4 @@
-#include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
 #include "hal.h"
-#include "task.h"
 
 extern "C"
 {
