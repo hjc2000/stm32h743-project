@@ -335,9 +335,9 @@ void InitialTask()
 								base::led::led_bar[1].Toggle();
 							}
 
-							if (scanner.HasKeyPressedEvent(2))
+							if (scanner.HasKeyDownEvent(2))
 							{
-								base::led::led_bar[1].Toggle();
+								base::led::led_bar[0].Toggle();
 							}
 						}
 					});
