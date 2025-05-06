@@ -4,7 +4,6 @@
 #include "base/unit/Nanoseconds.h"
 #include "base/UsageStateManager.h"
 #include "key_handle.h"
-#include <atomic>
 
 namespace bsp
 {
@@ -15,7 +14,8 @@ namespace bsp
 	private:
 		base::UsageStateManager<Key2> _usage_state_manager{};
 		base::gpio::GpioPin _pin{base::gpio::PortEnum::PortC, 13};
-		std::atomic_bool _pressed = false;
+		bool volatile _pressed = false;
+		bool volatile _checking = false;
 		base::Nanoseconds _last_check_time;
 
 	public:

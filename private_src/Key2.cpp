@@ -12,7 +12,6 @@ bsp::Key2::Key2()
 	_pin.RegisterInterruptCallback([this]()
 								   {
 									   _pressed = true;
-									   _last_check_time = base::systick::system_time_stamp();
 								   });
 }
 
@@ -20,12 +19,24 @@ bool bsp::Key2::KeyIsDown()
 {
 	if (_pressed)
 	{
+		_last_check_time = base::systick::system_time_stamp();
+		_pressed = false;
+		_checking = true;
+	}
+
+	if (_checking)
+	{
 		base::Nanoseconds current_time = base::systick::system_time_stamp();
 		if (current_time - _last_check_time > base::Nanoseconds{std::chrono::milliseconds{20}})
 		{
-			_pressed = false;
+			return !_pin.ReadPin();
+			_checking = false;
+		}
+		else
+		{
+			return true;
 		}
 	}
 
-	return _pressed;
+	return false;
 }
