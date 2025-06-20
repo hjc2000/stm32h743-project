@@ -8,7 +8,7 @@
 #include "base/embedded/systick/systick.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
-#include "base/stream/StreamWriter.h"
+#include "base/stream/AsyncStreamWriter.h"
 #include "base/task/delay.h"
 #include "base/task/task.h"
 #include "EthernetPort.h"
@@ -271,9 +271,17 @@ void InitialTask()
 	bsp::initialize_led();
 	bsp::initialize_pcf8574();
 
-	std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
-	serial->Start();
-	base::console.SetOutputWriter(std::shared_ptr<base::StreamWriter>{new base::StreamWriter{serial}});
+	{
+		std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
+		serial->Start();
+
+		std::shared_ptr<base::AsyncStreamWriter> writer{new base::AsyncStreamWriter{
+			1024,
+			serial,
+		}};
+
+		base::console.SetOutputWriter(writer);
+	}
 
 	base::task::run("led",
 					1,
