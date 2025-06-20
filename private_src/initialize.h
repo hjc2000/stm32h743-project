@@ -11,4 +11,7 @@ namespace bsp
 	void initialize_led();
 
 	void initialize_pcf8574();
+
+	void initialize_console();
+
 } // namespace bsp

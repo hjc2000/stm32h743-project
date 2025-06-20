@@ -1,4 +1,5 @@
 #include "initialize.h"
+#include "base/Console.h"
 #include "base/embedded/clock/ClockSource.h"
 #include "base/embedded/extended-io/PCF8574.h"
 #include "base/embedded/heap/heap.h"
@@ -8,6 +9,8 @@
 #include "base/embedded/led/LedBar.h"
 #include "base/embedded/sdram/chip/w9825g6kh_6/W9825G6KH_6.h"
 #include "base/embedded/sdram/SdramController.h"
+#include "base/embedded/serial/Serial.h"
+#include "base/stream/AsyncStreamWriter.h"
 #include <cstdint>
 #include <memory>
 
@@ -157,4 +160,17 @@ void bsp::initialize_pcf8574()
 	}};
 
 	base::extended_io::pcf8574_slot.Add(pcf8574);
+}
+
+void bsp::initialize_console()
+{
+	std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
+	serial->Start();
+
+	std::shared_ptr<base::AsyncStreamWriter> writer{new base::AsyncStreamWriter{
+		1024,
+		serial,
+	}};
+
+	base::console.SetOutputWriter(writer);
 }

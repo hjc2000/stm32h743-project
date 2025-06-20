@@ -4,11 +4,9 @@
 #include "base/embedded/key/KeyScanner.h"
 #include "base/embedded/led/Led.h"
 #include "base/embedded/led/LedBar.h"
-#include "base/embedded/serial/Serial.h"
 #include "base/embedded/systick/systick.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
-#include "base/stream/AsyncStreamWriter.h"
 #include "base/task/delay.h"
 #include "base/task/task.h"
 #include "EthernetPort.h"
@@ -270,18 +268,7 @@ void InitialTask()
 	bsp::initialize_iic_host();
 	bsp::initialize_led();
 	bsp::initialize_pcf8574();
-
-	{
-		std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
-		serial->Start();
-
-		std::shared_ptr<base::AsyncStreamWriter> writer{new base::AsyncStreamWriter{
-			1024,
-			serial,
-		}};
-
-		base::console.SetOutputWriter(writer);
-	}
+	bsp::initialize_console();
 
 	base::task::run("led",
 					1,
