@@ -167,6 +167,20 @@ void bsp::initialize_console()
 	std::shared_ptr<base::serial::Serial> serial{new base::serial::Serial{1}};
 	serial->Start();
 
+	base::task::run(1024 * 2,
+					[serial]()
+					{
+						uint8_t buffer[128]{};
+
+						while (true)
+						{
+							int32_t have_read = serial->Read(base::Span{buffer, sizeof(buffer)});
+							base::console.WriteLine(base::ReadOnlySpan{buffer, have_read});
+							base::console.WriteLine("123456");
+							base::console.WriteLine(std::to_string(have_read));
+						}
+					});
+
 	std::shared_ptr<base::AsyncStreamWriter> writer{new base::AsyncStreamWriter{
 		1024,
 		serial,
