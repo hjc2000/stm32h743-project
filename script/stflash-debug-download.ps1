@@ -28,7 +28,10 @@ try
 	$objcopy_cmd = $objcopy_cmd -join " "
 	Invoke-Expression $objcopy_cmd
 
-	st-flash --reset --connect-under-reset write "${install_path}/bin/${project_name}.bin" 0x8000000
+	STM32_Programmer_CLI.exe -c "port=JTAG mode=UR" `
+		-w "${install_path}\bin\${project_name}.bin" 0x8000000 `
+		-rst
+
 	if ($LASTEXITCODE)
 	{
 		try-remove-items.exe --paths "$install_path/bin/${project_name}.bin"
