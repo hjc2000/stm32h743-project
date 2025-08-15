@@ -3,8 +3,6 @@
 #include "base/embedded/heap/Heap4.h"
 #include "base/embedded/heap/IHeap.h"
 #include <cstddef>
-#include <stdlib.h>
-#include <string.h>
 
 namespace
 {
