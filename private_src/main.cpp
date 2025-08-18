@@ -1,5 +1,6 @@
 #include "base/Console.h"
 #include "base/embedded/core.h"
+#include "base/embedded/dma/MemoryDma.h"
 #include "base/embedded/key/Key.h"
 #include "base/embedded/key/KeyScanner.h"
 #include "base/embedded/led/Led.h"
@@ -9,6 +10,7 @@
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
 #include "base/task/delay.h"
 #include "base/task/task.h"
+#include "base/test/TestMemoryDma.h"
 #include "EthernetPort.h"
 #include "ff.h"
 #include "initialize.h"
@@ -297,13 +299,14 @@ void InitialTask()
 						// freertos_demo();
 						// p_net_sample_app_main();
 						// TestLittleFs();
-						TestDCP();
+						// TestDCP();
 						// TestUniversalTimer1();
 						// bsp::TestFlash();
 						// TestExtiKey();
 						// bsp::TestSerial();
 						// bsp::TestKeyScanner();
 						// bsp::TestIndependentWatchDog();
+						base::test::TestMemoryDma<4>(1);
 					});
 
 	base::task::run("key scanner",
