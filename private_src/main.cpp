@@ -1,3 +1,5 @@
+// IWYU pragma: begin_keep
+
 #include "base/Console.h"
 #include "base/embedded/core.h"
 #include "base/embedded/dma/MemoryDma.h"
@@ -20,6 +22,8 @@
 #include <chrono>
 #include <memory>
 #include <string>
+
+// IWYU pragma: end_keep
 
 /* #region 测试函数 */
 
@@ -299,14 +303,14 @@ void InitialTask()
 						// freertos_demo();
 						// p_net_sample_app_main();
 						// TestLittleFs();
-						// TestDCP();
+						TestDCP();
 						// TestUniversalTimer1();
 						// bsp::TestFlash();
 						// TestExtiKey();
 						// bsp::TestSerial();
 						// bsp::TestKeyScanner();
 						// bsp::TestIndependentWatchDog();
-						base::test::TestMemoryDma<4>(1);
+						// base::test::TestMemoryDma1<4>(1);
 					});
 
 	base::task::run("key scanner",
