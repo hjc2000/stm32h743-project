@@ -126,7 +126,7 @@ void bsp::initialize_sdram_heap()
 	base::sdram::SdramController sdram_controller{1};
 	base::sdram::chip::w9825g6kh_6::W9825G6KH_6 sdram{sdram_controller};
 	sdram.Open();
-	base::heap::AddHeap(sdram.Span());
+	base::heap::PushFront(sdram.Span());
 }
 
 void bsp::initialize_iic_host()
