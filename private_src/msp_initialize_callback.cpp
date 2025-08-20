@@ -1,5 +1,6 @@
 #include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/sdram/sdram_controller_handle.h"
+#include "hal.h" // IWYU pragma: keep
 #include <cstdint>
 #include <vector>
 
@@ -49,7 +50,7 @@ void base::sdram::msp_initialize_callback(uint32_t id)
 
 	for (auto &pin : pins)
 	{
-		pin.InitializeAsAlternateFunctionMode(12,
+		pin.InitializeAsAlternateFunctionMode(GPIO_AF12_FMC,
 											  base::gpio::PullMode::PullUp,
 											  base::gpio::DriveMode::PushPull);
 	}
