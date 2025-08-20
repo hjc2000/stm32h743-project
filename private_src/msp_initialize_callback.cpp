@@ -1,5 +1,7 @@
+#include "base/embedded/gpio/gpio_parameter.h"
 #include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/sdram/sdram_controller_handle.h"
+#include "base/embedded/serial/serial_handle.h"
 #include "hal.h" // IWYU pragma: keep
 #include <cstdint>
 #include <vector>
@@ -54,4 +56,20 @@ void base::sdram::msp_initialize_callback(uint32_t id)
 											  base::gpio::PullMode::PullUp,
 											  base::gpio::DriveMode::PushPull);
 	}
+}
+
+void base::serial::msp_initialize_callback(uint32_t id)
+{
+	base::gpio::GpioPin pa9{base::gpio::PortEnum::PortA, 9};
+	base::gpio::GpioPin pa10{base::gpio::PortEnum::PortA, 10};
+
+	// 发送引脚 PA9
+	pa9.InitializeAsAlternateFunctionMode(GPIO_AF7_USART1,
+										  base::gpio::PullMode::PullUp,
+										  base::gpio::DriveMode::PushPull);
+
+	// 接收引脚 PA10
+	pa10.InitializeAsAlternateFunctionMode(GPIO_AF7_USART1,
+										   base::gpio::PullMode::PullUp,
+										   base::gpio::DriveMode::PushPull);
 }
