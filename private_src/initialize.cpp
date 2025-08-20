@@ -158,7 +158,6 @@ void bsp::initialize_pcf8574()
 		base::gpio::GpioPin{base::gpio::PortEnum::PortB, 12},
 		base::iic::iic_host_slot[0],
 		0,
-
 	}};
 
 	base::extended_io::pcf8574_slot.Add(pcf8574);
