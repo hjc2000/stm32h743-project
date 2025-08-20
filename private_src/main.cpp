@@ -8,6 +8,7 @@
 #include "base/embedded/led/Led.h"
 #include "base/embedded/led/LedBar.h"
 #include "base/embedded/systick/systick.h"
+#include "base/embedded/watch-dog/IndependentWatchDog.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
 #include "base/task/delay.h"
@@ -281,9 +282,13 @@ void InitialTask()
 					1024 * 10,
 					[]()
 					{
+						base::independent_watch_dog::IndependentWatchDog watch_dog{1};
+						watch_dog.Initialize(std::chrono::milliseconds{2000});
+
 						base::led::led_bar[0].TurnOff();
 						while (true)
 						{
+							watch_dog.Feed();
 							base::led::led_bar[1].Toggle();
 							base::console.WriteLine(base::systick::frequency());
 							base::console.WriteLine(std::to_string(static_cast<std::chrono::nanoseconds>(base::systick::system_time_stamp()).count()) + "ns");
