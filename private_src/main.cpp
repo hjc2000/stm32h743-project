@@ -13,6 +13,7 @@
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
 #include "base/task/delay.h"
 #include "base/task/task.h"
+#include "base/test/TestBaseTimer.h"
 #include "base/test/TestMemoryDma.h"
 #include "EthernetPort.h"
 #include "ff.h"
@@ -276,6 +277,8 @@ void InitialTask()
 	bsp::initialize_led();
 	bsp::initialize_pcf8574();
 	bsp::initialize_console();
+
+	base::test::TestBaseTimer(3);
 
 	base::task::run("led",
 					1,
