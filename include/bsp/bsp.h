@@ -13,5 +13,3 @@ enum class KeyIndex : uint16_t
 
 void TestWindowWatchDog();
 void TestUniversalTimer1();
-void TestSDRAM();
-void TestEthernet();
