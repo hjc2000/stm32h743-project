@@ -3,6 +3,7 @@
 #include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/sdram/sdram_controller_handle.h"
 #include "base/embedded/serial/serial_handle.h"
+#include "base/embedded/timer/pwm_timer_handle.h"
 #include "hal.h" // IWYU pragma: keep
 #include <cstdint>
 #include <vector>
@@ -168,4 +169,8 @@ void base::ethernet::msp_initialize_callback(uint32_t id)
 
 	gpio_init_struct.Pin = ETH_TXD1_GPIO_PIN;
 	HAL_GPIO_Init(ETH_TXD1_GPIO_PORT, &gpio_init_struct); /* ETH_TXD1初始化 */
+}
+
+void base::pwm_timer::msp_initialize_callback(uint32_t id)
+{
 }
