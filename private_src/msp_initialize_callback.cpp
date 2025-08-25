@@ -173,4 +173,9 @@ void base::ethernet::msp_initialize_callback(uint32_t id)
 
 void base::pwm_timer::msp_initialize_callback(uint32_t id)
 {
+	base::gpio::GpioPin pin{base::gpio::PortEnum::PortB, 1};
+
+	pin.InitializeAsAlternateFunctionMode(GPIO_AF2_TIM3,
+										  base::gpio::PullMode::NoPull,
+										  base::gpio::DriveMode::PushPull);
 }
