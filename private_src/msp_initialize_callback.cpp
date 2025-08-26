@@ -183,4 +183,9 @@ void base::pwm_timer::msp_initialize_callback(uint32_t id)
 
 void base::input_capture_timer::msp_initialize_callback(uint32_t id)
 {
+	base::gpio::GpioPin pin{base::gpio::PortEnum::PortA, 0};
+
+	pin.InitializeAsAlternateFunctionMode(GPIO_AF2_TIM5,
+										  base::gpio::PullMode::PullDown,
+										  base::gpio::DriveMode::PushPull);
 }
