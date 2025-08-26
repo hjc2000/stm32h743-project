@@ -14,6 +14,7 @@
 #include "base/task/delay.h"
 #include "base/task/task.h"
 #include "base/test/TestBaseTimer.h"
+#include "base/test/TestInputCaptureTimer.h"
 #include "base/test/TestMemoryDma.h"
 #include "base/test/TestPwmTimer.h"
 #include "EthernetPort.h"
@@ -281,6 +282,7 @@ void InitialTask()
 
 	base::test::TestBaseTimer(6);
 	base::test::TestPwmTimer(3, 4);
+	// base::test::TestInputCaptureTimer(3, 4);
 
 	base::task::run("led",
 					1,

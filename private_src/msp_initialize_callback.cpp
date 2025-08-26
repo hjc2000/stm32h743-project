@@ -3,6 +3,7 @@
 #include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/sdram/sdram_controller_handle.h"
 #include "base/embedded/serial/serial_handle.h"
+#include "base/embedded/timer/input_capture_timer_handle.h"
 #include "base/embedded/timer/pwm_timer_handle.h"
 #include "hal.h" // IWYU pragma: keep
 #include <cstdint>
@@ -178,4 +179,8 @@ void base::pwm_timer::msp_initialize_callback(uint32_t id)
 	pin.InitializeAsAlternateFunctionMode(GPIO_AF2_TIM3,
 										  base::gpio::PullMode::NoPull,
 										  base::gpio::DriveMode::PushPull);
+}
+
+void base::input_capture_timer::msp_initialize_callback(uint32_t id)
+{
 }
