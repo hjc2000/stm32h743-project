@@ -41,8 +41,9 @@ namespace bsp
 		///
 		/// @brief LED 灯的状态。
 		///
-		/// @return base::led::State
+		/// @return
 		///
 		virtual base::led::State State() const override;
 	};
+
 } // namespace bsp
