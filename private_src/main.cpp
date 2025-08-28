@@ -280,7 +280,7 @@ void InitialTask()
 	bsp::initialize_pcf8574();
 	bsp::initialize_console();
 
-	base::test::TestBaseTimer(6);
+	// base::test::TestBaseTimer(6);
 	base::test::TestPwmTimer(3, 4);
 	base::test::TestInputCaptureTimer(5, 1);
 
@@ -297,11 +297,11 @@ void InitialTask()
 						{
 							watch_dog.Feed();
 							base::led::led_bar[0].Toggle();
-							base::console.WriteLine(base::systick::frequency());
-							base::console.WriteLine(std::to_string(static_cast<std::chrono::nanoseconds>(base::systick::system_time_stamp()).count()) + "ns");
-							base::console.WriteLine(std::to_string(static_cast<std::chrono::microseconds>(base::systick::system_time_stamp()).count()) + "us");
-							base::console.WriteLine(std::to_string(static_cast<std::chrono::milliseconds>(base::systick::system_time_stamp()).count()) + "ms");
-							base::console.WriteLine(std::to_string(static_cast<std::chrono::seconds>(base::systick::system_time_stamp()).count()) + "s");
+							// base::console.WriteLine(base::systick::frequency());
+							// base::console.WriteLine(std::to_string(static_cast<std::chrono::nanoseconds>(base::systick::system_time_stamp()).count()) + "ns");
+							// base::console.WriteLine(std::to_string(static_cast<std::chrono::microseconds>(base::systick::system_time_stamp()).count()) + "us");
+							// base::console.WriteLine(std::to_string(static_cast<std::chrono::milliseconds>(base::systick::system_time_stamp()).count()) + "ms");
+							// base::console.WriteLine(std::to_string(static_cast<std::chrono::seconds>(base::systick::system_time_stamp()).count()) + "s");
 							base::task::Delay(std::chrono::milliseconds{1000});
 						}
 					});
