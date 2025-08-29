@@ -282,7 +282,7 @@ void InitialTask()
 
 	// base::test::TestBaseTimer(6);
 	base::test::TestPwmTimer(3, 4);
-	base::test::TestInputCaptureTimer(5, 1);
+	base::test::TestInputCaptureTimer(5, 1, 20);
 
 	base::task::run("led",
 					1,
