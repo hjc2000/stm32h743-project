@@ -3,8 +3,8 @@ $ErrorActionPreference = "Stop"
 # region 项目参数
 
 $project_name = "stm32h743-project"
-$cmake_config = "arm-none-eabi-cortex-m7-debug"
 $platform = "arm-none-eabi-cortex-m7"
+$cmake_config = "arm-none-eabi-cortex-m7-debug"
 
 # endregion
 
