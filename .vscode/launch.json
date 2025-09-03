@@ -6,7 +6,7 @@
 	"configurations": [
 		{
 			"name": "ST-Link Debug",
-			"preLaunchTask": "stflash-debug-download",
+			"preLaunchTask": "debug-build",
 			"cwd": "${command:cmake.launchTargetDirectory}",
 			"executable": "${command:cmake.launchTargetPath}",
 			"request": "launch",
@@ -22,7 +22,7 @@
 		},
 		{
 			"name": "JLink Debug",
-			"preLaunchTask": "jlink-debug-download",
+			"preLaunchTask": "debug-build",
 			"cwd": "${command:cmake.launchTargetDirectory}",
 			"executable": "${command:cmake.launchTargetPath}",
 			"request": "launch",

@@ -2,6 +2,18 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "debug-build",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"script/debug-build.ps1"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
 			"label": "stflash-release-download",
 			"type": "shell",
 			"command": "pwsh",
