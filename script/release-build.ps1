@@ -5,6 +5,13 @@ $ErrorActionPreference = "Stop"
 $project_name = "stm32h743-project"
 $cmake_config = "arm-none-eabi-cortex-m7-release"
 $platform = "arm-none-eabi-cortex-m7"
+
+# endregion
+
+
+
+# region 计算所得的项目参数。不需要填写。
+
 $workspace_path = Get-Location
 $build_path = "$workspace_path/jc_build"
 $install_path = "$env:cpp_lib_build_scripts_path/${platform}/.libs/${project_name}"
@@ -13,6 +20,7 @@ Write-Host "构建路径 ${build_path}"
 Write-Host "安装路径 ${install_path}"
 
 # endregion
+
 
 # region 如果还没编译安装，就先编译安装。
 
