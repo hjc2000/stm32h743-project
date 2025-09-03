@@ -1,4 +1,4 @@
-. "script/prepare-for-debug.ps1"
+. "script/debug-build.ps1"
 
 Push-Location $install_path
 try
