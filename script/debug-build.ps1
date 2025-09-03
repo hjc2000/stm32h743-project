@@ -9,6 +9,9 @@ $workspace_path = Get-Location
 $build_path = "$workspace_path/jc_build"
 $install_path = "$env:cpp_lib_build_scripts_path/${platform}/.libs/${project_name}"
 
+Write-Host "构建路径 ${build_path}"
+Write-Host "安装路径 ${install_path}"
+
 # endregion
 
 # region 如果还没编译安装，就先编译安装。
