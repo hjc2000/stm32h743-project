@@ -1,4 +1,4 @@
-. "script/prepare-for-release.ps1"
+. "script/release-build.ps1"
 
 Push-Location $install_path
 try
