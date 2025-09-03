@@ -2,6 +2,18 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "ninja-install",
+			"type": "shell",
+			"command": "ninja",
+			"args": [
+				"install"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/jc_build"
+			},
+			"problemMatcher": []
+		},
+		{
 			"label": "debug-build",
 			"type": "shell",
 			"command": "pwsh",
@@ -26,30 +38,6 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "stflash-debug-download",
-			"type": "shell",
-			"command": "pwsh",
-			"args": [
-				"script/stflash-debug-download.ps1"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "jlink-debug-download",
-			"type": "shell",
-			"command": "pwsh",
-			"args": [
-				"script/jlink-debug-download.ps1"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}"
-			},
-			"problemMatcher": []
-		},
-		{
 			"label": "jlink-release-download",
 			"type": "shell",
 			"command": "pwsh",
@@ -58,18 +46,6 @@
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "ninja-install",
-			"type": "shell",
-			"command": "ninja",
-			"args": [
-				"install"
-			],
-			"options": {
-				"cwd": "${workspaceFolder}/jc_build"
 			},
 			"problemMatcher": []
 		},
