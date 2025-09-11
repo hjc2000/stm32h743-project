@@ -11,6 +11,8 @@
 #include "base/embedded/watch-dog/IndependentWatchDog.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
+#include "base/string/define.h"
+#include "base/string/ToHexString.h"
 #include "base/task/delay.h"
 #include "base/task/task.h"
 #include "base/test/TestBaseTimer.h"
@@ -24,7 +26,9 @@
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
 #include <chrono>
+#include <exception>
 #include <memory>
+#include <stdexcept>
 #include <string>
 
 // IWYU pragma: end_keep
@@ -311,6 +315,15 @@ void InitialTask()
 					1024 * 10,
 					[]()
 					{
+						try
+						{
+							throw std::runtime_error{"测试异常"};
+						}
+						catch (std::exception const &e)
+						{
+							base::console.WriteLine(CODE_POS_STR + base::ToHexString(&e));
+						}
+
 						// TestFatFs();
 						// freertos_demo();
 						// p_net_sample_app_main();
