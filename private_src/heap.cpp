@@ -16,8 +16,10 @@ namespace
 
 } // namespace
 
+///
 /// @brief 获取主堆。
 /// @return
+///
 base::heap::IHeap &base::heap::Heap()
 {
 	return _heap_context_instance_provider.Instance().heap4;
