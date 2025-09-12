@@ -296,11 +296,11 @@ void InitialTask()
 						base::independent_watch_dog::IndependentWatchDog watch_dog{1};
 						watch_dog.Initialize(std::chrono::milliseconds{2000});
 
-						base::led::led_bar[0].TurnOff();
+						base::led::led_bar()[0].TurnOff();
 						while (true)
 						{
 							watch_dog.Feed();
-							base::led::led_bar[0].Toggle();
+							base::led::led_bar()[0].Toggle();
 							// base::console().WriteLine(base::systick::frequency());
 							// base::console().WriteLine(std::to_string(static_cast<std::chrono::nanoseconds>(base::systick::system_time_stamp()).count()) + "ns");
 							// base::console().WriteLine(std::to_string(static_cast<std::chrono::microseconds>(base::systick::system_time_stamp()).count()) + "us");
@@ -354,17 +354,17 @@ void InitialTask()
 							scanner.ScanKeys();
 							if (scanner.HasKeyDownEvent(0))
 							{
-								base::led::led_bar[0].Toggle();
+								base::led::led_bar()[0].Toggle();
 							}
 
 							if (scanner.HasKeyDownEvent(1))
 							{
-								base::led::led_bar[0].Toggle();
+								base::led::led_bar()[0].Toggle();
 							}
 
 							if (scanner.HasKeyDownEvent(2))
 							{
-								base::led::led_bar[0].Toggle();
+								base::led::led_bar()[0].Toggle();
 							}
 						}
 					});

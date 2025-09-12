@@ -146,7 +146,7 @@ void bsp::initialize_iic_host()
 void bsp::initialize_led()
 {
 	// 初始化 LED 灯条。
-	base::led::led_bar.Add(std::vector<base::led::Led>{
+	base::led::led_bar().Add(std::vector<base::led::Led>{
 		// base::led::Led{0},
 		base::led::Led{1},
 	});

@@ -1,10 +1,11 @@
+#include "led_handle.h"
 #include "base/embedded/led/LedBar.h"
 #include "base/string/define.h"
 #include "GreenDigitalLed.h"
-#include "led_handle.h"
 #include "RedDigitalLed.h"
 #include <memory>
 #include <stdexcept>
+
 
 /* #region open */
 
@@ -89,8 +90,8 @@ base::led::State base::led::state(base::led::led_handle &h)
 
 void base::led::turn_on_error_led()
 {
-	if (base::led::led_bar.Count() > 0)
+	if (base::led::led_bar().Count() > 0)
 	{
-		base::led::led_bar[0].TurnOn();
+		base::led::led_bar()[0].TurnOn();
 	}
 }
