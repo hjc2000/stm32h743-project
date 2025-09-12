@@ -44,13 +44,13 @@ void TestLittleFs()
 	int res = lfs_format(&lfs, &port.Port()); // 格式化文件系统
 	if (res)
 	{
-		base::console.WriteLine("format failed: " + std::to_string(res));
+		base::console().WriteLine("format failed: " + std::to_string(res));
 	}
 
 	res = lfs_mount(&lfs, &port.Port()); // 挂载文件系统
 	if (res)
 	{
-		base::console.WriteLine("mount failed: " + std::to_string(res));
+		base::console().WriteLine("mount failed: " + std::to_string(res));
 	}
 
 	// 创建文件并写入数据
@@ -61,13 +61,13 @@ void TestLittleFs()
 	res = lfs_file_open(&lfs, &file, filename, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
 	if (res)
 	{
-		base::console.WriteLine("open failed: " + std::to_string(res));
+		base::console().WriteLine("open failed: " + std::to_string(res));
 	}
 
 	res = lfs_file_write(&lfs, &file, str, strlen(str));
 	if (res < 0)
 	{
-		base::console.WriteLine("write failed: " + std::to_string(res));
+		base::console().WriteLine("write failed: " + std::to_string(res));
 	}
 
 	lfs_file_close(&lfs, &file);
@@ -76,18 +76,18 @@ void TestLittleFs()
 	res = lfs_file_open(&lfs, &file, filename, LFS_O_RDONLY);
 	if (res)
 	{
-		base::console.WriteLine("open failed: " + std::to_string(res));
+		base::console().WriteLine("open failed: " + std::to_string(res));
 	}
 
 	char buffer[128] = {0};
 	res = lfs_file_read(&lfs, &file, buffer, sizeof(buffer) - 1);
 	if (res < 0)
 	{
-		base::console.WriteLine("read failed: " + std::to_string(res));
+		base::console().WriteLine("read failed: " + std::to_string(res));
 	}
 
-	base::console.WriteLine("have read: " + std::to_string(res));
-	base::console.WriteLine(buffer);
+	base::console().WriteLine("have read: " + std::to_string(res));
+	base::console().WriteLine(buffer);
 
 	lfs_file_close(&lfs, &file);
 
@@ -105,7 +105,7 @@ inline void TestFatFs()
 	res = f_mount(&fatfs, "", 0); // 卸载任何已挂载的卷
 	if (res != FR_OK)
 	{
-		base::console.WriteLine("f_mount error: " + std::to_string(res));
+		base::console().WriteLine("f_mount error: " + std::to_string(res));
 	}
 
 	// 创建格式化参数结构体
@@ -120,14 +120,14 @@ inline void TestFatFs()
 	res = f_mkfs("", &mkfs_parm, work, sizeof(work));
 	if (res != FR_OK)
 	{
-		base::console.WriteLine("f_mkfs error: " + std::to_string(res));
+		base::console().WriteLine("f_mkfs error: " + std::to_string(res));
 	}
 
 	// 重新挂载文件系统
 	res = f_mount(&fatfs, "", 1); // 挂载文件系统
 	if (res != FR_OK)
 	{
-		base::console.WriteLine("f_mount error: " + std::to_string(res));
+		base::console().WriteLine("f_mount error: " + std::to_string(res));
 	}
 
 	FIL file{};
@@ -143,13 +143,13 @@ inline void TestFatFs()
 		res = f_write(&file, str, strlen(str), &bytesWritten);
 		if (res != FR_OK || bytesWritten != strlen(str))
 		{
-			base::console.WriteLine("write failed: " + std::to_string(res));
+			base::console().WriteLine("write failed: " + std::to_string(res));
 		}
 		else
 		{
-			base::console.WriteLine("write " +
-									std::to_string(bytesWritten) +
-									" bytes to the file successfully");
+			base::console().WriteLine("write " +
+									  std::to_string(bytesWritten) +
+									  " bytes to the file successfully");
 		}
 
 		// 关闭文件
@@ -157,7 +157,7 @@ inline void TestFatFs()
 	}
 	else
 	{
-		base::console.WriteLine("open file failed: " + std::to_string(res));
+		base::console().WriteLine("open file failed: " + std::to_string(res));
 	}
 
 	// 重新打开文件以读取
@@ -172,15 +172,15 @@ inline void TestFatFs()
 		res = f_read(&file, buffer, sizeof(buffer) - 1, &bytesRead);
 		if (res != FR_OK)
 		{
-			base::console.WriteLine("read file failed: " + std::to_string(res));
+			base::console().WriteLine("read file failed: " + std::to_string(res));
 		}
 		else
 		{
-			base::console.WriteLine("read file successfully, have read " +
-									std::to_string(bytesRead) +
-									" bytes");
+			base::console().WriteLine("read file successfully, have read " +
+									  std::to_string(bytesRead) +
+									  " bytes");
 
-			base::console.WriteLine(buffer);
+			base::console().WriteLine(buffer);
 		}
 
 		// 关闭文件
@@ -188,7 +188,7 @@ inline void TestFatFs()
 	}
 	else
 	{
-		base::console.WriteLine("open file failed: " + std::to_string(res));
+		base::console().WriteLine("open file failed: " + std::to_string(res));
 	}
 
 	// 卸载文件系统
@@ -231,12 +231,12 @@ void TestDCP()
 		{
 			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
 			base::ethernet::EthernetFrameReader frame{span};
-			base::console.WriteLine("收到以太网帧：");
-			base::console.WriteLine(frame);
+			base::console().WriteLine("收到以太网帧：");
+			base::console().WriteLine(frame);
 			// EhternetInput(span);
 		});
 
-	base::console.WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
+	base::console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
 	netif_wrapper->EnableDHCP();
 	while (!netif_wrapper->HasGotAddressesByDHCP())
 	{
@@ -301,11 +301,11 @@ void InitialTask()
 						{
 							watch_dog.Feed();
 							base::led::led_bar[0].Toggle();
-							// base::console.WriteLine(base::systick::frequency());
-							// base::console.WriteLine(std::to_string(static_cast<std::chrono::nanoseconds>(base::systick::system_time_stamp()).count()) + "ns");
-							// base::console.WriteLine(std::to_string(static_cast<std::chrono::microseconds>(base::systick::system_time_stamp()).count()) + "us");
-							// base::console.WriteLine(std::to_string(static_cast<std::chrono::milliseconds>(base::systick::system_time_stamp()).count()) + "ms");
-							// base::console.WriteLine(std::to_string(static_cast<std::chrono::seconds>(base::systick::system_time_stamp()).count()) + "s");
+							// base::console().WriteLine(base::systick::frequency());
+							// base::console().WriteLine(std::to_string(static_cast<std::chrono::nanoseconds>(base::systick::system_time_stamp()).count()) + "ns");
+							// base::console().WriteLine(std::to_string(static_cast<std::chrono::microseconds>(base::systick::system_time_stamp()).count()) + "us");
+							// base::console().WriteLine(std::to_string(static_cast<std::chrono::milliseconds>(base::systick::system_time_stamp()).count()) + "ms");
+							// base::console().WriteLine(std::to_string(static_cast<std::chrono::seconds>(base::systick::system_time_stamp()).count()) + "s");
 							base::task::Delay(std::chrono::milliseconds{1000});
 						}
 					});
@@ -321,7 +321,7 @@ void InitialTask()
 						}
 						catch (std::exception const &e)
 						{
-							base::console.WriteLine(CODE_POS_STR + base::ToHexString(&e));
+							base::console().WriteLine(CODE_POS_STR + base::ToHexString(&e));
 						}
 
 						// TestFatFs();

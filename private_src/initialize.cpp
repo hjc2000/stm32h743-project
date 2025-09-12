@@ -176,9 +176,9 @@ void bsp::initialize_console()
 						while (true)
 						{
 							int32_t have_read = serial->Read(base::Span{buffer, sizeof(buffer)});
-							base::console.WriteLine(base::ReadOnlySpan{buffer, have_read});
-							base::console.WriteLine("123456");
-							base::console.WriteLine(std::to_string(have_read));
+							base::console().WriteLine(base::ReadOnlySpan{buffer, have_read});
+							base::console().WriteLine("123456");
+							base::console().WriteLine(std::to_string(have_read));
 						}
 					});
 
@@ -187,5 +187,5 @@ void bsp::initialize_console()
 		serial,
 	}};
 
-	base::console.SetOutputWriter(writer);
+	base::console().SetOutputWriter(writer);
 }
