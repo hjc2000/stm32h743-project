@@ -140,7 +140,7 @@ void bsp::initialize_iic_host()
 	}};
 
 	std::shared_ptr<base::iic::IicHost> iic_host{new base::iic::IicHost{pin_driver}};
-	base::iic::iic_host_slot.Add(iic_host);
+	base::iic::iic_host_slot().Add(iic_host);
 }
 
 void bsp::initialize_led()
@@ -156,7 +156,7 @@ void bsp::initialize_pcf8574()
 {
 	std::shared_ptr<base::extended_io::PCF8574> pcf8574{new base::extended_io::PCF8574{
 		base::gpio::GpioPin{base::gpio::PortEnum::PortB, 12},
-		base::iic::iic_host_slot[0],
+		base::iic::iic_host_slot()[0],
 		0,
 	}};
 
