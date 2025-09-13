@@ -198,7 +198,7 @@ inline void TestFatFs()
 void TestDCP()
 {
 	std::shared_ptr<lwip::NetifWrapper> netif_wrapper{new lwip::NetifWrapper{"netif"}};
-	lwip::NetifSlot::Instance().PlugIn(netif_wrapper);
+	lwip::net_if_slot().PlugIn(netif_wrapper);
 
 	base::IPAddress ip_address{"192.168.1.30"};
 	base::IPAddress netmask{"255.255.255.0"};
@@ -229,7 +229,7 @@ void TestDCP()
 	port.ReceivingEhternetFrameEvent().Subscribe(
 		[](base::ReadOnlySpan span)
 		{
-			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::NetifSlot::Instance().Find("netif");
+			std::shared_ptr<lwip::NetifWrapper> netif_wrapper = lwip::net_if_slot().Find("netif");
 			base::ethernet::EthernetFrameReader frame{span};
 			base::console().WriteLine("收到以太网帧：");
 			base::console().WriteLine(frame);
