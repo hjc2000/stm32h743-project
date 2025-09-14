@@ -17,6 +17,7 @@
 #include "base/task/task.h"
 #include "base/test/TestBaseTimer.h"
 #include "base/test/TestInputCaptureTimer.h"
+#include "base/test/TestLittleFsFlash.h"
 #include "base/test/TestMemoryDma.h"
 #include "base/test/TestPwmTimer.h"
 #include "EthernetPort.h"
@@ -263,6 +264,7 @@ void InitialTask()
 							base::console().WriteLine(CODE_POS_STR + base::ToHexString(&e));
 						}
 
+						base::test::TestLittleFsFlash();
 						// TestFatFs();
 						// freertos_demo();
 						// p_net_sample_app_main();
