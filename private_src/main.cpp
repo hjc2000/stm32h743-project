@@ -22,7 +22,6 @@
 #include "EthernetPort.h"
 #include "ff.h"
 #include "initialize.h"
-#include "littlefs/LfsFlashPort.h"
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
 #include <chrono>
@@ -34,66 +33,6 @@
 // IWYU pragma: end_keep
 
 /* #region 测试函数 */
-
-void TestLittleFs()
-{
-	Lfs::LfsFlashPort port{DI_FlashCollection().Get("internal-flash")};
-
-	// 初始化 LittleFS 文件系统
-	lfs_t lfs;
-	int res = lfs_format(&lfs, &port.Port()); // 格式化文件系统
-	if (res)
-	{
-		base::console().WriteLine("format failed: " + std::to_string(res));
-	}
-
-	res = lfs_mount(&lfs, &port.Port()); // 挂载文件系统
-	if (res)
-	{
-		base::console().WriteLine("mount failed: " + std::to_string(res));
-	}
-
-	// 创建文件并写入数据
-	char const *filename = "example.txt";
-	char const *str = "Hello, LittleFS!";
-	lfs_file_t file;
-
-	res = lfs_file_open(&lfs, &file, filename, LFS_O_WRONLY | LFS_O_CREAT | LFS_O_TRUNC);
-	if (res)
-	{
-		base::console().WriteLine("open failed: " + std::to_string(res));
-	}
-
-	res = lfs_file_write(&lfs, &file, str, strlen(str));
-	if (res < 0)
-	{
-		base::console().WriteLine("write failed: " + std::to_string(res));
-	}
-
-	lfs_file_close(&lfs, &file);
-
-	// 读取文件内容
-	res = lfs_file_open(&lfs, &file, filename, LFS_O_RDONLY);
-	if (res)
-	{
-		base::console().WriteLine("open failed: " + std::to_string(res));
-	}
-
-	char buffer[128] = {0};
-	res = lfs_file_read(&lfs, &file, buffer, sizeof(buffer) - 1);
-	if (res < 0)
-	{
-		base::console().WriteLine("read failed: " + std::to_string(res));
-	}
-
-	base::console().WriteLine("have read: " + std::to_string(res));
-	base::console().WriteLine(buffer);
-
-	lfs_file_close(&lfs, &file);
-
-	// 卸载文件系统
-	lfs_unmount(&lfs);
-}
 
 inline void TestFatFs()
 {
