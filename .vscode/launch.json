@@ -36,7 +36,8 @@
 			},
 			"serverArgs": [
 				"-if",
-				"JTAG"
+				"JTAG",
+				"-vd",
 			],
 		}
 	]
