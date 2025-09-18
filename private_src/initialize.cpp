@@ -8,7 +8,7 @@
 #include "base/embedded/iic/SoftwareIicHostPinDriver.h"
 #include "base/embedded/led/Led.h"
 #include "base/embedded/led/LedBar.h"
-#include "base/embedded/sdram/chip/w9825g6kh_6/W9825G6KH_6.h"
+#include "base/embedded/sdram/chip/w9825g6kh_6/W9825G6KH_6_Operator.h"
 #include "base/embedded/sdram/SdramController.h"
 #include "base/embedded/serial/Serial.h"
 #include "base/stream/AsyncStreamWriter.h"
@@ -126,7 +126,7 @@ void bsp::initialize_clock()
 void bsp::initialize_sdram_heap()
 {
 	base::sdram::SdramController sdram_controller{1};
-	base::sdram::chip::w9825g6kh_6::W9825G6KH_6 sdram{sdram_controller};
+	base::sdram::chip::w9825g6kh_6::W9825G6KH_6_Operator sdram{sdram_controller};
 	sdram.Initialize("hclk3", 2);
 	base::heap::PushFront(sdram.Span());
 }
