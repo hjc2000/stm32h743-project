@@ -28,6 +28,7 @@
 #include "lwip-wrapper/NetifWrapper.h"
 #include "usb_device.h"
 #include <chrono>
+#include <cstdlib>
 #include <exception>
 #include <memory>
 #include <stdexcept>
@@ -272,6 +273,13 @@ void InitialTask()
 						}
 
 						base::test::TestLittleFsFlash();
+
+						{
+							void *p = malloc(16);
+							base::console().WriteLine("malloc 分配的内存的指针: " + base::ToHexString(p));
+							free(p);
+						}
+
 						// TestFatFs();
 						// freertos_demo();
 						// p_net_sample_app_main();
