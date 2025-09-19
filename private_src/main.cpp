@@ -22,9 +22,11 @@
 #include "base/test/TestPwmTimer.h"
 #include "EthernetPort.h"
 #include "ff.h"
+#include "hal.h"
 #include "initialize.h"
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
+#include "usb_device.h"
 #include <chrono>
 #include <exception>
 #include <memory>
@@ -218,11 +220,16 @@ void EhternetInput(base::ReadOnlySpan const &span);
 ///
 void InitialTask()
 {
+	__HAL_RCC_GPIOH_CLK_ENABLE();
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+
 	bsp::initialize_sdram_heap();
 	bsp::initialize_iic_host();
 	bsp::initialize_led();
 	bsp::initialize_pcf8574();
 	bsp::initialize_console();
+
+	MX_USB_DEVICE_Init();
 
 	// base::test::TestBaseTimer(6);
 	base::test::TestPwmTimer(3, 4);
