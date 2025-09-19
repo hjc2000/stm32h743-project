@@ -78,7 +78,6 @@ extern "C"
 /****************************************/
 /* #define for FS and HS identification */
 #define DEVICE_FS 0
-#define DEVICE_HS 1
 
 	/**
 	 * @}
