@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
+#include <cstdint>
 
 /* USER CODE BEGIN INCLUDE */
 
@@ -243,6 +244,8 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t *pbuf, uint16_t length)
 }
 
 /**
+ * 收到的数据会通过此回调函数传递进来。
+ *
  * @brief  Data received over USB OUT endpoint are sent over CDC interface
  *         through this function.
  *
