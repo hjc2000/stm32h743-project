@@ -677,3 +677,25 @@ USBD_StatusTypeDef USBD_Get_USB_Status(HAL_StatusTypeDef hal_status)
 	}
 	return usb_status;
 }
+
+/**
+ * @brief  Static single allocation.
+ * @param  size: Size of allocated memory
+ * @retval None
+ */
+void *USBD_static_malloc(uint32_t size)
+{
+	UNUSED(size);
+	static uint32_t mem[(sizeof(USBD_CDC_HandleTypeDef) / 4) + 1]; /* On 32-bit boundary */
+	return mem;
+}
+
+/**
+ * @brief  Dummy memory free
+ * @param  p: Pointer to allocated  memory address
+ * @retval None
+ */
+void USBD_static_free(void *p)
+{
+	UNUSED(p);
+}

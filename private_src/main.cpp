@@ -284,8 +284,9 @@ void InitialTask()
 
 						while (true)
 						{
-							char const *str = "hello world";
+							char const *str = "hello world\n";
 							CDC_Transmit_FS(const_cast<uint8_t *>(reinterpret_cast<uint8_t const *>(str)), strlen(str));
+							base::task::Delay(std::chrono::milliseconds{1000});
 						}
 
 						// TestFatFs();
