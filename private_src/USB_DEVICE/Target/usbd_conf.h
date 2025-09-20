@@ -86,6 +86,9 @@ extern "C"
 	/* Memory management macros make sure to use static memory allocation */
 	/** Alias for memory allocation. */
 
+	///
+	/// @brief 禁止替换成 malloc, 理由见：https://blog.csdn.net/qq_36148047/article/details/151905008?sharetype=blogdetail&sharerId=151905008&sharerefer=PC&sharesource=qq_36148047&spm=1011.2480.3001.8118
+	///
 #define USBD_malloc (void *)USBD_static_malloc
 
 /** Alias for memory release. */
