@@ -21,10 +21,12 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "usb_device.h"
+#include "base/string/define.h"
 #include "usbd_cdc.h"
 #include "usbd_cdc_if.h"
 #include "usbd_core.h"
 #include "usbd_desc.h"
+#include <stdexcept>
 
 /* USER CODE BEGIN Includes */
 
@@ -70,22 +72,22 @@ void MX_USB_DEVICE_Init(void)
 	/* Init Device Library, add supported class and start the library. */
 	if (USBD_Init(&hUsbDeviceFS, &FS_Desc, 0) != USBD_OK)
 	{
-		// Error_Handler();
+		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
 	if (USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC) != USBD_OK)
 	{
-		// Error_Handler();
+		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
 	if (USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS) != USBD_OK)
 	{
-		// Error_Handler();
+		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
 	if (USBD_Start(&hUsbDeviceFS) != USBD_OK)
 	{
-		// Error_Handler();
+		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
 	/* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
