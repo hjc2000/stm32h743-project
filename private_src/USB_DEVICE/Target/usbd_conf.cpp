@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include "base/string/define.h"
 #include "stm32h7xx.h"
 #include "stm32h7xx_hal.h"
 #include "stm32h7xx_hal_pcd.h"
@@ -27,6 +28,7 @@
 #include "usbd_def.h"
 
 #include "stm32_hal_legacy.h"
+#include <stdexcept>
 
 /* USER CODE BEGIN Includes */
 
@@ -81,7 +83,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *pcdHandle)
 		PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
 		if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
 		{
-			// Error_Handler();
+			throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 		}
 
 		/** Enable USB Voltage detector
@@ -226,8 +228,9 @@ void HAL_PCD_ResetCallback(PCD_HandleTypeDef *hpcd)
 	}
 	else
 	{
-		// Error_Handler();
+		throw std::runtime_error{CODE_POS_STR + "复位失败。"};
 	}
+
 	/* Set Speed. */
 	USBD_LL_SetSpeed((USBD_HandleTypeDef *)hpcd->pData, speed);
 
@@ -364,7 +367,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 	hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = DISABLE;
 	if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_OK)
 	{
-		// Error_Handler();
+		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
