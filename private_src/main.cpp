@@ -27,7 +27,9 @@
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
 #include "usb_device.h"
+#include "USB_DEVICE/App/usbd_cdc_if.h"
 #include <chrono>
+#include <cstdint>
 #include <cstdlib>
 #include <exception>
 #include <memory>
@@ -278,6 +280,12 @@ void InitialTask()
 							void *p = malloc(16);
 							base::console().WriteLine("malloc 分配的内存的指针: " + base::ToHexString(p));
 							free(p);
+						}
+
+						while (true)
+						{
+							char const *str = "hello world";
+							CDC_Transmit_FS(const_cast<uint8_t *>(reinterpret_cast<uint8_t const *>(str)), strlen(str));
 						}
 
 						// TestFatFs();
