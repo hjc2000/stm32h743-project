@@ -349,28 +349,28 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
 	hpcd_USB_OTG_FS.Instance = USB_OTG_FS;
 	hpcd_USB_OTG_FS.Init.dev_endpoints = 9;
 	hpcd_USB_OTG_FS.Init.speed = PCD_SPEED_FULL;
-	hpcd_USB_OTG_FS.Init.dma_enable = DISABLE;
+	hpcd_USB_OTG_FS.Init.dma_enable = FunctionalState::DISABLE;
 	hpcd_USB_OTG_FS.Init.phy_itface = PCD_PHY_EMBEDDED;
-	hpcd_USB_OTG_FS.Init.Sof_enable = DISABLE;
-	hpcd_USB_OTG_FS.Init.low_power_enable = DISABLE;
-	hpcd_USB_OTG_FS.Init.lpm_enable = DISABLE;
-	hpcd_USB_OTG_FS.Init.battery_charging_enable = DISABLE;
-	hpcd_USB_OTG_FS.Init.vbus_sensing_enable = DISABLE;
-	hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = DISABLE;
-	if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_OK)
+	hpcd_USB_OTG_FS.Init.Sof_enable = FunctionalState::DISABLE;
+	hpcd_USB_OTG_FS.Init.low_power_enable = FunctionalState::DISABLE;
+	hpcd_USB_OTG_FS.Init.lpm_enable = FunctionalState::DISABLE;
+	hpcd_USB_OTG_FS.Init.battery_charging_enable = FunctionalState::DISABLE;
+	hpcd_USB_OTG_FS.Init.vbus_sensing_enable = FunctionalState::DISABLE;
+	hpcd_USB_OTG_FS.Init.use_dedicated_ep1 = FunctionalState::DISABLE;
+	if (HAL_PCD_Init(&hpcd_USB_OTG_FS) != HAL_StatusTypeDef::HAL_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
 
 #if (USE_HAL_PCD_REGISTER_CALLBACKS == 1U)
 	/* Register USB PCD CallBacks */
-	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_SOF_CB_ID, PCD_SOFCallback);
-	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_SETUPSTAGE_CB_ID, PCD_SetupStageCallback);
-	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_RESET_CB_ID, PCD_ResetCallback);
-	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_SUSPEND_CB_ID, PCD_SuspendCallback);
-	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_RESUME_CB_ID, PCD_ResumeCallback);
-	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_CONNECT_CB_ID, PCD_ConnectCallback);
-	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_DISCONNECT_CB_ID, PCD_DisconnectCallback);
+	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_CallbackIDTypeDef::HAL_PCD_SOF_CB_ID, PCD_SOFCallback);
+	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_CallbackIDTypeDef::HAL_PCD_SETUPSTAGE_CB_ID, PCD_SetupStageCallback);
+	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESET_CB_ID, PCD_ResetCallback);
+	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_CallbackIDTypeDef::HAL_PCD_SUSPEND_CB_ID, PCD_SuspendCallback);
+	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_CallbackIDTypeDef::HAL_PCD_RESUME_CB_ID, PCD_ResumeCallback);
+	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_CallbackIDTypeDef::HAL_PCD_CONNECT_CB_ID, PCD_ConnectCallback);
+	HAL_PCD_RegisterCallback(&hpcd_USB_OTG_FS, HAL_PCD_CallbackIDTypeDef::HAL_PCD_DISCONNECT_CB_ID, PCD_DisconnectCallback);
 
 	HAL_PCD_RegisterDataOutStageCallback(&hpcd_USB_OTG_FS, PCD_DataOutStageCallback);
 	HAL_PCD_RegisterDataInStageCallback(&hpcd_USB_OTG_FS, PCD_DataInStageCallback);
