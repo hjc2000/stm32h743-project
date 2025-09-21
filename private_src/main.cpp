@@ -223,16 +223,11 @@ void EhternetInput(base::ReadOnlySpan const &span);
 ///
 void InitialTask()
 {
-	__HAL_RCC_GPIOH_CLK_ENABLE();
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-
 	bsp::initialize_sdram_heap();
 	bsp::initialize_iic_host();
 	bsp::initialize_led();
 	bsp::initialize_pcf8574();
 	bsp::initialize_console();
-
-	MX_USB_DEVICE_Init();
 
 	// base::test::TestBaseTimer(6);
 	base::test::TestPwmTimer(3, 4);
@@ -282,11 +277,17 @@ void InitialTask()
 							free(p);
 						}
 
-						while (true)
 						{
-							char const *str = "hello world\n";
-							CDC_Transmit_FS(const_cast<uint8_t *>(reinterpret_cast<uint8_t const *>(str)), strlen(str));
-							base::task::Delay(std::chrono::milliseconds{1000});
+							__HAL_RCC_GPIOH_CLK_ENABLE();
+							__HAL_RCC_GPIOA_CLK_ENABLE();
+							MX_USB_DEVICE_Init();
+
+							while (true)
+							{
+								char const *str = "hello world\n";
+								CDC_Transmit_FS(const_cast<uint8_t *>(reinterpret_cast<uint8_t const *>(str)), strlen(str));
+								base::task::Delay(std::chrono::milliseconds{1000});
+							}
 						}
 
 						// TestFatFs();
