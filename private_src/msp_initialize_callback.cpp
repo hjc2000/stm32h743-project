@@ -5,7 +5,9 @@
 #include "base/embedded/serial/serial_handle.h"
 #include "base/embedded/timer/input_capture_timer_handle.h"
 #include "base/embedded/timer/pwm_timer_handle.h"
+#include "base/embedded/usb/usb_fs_pcd_handle.h"
 #include "hal.h" // IWYU pragma: keep
+#include "stm32_hal_legacy.h"
 #include <cstdint>
 #include <vector>
 
@@ -188,4 +190,39 @@ void base::input_capture_timer::msp_initialize_callback(uint32_t id)
 	pin.InitializeAsAlternateFunctionMode(GPIO_AF2_TIM5,
 										  base::gpio::PullMode::PullDown,
 										  base::gpio::DriveMode::PushPull);
+}
+
+void base::usb_fs_pcd::msp_initialize(uint32_t id)
+{
+	GPIO_InitTypeDef GPIO_InitStruct{};
+	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct{};
+	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
+	PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
+	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+	{
+		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
+	}
+
+	/** Enable USB Voltage detector
+	 */
+	HAL_PWREx_EnableUSBVoltageDetector();
+
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	/**USB_OTG_FS GPIO Configuration
+	PA11     ------> USB_OTG_FS_DM
+	PA12     ------> USB_OTG_FS_DP
+	*/
+	GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	GPIO_InitStruct.Alternate = GPIO_AF10_OTG1_FS;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	/* Peripheral clock enable */
+	__HAL_RCC_USB_OTG_FS_CLK_ENABLE();
+
+	/* Peripheral interrupt init */
+	HAL_NVIC_SetPriority(OTG_FS_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
 }
