@@ -192,7 +192,7 @@ void base::input_capture_timer::msp_initialize_callback(uint32_t id)
 										  base::gpio::DriveMode::PushPull);
 }
 
-void base::usb_fs_pcd::msp_initialize(uint32_t id)
+void base::usb::fs_pcd::msp_initialize(uint32_t id)
 {
 	GPIO_InitTypeDef GPIO_InitStruct{};
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct{};
