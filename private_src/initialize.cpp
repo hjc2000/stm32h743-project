@@ -160,7 +160,7 @@ void bsp::initialize_pcf8574()
 		0,
 	}};
 
-	base::extended_io::pcf8574_slot.Add(pcf8574);
+	base::extended_io::pcf8574_slot().Add(pcf8574);
 }
 
 void bsp::initialize_console()

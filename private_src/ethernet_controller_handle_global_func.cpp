@@ -37,7 +37,7 @@ namespace
 
 void base::ethernet::hardware_reset_phy(base::ethernet::ethernet_controller_handle &h)
 {
-	base::extended_io::PCF8574Operator pcf8574_operator{*base::extended_io::pcf8574_slot[0]};
+	base::extended_io::PCF8574Operator pcf8574_operator{*base::extended_io::pcf8574_slot()[0]};
 
 	/* 公司的开发板是旧版的，复位需要先输出高电平，延时后输出低电平。
 	 * 家里的开发板是新版的，复位需要先输出低电平，延时后输出高电平。
