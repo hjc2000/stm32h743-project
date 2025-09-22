@@ -616,10 +616,9 @@ static uint8_t USBD_CDC_EP0_RxReady(USBD_HandleTypeDef *pdev)
  */
 static uint8_t *USBD_CDC_GetFSCfgDesc(uint16_t *length)
 {
-	USBD_EpDescTypeDef *pEpCmdDesc = USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_CMD_EP);
-	USBD_EpDescTypeDef *pEpOutDesc = USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_OUT_EP);
-	USBD_EpDescTypeDef *pEpInDesc = USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_IN_EP);
-
+	USBD_EpDescTypeDef *pEpCmdDesc = reinterpret_cast<USBD_EpDescTypeDef *>(USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_CMD_EP));
+	USBD_EpDescTypeDef *pEpOutDesc = reinterpret_cast<USBD_EpDescTypeDef *>(USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_OUT_EP));
+	USBD_EpDescTypeDef *pEpInDesc = reinterpret_cast<USBD_EpDescTypeDef *>(USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_IN_EP));
 	if (pEpCmdDesc != NULL)
 	{
 		pEpCmdDesc->bInterval = CDC_FS_BINTERVAL;
@@ -647,9 +646,9 @@ static uint8_t *USBD_CDC_GetFSCfgDesc(uint16_t *length)
  */
 static uint8_t *USBD_CDC_GetHSCfgDesc(uint16_t *length)
 {
-	USBD_EpDescTypeDef *pEpCmdDesc = USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_CMD_EP);
-	USBD_EpDescTypeDef *pEpOutDesc = USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_OUT_EP);
-	USBD_EpDescTypeDef *pEpInDesc = USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_IN_EP);
+	USBD_EpDescTypeDef *pEpCmdDesc = reinterpret_cast<USBD_EpDescTypeDef *>(USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_CMD_EP));
+	USBD_EpDescTypeDef *pEpOutDesc = reinterpret_cast<USBD_EpDescTypeDef *>(USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_OUT_EP));
+	USBD_EpDescTypeDef *pEpInDesc = reinterpret_cast<USBD_EpDescTypeDef *>(USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_IN_EP));
 
 	if (pEpCmdDesc != NULL)
 	{
@@ -678,9 +677,9 @@ static uint8_t *USBD_CDC_GetHSCfgDesc(uint16_t *length)
  */
 static uint8_t *USBD_CDC_GetOtherSpeedCfgDesc(uint16_t *length)
 {
-	USBD_EpDescTypeDef *pEpCmdDesc = USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_CMD_EP);
-	USBD_EpDescTypeDef *pEpOutDesc = USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_OUT_EP);
-	USBD_EpDescTypeDef *pEpInDesc = USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_IN_EP);
+	USBD_EpDescTypeDef *pEpCmdDesc = reinterpret_cast<USBD_EpDescTypeDef *>(USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_CMD_EP));
+	USBD_EpDescTypeDef *pEpOutDesc = reinterpret_cast<USBD_EpDescTypeDef *>(USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_OUT_EP));
+	USBD_EpDescTypeDef *pEpInDesc = reinterpret_cast<USBD_EpDescTypeDef *>(USBD_GetEpDesc(USBD_CDC_CfgDesc, CDC_IN_EP));
 
 	if (pEpCmdDesc != NULL)
 	{

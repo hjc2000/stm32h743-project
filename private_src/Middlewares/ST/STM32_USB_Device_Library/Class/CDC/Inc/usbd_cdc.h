@@ -157,6 +157,7 @@ extern "C"
 	#else
 uint8_t USBD_CDC_SetTxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff,
 							 uint32_t length);
+
 uint8_t USBD_CDC_TransmitPacket(USBD_HandleTypeDef *pdev);
 	#endif /* USE_USBD_COMPOSITE */
 	uint8_t USBD_CDC_SetRxBuffer(USBD_HandleTypeDef *pdev, uint8_t *pbuff);
