@@ -2,6 +2,7 @@
 #include "base/embedded/heap/Heap4.h"
 #include "base/embedded/heap/IHeap.h"
 #include "base/SingletonProvider.h"
+#include <cstddef>
 #include <cstdint>
 
 namespace
@@ -9,7 +10,7 @@ namespace
 	struct HeapContext
 	{
 		uint8_t *_buffer = reinterpret_cast<uint8_t *>(0x24000000);
-		base::heap::Heap4 heap4{_buffer, sizeof(_buffer)};
+		base::heap::Heap4 heap4{_buffer, static_cast<size_t>(512) * 1024};
 	};
 
 	base::SingletonProvider<HeapContext> _heap_context_instance_provider;
