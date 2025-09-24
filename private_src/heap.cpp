@@ -2,13 +2,13 @@
 #include "base/embedded/heap/Heap4.h"
 #include "base/embedded/heap/IHeap.h"
 #include "base/SingletonProvider.h"
-#include <cstddef>
+#include <cstdint>
 
 namespace
 {
 	struct HeapContext
 	{
-		uint8_t _buffer[static_cast<size_t>(1024) * 200];
+		uint8_t *_buffer = reinterpret_cast<uint8_t *>(0x24000000);
 		base::heap::Heap4 heap4{_buffer, sizeof(_buffer)};
 	};
 
