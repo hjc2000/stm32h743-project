@@ -13,6 +13,6 @@ target_import_lwip_wrapper(${ProjectName} PUBLIC)
 target_import_freertos(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_hal(${ProjectName} PUBLIC)
 target_import_stm32h743iit6_peripherals(${ProjectName} PUBLIC)
-target_link_libraries(${ProjectName} PUBLIC c stdc++)
+target_link_libraries(${ProjectName} PUBLIC c stdc++ gcc)
 
 target_obj_size(${ProjectName})
