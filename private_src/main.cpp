@@ -8,6 +8,7 @@
 #include "base/embedded/led/Led.h"
 #include "base/embedded/led/LedBar.h"
 #include "base/embedded/systick/systick.h"
+#include "base/embedded/usb/UsbFsPcd.h"
 #include "base/embedded/watch-dog/IndependentWatchDog.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
@@ -26,8 +27,6 @@
 #include "initialize.h"
 #include "lwip-wrapper/NetifSlot.h"
 #include "lwip-wrapper/NetifWrapper.h"
-#include "usb_device.h"
-#include "USB_DEVICE/App/usbd_cdc_if.h"
 #include <chrono>
 #include <cstdint>
 #include <cstdlib>
@@ -217,6 +216,13 @@ void EhternetInput(base::ReadOnlySpan const &span);
 
 /* #endregion */
 
+extern "C"
+{
+	void MX_USB_DEVICE_Init();
+
+	uint8_t CDC_Transmit_FS(uint8_t *Buf, uint16_t Len);
+}
+
 ///
 /// @brief 起始任务。
 ///
@@ -278,13 +284,15 @@ void InitialTask()
 						}
 
 						{
-							__HAL_RCC_GPIOH_CLK_ENABLE();
-							__HAL_RCC_GPIOA_CLK_ENABLE();
+							std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd{new base::usb::fs_pcd::UsbFsPcd{1}};
+							pcd->InitializeAsDevice(base::usb::PhyType::Embedded);
+							base::usb::fs_pcd::usb_fs_pcd_slot().Add(pcd);
+
 							MX_USB_DEVICE_Init();
 
 							while (true)
 							{
-								char const *str = "hello world\n";
+								char const *str = "USB hello world\n";
 								CDC_Transmit_FS(const_cast<uint8_t *>(reinterpret_cast<uint8_t const *>(str)), strlen(str));
 								base::task::Delay(std::chrono::milliseconds{1000});
 							}

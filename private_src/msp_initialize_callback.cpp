@@ -196,16 +196,15 @@ void base::usb::fs_pcd::msp_initialize(uint32_t id)
 {
 	GPIO_InitTypeDef GPIO_InitStruct{};
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct{};
+
+	/** Initializes the peripherals clock
+	 */
 	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
 	PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};
 	}
-
-	/** Enable USB Voltage detector
-	 */
-	HAL_PWREx_EnableUSBVoltageDetector();
 
 	__HAL_RCC_GPIOA_CLK_ENABLE();
 	/**USB_OTG_FS GPIO Configuration
@@ -218,11 +217,4 @@ void base::usb::fs_pcd::msp_initialize(uint32_t id)
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	GPIO_InitStruct.Alternate = GPIO_AF10_OTG1_FS;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-	/* Peripheral clock enable */
-	__HAL_RCC_USB_OTG_FS_CLK_ENABLE();
-
-	/* Peripheral interrupt init */
-	HAL_NVIC_SetPriority(OTG_FS_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
 }
