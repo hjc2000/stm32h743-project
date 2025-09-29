@@ -8,7 +8,7 @@
 #include "base/embedded/led/Led.h"
 #include "base/embedded/led/LedBar.h"
 #include "base/embedded/systick/systick.h"
-#include "base/embedded/usb/fs_device_pcd/UsbFsPcd.h"
+#include "base/embedded/usb/fs-device-pcd/UsbFsPcd.h"
 #include "base/embedded/watch-dog/IndependentWatchDog.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
