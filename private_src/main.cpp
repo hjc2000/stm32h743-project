@@ -285,7 +285,7 @@ void InitialTask()
 
 						{
 							std::shared_ptr<base::usb::fs_device_pcd::UsbFsPcd> pcd{new base::usb::fs_device_pcd::UsbFsPcd{1}};
-							pcd->InitializeAsDevice(base::usb::PhyType::Embedded);
+							pcd->Initialize(base::usb::PhyType::Embedded);
 							base::usb::fs_device_pcd::usb_fs_pcd_slot().Add(pcd);
 
 							MX_USB_DEVICE_Init();
