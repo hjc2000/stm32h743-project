@@ -8,7 +8,7 @@
 #include "base/embedded/led/Led.h"
 #include "base/embedded/led/LedBar.h"
 #include "base/embedded/systick/systick.h"
-#include "base/embedded/usb/UsbFsPcd.h"
+#include "base/embedded/usb/fs_device_pcd/UsbFsPcd.h"
 #include "base/embedded/watch-dog/IndependentWatchDog.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
 #include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
@@ -284,9 +284,9 @@ void InitialTask()
 						}
 
 						{
-							std::shared_ptr<base::usb::fs_pcd::UsbFsPcd> pcd{new base::usb::fs_pcd::UsbFsPcd{1}};
+							std::shared_ptr<base::usb::fs_device_pcd::UsbFsPcd> pcd{new base::usb::fs_device_pcd::UsbFsPcd{1}};
 							pcd->InitializeAsDevice(base::usb::PhyType::Embedded);
-							base::usb::fs_pcd::usb_fs_pcd_slot().Add(pcd);
+							base::usb::fs_device_pcd::usb_fs_pcd_slot().Add(pcd);
 
 							MX_USB_DEVICE_Init();
 

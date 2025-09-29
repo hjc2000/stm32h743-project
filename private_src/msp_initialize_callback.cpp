@@ -5,7 +5,7 @@
 #include "base/embedded/serial/serial_handle.h"
 #include "base/embedded/timer/input_capture_timer_handle.h"
 #include "base/embedded/timer/pwm_timer_handle.h"
-#include "base/embedded/usb/usb_fs_pcd_handle.h"
+#include "base/embedded/usb/fs_device_pcd/usb_fs_pcd_handle.h"
 #include "hal.h" // IWYU pragma: keep
 #include "stm32_hal_legacy.h"
 #include <cstdint>
@@ -192,7 +192,7 @@ void base::input_capture_timer::msp_initialize_callback(uint32_t id)
 										  base::gpio::DriveMode::PushPull);
 }
 
-void base::usb::fs_pcd::msp_initialize(uint32_t id)
+void base::usb::fs_device_pcd::msp_initialize(uint32_t id)
 {
 	GPIO_InitTypeDef GPIO_InitStruct{};
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct{};
