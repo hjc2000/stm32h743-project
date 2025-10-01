@@ -5,7 +5,7 @@
 #include "base/embedded/serial/serial_handle.h"
 #include "base/embedded/timer/input_capture_timer_handle.h"
 #include "base/embedded/timer/pwm_timer_handle.h"
-#include "base/embedded/usb/fs-device-pcd/usb_fs_pcd_handle.h"
+#include "base/embedded/usb/fs-device-pcd/usb_fs_device_pcd_handle.h"
 #include "hal.h" // IWYU pragma: keep
 #include "stm32_hal_legacy.h"
 #include <cstdint>
