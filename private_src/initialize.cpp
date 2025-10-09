@@ -1,6 +1,7 @@
 #include "initialize.h"
 #include "base/Console.h"
 #include "base/embedded/clock/ClockSource.h"
+#include "base/embedded/cortex/mpu.h"
 #include "base/embedded/extended-io/PCF8574.h"
 #include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/heap/heap.h"
@@ -12,6 +13,7 @@
 #include "base/embedded/sdram/SdramController.h"
 #include "base/embedded/serial/Serial.h"
 #include "base/stream/AsyncStreamWriter.h"
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <vector>
@@ -128,6 +130,12 @@ void bsp::initialize_sdram_heap()
 	base::sdram::SdramController sdram_controller{1};
 	base::sdram::chip::w9825g6kh_6::W9825G6KH_6_Operator sdram{sdram_controller};
 	sdram.InitializeAsReadBurstMode("hclk3", 2);
+
+	base::cortex::mpu::configure(15,
+								 reinterpret_cast<size_t>(sdram.Span().Buffer()),
+								 sdram.Span().Size(),
+								 base::cortex::MemoryType::NormalWithCache_WriteBack);
+
 	base::heap::PushFront(sdram.Span());
 }
 
