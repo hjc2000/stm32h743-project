@@ -11,7 +11,6 @@
 #include "base/embedded/usb/fs-device-pcd/UsbFsDevicePcd.h"
 #include "base/embedded/watch-dog/IndependentWatchDog.h"
 #include "base/net/ethernet/EthernetFrameReader.h"
-#include "base/net/profinet/dcp/DcpHelloRequestWriter.h"
 #include "base/string/define.h"
 #include "base/string/ToHexString.h"
 #include "base/task/delay.h"
@@ -191,21 +190,7 @@ void TestDCP()
 	while (true)
 	{
 		base::Span buffer_span{buffer.get(), 1500};
-		base::profinet::DcpHelloRequestWriter hello{buffer_span};
-		hello.WriteSourceMac(mac);
-		hello.WriteXid(1);
-		hello.WriteNameOfStationBlock("rt-labs-dev");
-
-		hello.WriteIPAddressInfomationBlock(false,
-											netif_wrapper->IPAddress(),
-											netif_wrapper->Gateway(),
-											netif_wrapper->Netmask());
-
-		hello.WriteIdBlock(0x0493, 0x0002);
-		hello.WriteOemIdBlock(0xcafe, 0xee02);
-		hello.WriteDeviceInitiativeBlock(true);
-
-		port.Send(hello.SpanForSending());
+		port.Send(buffer_span);
 		base::task::Delay(std::chrono::milliseconds{1000});
 	}
 }
