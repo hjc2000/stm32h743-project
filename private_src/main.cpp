@@ -79,6 +79,7 @@ inline void TestFatFs()
 
 	// 打开或创建文件
 	res = f_open(&file, filename, FA_CREATE_ALWAYS | FA_WRITE);
+
 	if (res == FR_OK)
 	{
 		// 写入字符串到文件
