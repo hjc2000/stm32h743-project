@@ -1,5 +1,3 @@
-// IWYU pragma: begin_keep
-
 #include "base/Console.h"
 #include "base/embedded/core.h"
 #include "base/embedded/dma/MemoryDma.h"
@@ -33,8 +31,6 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-
-// IWYU pragma: end_keep
 
 /* #region 测试函数 */
 
