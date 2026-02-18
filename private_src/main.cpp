@@ -188,8 +188,8 @@ void TestDCP()
 
 	while (true)
 	{
-		base::Span buffer_span{buffer.get(), 1500};
-		port.Send(buffer_span);
+		// base::Span buffer_span{buffer.get(), 1500};
+		// port.Send(buffer_span);
 		base::task::Delay(std::chrono::milliseconds{1000});
 	}
 }
@@ -250,43 +250,43 @@ void InitialTask()
 					1024 * 10,
 					[]()
 					{
-						try
-						{
-							throw std::runtime_error{"测试异常"};
-						}
-						catch (std::exception const &e)
-						{
-							base::console().WriteLine(CODE_POS_STR + base::ToHexString(&e));
-						}
+						// try
+						// {
+						// 	throw std::runtime_error{"测试异常"};
+						// }
+						// catch (std::exception const &e)
+						// {
+						// 	base::console().WriteLine(CODE_POS_STR + base::ToHexString(&e));
+						// }
 
-						base::test::TestLittleFsFlash();
+						// base::test::TestLittleFsFlash();
 
-						{
-							void *p = malloc(16);
-							base::console().WriteLine("malloc 分配的内存的指针: " + base::ToHexString(p));
-							free(p);
-						}
+						// {
+						// 	void *p = malloc(16);
+						// 	base::console().WriteLine("malloc 分配的内存的指针: " + base::ToHexString(p));
+						// 	free(p);
+						// }
 
-						{
-							std::shared_ptr<base::usb::fs_device_pcd::UsbFsDevicePcd> pcd{new base::usb::fs_device_pcd::UsbFsDevicePcd{1}};
-							pcd->Initialize(base::usb::PhyType::Embedded);
-							base::usb::fs_device_pcd::usb_fs_pcd_slot().Add(pcd);
+						// {
+						// 	std::shared_ptr<base::usb::fs_device_pcd::UsbFsDevicePcd> pcd{new base::usb::fs_device_pcd::UsbFsDevicePcd{1}};
+						// 	pcd->Initialize(base::usb::PhyType::Embedded);
+						// 	base::usb::fs_device_pcd::usb_fs_pcd_slot().Add(pcd);
 
-							MX_USB_DEVICE_Init();
+						// 	MX_USB_DEVICE_Init();
 
-							while (true)
-							{
-								char const *str = "USB hello world\n";
-								CDC_Transmit_FS(const_cast<uint8_t *>(reinterpret_cast<uint8_t const *>(str)), strlen(str));
-								base::task::Delay(std::chrono::milliseconds{1000});
-							}
-						}
+						// 	while (true)
+						// 	{
+						// 		char const *str = "USB hello world\n";
+						// 		CDC_Transmit_FS(const_cast<uint8_t *>(reinterpret_cast<uint8_t const *>(str)), strlen(str));
+						// 		base::task::Delay(std::chrono::milliseconds{1000});
+						// 	}
+						// }
 
 						// TestFatFs();
 						// freertos_demo();
 						// p_net_sample_app_main();
 						// TestLittleFs();
-						// TestDCP();
+						TestDCP();
 						// TestUniversalTimer1();
 						// bsp::TestFlash();
 						// TestExtiKey();
