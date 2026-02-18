@@ -177,12 +177,12 @@ void TestDCP()
 		});
 
 	base::console().WriteLine("MAC 地址：" + netif_wrapper->Mac().ToString());
-	netif_wrapper->EnableDHCP();
+	// netif_wrapper->EnableDHCP();
 
-	while (!netif_wrapper->HasGotAddressesByDHCP())
-	{
-		// break;
-	}
+	// while (!netif_wrapper->HasGotAddressesByDHCP())
+	// {
+	// 	// break;
+	// }
 
 	std::unique_ptr<uint8_t[]> buffer{new uint8_t[1500]{}};
 
