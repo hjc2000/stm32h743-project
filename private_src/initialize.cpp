@@ -5,8 +5,8 @@
 #include "base/embedded/extended-io/PCF8574.h"
 #include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/heap/heap.h"
+#include "base/embedded/iic/GpioPinSoftwareIicHostPinDriver.h"
 #include "base/embedded/iic/IicHost.h"
-#include "base/embedded/iic/SoftwareIicHostPinDriver.h"
 #include "base/embedded/led/Led.h"
 #include "base/embedded/led/LedBar.h"
 #include "base/embedded/sdram/chip/w9825g6kh_6/W9825G6KH_6_Operator.h"
@@ -142,7 +142,7 @@ void bsp::initialize_sdram_heap()
 void bsp::initialize_iic_host()
 {
 	/// @brief 连接着 EEROM 芯片和 PCF8574T 芯片的 GPIO 模拟 IIC 主机接口。
-	std::shared_ptr<base::iic::SoftwareIicHostPinDriver<base::gpio::GpioPin>> pin_driver{new base::iic::SoftwareIicHostPinDriver<base::gpio::GpioPin>{
+	std::shared_ptr<base::iic::GpioPinSoftwareIicHostPinDriver> pin_driver{new base::iic::GpioPinSoftwareIicHostPinDriver{
 		base::gpio::GpioPin{base::gpio::PortEnum::PortH, 4},
 		base::gpio::GpioPin{base::gpio::PortEnum::PortH, 5},
 	}};
