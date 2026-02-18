@@ -1,7 +1,7 @@
 #include "base/Console.h"
 #include "base/embedded/core.h"
 #include "base/embedded/dma/MemoryDma.h"
-#include "base/embedded/extended-io/PCF8574.h"
+#include "base/embedded/extended_io/PCF8574.h"
 #include "base/embedded/key/Key.h"
 #include "base/embedded/key/KeyScanner.h"
 #include "base/embedded/led/Led.h"

@@ -2,7 +2,7 @@
 #include "base/Console.h"
 #include "base/embedded/clock/ClockSource.h"
 #include "base/embedded/cortex/mpu.h"
-#include "base/embedded/extended-io/PCF8574.h"
+#include "base/embedded/extended_io/PCF8574.h"
 #include "base/embedded/gpio/GpioPin.h"
 #include "base/embedded/heap/heap.h"
 #include "base/embedded/iic/GpioPinSoftwareIicHostPinDriver.h"
