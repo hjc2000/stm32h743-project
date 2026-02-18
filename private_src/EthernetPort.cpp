@@ -31,6 +31,7 @@ void bsp::EthernetPort::Open(base::Mac const &mac)
 					[this]()
 					{
 						bool last_loop_is_linked = false;
+
 						while (true)
 						{
 							bool is_linked = _phy_driver.IsLinked();
