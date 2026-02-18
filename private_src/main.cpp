@@ -250,15 +250,6 @@ void InitialTask()
 					1024 * 10,
 					[]()
 					{
-						try
-						{
-							throw std::runtime_error{"测试异常"};
-						}
-						catch (std::exception const &e)
-						{
-							base::console().WriteLine(CODE_POS_STR + base::ToHexString(&e));
-						}
-
 						base::test::TestLittleFsFlash();
 
 						{
