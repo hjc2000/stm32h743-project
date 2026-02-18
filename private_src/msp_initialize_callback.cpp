@@ -201,6 +201,7 @@ void base::usb::fs_device_pcd::msp_initialize(uint32_t id)
 	 */
 	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
 	PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_PLL;
+
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
 	{
 		throw std::runtime_error{CODE_POS_STR + "初始化失败。"};

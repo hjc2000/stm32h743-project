@@ -1,6 +1,7 @@
 #include "base/Console.h"
 #include "base/embedded/core.h"
 #include "base/embedded/dma/MemoryDma.h"
+#include "base/embedded/extended-io/PCF8574.h"
 #include "base/embedded/key/Key.h"
 #include "base/embedded/key/KeyScanner.h"
 #include "base/embedded/led/Led.h"
@@ -242,6 +243,23 @@ void InitialTask()
 							// base::console().WriteLine(std::to_string(static_cast<std::chrono::milliseconds>(base::systick::system_time_stamp()).count()) + "ms");
 							// base::console().WriteLine(std::to_string(static_cast<std::chrono::seconds>(base::systick::system_time_stamp()).count()) + "s");
 							base::task::Delay(std::chrono::milliseconds{1000});
+						}
+					});
+
+	base::task::run("测试蜂鸣器",
+					1,
+					1024 * 10,
+					[]()
+					{
+						base::extended_io::PCF8574Operator pcf8574_operator{*base::extended_io::pcf8574_slot()[0]};
+
+						while (true)
+						{
+							pcf8574_operator.WriteBit(0, 0);
+							base::task::Delay(std::chrono::milliseconds{100});
+
+							pcf8574_operator.WriteBit(0, 1);
+							base::task::Delay(std::chrono::milliseconds{100});
 						}
 					});
 
