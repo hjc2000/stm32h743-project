@@ -233,6 +233,7 @@ void InitialTask()
 						watch_dog.Initialize(std::chrono::milliseconds{2000});
 
 						base::led::led_bar()[0].TurnOff();
+
 						while (true)
 						{
 							watch_dog.Feed();
@@ -319,6 +320,7 @@ void InitialTask()
 						while (true)
 						{
 							scanner.ScanKeys();
+
 							if (scanner.HasKeyDownEvent(0))
 							{
 								base::led::led_bar()[0].Toggle();
