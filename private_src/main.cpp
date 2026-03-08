@@ -256,7 +256,7 @@ void InitialTask()
 
 						while (true)
 						{
-							pcf8574_operator.WriteBit(0, 0);
+							// pcf8574_operator.WriteBit(0, 0);
 							base::task::Delay(std::chrono::milliseconds{100});
 
 							pcf8574_operator.WriteBit(0, 1);
