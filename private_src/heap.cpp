@@ -1,7 +1,7 @@
 #include "base/embedded/heap/heap.h"
 #include "base/embedded/heap/Heap4.h"
 #include "base/embedded/heap/IHeap.h"
-#include "base/SingletonProvider.h"
+#include "base/GlobalObjectProvider.h"
 #include <cstddef>
 #include <cstdint>
 
@@ -13,7 +13,7 @@ namespace
 		base::heap::Heap4 heap4{_buffer, static_cast<size_t>(512) * 1024};
 	};
 
-	base::SingletonProvider<HeapContext> _heap_context_instance_provider;
+	base::GlobalObjectProvider<HeapContext> _heap_context_instance_provider;
 
 } // namespace
 
